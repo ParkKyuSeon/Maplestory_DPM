@@ -822,15 +822,3 @@ sum((AdeleRR$Deal)) ## 5,584,350,395,323
 
 Adele40s <-  AdeleDealData[24:712, ]
 sum((Adele40s$Deal)) ## 9,654,505,978,950
-
-## Wonder(Done), Creation (Done)
-## Territory, Ruin (Done)
-## Blossom (Done)
-## Restore(Done), AuraWeapon(Done) - ruin X, grave X, gathering X, blossom X, resonance X, marker X, storm X, divide O, 
-## MagicCircuitFullDrive(Done) - MCFCycle - only territory X, grave X
-## Storm (Done)
-## Order (Done)
-## Infinite (Done)
-## Spider In Mirror (Done)
-
-## EtherSword Logic / order -> summoned / storm order logic
