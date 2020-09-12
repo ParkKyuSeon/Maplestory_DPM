@@ -1235,12 +1235,3 @@ Mikhail40s <-  MikhailDealData[24:451, ]
 sum((Mikhail40s$Deal)) ## 6,260,558,530,237
 
 DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)
-
-
-## AdvancedFinalAttack, AuraWeapon, SpiderInMirror, LightofCourageAddAttaack
-
-
-## LightofCourageBuff Time Logic
-## Deadly Charge Buff Logic
-## Mikhaillink - 180 / DeadlyCharge - 15 / SacredCube - 240 / RhoAias - 360 / SwordofSoulLight - 180 / LightofCourage - 90 / Useful - 240 / AuraWeapon - 180 / BlessofCygnus - 240 / RR4 - 180 / SoulContract - 90 
-## SIM - 240 / Phalanx - 30 / Cross - 12 / RoyalGuard - 6 / ClaiomhSolais - 12
