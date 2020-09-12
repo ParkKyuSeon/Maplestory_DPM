@@ -1401,12 +1401,3 @@ sum((IlliumRR$Deal)) ## 3,795,760,796,297
 
 Illium40s <- IlliumDealData[220:667, ]
 sum((Illium40s$Deal)) ## 7,227,667,732,715
-
-
-## JavelinBuffLogic (Done)
-## SoulofCrystalLogic (Done)
-## AddATKsLogic(JavelinFragment(Done), MagicMissile(Done), Destruction(Done), Domination(Done), DestructionSoul(Done), DominationSoul(Done), MagicCircuitFullDrive(Done), 
-##              CrystalGate(Done), JavelinAddATK, JavelinAddFragment, CurseMark, CurseMarkJavelin, IgnitionSoul(Done))
-## RepATKs(CrystalIgnition, ReactionSpectrum)
-## Liyo, Deus Logic & Liyo, Deus, Machina Logic (Done)
-## Spider In Mirror
