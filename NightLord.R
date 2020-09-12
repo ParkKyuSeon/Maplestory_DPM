@@ -595,36 +595,3 @@ NightLord40s <- NightLordDealData[31:656, ]
 sum((NightLord40s$Deal)) ## 9,360,504,390,231
 
 DealRatio(NightLordDealCycle, NightLordFinalDPMwithMax)
-
-## ThrowBlasting Simulation
-tb <- c()
-for(i in 1:500000) {
-  t <- 47
-  while(t > 0) {
-    t <- t - sample(c(2, 3, 4), 1)
-  }
-  tb[i] <- 47 - t
-}
-mean(tb)
-
-sum(tb==47) / 500000
-sum(tb==48) / 500000
-sum(tb==49) / 500000
-sum(tb==50) / 500000
-
-47 * (1/3) + 48 * (1/3) + 49 * (2/9) + 50 * (1/9) ## 48.11111
-
-
-trys <- c()
-for(i in 1:500000) {
-  t <- 47
-  p <- 0
-  while(t > 0) {
-    t <- t - sample(c(2, 3, 4), 1)
-    p <- p + 1
-  }
-  trys[i] <- p
-}
-mean(trys)
-max(trys)
-min(trys)
