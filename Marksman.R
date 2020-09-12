@@ -588,19 +588,15 @@ curve(log(x/(Mastery*(CriticalDamage+1.2)))*(1/((1-Mastery)*0.3)), add=T, from=M
 curve(log((CriticalDamage+1.5)/(CriticalDamage+1.2))*(1/((1-Mastery)*0.3)) + 0*x, add=T, from=Mastery*(CriticalDamage+1.5), to=CriticalDamage+1.2)
 curve(log((CriticalDamage+1.5)/x)*(1/((1-Mastery)*0.3)), add=T, from=CriticalDamage+1.2, to=CriticalDamage+1.5)
 
-
 Mastery <- 0.95
 CriticalDamage <- 0.8
-
 
 plot(x=c(), y=c(), xlim=c(Mastery*(CriticalDamage+1.2), CriticalDamage+1.5), ylim=c(0, 4), main="Damage Distribution", ylab="", xlab="Mastery*CDMR")
 curve(log(x/(Mastery*(CriticalDamage+1.2)))*(1/((1-Mastery)*0.3)), add=T, from=Mastery*(CriticalDamage+1.2), to=CriticalDamage+1.2)
 curve(log(1/Mastery)*(1/((1-Mastery)*0.3)) + 0*x, add=T, from=CriticalDamage+1.2, to=Mastery*(CriticalDamage+1.5))
 curve(log((CriticalDamage+1.5)/x)*(1/((1-Mastery)*0.3)), add=T, from=Mastery*(CriticalDamage+1.5), to=CriticalDamage+1.5)
 
-
 curve(log(x/(Mastery*(CriticalDamage+1.2)))*(1/((1-Mastery)*0.3)), xlim=c(0, 3))
-
 
 
 ## Marksman Deal Ratio
