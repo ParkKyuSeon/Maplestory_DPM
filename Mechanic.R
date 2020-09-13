@@ -715,6 +715,6 @@ MechanicRR <- MechanicDealData[49:298, ]
 sum((MechanicRR$Deal)) ## 3,444,683,404,196
 
 Mechanic40s <-  MechanicDealData[34:651, ]
-sum((Mechanic40s$Deal)) ## 6,608,095,108,506
+sum((Mechanic40s$Deal)) ## 5,505,711,601,591
 
 DealRatio(MechanicDealCycle, MechanicFinalDPMwithMax)

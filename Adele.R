@@ -811,7 +811,7 @@ AdeleFinalDPMwithMax <- DealCalcWithMaxDMR(AdeleDealCycle, ATKFinal, BuffFinal, 
 DPMTver$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (346950 / 60000)
 DPMTver$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (346950 / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (346950 / 60000)
 
-DealRatio(AdeleDealCycle, AdeleFinalDPMwithMax)
+AdeleDealRatio <- DealRatio(AdeleDealCycle, AdeleFinalDPMwithMax)
 
 AdeleDealData <- data.frame(AdeleDealCycle$Skills, AdeleDealCycle$Time, AdeleDealCycle$Restraint4, AdeleFinalDPMwithMax, AdeleFinalDPM-AdeleFinalDPMwithMax)
 colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")

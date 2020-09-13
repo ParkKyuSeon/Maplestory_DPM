@@ -446,8 +446,7 @@ colnames(info) <- c("option", "value")
 ThrowBlasting <- rbind(data.frame(option, value), info)}
 
 NightLordATK <- Attack(list(QuadrapleThrow=QuadrapleThrow, QuadrapleThrowSpread=QuadrapleThrowSpread, SuddenRaid=SuddenRaid, MarkofNightLord=MarkofNightLord, MarkofNightLordSpread=MarkofNightLordSpread,
-                            MarkofNightLordThrowBlastingRemain=MarkofNightLordThrowBlastingRemain, 
-                            ThrowingKnife=ThrowingKnife, SecretBookExplosion=SecretBookExplosion, ThrowBlasting=ThrowBlasting, ThrowBlastingRemain=ThrowBlastingRemain,
+                            ThrowingKnife=ThrowingKnife, SecretBookExplosion=SecretBookExplosion, ThrowBlasting=ThrowBlasting,
                             SpiderInMirror=SpiderInMirror))
 
 
@@ -475,7 +474,7 @@ NightLordSummoned <- Summoned(list(DarkFlare=DarkFlare, SecretBook=SecretBook, S
 ATKFinal <- data.frame(NightLordATK)
 ATKFinal$Delay <- Delay(ATKFinal$Delay, NightLordSpec$ATKSpeed)
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, NightLordSpec$CoolReduceP, NightLordSpec$CoolReduce)
-ATKFinal <- AddATKRateSkills("ShadowPartner", BuffFinal, ATKFinal, c("QuadrapleThrow", "SuddenRaid", "ThrowingKnife", "ThrowBlasting", "ThrowBlastingRemain"))
+ATKFinal <- AddATKRateSkills("ShadowPartner", BuffFinal, ATKFinal, c("QuadrapleThrow", "SuddenRaid", "ThrowingKnife", "ThrowBlasting"))
 
 BuffFinal <- data.frame(NightLordBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, NightLordSpec$CoolReduceP, NightLordSpec$CoolReduce)

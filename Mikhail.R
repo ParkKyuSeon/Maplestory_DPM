@@ -1217,7 +1217,7 @@ MikhailSpecOpt$ATKP <- MikhailSpecOpt$ATKP + MikhailSpecOpt1$ATKP
 MikhailSpecOpt$BDR <- MikhailSpecOpt$BDR + MikhailSpecOpt1$BDR
 MikhailSpecOpt$IGR <- IGRCalc(c(MikhailSpecOpt$IGR, MikhailSpecOpt1$IGR))
 
-MikhailSpecOpt2 <- WindBreakerOptimization2(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, HyperStatBase, MikhailChrLv, MikhailCRROver)
+MikhailSpecOpt2 <- WindBreakerOptimization2(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, HyperStatBase, MikhailChrLv, MikhailCRROver)
 MikhailFinalDPM <- WindBreakerDealCalc(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
 MikhailFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
 
@@ -1229,9 +1229,9 @@ colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(MikhailDealData, MikhailDealData$Leakage > 0)
 
 MikhailRR <- MikhailDealData[230:383, ]
-sum((MikhailRR$Deal)) ## 3,314,080,178,255
+sum((MikhailRR$Deal)) ## 3,341,228,265,523
 
 Mikhail40s <-  MikhailDealData[24:451, ]
-sum((Mikhail40s$Deal)) ## 6,260,558,530,237
+sum((Mikhail40s$Deal)) ## 6,309,129,531,050
 
 DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)

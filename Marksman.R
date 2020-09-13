@@ -600,4 +600,4 @@ curve(log(x/(Mastery*(CriticalDamage+1.2)))*(1/((1-Mastery)*0.3)), xlim=c(0, 3))
 
 
 ## Marksman Deal Ratio
-DealRatio(MarksmanDealCycle, MarksmanFinalDPMwithMax)
+MarksmanDealRatio <- DealRatio(MarksmanDealCycle, MarksmanFinalDPMwithMax)
