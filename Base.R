@@ -3,18 +3,6 @@ options("scipen"=500)
 options("max.print"=100000)
 
 
-## DPMs
-DPM <- data.frame(t(rep(0, 43)))
-DPM <- rbind(DPM, DPM)
-colnames(DPM) <- job
-rownames(DPM) <- c("DPM", "DamageLeakage")
-
-DPMTver <- data.frame(t(rep(0, 43)))
-DPMTver <- rbind(DPMTver, DPMTver)
-colnames(DPMTver) <- job
-rownames(DPMTver) <- c("DPM", "DamageLeakage")
-
-
 ## Monster Info
 MapArc <- 760
 MobLv <- 250
@@ -68,3 +56,15 @@ BaseMastery <- c(20, 20, 20, 25, 25, 25, 15, 15, 15, 15, 20, 20, 20, 15, 15, 20,
                  20, 25, 15, 15, 20, 20, 20, 20, 20, 15, 20, 20, 20, 20, 20, 25)
 ChrInfo <- data.frame(job, class1, class2, MainStat, SubStat1, SubStat2, CharacterLv, UnionLv, ArcaneForce, 
                       Charisma, Insight, Sensibility, BaseMastery)
+
+
+## DPMs
+DPM <- data.frame(t(rep(0, 43)))
+DPM <- rbind(DPM, DPM)
+colnames(DPM) <- job
+rownames(DPM) <- c("DPM", "DamageLeakage")
+
+DPMTver <- data.frame(t(rep(0, 43)))
+DPMTver <- rbind(DPMTver, DPMTver)
+colnames(DPMTver) <- job
+rownames(DPMTver) <- c("DPM", "DamageLeakage")
