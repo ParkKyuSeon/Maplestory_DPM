@@ -8,6 +8,7 @@ DPM12338Ratio[4, ] <- DPM12338[4, ] / DPM12338Standard[4] * 100
 DPM12338Ratio <- round(DPM12338Ratio, 4)
 rownames(DPM12338Ratio) <- c("DPMRatio", "LeakageRatio", "RestraintRatio", "40sRatio")
 
+DPM12338 <- round(DPM12338)
 DPM12338Final <- rbind(DPM12338, DPM12338Ratio)
 rownames(DPM12338Final) <- c("DPM", "DPMRatio", "DamageLeakage", "LeakageRatio", "Restraint", "RestraintRatio", "40s", "40sRatio")
 for(i in 1:nrow(DPM12338)) {
