@@ -437,7 +437,7 @@ BladeTornadoPre <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(375 + 15 * DualBladeCore[[2]][3, 2], 6, 720, 120, 12, T, F, F)
+info <- c(400 + 16 * DualBladeCore[[2]][3, 2], 6, 720, 120, 12, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeTornado <- rbind(data.frame(option, value), info)
@@ -561,16 +561,16 @@ DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFi
 DualBladeFinalDPM <- DealCalc(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 DualBladeFinalDPMwithMax <- DealCalcWithMaxDMR(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 
-DPMTver$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (360690 / 60000)
-DPMTver$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (360690 / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (360690 / 60000)
+DPM12338$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (360690 / 60000)
+DPM12338$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (360690 / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (360690 / 60000)
 
 DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Time, DualBladeDealCycle$Restraint4, DualBladeFinalDPMwithMax)
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")
 
 DualBladeRR <- DualBladeDealData[25:270, ]
-sum((DualBladeRR$Deal)) ## 3,962,053,559,506
+sum((DualBladeRR$Deal)) ## 4003515655234
 
 DualBlade40s <- DualBladeDealData[25:535, ]
-sum((DualBlade40s$Deal)) ## 5,930,151,965,025
+sum((DualBlade40s$Deal)) ## 5988177534483
 
 DealRatio(DualBladeDealCycle, DualBladeFinalDPMwithMax)

@@ -1380,8 +1380,8 @@ IlliumFinalDPM <- ResetDealCalc(DealCycles=list(IlliumDealCycleReduction, Illium
 IlliumFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(IlliumDealCycleReduction, IlliumDealCycle2Reduction, IlliumDealCycle3Reduction, IlliumDealCycle4Reduction), 
                                                  ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2, IlliumDealCycleTimes, IlliumDealCycleProbs)
 
-DPMTver$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (724698 / 60000)
-DPMTver$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (724698 / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (724698 / 60000)
+DPM12338$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (724698 / 60000)
+DPM12338$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (724698 / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (724698 / 60000)
 
 IlliumDeal1 <- DealCalcWithMaxDMR(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
 IlliumDeal2 <- DealCalcWithMaxDMR(IlliumDealCycle2, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)

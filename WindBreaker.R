@@ -639,7 +639,7 @@ WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 6)), ATKF
 WindBreakerDealCycle <- DealCycleFinal(WindBreakerDealCycle)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphere", 17, 540, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphereGust", 1, 2400, ATKFinal)
-WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "HowlingGaleSmall", 56, 1000, ATKFinal)
+WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "HowlingGaleSmall", 57, 840, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "HowlingGaleBig", 66, 0, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "WindWall", 25, 0, ATKFinal)
 WindBreakerDealCycle <- DCSummonedATKs(WindBreakerDealCycle, Skill=c("GuidedArrow", "CygnusPhalanx"), SummonedFinal)
@@ -661,8 +661,8 @@ WindBreakerSpecOpt2 <- WindBreakerOptimization2(WindBreakerDealCycleReduction, A
 WindBreakerFinalDPM <- WindBreakerDealCalc(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 WindBreakerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 
-DPMTver$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (222920 / 60000)
-DPMTver$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (222920 / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (222920 / 60000)
+DPM12338$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (222920 / 60000)
+DPM12338$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (222920 / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (222920 / 60000)
 
 WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCycle$Time, WindBreakerDealCycle$Restraint4, WindBreakerFinalDPMwithMax)
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")

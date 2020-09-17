@@ -449,7 +449,7 @@ ParalyzeUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(FDRCalc(c(2 * ArchmageFPCore[[1]][3, 2], floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchmageFPCore[[1]][3, 2]>=40, 20, 0), 60 + ArchmageFPSpec$SkillLv)))
-info <- c((46 + ArchmageFPSpec$SkillLv) * 2.25, 60 * ArchmageFPUnstable[8, 3], 0, NA, NA, NA, NA, F)
+info <- c((45 + ArchmageFPSpec$SkillLv) * 2.25, 60 * ArchmageFPUnstable[8, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MistEruptionUnstable <- rbind(data.frame(option, value), info)
@@ -484,7 +484,7 @@ Paralyze <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(FDRCalc(c(2 * ArchmageFPCore[[1]][6, 2], floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchmageFPCore[[1]][3, 2]>=40, 20, 0), 60 + ArchmageFPSpec$SkillLv)))
-info <- c((46 + ArchmageFPSpec$SkillLv) * 2.25, 60, 930, NA, 8 * (1 - 0.5 - ArchmageFPSpec$CoolReduceP/100), F, T, F)
+info <- c((45 + ArchmageFPSpec$SkillLv) * 2.25, 60, 930, NA, 8 * (1 - 0.5 - ArchmageFPSpec$CoolReduceP/100), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MistEruption <- rbind(data.frame(option, value), info)
@@ -652,42 +652,42 @@ PoisonChainPre <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(300 + 12 * ArchmageFPCore[[2]][4, 2], 6, 780, 1800, NA, NA, NA, F)
+info <- c(150 + 6 * ArchmageFPCore[[2]][4, 2], 6, 780, 1800, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(300 + 1 * (30 + ArchmageFPCore[[2]][4, 2]) + 12 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(150 + 1 * (30 + ArchmageFPCore[[2]][4, 2]) + 6 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(300 + 2 * (30 + ArchmageFPCore[[2]][4, 2]) + 12 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(150 + 2 * (30 + ArchmageFPCore[[2]][4, 2]) + 6 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain3 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(300 + 3 * (30 + ArchmageFPCore[[2]][4, 2]) + 12 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(150 + 3 * (30 + ArchmageFPCore[[2]][4, 2]) + 6 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain4 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(300 + 4 * (30 + ArchmageFPCore[[2]][4, 2]) + 12 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(150 + 4 * (30 + ArchmageFPCore[[2]][4, 2]) + 6 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain5 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(ArchmageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(300 + 5 * (30 + ArchmageFPCore[[2]][4, 2]) + 12 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(150 + 5 * (30 + ArchmageFPCore[[2]][4, 2]) + 6 * ArchmageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChainMax <- rbind(data.frame(option, value), info)
@@ -1037,15 +1037,15 @@ ArchmageFPSpecOpt2 <- BishopOptimization2(ArchmageFPDealCycle, ArchmageFPDealCyc
 ArchmageFPFinalDPM <- BishopDealCalc(ArchmageFPDealCycle, ArchmageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchmageFPSpecOpt2, Unsdata)
 ArchmageFPFinalDPMwithMax <- BishopDealCalcWithMaxDMR(ArchmageFPDealCycle, ArchmageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchmageFPSpecOpt2, Unsdata)
 
-DPMTver$ArchMageFP[1] <- sum(na.omit(ArchmageFPFinalDPMwithMax)) / (218671.2 / 60000)
-DPMTver$ArchMageFP[2] <- sum(na.omit(ArchmageFPFinalDPM)) / (218671.2 / 60000) - sum(na.omit(ArchmageFPFinalDPMwithMax)) / (218671.2 / 60000)
+DPM12338$ArchMageFP[1] <- sum(na.omit(ArchmageFPFinalDPMwithMax)) / (218671.2 / 60000)
+DPM12338$ArchMageFP[2] <- sum(na.omit(ArchmageFPFinalDPM)) / (218671.2 / 60000) - sum(na.omit(ArchmageFPFinalDPMwithMax)) / (218671.2 / 60000)
 
 ArchmageFPDamage <- BishopDealCalcGeneral(ArchmageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchmageFPSpecOpt2)
 ArchmageFP40s <- data.frame(ArchmageFPDealCycle$Skills, ArchmageFPDealCycle$Time, ArchmageFPDealCycle$Restraint4, ArchmageFPDealCycle$Infinity, ArchmageFPDealCycle$InfinityFDR, ArchmageFPDamage)
 colnames(ArchmageFP40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 
-sum(ArchmageFP40s$Damage[1510:1796]) ## 3,900,447,735,956
-sum(ArchmageFP40s$Damage[1168:1803]) ## 6,948,231,964,889
+sum(ArchmageFP40s$Damage[1510:1796]) ## 3803325307364
+sum(ArchmageFP40s$Damage[1168:1803]) ## 6724137302925
 
 ArchmageFPDamage2 <- BishopDealCalcGeneral(ArchmageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchmageFPSpecOpt2)
 

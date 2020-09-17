@@ -1221,8 +1221,8 @@ MikhailSpecOpt2 <- WindBreakerOptimization2(MikhailDealCycleReduction, ATKFinal,
 MikhailFinalDPM <- WindBreakerDealCalc(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
 MikhailFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
 
-DPMTver$Mikhail[1] <- sum(na.omit(MikhailFinalDPMwithMax)) / (696480 / 60000)
-DPMTver$Mikhail[2] <- sum(na.omit(MikhailFinalDPM)) / (696480 / 60000) - sum(na.omit(MikhailFinalDPMwithMax)) / (696480 / 60000)
+DPM12338$Mikhail[1] <- sum(na.omit(MikhailFinalDPMwithMax)) / (696480 / 60000)
+DPM12338$Mikhail[2] <- sum(na.omit(MikhailFinalDPM)) / (696480 / 60000) - sum(na.omit(MikhailFinalDPMwithMax)) / (696480 / 60000)
 
 MikhailDealData <- data.frame(MikhailDealCycle$Skills, MikhailDealCycle$Time, MikhailDealCycle$Restraint4, MikhailFinalDPMwithMax, MikhailFinalDPM-MikhailFinalDPMwithMax)
 colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")

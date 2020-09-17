@@ -199,7 +199,7 @@ Valhalla <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(1)
-info <- c(30, 180, 450, F, F, F, T)
+info <- c(30, 240, 450, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ComboInstinct <- rbind(data.frame(option, value), info) ## Combo Data
@@ -581,16 +581,16 @@ HeroSpecOpt2 <- HeroOptimization2(HeroDealCycleReduction, ATKFinal, BuffFinal, S
 HeroFinalDPM <- HeroDealCalc(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt2)
 HeroFinalDPMwithMax <- HeroDealCalcWithMaxDMR(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt2)
 
-DPMTver$Hero[1] <- sum(na.omit(HeroFinalDPMwithMax)) / (229440 / 60000)
-DPMTver$Hero[2] <- sum(na.omit(HeroFinalDPM)) / (229440 / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (229440 / 60000)
+DPM12338$Hero[1] <- sum(na.omit(HeroFinalDPMwithMax)) / (229440 / 60000)
+DPM12338$Hero[2] <- sum(na.omit(HeroFinalDPM)) / (229440 / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (229440 / 60000)
 
 HeroDealData <- data.frame(HeroDealCycle$Skills, HeroDealCycle$Time, HeroDealCycle$Restraint4, HeroFinalDPMwithMax)
 colnames(HeroDealData) <- c("Skills", "Time", "R4", "Deal")
 
 HeroRR <- HeroDealData[58:180, ]
-sum((HeroRR$Deal)) ## 5,154,908,797,513
+sum((HeroRR$Deal)) ## 5154908797513
 
 Hero40s <- HeroDealData[30:359, ]
-sum((Hero40s$Deal)) ## 9,190,982,581,038
+sum((Hero40s$Deal)) ## 9190982581038
 
 DealRatio(HeroDealCycle, HeroFinalDPMwithMax)

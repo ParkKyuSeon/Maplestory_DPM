@@ -453,8 +453,8 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DistortionField <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor("FDR", levels=ASkill)
+value <- c(105 + 3 * MechanicSpec$PSkillLv)
 info <- c(350 + 10 * MechanicCore[[2]][1, 2], 8, 0, NA, 200, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -523,8 +523,8 @@ info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 MultipleOptionGetling <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=SSkill)
-value <- c()
+option <- factor("FDR", levels=SSkill)
+value <- c(105 + 3 * MechanicSpec$PSkillLv)
 info <- c(250 + 10 * MechanicCore[[2]][4, 2], 4, 720, 4000, 70, 200, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -704,17 +704,17 @@ MechanicSpecOpt2 <- LuckyDiceOptimization2(MechanicDealCycleReduction, ATKFinal,
 MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))
 MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))
 
-DPMTver$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (404180 / 60000)
-DPMTver$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (404180 / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (404180 / 60000)
+DPM12338$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (404180 / 60000)
+DPM12338$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (404180 / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (404180 / 60000)
 
 MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time, MechanicDealCycle$Restraint4, 
                                LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(1, 0, 0)))
 colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
 
 MechanicRR <- MechanicDealData[49:298, ]
-sum((MechanicRR$Deal)) ## 3,444,683,404,196
+sum((MechanicRR$Deal)) ## 3781613925278
 
 Mechanic40s <-  MechanicDealData[34:651, ]
-sum((Mechanic40s$Deal)) ## 5,505,711,601,591
+sum((Mechanic40s$Deal)) ## 6273065744946
 
 DealRatio(MechanicDealCycle, MechanicFinalDPMwithMax)

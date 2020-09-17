@@ -808,8 +808,8 @@ AdeleSpecOpt2 <- Optimization2(AdeleDealCycleReduction, ATKFinal, BuffFinal, Sum
 AdeleFinalDPM <- DealCalc(AdeleDealCycle, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 AdeleFinalDPMwithMax <- DealCalcWithMaxDMR(AdeleDealCycle, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 
-DPMTver$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (346950 / 60000)
-DPMTver$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (346950 / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (346950 / 60000)
+DPM12338$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (346950 / 60000)
+DPM12338$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (346950 / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (346950 / 60000)
 
 AdeleDealRatio <- DealRatio(AdeleDealCycle, AdeleFinalDPMwithMax)
 

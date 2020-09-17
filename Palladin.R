@@ -572,8 +572,8 @@ PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFina
 PalladinFinalDPM <- DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 PalladinFinalDPMwithMax <- DealCalcWithMaxDMR(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 
-DPMTver$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (345330 / 60000)
-DPMTver$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (345330 / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (345330 / 60000)
+DPM12338$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (345330 / 60000)
+DPM12338$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (345330 / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (345330 / 60000)
 
 PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time, PalladinDealCycle$Restraint4, PalladinFinalDPMwithMax)
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")

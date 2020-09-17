@@ -855,8 +855,8 @@ BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFina
 BishopFinalDPM <- BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, Unsdata)
 BishopFinalDPMwithMax <- BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, Unsdata)
 
-DPMTver$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (211669.8 / 60000)
-DPMTver$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (211669.8 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (211669.8 / 60000)
+DPM12338$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (211669.8 / 60000)
+DPM12338$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (211669.8 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (211669.8 / 60000)
 
 ## PrayFDR Logic Needed
 

@@ -109,10 +109,6 @@ option <- factor("CDMR", levels=PSkill)
 value <- c(20)
 ExtremeArchery <- data.frame(option, value)
 
-option <- factor("BDR", levels=PSkill)
-value <- c(2)
-MotalBlow <- data.frame(option, value)
-
 option <- factor(c("IGR", "BDR"), levels=PSkill)
 value <- c(25, 15)
 Marksmanship <- data.frame(option, value)
@@ -123,23 +119,10 @@ CrossbowExpert <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(40 + MarksmanSpec$PSkillLv)
-IllusionStep <- data.frame(option, value)
+IllusionStep <- data.frame(option, value)}
 
-option <- factor(c("FDR", "IGR"), levels=PSkill)
-value <- c(ifelse(Distance>=200, min(40+MarksmanSpec$PSkillLv, floor((Distance-200)/18)*4), 0), 
-           ifelse(Distance<200, min(30+MarksmanSpec$PSkillLv, floor((200-Distance)/18)*3), 0))
-AdditionalBolt <- data.frame(option, value) ## Attack Skills Only
-
-option <- factor("IGR", levels=PSkill)
-value <- c(min(10 + MarksmanSpec$PSkillLv + floor(Distance/40)*ifelse(MarksmanSpec$PSkillLv>0, 5, 4), 50 + MarksmanSpec$PSkillLv))
-WeaknessFinding <- data.frame(option, value)
-
-option <- factor("FDR", levels=PSkill)
-value <- c(20 + 2 * MarksmanSpec$PSkillLv)
-LastmanStanding <- data.frame(option, value)}
-
-MarksmanPassive <- Passive(list(CriticalShot, PhysicalTraining, ExtremeArchery, MotalBlow, Marksmanship, 
-                                IllusionStep, CrossbowExpert, WeaknessFinding, LastmanStanding))
+MarksmanPassive <- Passive(list(CriticalShot, PhysicalTraining, ExtremeArchery, Marksmanship, 
+                                IllusionStep, CrossbowExpert))
 
 
 ## Marksman - Buff
@@ -227,6 +210,42 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)
 
+option <- factor(c("IGR"), levels=BSkill)
+value <- c(IGRCalc(c(30, 14)))
+info <- c(1, 180, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+Distance0 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("FDR", "IGR"), levels=BSkill)
+value <- c(ifelse(Distance>=200, min(40+MarksmanSpec$PSkillLv, floor((Distance-200)/18)*4), 0), 
+           ifelse(Distance<200, min(30+MarksmanSpec$PSkillLv, floor((200-Distance)/18)*3), 0))
+info <- c(1, 180, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+DistancingSense <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR"), levels=BSkill)
+value <- c(min(14 + MarksmanSpec$PSkillLv + floor(Distance/40)*ifelse(MarksmanSpec$PSkillLv>0, 5, 4), 50 + MarksmanSpec$PSkillLv))
+info <- c(1, 180, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+WeaknessFinding <- rbind(data.frame(option, value), info)
+
+option <- factor(c("FDR"), levels=BSkill)
+value <- c(20 + 2 * MarksmanSpec$PSkillLv)
+info <- c(1, 180, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LastmanStanding <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR"), levels=BSkill)
+value <- c(2)
+info <- c(1, 180, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+MotalBlow <- rbind(data.frame(option, value), info)
+
 option <- factor("CDMR", levels=BSkill)
 value <- c(20 * (0.2 + 0.01 * MarksmanCore[[2]][7, 2]))
 info <- c(0, 120, 0, F, T, F, T)
@@ -236,7 +255,8 @@ Synergy <- rbind(data.frame(option, value), info)}
 
 MarksmanBuff <- Buff(list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, UsefulWindBooster=UsefulWindBooster, 
                           UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, Bullseye=Bullseye, 
-                          SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, MapleWarriors2=MapleWarriors2, 
+                          SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, 
+                          DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
                           Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 ### PetBuff : CrossbowBooster, SoulArrow, SharpEyes
 
@@ -319,16 +339,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
 
-MarksmanBuff <- Buff(list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, 
-                          MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, UsefulWindBooster=UsefulWindBooster, 
+MarksmanBuff <- Buff(list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, UsefulWindBooster=UsefulWindBooster, 
                           UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, Bullseye=Bullseye, 
-                          SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, MapleWarriors2=MapleWarriors2, 
+                          SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, 
+                          DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
                           Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 
 
 ## Marksman - Spider In Mirror
-{option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(AdditionalBolt[1, 2], AdditionalBolt[2, 2])
+{option <- factor(levels=ASkill)
+value <- c()
 info <- c(450 + 18 * MarksmanCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -386,15 +406,15 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 ## Marksman - Attacks
 {option <- factor(c("IGR", "BDR", "CRR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20 + ceiling(MarksmanSpec$SkillLv/3)*2, AdditionalBolt[2, 2], ifelse(MarksmanCore[[1]][1, 2]>=40, 20, 0))), 
-           30, 100, FDRCalc(c(2 * MarksmanCore[[1]][1, 2], AdditionalBolt[1, 2])))
+value <- c(IGRCalc(c(20 + ceiling(MarksmanSpec$SkillLv/3)*2, ifelse(MarksmanCore[[1]][1, 2]>=40, 20, 0))), 
+           30, 100, 2 * MarksmanCore[[1]][1, 2])
 info <- c(465 + MarksmanSpec$SkillLv * 5, 10, 840, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Snipe <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR", "WhenBuffOnly"), levels=ASkill)
-value <- c(AdditionalBolt[2, 2], AdditionalBolt[1, 2], T)
+option <- factor(c("WhenBuffOnly"), levels=ASkill)
+value <- c(T)
 info <- c(600 + 24 * MarksmanCore[[2]][2, 2], 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -407,43 +427,43 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChargedArrowStart <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "CRR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(50, AdditionalBolt[2, 2])), 100, AdditionalBolt[1, 2])
+option <- factor(c("IGR", "CRR"), levels=ASkill)
+value <- c(50, 100)
 info <- c(750 + 30 * MarksmanCore[[2]][3, 2], 11, 480, NA, 10, T, F, T)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChargedArrow <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "CRR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(50, AdditionalBolt[2, 2])), 100, AdditionalBolt[1, 2])
+option <- factor(c("IGR", "CRR"), levels=ASkill)
+value <- c(50, 100)
 info <- c(500 + 20 * MarksmanCore[[2]][3, 2], 11, 480, NA, 10, T, F, T)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChargedArrowUncharged <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "BDR", "CRR", "FDR"), levels=ASkill)
-value <- c(100, 100, 100, AdditionalBolt[1, 2])
+option <- factor(c("IGR", "BDR", "CRR"), levels=ASkill)
+value <- c(100, 100, 100)
 info <- c(0, 0, 150, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TrueSnipeStart <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "BDR", "CRR", "FDR"), levels=ASkill)
-value <- c(100, 100, 100, AdditionalBolt[1, 2])
+option <- factor(c("IGR", "BDR", "CRR"), levels=ASkill)
+value <- c(100, 100, 100)
 info <- c(950 + 30 * MarksmanCore[[2]][1, 2], 15, 900, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TrueSnipe <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR", "WhenBuffOnly"), levels=ASkill)
-value <- c(IGRCalc(c(25, AdditionalBolt[2, 2])), AdditionalBolt[1, 2], T)
+option <- factor(c("IGR", "WhenBuffOnly"), levels=ASkill)
+value <- c(25, T)
 info <- c(300 + 12 * MarksmanCore[[2]][4, 2], 24, 1080, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FullbustShot <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(AdditionalBolt[2, 2], ifelse(MarksmanCore[[1]][4, 2]>=40, 20, 0))), FDRCalc(c(4 * MarksmanCore[[1]][4, 2], AdditionalBolt[1, 2])))
+value <- c(ifelse(MarksmanCore[[1]][4, 2]>=40, 20, 0), 4 * MarksmanCore[[1]][4, 2])
 info <- c(140, 0.4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -543,6 +563,7 @@ MarksmanDealCycle <- DCSummonedATKs(MarksmanDealCycle, Skill=c("GuidedArrow", "E
 MarksmanDealCycle <- DCSpiderInMirror(MarksmanDealCycle, SummonedFinal)
 MarksmanDealCycle <- EvolveCycle(MarksmanDealCycle)
 MarksmanDealCycle <- MarksmanSynergy(MarksmanDealCycle)
+MarksmanDealCycle <- MarksmanDistance(MarksmanDealCycle)
 
 MarksmanDealCycleReduction <- DealCycleReduction(MarksmanDealCycle)
 
@@ -563,20 +584,20 @@ MarksmanFinalDPM <- DealCalc(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFin
 MarksmanFinalDPMwithMax <- DealCalcWithMaxDMR(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
 MarksmanFinalDPM - MarksmanFinalDPMwithMax
 
-DPMTver$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(233910/60000)
-DPMTver$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(233910/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(233910/60000)
+DPM12338$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(233910/60000)
+DPM12338$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(233910/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(233910/60000)
 
 
 ## Restraint Deal and 40s Damage
 MRestraint <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(MRestraint) <- c("Skills", "Damage", "Time", "R4")
 MRestraint <- subset(MRestraint, MRestraint$R4>0)
-sum(MRestraint$Damage) ## 3,810,178,481,984
+sum(MRestraint$Damage) ## 3572416985250
 
 Marksman40s <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(Marksman40s) <- c("Skills", "Damage", "Time", "R4")
 Marksman40s <- Marksman40s[37:355, ]
-sum((Marksman40s$Damage)) ## 6,138,022,427,145
+sum((Marksman40s$Damage)) ## 5843008647435
 
 
 ## Damage Distribution
