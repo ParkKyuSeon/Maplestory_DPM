@@ -70,6 +70,6 @@ colnames(DPMTver) <- job
 rownames(DPMTver) <- c("DPM", "DamageLeakage")
 
 DPM12338 <- data.frame(t(rep(0, 43)))
-DPM12338 <- rbind(DPM12338, DPM12338)
+DPM12338 <- rbind(DPM12338, DPM12338, DPM12338, DPM12338)
 colnames(DPM12338) <- job
-rownames(DPM12338) <- c("DPM", "DamageLeakage")
+rownames(DPM12338) <- c("DPM", "DamageLeakage", "Restraint", "40s")

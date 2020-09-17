@@ -668,9 +668,9 @@ WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCy
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 
 WindBreakerRR <- WindBreakerDealData[126:1197, ]
-sum((WindBreakerRR$Deal)) ## 2,971,470,062,667
+DPM12338$WindBreaker[3] <- sum((WindBreakerRR$Deal)) ## 2,971,470,062,667
 
 WindBreaker40s <- WindBreakerDealData[126:2585, ]
-sum((WindBreaker40s$Deal)) ## 5,029,342,027,630
+DPM12338$WindBreaker[4] <- sum((WindBreaker40s$Deal)) ## 5,029,342,027,630
 
 DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)

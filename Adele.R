@@ -818,7 +818,7 @@ colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AdeleDealData, AdeleDealData$Leakage > 0)
 
 AdeleRR <- AdeleDealData[188:565, ]
-sum((AdeleRR$Deal)) ## 5,584,350,395,323
+DPM12338$Adele[3] <- sum((AdeleRR$Deal)) ## 5,584,350,395,323
 
 Adele40s <-  AdeleDealData[24:712, ]
-sum((Adele40s$Deal)) ## 9,654,505,978,950
+DPM12338$Adele[4] <- sum((Adele40s$Deal)) ## 9,654,505,978,950

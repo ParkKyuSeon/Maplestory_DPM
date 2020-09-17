@@ -592,12 +592,12 @@ DPM12338$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(233910/60000) - sum(na.o
 MRestraint <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(MRestraint) <- c("Skills", "Damage", "Time", "R4")
 MRestraint <- subset(MRestraint, MRestraint$R4>0)
-sum(MRestraint$Damage) ## 3572416985250
+DPM12338$Marksman[3] <- sum(MRestraint$Damage) ## 3572416985250
 
 Marksman40s <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(Marksman40s) <- c("Skills", "Damage", "Time", "R4")
 Marksman40s <- Marksman40s[37:355, ]
-sum((Marksman40s$Damage)) ## 5843008647435
+DPM12338$Marksman[4] <- sum((Marksman40s$Damage)) ## 5843008647435
 
 
 ## Damage Distribution

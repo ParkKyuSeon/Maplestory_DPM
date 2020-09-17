@@ -588,9 +588,9 @@ HeroDealData <- data.frame(HeroDealCycle$Skills, HeroDealCycle$Time, HeroDealCyc
 colnames(HeroDealData) <- c("Skills", "Time", "R4", "Deal")
 
 HeroRR <- HeroDealData[58:180, ]
-sum((HeroRR$Deal)) ## 5154908797513
+DPM12338$Hero[3] <- sum((HeroRR$Deal)) ## 5154908797513
 
 Hero40s <- HeroDealData[30:359, ]
-sum((Hero40s$Deal)) ## 9190982581038
+DPM12338$Hero[4] <- sum((Hero40s$Deal)) ## 9190982581038
 
 DealRatio(HeroDealCycle, HeroFinalDPMwithMax)

@@ -579,9 +579,9 @@ PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time,
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
 
 PalladinRR <- PalladinDealData[25:199, ]
-sum((PalladinRR$Deal)) ## 3,519,543,612,093
+DPM12338$Palladin[3] <- sum((PalladinRR$Deal)) ## 3,519,543,612,093
 
 Palladin40s <- PalladinDealData[18:367, ]
-sum((Palladin40s$Deal)) ## 5,506,647,320,042
+DPM12338$Palladin[4] <- sum((Palladin40s$Deal)) ## 5,506,647,320,042
 
 DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)

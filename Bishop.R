@@ -864,8 +864,8 @@ BishopDamage <- BishopDealCalcGeneral(BishopDealCycle, ATKFinal, BuffFinal, Summ
 Bishop40s <- data.frame(BishopDealCycle$Skills, BishopDealCycle$Time, BishopDealCycle$Restraint4, BishopDealCycle$Infinity, BishopDealCycle$InfinityFDR, BishopDamage)
 colnames(Bishop40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 
-sum(Bishop40s$Damage[341:428]) ## 2,627,388,806,826
-sum(Bishop40s$Damage[264:437]) ## 4,589,763,955,359
+DPM12338$Bishop[3] <- sum(Bishop40s$Damage[341:428]) ## 2,627,388,806,826
+DPM12338$Bishop[4] <- sum(Bishop40s$Damage[264:437]) ## 4,589,763,955,359
 
 BishopDamage2 <- BishopDealCalcGeneral(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
 

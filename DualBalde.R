@@ -568,9 +568,9 @@ DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Ti
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")
 
 DualBladeRR <- DualBladeDealData[25:270, ]
-sum((DualBladeRR$Deal)) ## 4003515655234
+DPM12338$DualBlader[3] <- sum((DualBladeRR$Deal)) ## 4003515655234
 
 DualBlade40s <- DualBladeDealData[25:535, ]
-sum((DualBlade40s$Deal)) ## 5988177534483
+DPM12338$DualBlader[4] <- sum((DualBlade40s$Deal)) ## 5988177534483
 
 DealRatio(DualBladeDealCycle, DualBladeFinalDPMwithMax)

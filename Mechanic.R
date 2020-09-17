@@ -712,9 +712,9 @@ MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time,
 colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
 
 MechanicRR <- MechanicDealData[49:298, ]
-sum((MechanicRR$Deal)) ## 3781613925278
+DPM12338$Mechanic[3] <- sum((MechanicRR$Deal)) ## 3781613925278
 
 Mechanic40s <-  MechanicDealData[34:651, ]
-sum((Mechanic40s$Deal)) ## 6273065744946
+DPM12338$Mechanic[4] <- sum((Mechanic40s$Deal)) ## 6273065744946
 
 DealRatio(MechanicDealCycle, MechanicFinalDPMwithMax)

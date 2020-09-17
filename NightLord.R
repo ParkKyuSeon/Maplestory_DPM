@@ -588,9 +588,9 @@ NightLordDealData <- data.frame(NightLordDealCycle$Skills, NightLordDealCycle$Ti
 colnames(NightLordDealData) <- c("Skills", "Time", "R4", "Deal")
 
 NightLordRR <- NightLordDealData[31:365, ]
-sum((NightLordRR$Deal)) ## 6,451,217,719,327
+DPM12338$NightLord[3] <- sum((NightLordRR$Deal)) ## 6,451,217,719,327
 
 NightLord40s <- NightLordDealData[31:656, ]
-sum((NightLord40s$Deal)) ## 9,360,504,390,231
+DPM12338$NightLord[4] <- sum((NightLord40s$Deal)) ## 9,360,504,390,231
 
 DealRatio(NightLordDealCycle, NightLordFinalDPMwithMax)

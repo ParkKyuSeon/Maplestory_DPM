@@ -1229,9 +1229,9 @@ colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(MikhailDealData, MikhailDealData$Leakage > 0)
 
 MikhailRR <- MikhailDealData[230:383, ]
-sum((MikhailRR$Deal)) ## 3,341,228,265,523
+DPM12338$Mikhail[3] <- sum((MikhailRR$Deal)) ## 3,341,228,265,523
 
 Mikhail40s <-  MikhailDealData[24:451, ]
-sum((Mikhail40s$Deal)) ## 6,309,129,531,050
+DPM12338$Mikhail[4] <- sum((Mikhail40s$Deal)) ## 6,309,129,531,050
 
 DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)

@@ -1044,8 +1044,8 @@ ArchmageFPDamage <- BishopDealCalcGeneral(ArchmageFPDealCycle, ATKFinal, BuffFin
 ArchmageFP40s <- data.frame(ArchmageFPDealCycle$Skills, ArchmageFPDealCycle$Time, ArchmageFPDealCycle$Restraint4, ArchmageFPDealCycle$Infinity, ArchmageFPDealCycle$InfinityFDR, ArchmageFPDamage)
 colnames(ArchmageFP40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 
-sum(ArchmageFP40s$Damage[1510:1796]) ## 3803325307364
-sum(ArchmageFP40s$Damage[1168:1803]) ## 6724137302925
+DPM12338$ArchMageFP[3] <- sum(ArchmageFP40s$Damage[1510:1796]) ## 3803325307364
+DPM12338$ArchMageFP[4] <- sum(ArchmageFP40s$Damage[1168:1803]) ## 6724137302925
 
 ArchmageFPDamage2 <- BishopDealCalcGeneral(ArchmageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchmageFPSpecOpt2)
 

@@ -1397,7 +1397,7 @@ colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(IlliumDealData, IlliumDealData$Leakage > 0)
 
 IlliumRR <- IlliumDealData[220:407, ]
-sum((IlliumRR$Deal)) ## 3,795,760,796,297
+DPM12338$Illium[3] <- sum((IlliumRR$Deal)) ## 3,795,760,796,297
 
 Illium40s <- IlliumDealData[220:667, ]
-sum((Illium40s$Deal)) ## 7,227,667,732,715
+DPM12338$Illium[4] <- sum((Illium40s$Deal)) ## 7,227,667,732,715
