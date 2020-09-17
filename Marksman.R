@@ -211,7 +211,7 @@ colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=BSkill)
-value <- c(IGRCalc(c(30, 14)))
+value <- c(IGRCalc(c(30, 10 + ifelse(MarksmanSpec$PSkillLv>0, 5, 4))))
 info <- c(1, 180, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -226,7 +226,7 @@ colnames(info) <- c("option", "value")
 DistancingSense <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=BSkill)
-value <- c(min(14 + MarksmanSpec$PSkillLv + floor(Distance/40)*ifelse(MarksmanSpec$PSkillLv>0, 5, 4), 50 + MarksmanSpec$PSkillLv))
+value <- c(min(10 + ifelse(MarksmanSpec$PSkillLv>0, 5, 4) + MarksmanSpec$PSkillLv + floor(Distance/40)*ifelse(MarksmanSpec$PSkillLv>0, 5, 4), 50 + MarksmanSpec$PSkillLv))
 info <- c(1, 180, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -592,12 +592,12 @@ DPM12338$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(233910/60000) - sum(na.o
 MRestraint <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(MRestraint) <- c("Skills", "Damage", "Time", "R4")
 MRestraint <- subset(MRestraint, MRestraint$R4>0)
-DPM12338$Marksman[3] <- sum(MRestraint$Damage) ## 3572416985250
+DPM12338$Marksman[3] <- sum(MRestraint$Damage)
 
 Marksman40s <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(Marksman40s) <- c("Skills", "Damage", "Time", "R4")
 Marksman40s <- Marksman40s[37:355, ]
-DPM12338$Marksman[4] <- sum((Marksman40s$Damage)) ## 5843008647435
+DPM12338$Marksman[4] <- sum((Marksman40s$Damage))
 
 
 ## Damage Distribution
