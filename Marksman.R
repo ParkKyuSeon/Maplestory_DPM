@@ -457,7 +457,7 @@ TrueSnipe <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "WhenBuffOnly"), levels=ASkill)
 value <- c(25, T)
-info <- c(300 + 12 * MarksmanCore[[2]][4, 2], 24, 1080, NA, NA, NA, NA, F)
+info <- c(300 + 12 * MarksmanCore[[2]][4, 2], 40, 1080, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FullbustShot <- rbind(data.frame(option, value), info) 
