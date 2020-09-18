@@ -817,8 +817,8 @@ AdeleDealData <- data.frame(AdeleDealCycle$Skills, AdeleDealCycle$Time, AdeleDea
 colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AdeleDealData, AdeleDealData$Leakage > 0)
 
-AdeleRR <- AdeleDealData[188:565, ]
-DPM12338$Adele[3] <- sum((AdeleRR$Deal)) ## 5,584,350,395,323
+AdeleRR <- AdeleDealData[188:567, ]
+DPM12338$Adele[3] <- sum((AdeleRR$Deal))
 
-Adele40s <-  AdeleDealData[24:712, ]
-DPM12338$Adele[4] <- sum((Adele40s$Deal)) ## 9,654,505,978,950
+Adele40s <-  AdeleDealData[24:714, ]
+DPM12338$Adele[4] <- sum((Adele40s$Deal))

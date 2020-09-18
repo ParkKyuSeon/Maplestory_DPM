@@ -3309,7 +3309,7 @@ RuinTerritoryCycle <- function(DealCycle, ATKSkillList) {
       DealCycle[i, 3:ncol(DealCycle)] <- ifelse(DealCycle[i, 3:ncol(DealCycle)]<0, 0, DealCycle[i, 3:ncol(DealCycle)])
     }
   }
-  DealCycle <- RepATKCycle(DealCycle, "RuinExplosion", 6, 0, ATKSkillList)
+  DealCycle <- RepATKCycle(DealCycle, "RuinExplosion", 8, 0, ATKSkillList)
   
   for(i in 2:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="Ruin" | DealCycle$Skills[i]=="RuinExplosion" | DealCycle$Skills[i]=="RuinExplosionStart") {
