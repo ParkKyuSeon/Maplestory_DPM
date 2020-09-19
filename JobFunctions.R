@@ -1939,7 +1939,7 @@ MarksmanDistance <- function(MarksmanDealCycle) {
       MarksmanDealCycle$MotalBlow[i] <- 1
     }
     ## DistancingSense
-    if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "TrueSnipe", "FullBustShot", "SpiderInMirror", "FinalAttack"))==1) {
+    if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "ChargedArrow", "ChargedArrowUncharged", "TrueSnipe", "FullBustShot", "SpiderInMirror", "FinalAttack"))==1) {
       MarksmanDealCycle$DistancingSense[i] <- 1
     }
     ## Distance 0
