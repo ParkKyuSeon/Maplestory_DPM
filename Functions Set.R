@@ -332,6 +332,22 @@ PetSetOption <- function(Pets=c("D", "P")) {
 }
 
 
+## Item Option Summation Function
+ItemSum <- function(ItemSet, SetOption, PetSetOption) {
+  Item <- rbind(ItemSet, SetOption, PetSetOption)
+  ItemSum <-c()
+  for(i in c(2:10, 17:19)) {
+    ItemSum[i] <- sum(Item[, i])
+  }
+  ItemSum[16] <- IGRCalc(Item[, 16])
+  ItemSum <- data.frame(t(ItemSum))
+  ItemSum[8] <- sum(data.frame(ItemSet)$ATKSub)
+  colnames(ItemSum) <- colnames(Item)
+  rownames(ItemSum) <- c("Item")
+  return(ItemSum)
+}
+
+
 ## Weapon Upgrade and Starforce Function
 ### UpgradeType code : "1" : 15%(ATK+9, MainStat+4), "2": Magical(ATK+10, AllStat+3)
 ### Item Name code : "F" : Fafnir, "AB" : Absolabs, "AR" : Arcane Shade
@@ -460,6 +476,78 @@ WeaponAddpotential <- function(Weapons, grade=c("E", "U", "L"), options=c("A", "
 
 
 ## Union and CRR Get Function
+UnionChr <- function(UnionPreSet, Job, ChrLv) {
+  JobIndex <- c()
+  for(i in 1:nrow(ChrInfo)) {
+    if(ChrInfo$job[i]==Job) {
+      JobIndex <- i 
+      break
+    }
+  }
+  
+  MS <- ChrInfo$MainStat[i]
+  StatIndex <- c()
+  for(i in 1:length(UnionPrior)) {
+    if(names(UnionPrior)[i]==MS) {
+      StatIndex <- i 
+      break
+    }
+  }
+  
+  Jobs <- unique(c(Job, UnionPrior[[StatIndex]]))
+  Grade <- c(ifelse(ChrLv>=250, "SSS", ifelse(ChrLv>=200, "SS", "S")), rep("SSS", UnionPreSet$SSSChrs), 
+             rep("SS", UnionPreSet$SSChrs), rep("S", UnionPreSet$SChrs))
+  if(length(Jobs) < 1 + UnionPreSet$Chrs) {
+    Grade <- Grade[1:length(Jobs)]
+  } else {
+    Jobs <- Jobs[1:length(Grade)]
+  }
+  
+  OpIndex <- c()
+  for(j in 1:length(Jobs)) {
+    for(i in 1:nrow(UnionCharacters)) {
+      if(rownames(UnionCharacters)[i]==Jobs[j]) {
+        OpIndex[j] <- i
+      }
+    }
+  }
+  Option <- c()
+  for(i in 1:length(OpIndex)) {
+    Option[i] <- UnionCharacters$Options[OpIndex[i]]
+  }
+  Prior <- data.frame(Job=Jobs, Grade=Grade, Option=Option)
+  if(UnionPreSet$MapleM==T) {
+    MapleM <- data.frame(Job="MapleM", Grade=UnionPreSet$MapleMGrade, Option="ATK")
+    Prior <- rbind(Prior, MapleM)
+    for(i in 1:nrow(UnionCharacters)) {
+      if(rownames(UnionCharacters)[i]=="MapleM") {
+        OpIndex <- c(OpIndex, i)
+        break
+      }
+    }
+  }
+  
+  Value <- c()
+  for(i in 1:length(OpIndex)) {
+    Value[i] <- ifelse(Prior$Grade[i]=="SSS", UnionCharacters$SSS[OpIndex[i]], 
+                       ifelse(Prior$Grade[i]=="SS", UnionCharacters$SS[OpIndex[i]], UnionCharacters$S[OpIndex[i]]))
+  }
+  Prior$Value <- Value
+  
+  UnionOptions <- c("STR", "DEX", "INT", "LUK", "HPP", "HP", "STRDEXLUK", "ATK", "IGR", "BDR", "CRR", "CDMR", "SummonedDuration", 
+                    "BuffDuration", "CoolReduceP", "Others")
+  UnionChrOp <- data.frame(t(rep(0, length(UnionOptions))))
+  for(i in 1:length(UnionOptions)) {
+    v <- subset(Prior, Prior$Option==UnionOptions[i])
+    UnionChrOp[1, i] <- sum(v$Value)
+  }
+  colnames(UnionChrOp) <- UnionOptions
+  UnionChrOp$STR <- UnionChrOp$STR + UnionChrOp$STRDEXLUK
+  UnionChrOp$DEX <- UnionChrOp$DEX + UnionChrOp$STRDEXLUK
+  UnionChrOp$LUK <- UnionChrOp$LUK + UnionChrOp$STRDEXLUK
+  UnionChrOp <- UnionChrOp[, c(-7, -16)]
+  return(UnionChrOp)
+}
 UnionPlace <- function(UnionRemained, UnionBase, UnionBuffDuration, UnionCRR, UnionStance=0) {
   UnionBase$BuffDuration <- UnionBuffDuration
   UnionBase$CRR <- UnionCRR
@@ -1279,9 +1367,9 @@ CutDam <- function(DamAVG, Mastery, CDMR) {
   
   DamMax <- DamAVG / avg * maxd
   Dammin <- DamAVG / avg * mind
-  dr <- 10000000000 / (DamAVG / avg)
-  if(DamMax > 10000000000 & Dammin < 10000000000) {
-    p <- 1 - pdamdist(10000000000, DamAVG, Mastery, CDMR)
+  dr <- 150000000000 / (DamAVG / avg)
+  if(DamMax > 150000000000 & Dammin < 150000000000) {
+    p <- 1 - pdamdist(150000000000, DamAVG, Mastery, CDMR)
     e <- 0
     if(a * (b + 1.5) > b + 1.2) {
       if(dr < b + 1.2) {
@@ -1306,9 +1394,9 @@ CutDam <- function(DamAVG, Mastery, CDMR) {
         e <- e + e4(dr, a, b) - e4(b + 1.2, a, b)
       }
     }
-    NewDMR <- DamAVG / avg * e + 10000000000 * p
-  } else if(Dammin > 10000000000) {
-    NewDMR <- 10000000000
+    NewDMR <- DamAVG / avg * e + 150000000000 * p
+  } else if(Dammin > 150000000000) {
+    NewDMR <- 150000000000
   } else {
     NewDMR <- DamAVG
   }
@@ -2062,4 +2150,326 @@ ResetDealRatio <- function(DealCycles=list(), DealDatas=list(), times=c(), prob=
   DealRatioFinal <- data.frame(t(DealRatioFinal))
   DealRatioFinal <- subset(DealRatioFinal, DealRatioFinal$Ratio>0)
   return(DealRatioFinal)
+}
+
+
+## Common V Skill Functions
+CommonV <- function(class1, class2) {
+  cls1 <- c("Warrior", "Wizard", "Bowman", "Theif", "Pirate")
+  cmm1 <- c("AuraWeapon", "OverloadMana", "GuidedArrow", "VenomBurst", "LoadedDice")
+  cmm3 <- c("BodyofSteal", "EtherealForm", "CriticalReinforce", "ReadyToDie", "OverDrive")
+  
+  cls2 <- c("AdventureWarrior", "AdventureWizard", "AdventureBowman", "AdventureTheif", "AdventurePirate", 
+            "CygnusKnights", "Heroes", "Resistance", "Demon", "Nova", "Lef", "Anima", "Transcedent", "Supernatural")
+  cmm2 <- c("BlitzShield", "UnstableMemorize", "Evolve", "UltimateDarkSight", "PirateFlag", 
+            "CygnusPhalanx", "FreudBlessing", "ResistanceLineInfantry", "CallMastema", "Pantheon", "MagicCircuitFullDrive", NA, NA, NA)
+  cmm4 <- c("MapleWarriors2", "MapleWarriors2", "MapleWarriors2", "MapleWarriors2", "MapleWarriors2", 
+            "BlessofCygnus", "MapleWarriors2", "MapleWarriors2", "BlessofIsekaiGoddess", "BlessofGrandisGoddess", "BlessofGrandisGoddess", "BlessofGrandisGoddess", 
+            "BlessofRhinne", "BlessofMasteriaGoddess")
+  
+  cls1skill <- data.frame(cls1, cmm1, cmm3, stringsAsFactors=F)
+  cls2skill <- data.frame(cls2, cmm2, cmm4, stringsAsFactors=F)
+  if(class2=="Adventure") {
+    class2 <- paste(class2, class1, sep="")
+  }
+
+  commonskills <- c()
+  for(i in 1:5) {
+    if(class1==cls1skill$cls1[i]) {
+      commonskills <- c(commonskills, cls1skill$cmm1[i], cls1skill$cmm3[i])
+    }
+  }
+  for(i in 1:nrow(cls2skill)) {
+    if(class2==cls2skill$cls2[i]) {
+      commonskills <- c(commonskills, cls2skill$cmm2[i], cls2skill$cmm4[i], "SpiderInMirror")
+    }
+  }
+  return(commonskills)
+}
+
+
+## V Matrix Functions
+MatrixSet <- function(PasSkills, 
+                      PasLvs, 
+                      PasMP, 
+                      ActSkills, 
+                      ActLvs, 
+                      ActMP, 
+                      UsefulSkills, 
+                      UsefullLvs, 
+                      UsefulMP, 
+                      SpecSet=SpecDefault) {
+  Cores <- floor((SpecSet$Basic$ChrLv - 200) / 5) + 5
+  MatrixPoints <- SpecSet$Basic$ChrLv - 200
+  
+  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + length(UsefulSkills)
+  if(CoreNumbers > Cores) {warning("Invalid Input : Cores Exceeded") 
+    stop()}
+  
+  MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP)
+  if(MPs > MatrixPoints) {warning("Invalid Input : Matrix Points Exceeded") 
+    stop()}
+  
+  PassiveCore <- data.frame(PasSkills, PasLvs + PasMP)
+  colnames(PassiveCore) <- c("Passive", "Levels")
+  
+  ActiveCore <- data.frame(ActSkills, ActLvs + ActMP)
+  colnames(ActiveCore) <- c("Active", "Levels")
+  
+  UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
+  colnames(UsefulCore) <- c("Useful", "Levels")
+  Cores <- list(PassiveCore, ActiveCore, UsefulCore)
+  print("Valid Input")
+  return(Cores)
+}
+
+
+## Job Basic Info Function
+JobBase <- function(ChrInfo=ChrInfo,
+                    MobInfo=MobDefault,
+                    SpecSet=SpecDefault, 
+                    Job,
+                    CoreData,
+                    MikhailLink, 
+                    OtherBuffDuration, 
+                    AbilList, 
+                    LinkList, 
+                    MonsterLife, 
+                    Weapon,
+                    WeaponType, 
+                    SubWeapon, 
+                    Emblem) {
+  JobIndex <- c()
+  for(i in 1:nrow(ChrInfo)) {
+    if(Job==ChrInfo$job[i]) {
+      JobIndex <- i
+    }
+  }
+  InfoList <- c("Class1", "Class2", "MainStat", "SubStat1", "SubStat2", "BaseMastery")
+  JobData <- list()
+  JobData$Job <- Job
+  for(i in 1:length(InfoList)) {
+    JobData[[i+1]] <- ChrInfo[JobIndex, i+1]
+    names(JobData)[[i+1]] <- InfoList[i]
+  }
+  JobData$CRROver <- ifelse(JobData$Class1=="Bowman", T, F)
+  
+  UnionIndex <- c()
+  for(i in 1:length(UnionPreSet)) {
+    if(paste("Union", SpecSet$Basic$UnionLv, sep="")==names(UnionPreSet)[[i]]) {
+      UnionIndex <- i
+      break
+    }
+  }
+  CoolReduceP <- UnionChr(UnionPreSet[[i]], Job, SpecSet$Basic$ChrLv)$CoolReduceP
+  MikhailLinkCoolTime <- 180 * ((100 - CoolReduceP) / 100)
+  JobData$BuffDurationNeeded <- max(OtherBuffDuration, ifelse(MikhailLink==T, ceiling((MikhailLinkCoolTime / 110 - 1) * 100), 0))
+  
+  InfoList2 <- c("ChrLv", "UnionLv", "ArcaneForce", "ArcaneForceStat", "AuthenticForce", "Charisma", "Insight", "Sensibility")
+  t <- length(JobData)
+  for(i in 1:length(InfoList2)) {
+    JobData[[i+t]] <- SpecSet$Basic[1, i]
+    names(JobData)[[i+t]] <- InfoList2[i]
+  }
+  
+  JobData$Ability <- Abilities(AbilList, SpecSet$AbilityGrade)
+  
+  MobLvFactor <- JobData$ChrLv > MobInfo$Basic$Lv
+  CadenaLinkIndex <- c()
+  for(i in 1:nrow(LinkBase)) {
+    if("Cadena"==ChrInfo$job[i]) {
+      CadenaLinkIndex <- i
+    }
+  }
+  Links <- LinkBase
+  Links$BDR[CadenaLinkIndex] <- ifelse(MobLvFactor==T, 12, 6)
+  LinkIndex <- c()
+  for(j in 1:length(LinkList)) {
+    for(i in 1:nrow(LinkSkill)) {
+      if(LinkList[j]==rownames(LinkSkill)[i]) {
+        LinkIndex <- c(LinkIndex, i)
+      }
+    }
+  }
+  Links <- rbind(LinkBase, LinkSkill[LinkIndex, ])
+  Links <- data.frame(Links)
+  LinkSet <- c()
+  for(i in c(1:9, 11:13)) {
+    LinkSet[i] <- sum(Links[, i]) 
+  }
+  LinkSet[10] <- IGRCalc(Links[, 10])
+  LinkSet <- data.frame(t(LinkSet))
+  colnames(LinkSet) <- colnames(Links)[1:13]
+  rownames(LinkSet) <- c("Links")
+  JobData$Links <- LinkSet
+  
+  ML <- colSums(MonsterLife) ## IGR Logic Needed
+  JobData$MonsterLife <- data.frame(t(ML))
+  JobData$CommonSkillSet <- data.frame(t(colSums(CommonSkills)))
+  JobData$Dopings <- data.frame(t(colSums(DopingSet))) ## IGR Logic Needed
+  
+  Weapon <- rbind(Weapon, SubWeapon, Emblem)
+  rownames(Weapon) <- c("Weapon", "SubWeapon", "Emblem")
+  Weapon <- data.frame(Weapon)
+  Weapon <- WeaponAddpotential(Weapon, c(SpecSet$WeaponAddPGrade), c(SpecSet$WeaponAddPOp))
+  JobData$Weapon <- Weapon
+  JobData$ItemSet <- SpecSet$ItemSet
+  
+  UnionIndex <- c()
+  for(i in 1:length(UnionPreSet)) {
+    if(paste("Union", SpecSet$Basic$UnionLv, sep="")==names(UnionPreSet)[[i]]) {
+      UnionIndex <- i
+      break
+    }
+  }
+  JobData$UnionChrs <- UnionChr(UnionPreSet[[i]], Job, SpecSet$Basic$ChrLv)
+  
+  JobData$SkillLv <- sum(AdeleCore[[3]][, 1]=="CombatOrders")
+  JobData$PSkillLv <- sum(AdeleCore[[3]][, 1]=="CombatOrders") + JobData$Ability$PassiveLv
+  MainStatP <- 1
+  for(i in 1:length(JobData)) {
+    if(is.data.frame(JobData[[i]])==T) {
+    MainStatP <- MainStatP + sum(JobData[[i]]$AllstatP)/100 + sum(JobData[[i]]$MainStatP)/100
+    }
+  }
+  JobData$MainStatP <- MainStatP
+  return(JobData)
+}
+
+
+## Job Spec Function
+JobSpec <- function(JobBase, 
+                    Passive, 
+                    AllTimeBuff, 
+                    MobInfo=MobDefault, 
+                    SpecSet=SpecDefault, 
+                    WeaponName, 
+                    UnionStance) {
+  JobBase$MainStatP <- Passive
+  names(JobBase)[length(JobBase)] <- "Passive"
+  JobBase$AllTimeBuff <- AllTimeBuff
+  CRR <- 5 ; BuffDuration <- floor(JobBase$Sensibility/10)
+  for(i in 1:length(JobBase)) {
+    if(is.data.frame(JobBase[[i]])==T) {
+      CRR <- CRR + sum(JobBase[[i]]$CRR)
+      BuffDuration <- BuffDuration + sum(JobBase[[i]]$BuffDuration)
+    }
+  }
+  CRR <- ifelse(JobBase$CRROver==T, CRR, min(CRR, 100))
+  
+  UnionFieldOption <- c("CDMR", "CRR", "BDR", "IGR", "BuffDuration", "MainStat", "SubStat1", "SubStat2", "ATK", "Stance")
+  UnionBase <- data.frame(t(c(40, 0, 0, 0, 0, 5, 1, 1, 5, 0)))
+  colnames(UnionBase) <- UnionFieldOption
+  UnionIndex <- c()
+  for(i in 1:length(UnionPreSet)) {
+    if(paste("Union", JobBase$UnionLv, sep="")==names(UnionPreSet)[[i]]) {
+      UnionIndex <- i
+      break
+    }
+  }
+  UnionFields <- UnionPreSet[[i]]$SSSChrs * 5 + UnionPreSet[[i]]$SSChrs * 4 + UnionPreSet[[i]]$SChrs * 3 + 
+                 ifelse(JobBase$ChrLv>=250, 5, ifelse(JobBase$ChrLv>=200, 4, 3)) + 
+                 ifelse(UnionPreSet[[i]]$MapleM==F, 0, ifelse(UnionPreSet[[i]]$MapleMGrade=="SS", 4, 3)) - sum(UnionBase)
+  CRRs <- CRRGet(UnionFields, JobBase$BuffDurationNeeded > 0, JobBase$BuffDurationNeeded, CRR, JobBase$CRROver)
+  UnionBase <- UnionPlace(UnionFields - max(0, JobBase$BuffDurationNeeded - BuffDuration) - CRRs$Union, UnionBase, 
+                          max(0, JobBase$BuffDurationNeeded - BuffDuration), CRRs$Union, UnionStance)
+  UnionBase$CDMR <- UnionBase$CDMR/2
+  UnionBase$MainStat <- UnionBase$MainStat*5
+  UnionBase$SubStat1 <- UnionBase$SubStat1*5
+  UnionBase$SubStat2 <- UnionBase$SubStat2*5
+  UnionRemained <- UnionPreSet[[i]]$SSSChrs * 5 + UnionPreSet[[i]]$SSChrs * 4 + UnionPreSet[[i]]$SChrs * 3 + 
+                   ifelse(JobBase$ChrLv>=250, 5, ifelse(JobBase$ChrLv>=200, 4, 3)) + 
+                   ifelse(UnionPreSet[[i]]$MapleM==F, 0, ifelse(UnionPreSet[[i]]$MapleMGrade=="SS", 4, 3)) - 
+                   UnionBase$CDMR * 2 - UnionBase$CRR - UnionBase$BuffDuration - UnionBase$MainStat / 5 - UnionBase$SubStat1 / 5 - 
+                   UnionBase$SubStat2 / 5 - UnionBase$ATK - UnionBase$Stance
+  JobBase$UnionBase <- UnionBase
+  
+  HyperStatBase <- data.frame(t(c(0, 0, 0, 10, 10, 10, ifelse(CRRs$Hyper<=5, CRRs$Hyper, 5+(CRRs$Hyper-5)/2), 10, 0)))
+  colnames(HyperStatBase) <- colnames(HyperStats)[2:10]
+  HyperSP <- 0
+  for(i in 1:9) {
+    lvs <- HyperStatBase[1, i]
+    HyperStatBase[1, i] <- ifelse(lvs==0, 0, sum(HyperStats[1:lvs, i+1]))
+    HyperSP <- HyperSP + ifelse(lvs==0, 0, sum(HyperStats[1:lvs, 1]))
+  }
+  JobBase$HyperStatBase <- HyperStatBase
+  
+  SoulWeaponOptions <- c("ATK", "ATKP", "CRR")
+  SoulWeapon <- data.frame(t(c(20, ifelse(CRRs[1, 3]==0, 3, 0), ifelse(CRRs[1, 3]==12, 12, 0))))
+  colnames(SoulWeapon) <- SoulWeaponOptions
+  JobBase$SoulWeapon <- SoulWeapon
+  
+  for(i in 1:4) {
+    colnames(JobBase$UnionChrs)[i] <- ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$MainStat, "MainStat", 
+                                             ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$SubStat1, "SubStat1", 
+                                             ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$SubStat2, "SubStat2", 
+                                             colnames(JobBase$UnionChrs)[i])))
+    colnames(JobBase$MonsterLife)[i+8] <- ifelse(colnames(JobBase$MonsterLife)[i+8]==JobBase$MainStat, "MainStat", 
+                                                 ifelse(colnames(JobBase$MonsterLife)[i+8]==JobBase$SubStat1, "SubStat1", 
+                                                 ifelse(colnames(JobBase$MonsterLife)[i+8]==JobBase$SubStat2, "SubStat2", 
+                                                 colnames(JobBase$MonsterLife)[i+8])))
+  }
+  UneffMainStat <- JobBase$UnionChrs$MainStat + JobBase$HyperStatBase$MainStat
+  UneffSubStat1 <- JobBase$UnionChrs$SubStat1 + JobBase$HyperStatBase$SubStat1
+  UneffSubStat2 <- JobBase$UnionChrs$SubStat2 + JobBase$HyperStatBase$SubStat2
+  JobBase$UnionChrs$MainStat <- 0 ; JobBase$HyperStatBase$MainStat <- 0
+  JobBase$UnionChrs$SubStat1 <- 0 ; JobBase$HyperStatBase$SubStat1 <- 0
+  JobBase$UnionChrs$SubStat2 <- 0 ; JobBase$HyperStatBase$SubStat2 <- 0
+  
+  MainStat <- 18 + 5 * JobBase$ChrLv ; SubStat1 <- 4 ; SubStat2 <- 4 ; ATK <- 0 ; ATKSub <- JobBase$ItemSet$ATKSub
+  ATKP <- 0 ; IGR <- floor(JobBase$Charisma/5)/2 ; BDR <- 0 ; CRR <- 5 ; CDMR <- 0 ; FDR <- 0
+  ATKSpeed <- WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[17]
+  Mastery <- JobBase$BaseMastery
+  BuffDuration <- floor(JobBase$Sensibility/10) ; SummonedDuration <- 0
+  ImmuneIgnore <- floor(JobBase$Insight/10)/2
+  CoolTimeReset <- 0 ; SkillLv <- JobBase$SkillLv ; PSkillLv <- JobBase$PSkillLv ; CoolReduceP <- 0 ; CoolReduce <- 0 ; Disorder <- 1
+  AllstatP <- 1 ; MainStatP <- 1
+  for(i in 1:length(JobBase)) {
+    if(is.data.frame(JobBase[[i]])==T) {
+      MainStat <- MainStat + sum(JobBase[[i]]$MainStat)
+      SubStat1 <- SubStat1 + sum(JobBase[[i]]$SubStat1)
+      SubStat2 <- SubStat2 + sum(JobBase[[i]]$SubStat2)
+      ATK <- ATK + sum(JobBase[[i]]$ATK)
+      ATKP <- ATKP + sum(JobBase[[i]]$ATKP)
+      IGR <- IGRCalc(c(IGR, IGRCalc(c(JobBase[[i]]$IGR))))
+      FDR <- FDRCalc(c(FDR, FDRCalc(c(JobBase[[i]]$FDR))))
+      BDR <- BDR + sum(JobBase[[i]]$BDR) + sum(JobBase[[i]]$DisorderBDR) + sum(JobBase[[i]]$DMR)
+      CRR <- CRR + sum(JobBase[[i]]$CRR)
+      CDMR <- CDMR + sum(JobBase[[i]]$CDMR)
+      ATKSpeed <- ATKSpeed - sum(JobBase[[i]]$ATKSpeed)
+      Mastery <- Mastery + sum(JobBase[[i]]$Mastery)
+      BuffDuration <- BuffDuration + sum(JobBase[[i]]$BuffDuration)
+      SummonedDuration <- SummonedDuration + sum(JobBase[[i]]$SummonedDuration) + sum(JobBase[[i]]$SummonDuration)
+      ImmuneIgnore <- ImmuneIgnore + sum(JobBase[[i]]$ImmuneIgnore)
+      CoolTimeReset <- CoolTimeReset + sum(JobBase[[i]]$CoolTimeReset)
+      CoolReduceP <- CoolReduceP + sum(JobBase[[i]]$CoolReduceP)
+      AllstatP <- AllstatP + sum(JobBase[[i]]$AllstatP)/100
+      MainStatP <- MainStatP + sum(JobBase[[i]]$AllstatP)/100 + sum(JobBase[[i]]$MainStatP)/100
+    }
+  }
+  MainStat <- floor(MainStat * MainStatP) + JobBase$ArcaneForceStat + UneffMainStat
+  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1
+  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2
+  SubStat2 <- ifelse(is.na(JobBase$SubStat2)==T, 0, SubStat2)
+  CRR <- ifelse(JobBase$CRROver==T, CRR, min(100, CRR))
+  FDR <- FDRCalc(c(FDR, ArcaneForceFDR(JobBase$ArcaneForce, MobInfo$Basic$Arc), LevelFDR(JobBase$ChrLv, MobInfo$Basic$Lv), 
+                   (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[19]*100-100)))
+  ATKSpeed <- max(ATKSpeed, 2)
+  Mastery <- min(Mastery, 95)
+  if(SubStat2==0) {
+    Spec <- data.frame(MainStat=MainStat, SubStat1=SubStat1, ATK=ATK, ATKSub=ATKSub,
+                       ATKP=ATKP, IGR=IGR, BDR=BDR, CRR=CRR, CDMR=CDMR, FDR=FDR, 
+                       ATKSpeed=ATKSpeed, Mastery=Mastery, BuffDuration=BuffDuration, SummonedDuration=SummonedDuration, ImmuneIgnore=ImmuneIgnore, 
+                       CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, 
+                       MainStatP=MainStatP)
+  } else {
+    Spec <- data.frame(MainStat=MainStat, SubStat1=SubStat1, SubStat2=SubStat2, ATK=ATK, ATKSub=ATKSub,
+                       ATKP=ATKP, IGR=IGR, BDR=BDR, CRR=CRR, CDMR=CDMR, FDR=FDR, 
+                       ATKSpeed=ATKSpeed, Mastery=Mastery, BuffDuration=BuffDuration, SummonedDuration=SummonedDuration, ImmuneIgnore=ImmuneIgnore, 
+                       CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, 
+                       MainStatP=MainStatP)
+  }
+  
+  Spec <- list(Spec=Spec, UnionRemained=UnionRemained, HyperStatBase=HyperStatBase, CoolReduceType=SpecSet$CoolReduceInfo)
+  return(Spec)
 }

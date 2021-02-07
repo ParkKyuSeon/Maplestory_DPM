@@ -1,6 +1,7 @@
 ## MapleUnion
 UnionOptions <- c("STR", "DEX", "INT", "LUK", "HPP", "HP", "STRDEXLUK", "ATK", "IGR", "BDR", "CRR", "CDMR", "SummonedDuration", 
-                  "BuffDuration", "CoolReduce", "Others")
+                  "BuffDuration", "CoolReduceP", "Others")
+### Union Options
 {Hero <- c(10, 20, 40, 80, 100) # STR
 Palladin <- c(10, 20, 40, 80, 100) # STR
 DarkKnight <- c(2, 3, 4, 5, 6) # HPP
@@ -47,60 +48,41 @@ Kinesis <- c(10, 20, 40, 80, 100) # INT
 MapleM <- c(5, 10, 15, 20, NA) # ATK
 Options <- c("STR", "STR", "HPP", "Others", "INT", "INT", "DEX", "CRR", "DEX", "CRR", "LUK", "LUK", "STR", "SummonedDuration", "STR",
              "HP", "HP", "INT", "DEX", "LUK", "STR",
-             "Others", "Others", "INT", "CoolReduce", "Others", "CDMR", 
+             "Others", "Others", "INT", "CoolReduceP", "Others", "CDMR", 
              "IGR", "INT", "BDR", "BuffDuration", "STRDEXLUK", "Others", "BDR", 
              "STR", "LUK", "DEX", "STR", "LUK", "STR", "LUK", "Others", "INT", "ATK")
-Options <- factor(Options, levels=UnionOptions)
 Union <- rbind(Hero, Palladin, DarkKnight, ArchMageFP, ArchMageTC, Bishop, BowMaster, Marksman, PathFinder, 
                NightLord, Shadower, DualBlader, Viper, Captain, CannonMaster, 
                Mikhail, SoulMaster, FlameWizard, WindBreaker, NightWalker, Striker, 
                Aran, Evan, Luminous, Mercedes, Phantom, Eunwol, 
                Blaster, BattleMage, WildHunter, Mechanic, Xenon, DemonSlayer, DemonAvenger, 
                Kaiser, Cadena, AngelicBuster, Adele, Illium, Ark, Hoyeong, Zero, Kinesis, MapleM)}
-UnionCharacters <- data.frame(Union, Options)
+UnionCharacters <- data.frame(Union, Options, stringsAsFactors=F)
 colnames(UnionCharacters) <- c("B", "A", "S", "SS", "SSS", "Options")
 
-{UnionChrSTR <- sum(subset(UnionCharacters, UnionCharacters$Options=="STR")[, 4]) + sum(subset(UnionCharacters, UnionCharacters$Options=="STRDEXLUK")[, 4])
-UnionChrDEX <- sum(subset(UnionCharacters, UnionCharacters$Options=="DEX")[, 4]) + sum(subset(UnionCharacters, UnionCharacters$Options=="STRDEXLUK")[, 4])
-UnionChrINT <- sum(subset(UnionCharacters, UnionCharacters$Options=="INT")[, 4])
-UnionChrLUK <- sum(subset(UnionCharacters, UnionCharacters$Options=="LUK")[, 4]) + sum(subset(UnionCharacters, UnionCharacters$Options=="STRDEXLUK")[, 4])
-UnionChrATK <- sum(subset(UnionCharacters, UnionCharacters$Options=="ATK")[, 4])
-UnionChrIGR <- IGRCalc(subset(UnionCharacters, UnionCharacters$Options=="IGR")[, 4])
-UnionChrBDR <- sum(subset(UnionCharacters, UnionCharacters$Options=="BDR")[, 4])
-UnionChrCRR <- sum(subset(UnionCharacters, UnionCharacters$Options=="CRR")[, 4])
-UnionChrCDMR <- sum(subset(UnionCharacters, UnionCharacters$Options=="CDMR")[, 4])
-UnionChrSummonedDuration <- sum(subset(UnionCharacters, UnionCharacters$Options=="SummonedDuration")[, 4])
-UnionChrBuffDuration <- sum(subset(UnionCharacters, UnionCharacters$Options=="BuffDuration")[, 4])
-UnionChrCoolReduce <- sum(subset(UnionCharacters, UnionCharacters$Options=="CoolReduce")[, 4])}
+### Union Priority
+{UnionPrior <- list()
+UnionPrior$STR <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "Blaster", "WildHunter", "Mechanic", "DemonAvenger", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")), "Xenon", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="DEX")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="LUK")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="INT")))
+UnionPrior$DEX <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "Blaster", "WildHunter", "Mechanic", "DemonAvenger", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="DEX")), "Xenon", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="LUK")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="INT")))
+UnionPrior$LUK <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "Blaster", "WildHunter", "Mechanic", "DemonAvenger", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="LUK")), "Xenon", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="DEX")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="INT")))
+UnionPrior$INT <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "Blaster", "WildHunter", "Mechanic", "DemonAvenger", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="INT")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="LUK")), "Xenon", 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="DEX")), 
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")))}
 
-Union8000Chr <- c(UnionChrSTR, UnionChrDEX, UnionChrINT, UnionChrLUK, UnionChrATK, UnionChrIGR, UnionChrBDR, UnionChrCRR, UnionChrCDMR, 
-                  UnionChrSummonedDuration, UnionChrBuffDuration, UnionChrCoolReduce)
-Union8000Chr <- data.frame(t(Union8000Chr))
-colnames(Union8000Chr) <- c("STR", "DEX", "INT", "LUK", "ATK", "IGR", "BDR", "CRR", "CDMR", "SummonedDuration", "BuffDuration", "CoolReduce")
-
-UnionLv <- c(6000, 8000)
-FieldChrs <- c(28, 36)
-MapleM <- c(T, T)
-SSSChrs <- c(ifelse(ChrLv>=250, 1, 0), ifelse(ChrLv>=250, 1, 0))
-SSChrs <- c(ifelse(ChrLv>=250, 11, 12), ifelse(ChrLv>=250, 35, 36))
-SChrs <- c(16, 0)
-FieldNumbers <- SSSChrs * 5 + SSChrs * 4 + SChrs * 3 + ifelse(MapleM==T, 4, 0)
-MainStat <- c(25, 25)
-SubStat1 <- c(5, 5)
-SubStat2 <- c(5, 5)
-ATK <- c(5, 5)
-
-BuffDurationNeeded <- c(F, F)
-BuffDurationMax <- c(NA, NA)
-CRROver <- c(T, T)
-CDMR <- c(20, 20)
-BuffDuration <- c(0, 0)
-
-
-## V Matrix
-MatrixPoints <- ChrLv - 200
-Cores <- floor(ChrLv / 5) + 5
-LvsperCore <- 25
 
 
 ## HyperStats
@@ -122,6 +104,7 @@ lv <- 140:275
 ptsperlv <- floor((lv-110)/10)
 lvpts <- data.frame(lv, ptsperlv)
 sum(subset(lvpts, lvpts$lv<=ChrLv)[, 2])
+
 
 
 ## Monster Life
@@ -307,6 +290,7 @@ colnames(MLTypeL22) <- MonsterLifeSpecs
 }
 
 
+
 ## LinkSkill
 LinkOption <- c("MainStat", "SubStat1", "SubStat2", "MaxHP", "MaxHPP", "ATK", "ATKSub", 
                 "MainStatP", "AllstatP", "IGR", "BDR", "CRR", "CDMR", "Disorder")
@@ -350,6 +334,7 @@ colnames(LinkBase) <- LinkOption
 LinkBase <- data.frame(LinkBase)
 
 
+
 ## Doping
 DopingOption <- c("MainStat", "SubStat1", "SubStat2", "MaxHP", "ATK", "ATKSub", 
                   "AllstatP", "IGR", "BDR", "CRR", "CDMR", "ATKSpeed", "ArcaneForce")
@@ -387,6 +372,7 @@ DopingSet <- rbind(BDRArcanum, ATKArcanum, GuildBless, UnionPower, BreadDrop, Ur
 colnames(DopingSet) <- DopingOption
 
 
+
 ## Ability Data
 AbilityOption <- c("BDR", "CRR", "BuffDuration", "CoolTimeReset", "PassiveLv", "DisorderBDR", "ATK")
 Legendry <- c(20, 30, 50, 20, 1, 10, 30)
@@ -396,6 +382,7 @@ Ability <- rbind(Legendry, Unique, Epic)
 colnames(Ability) <- AbilityOption
 
 
+
 ## Common Skills
 CommonSkillOptions <- c("ATKP", "MainStat", "SubStat1", "SubStat2", "ATK")
 WillOfUnion <- c(0, 5, 5, 5, 5)
@@ -403,6 +390,7 @@ BlessofSpirit <- c(0, 0, 0, 0, 30)
 EchoofHero <- c(4, 0, 0, 0, 0)
 CommonSkills <- rbind(WillOfUnion, BlessofSpirit, EchoofHero)
 colnames(CommonSkills) <- CommonSkillOptions
+
 
 
 ## Spider in Mirror - Data
@@ -464,10 +452,11 @@ colnames(info) <- c("option", "value")
 SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
+
 ## SeedRing & Soul Contract Data
 {option <- factor("ATKP", levels=BSkill)
 value <- c(100)
-info <- c(15, 180, 0, F, T, F, F)
+info <- c(15, 180, 30, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Restraint4 <- rbind(data.frame(option, value), info)

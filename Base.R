@@ -3,22 +3,6 @@ options("scipen"=500)
 options("max.print"=100000)
 
 
-## Monster Info
-MapArc <- 760
-MobLv <- 250
-MobGuard <- 300
-PhysicsImmune <- T
-BossSize <- c("Scarecrow", "HardLucid3rdPhase")
-BossSize <- factor("Scarecrow", levels=BossSize)
-
-
-## General Game Info
-ServerLag <- 3
-PartyMembers <- 1
-DealTime <- 1
-ChrLv <- 255
-
-
 ## Character Info
 job <- c("Hero", "Palladin", "DarkKinght", "ArchMageFP", "ArchMageTC", "Bishop", "Bowmaster", "Marksman", "PathFinder",
          "NightLord", "Shadower", "DualBlader", "Viper", "Captain", "CannonMaster", 
@@ -46,16 +30,9 @@ SubStat2 <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "STR", "STR", NA, NA, NA,
               NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
               NA, NA, NA, NA, "STR", NA, NA,
               NA, "STR", NA, NA, NA, NA, NA, NA, NA)
-CharacterLv <- c(rep(ChrLv, 43))  ## ChrLv Related Parts Arrange Needed
-UnionLv <- c(rep(8000, 43))
-ArcaneForce <- c(rep(1320, 43))
-Charisma <- c(rep(100, 43))
-Insight <- c(rep(100, 43))
-Sensibility <- c(rep(100, 43))
 BaseMastery <- c(20, 20, 20, 25, 25, 25, 15, 15, 15, 15, 20, 20, 20, 15, 15, 20, 20, 25, 15, 15, 20, 20, 25, 25, 15, 20, 20, 
                  20, 25, 15, 15, 20, 20, 20, 20, 20, 15, 20, 20, 20, 20, 20, 25)
-ChrInfo <- data.frame(job, class1, class2, MainStat, SubStat1, SubStat2, CharacterLv, UnionLv, ArcaneForce, 
-                      Charisma, Insight, Sensibility, BaseMastery)
+ChrInfo <- data.frame(job, class1, class2, MainStat, SubStat1, SubStat2, BaseMastery, stringsAsFactors=F)
 
 
 ## DPMs

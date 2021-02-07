@@ -121,7 +121,7 @@ value <- c(30, 15, 20)
 Ascent <- data.frame(option, value)
 
 option <- factor(c("ATK", "Mastery"), levels=PSkill)
-value <- c(30 + AdeleSpec$PSkillLv, 70 + floor(AdeleSpec$PSkillLv/2))
+value <- c(30 + AdeleSpec$PSkillLv, 70 + ceiling(AdeleSpec$PSkillLv/2))
 Expert <- data.frame(option, value)
 
 option <- factor(c("FDR", "IGR"), levels=PSkill)

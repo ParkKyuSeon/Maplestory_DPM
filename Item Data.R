@@ -612,8 +612,6 @@ for(i in 1:30) {
   SpecSet1[i, 7] <- SpecSet1[i, 7] + Addop[i, 5]
 }
 
-SpecSet2 <- SpecSet1
-
 PoYes <- c(1:3, 6:17, 20:21)
 for(i in PoYes) {
   if(i!=17 & i!=9) {
@@ -629,23 +627,6 @@ for(i in PoYes) {
   SpecSet1[i, 2] <- SpecSet1[i, 2] + APo[1, 3]
   SpecSet1[i, 7] <- SpecSet1[i, 7] + APo[1, 4]
 }
-
-PoYes <- c(1:3, 6:17, 20:21)
-for(i in PoYes) {
-  if(i!=17 & i!=9) {
-    Po <- Potential(c("U", "E", "E"), c("M", "M", "O"))
-  } else if(i==9) {
-    Po <- Potential(c("L", "U", "U"), c("C", "M", "O"))
-  } else {Po <- Potential(c("L", "U", "U"), c("CDR", "M", "O"))}
-  APo <- AddPotential(SpecSet2[i, 1], ChrInfo[1, 7], c("E", "R", "R"), c("MP", "ATK", "O"))
-  SpecSet2[i, 9] <- SpecSet2[i, 9] + Po[1, 1] + APo[1, 1]
-  SpecSet2[i, 10] <- SpecSet2[i, 10] + Po[1, 2] + APo[1, 2]
-  SpecSet2[i, 6] <- SpecSet2[i, 6] + Po[1, 3] + APo[1, 5]
-  SpecSet2[i, 19] <- SpecSet2[i, 19] + Po[1, 5] + APo[1, 7]
-  SpecSet2[i, 2] <- SpecSet2[i, 2] + APo[1, 3]
-  SpecSet2[i, 7] <- SpecSet2[i, 7] + APo[1, 4]
-}
 }
 
-View(SpecSet1) # Without CoolReduce
-View(SpecSet2) # With CoolReduce
+View(SpecSet1)
