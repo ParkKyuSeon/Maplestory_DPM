@@ -302,7 +302,7 @@ AdventureBowman <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0)
 AdventureThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Disorder==T, (10+ServerLag)/20*18, 0), 0, 0, 0)
 AdventurePirates <- c(70, 70, 70, 1225, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 Mikhail <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Stance
-CygnusKnights <- c(0, 0, 0, 0, 0, 20, 20, 0, 0, 0, 0, 0, 0, 0)
+CygnusKnights <- c(0, 0, 0, 0, 0, 25, 25, 0, 0, 0, 0, 0, 0, 0)
 Resistance <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Invincible
 Xenon <- c(0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0)
 DemonSlayer <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0)

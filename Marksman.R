@@ -483,8 +483,8 @@ colnames(info) <- c("option", "value")
 Evolve <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("FDR", "IGR"), levels=SSkill)
-value <- c(2 * MarksmanCore[[1]][3, 2], ifelse(MarksmanCore[[1]][3, 2]>=40, 20, 0))
-info <- c(390, 1, 0, 3030, 220, 105, T, T, F, F)
+value <- c(3 * MarksmanCore[[1]][3, 2], ifelse(MarksmanCore[[1]][3, 2]>=40, 20, 0))
+info <- c(390, 1, 0, 1710, 220, 105, T, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Freezer <- rbind(data.frame(option, value), info) 
@@ -582,7 +582,7 @@ MarksmanSpecOpt$IGR <- IGRCalc(c(MarksmanSpecOpt$IGR, MarksmanSpecOpt1$IGR))
 MarksmanSpecOpt2 <- Optimization2(MarksmanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt, HyperStatBase, MarksmanChrLv, MarksmanCRROver)
 MarksmanFinalDPM <- DealCalc(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
 MarksmanFinalDPMwithMax <- DealCalcWithMaxDMR(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
-MarksmanFinalDPM - MarksmanFinalDPMwithMax
+sum(na.omit(MarksmanFinalDPM - MarksmanFinalDPMwithMax))
 
 DPM12338$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(233910/60000)
 DPM12338$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(233910/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(233910/60000)
@@ -598,7 +598,6 @@ Marksman40s <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, Mar
 colnames(Marksman40s) <- c("Skills", "Damage", "Time", "R4")
 Marksman40s <- Marksman40s[37:355, ]
 DPM12338$Marksman[4] <- sum((Marksman40s$Damage))
-
 
 ## Damage Distribution
 Mastery <- 0.85

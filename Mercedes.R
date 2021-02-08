@@ -8,7 +8,7 @@ MercedesCore <- MatrixSet(PasSkills=c("RingofIshtar", "AdvancedStrikeDualShot_Ad
                           ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
                           ActMP=c(5, 5, 5, 5, 5, 0, 5, 5), 
                           UsefulSkills=c("CombatOrders", "SharpEyes"), 
-                          UsefullLvs=c(20, 20), 
+                          UsefulLvs=c(20, 20), 
                           UsefulMP=c(0, 0), 
                           SpecSet=SpecDefault)
 
@@ -23,7 +23,7 @@ MercedesBase <- JobBase(ChrInfo=ChrInfo,
                         OtherBuffDuration=0, 
                         AbilList=c("BDR", "BuffDuration"), 
                         LinkList=c("Mikhail", "Mercedes", "DemonAvenger", "Phantom"), 
-                        MonsterLife=MLTypeD22, 
+                        MonsterLife=MLTypeD23, 
                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "DualBowgun", SpecDefault$WeaponType)[, 1:16],
                         WeaponType=SpecDefault$WeaponType, 
                         SubWeapon=SubWeapon[23, ], 
@@ -227,7 +227,7 @@ MercedesBuff <- Buff(list(DualBowgunBooster=DualBowgunBooster, WaterShield=Water
 ## Mercedes - Spider In Mirror
 {option <- factor(levels=ASkill)
 value <- c()
-info <- c(750 + 30 * MercedesCore[[2]][8, 2], 12, 960, NA, 250, T, F, F)
+info <- c(450 + 18 * MercedesCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror <- rbind(data.frame(option, value), info) 

@@ -84,3 +84,8 @@ MercedesDealTL <- DealTimeLine(MercedesDealData$Time, MercedesDealData$Deal)
 barplot(MercedesDealTL$Deal/100000000, names.arg=MercedesDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="Mercedes Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+BowmasterDealTL <- DealTimeLine(BowmasterDealData$Time, BowmasterDealData$Deal)
+barplot(BowmasterDealTL$Deal/100000000, names.arg=BowmasterDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="Bowmaster Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

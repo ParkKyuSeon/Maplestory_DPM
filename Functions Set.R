@@ -2155,7 +2155,7 @@ ResetDealRatio <- function(DealCycles=list(), DealDatas=list(), times=c(), prob=
 
 ## Common V Skill Functions
 CommonV <- function(class1, class2) {
-  cls1 <- c("Warrior", "Wizard", "Bowman", "Theif", "Pirate")
+  cls1 <- c("Warrior", "Wizard", "Bowman", "Thief", "Pirate")
   cmm1 <- c("AuraWeapon", "OverloadMana", "GuidedArrow", "VenomBurst", "LoadedDice")
   cmm3 <- c("BodyofSteal", "EtherealForm", "CriticalReinforce", "ReadyToDie", "OverDrive")
   
@@ -2196,7 +2196,7 @@ MatrixSet <- function(PasSkills,
                       ActLvs, 
                       ActMP, 
                       UsefulSkills, 
-                      UsefullLvs, 
+                      UsefulLvs, 
                       UsefulMP, 
                       SpecSet=SpecDefault) {
   Cores <- floor((SpecSet$Basic$ChrLv - 200) / 5) + 5

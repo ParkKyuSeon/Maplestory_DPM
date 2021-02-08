@@ -1900,16 +1900,16 @@ EvolveCycle <- function(DealCycleWithEvolve) {
     DC <- Evolves[i, ]
     DC <- rbind(DC, DC)
     DC[2, 1] <- c("Freezer")
-    DC[2, 2] <- DC[1, 2] + 43030
+    DC[2, 2] <- DC[1, 2] + 41710
     
     p <- 3
-    t <- 40000 + 3030 * 2
+    t <- 40000 + 1710 * 2
     interval <- ifelse(is.na(Evolves[i+1, 2])==T, maxtime - Evolves[i, 2], Evolves[i+1, 2] - Evolves[i, 2])
     while(t < interval & t < 282000) {
       DC <- rbind(DC, DC[p-1, ])
-      DC[p, 2] <- DC[p-1, 2] + 3030
+      DC[p, 2] <- DC[p-1, 2] + 1710
       p <- p + 1
-      t <- t + 3030
+      t <- t + 1710
     }
     DealCycleWithEvolve <- rbind(DealCycleWithEvolve, DC[2:nrow(DC), ])
   }
