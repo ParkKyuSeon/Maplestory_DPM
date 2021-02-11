@@ -89,3 +89,8 @@ BowmasterDealTL <- DealTimeLine(BowmasterDealData$Time, BowmasterDealData$Deal)
 barplot(BowmasterDealTL$Deal/100000000, names.arg=BowmasterDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="Bowmaster Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
+barplot(AranDealTL$Deal/100000000, names.arg=AranDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="Aran Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

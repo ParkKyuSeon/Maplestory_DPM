@@ -16,7 +16,7 @@ class1 <- c("Warrior", "Warrior", "Warrior", "Wizard", "Wizard", "Wizard", "Bowm
             "Warrior", "Wizard", "Wizard", "Bowman", "Thief", "Pirate", 
             "Warrior", "Wizard", "Bowman", "Pirate", "Hybrid", "Warrior", "Warrior", 
             "Warrior", "Thief", "Pirate", "Warrior", "Wizard", "Pirate", "Thief", "Warrior", "Wizard")
-class2 <- c(rep("Adventure", 15), rep("CygnusKnights", 6), rep("Heores", 6), rep("Resistance", 5), rep("Demon", 2), 
+class2 <- c(rep("Adventure", 15), rep("CygnusKnights", 6), rep("Heroes", 6), rep("Resistance", 5), rep("Demon", 2), 
             rep("Nova", 3), rep("Lef", 3), "Anima", "Transcedent", "Supernatural")
 MainStat <- c("STR", "STR", "STR", "INT", "INT", "INT", "DEX", "DEX", "DEX", "LUK", "LUK", "LUK", "STR", "DEX", "STR",
               "STR", "STR", "INT", "DEX", "LUK", "STR", "STR", "INT", "INT", "DEX", "LUK", "STR", 
