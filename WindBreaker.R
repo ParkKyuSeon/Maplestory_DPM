@@ -373,7 +373,7 @@ colnames(info) <- c("option", "value")
 PinpointPierce <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(WindBreakerCore[[1]][1, 2]>=40, 20, 0), ((1.2 + 0.01 * floor(WindBreakerSpec$SkillLv/2))^ifelse(WindBreakerCore[[1]][1, 2]>=20, 4, 3)) * 100 - 100 + 50, 2 * WindBreakerCore[[1]][1, 2])
+value <- c(ifelse(WindBreakerCore[[1]][1, 2]>=40, 20, 0), ((1.2 + 0.01 * floor(WindBreakerSpec$SkillLv/2))^3) * 100 - 100 + 50, 2 * WindBreakerCore[[1]][1, 2])
 info <- c(345, 1, 120, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
