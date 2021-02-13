@@ -210,7 +210,6 @@ AranUnionRemained <- AranSpec$UnionRemained
 AranHyperStatBase <- AranSpec$HyperStatBase
 AranCoolReduceType <- AranSpec$CoolReduceType
 AranSpec <- AranSpec$Spec
-AranTargetPlus <- 0
 
 
 ## Aran - Spider In Mirror
@@ -301,21 +300,21 @@ colnames(info) <- c("option", "value")
 GatheringCatcherCommand <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (5 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
 info <- c(385 + 10 * AranSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (5 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
 info <- c(400 + 10 * AranSpec$SkillLv, 6, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (5 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
 info <- c(415 + 10 * AranSpec$SkillLv, 6, 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -323,7 +322,7 @@ Beyonder3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(AranCore[[1]][4, 2]>=40, 20, 0), 2 * AranCore[[1]][4, 2])
-info <- c(1195 + 10 * AranSpec$SkillLv + 1 * AranSpec$PSkillLv, 15, 450, 30, NA, NA, NA, F)
+info <- c(1195 + 10 * AranSpec$SkillLv + 1 * AranSpec$PSkillLv, 15, 600, 30, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HuntersTargeting <- rbind(data.frame(option, value), info)
@@ -354,7 +353,7 @@ value <- c(ifelse(AranCore[[1]][1, 2]>=40, 20, 0), 2 * AranCore[[1]][1, 2])
 info <- c(975 + 51 * AranSpec$PSkillLv, 4, 450, NA, NA, NA, NA, F) ## Dynamic Mastery Check Needed
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-SwingAdrelaine <- rbind(data.frame(option, value), info)
+SwingAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=ASkill)
 value <- c(10)
@@ -385,21 +384,21 @@ colnames(info) <- c("option", "value")
 GatheringCatcherCommandAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (10 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
 info <- c(535 + 10 * AranSpec$SkillLv, 8, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder1Adrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (10 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
 info <- c(550 + 10 * AranSpec$SkillLv, 8, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder2Adrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (10 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
 info <- c(565 + 10 * AranSpec$SkillLv, 8, 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -455,14 +454,14 @@ colnames(info) <- c("option", "value")
 BrandishMahaCommand <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ (10 + AranTargetPlus + c(ifelse(AranCore[[1]][3, 2]>=20, 1, 0))) - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 70)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 9 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 70)), 2 * AranCore[[1]][3, 2])
 info <- c(600 + 5 * AranCore[[2]][3, 2], 7 + floor(AranCore[[2]][3, 2]/30), 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FenrirCrash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 14 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 70)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 9 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 70)), 2 * AranCore[[1]][3, 2])
 info <- c(750 + 5 * AranCore[[2]][3, 2], 9 + floor(AranCore[[2]][3, 2]/30), 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -498,7 +497,7 @@ DireWolfCurseDummy <- rbind(data.frame(option, value), info)}
 
 AranATK <- Attack(list(Swing=Swing, SwingAfterimage=SwingAfterimage, FinalBlowCommand=FinalBlowCommand, GatheringCatcherCommand=GatheringCatcherCommand, 
                        Beyonder1=Beyonder1, Beyonder2=Beyonder2, Beyonder3=Beyonder3, HuntersTargeting=HuntersTargeting, AdvancedFinalAttack=AdvancedFinalAttack, 
-                       ZoneofMaha=ZoneofMaha, ZoneofMahaZone=ZoneofMahaZone, SwingAdrelaine=SwingAdrelaine, SwingAfterimageAdrenaline=SwingAfterimageAdrenaline, 
+                       ZoneofMaha=ZoneofMaha, ZoneofMahaZone=ZoneofMahaZone, SwingAdrenaline=SwingAdrenaline, SwingAfterimageAdrenaline=SwingAfterimageAdrenaline, 
                        FinalBlowCommandAdrenaline=FinalBlowCommandAdrenaline, FinalBlowWave=FinalBlowWave, GatheringCatcherCommandAdrenaline=GatheringCatcherCommandAdrenaline, 
                        Beyonder1Adrenaline=Beyonder1Adrenaline, Beyonder2Adrenaline=Beyonder2Adrenaline, Beyonder3Adrenaline=Beyonder3Adrenaline, BeyonderWave=BeyonderWave, 
                        AdvancedFinalAttackAdrenaline=AdvancedFinalAttackAdrenaline, ZoneofMahaAdrenaline=ZoneofMahaAdrenaline, ZoneofMahaZoneAdrenaline=ZoneofMahaZoneAdrenaline, 
@@ -513,7 +512,7 @@ AranSummoned <- Summoned(list(SpiderInMirrorStart=SpiderInMirrorStart, SpiderInM
 
 ## Aran - DealCycle & Deal Calculation
 ATKFinal <- data.frame(AranATK)
-ATKFinal$Delay <- Delay(ATKFinal$Delay, AranSpec$ATKSpeed)
+ATKFinal$Delay[-8] <- Delay(ATKFinal$Delay, AranSpec$ATKSpeed)[-8]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, AranSpec$CoolReduceP, AranSpec$CoolReduce)
 
 BuffFinal <- data.frame(AranBuff)
@@ -627,7 +626,7 @@ AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStru
     return(DealCycle)
   }
   ADDummyF <- function(DealCycle, ADDummy) {
-    if(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
+    if(DealCycle$AdrenalineBoost[nrow(DealCycle)-1] > 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] <= 0) {
       ADDummy <- ADDummy + 1
       print(paste("Adrenaline End : ", DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1], sep=""))
     } else if(DealCycle$AdrenalineBoost[nrow(DealCycle)-1] > 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] == subset(BuffFinal, rownames(BuffFinal)=="AdrenalineBoost")$Duration * 1000) {
@@ -834,6 +833,12 @@ AranAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ]
   rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("Swing", "SwingAdrenaline"))==1) {
+      DealCycle$SwingBuff[i] <- 0
+    }
+  }
   return(DealCycle)
 }
 
@@ -863,8 +868,8 @@ AranSpecOpt2 <- Optimization2(AranDealCycleReduction, ATKFinal, BuffFinal, Summo
 AranFinalDPM <- DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
 AranFinalDPMwithMax <- DealCalcWithMaxDMR(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
 
-DPM12338$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (240750 / 60000)
-DPM12338$Aran[2] <- sum(na.omit(AranFinalDPM)) / (240750 / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (240750 / 60000)
+DPM12338$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (241020 / 60000)
+DPM12338$Aran[2] <- sum(na.omit(AranFinalDPM)) / (241020 / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (241020 / 60000)
 
 AranDealRatio <- DealRatio(AranDealCycle, AranFinalDPMwithMax)
 
@@ -873,9 +878,12 @@ colnames(AranDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(AranDealData, AranDealData$R4>0)
 
-AranRR <- AranDealData[151:676, ]
+AranRR <- AranDealData[151:664, ]
 DPM12338$Aran[3] <- sum((AranRR$Deal))
 
-Aran40s <-  AranDealData[151:1011, ]
+Aran40s <-  AranDealData[151:1008, ]
 DPM12338$Aran[4] <- sum((Aran40s$Deal))
+
+
+
 

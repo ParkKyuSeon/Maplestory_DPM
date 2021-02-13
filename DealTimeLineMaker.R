@@ -94,3 +94,8 @@ AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
 barplot(AranDealTL$Deal/100000000, names.arg=AranDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="Aran Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+SoulMasterDealTL <- DealTimeLine(SoulMasterDealData$Time, SoulMasterDealData$Deal)
+barplot(SoulMasterDealTL$Deal/100000000, names.arg=SoulMasterDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="SoulMaster Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

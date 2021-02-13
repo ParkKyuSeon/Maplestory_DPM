@@ -2157,7 +2157,7 @@ ResetDealRatio <- function(DealCycles=list(), DealDatas=list(), times=c(), prob=
 CommonV <- function(class1, class2) {
   cls1 <- c("Warrior", "Wizard", "Bowman", "Thief", "Pirate")
   cmm1 <- c("AuraWeapon", "OverloadMana", "GuidedArrow", "VenomBurst", "LoadedDice")
-  cmm3 <- c("BodyofSteal", "EtherealForm", "CriticalReinforce", "ReadyToDie", "OverDrive")
+  cmm3 <- c("BodyofSteel", "EtherealForm", "CriticalReinforce", "ReadyToDie", "OverDrive")
   
   cls2 <- c("AdventureWarrior", "AdventureWizard", "AdventureBowman", "AdventureTheif", "AdventurePirate", 
             "CygnusKnights", "Heroes", "Resistance", "Demon", "Nova", "Lef", "Anima", "Transcedent", "Supernatural")
