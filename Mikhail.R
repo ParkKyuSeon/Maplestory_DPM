@@ -494,7 +494,7 @@ ShiningCrossInstall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * MikhailCore[[2]][6, 2], 1, 780, 240, 0.24*89+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * MikhailCore[[2]][6, 2], 1, 780, 240, 0.24*(39 + MikhailCore[[2]][6, 2])+0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}

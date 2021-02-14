@@ -14,7 +14,6 @@ SoulMasterCore <- MatrixSet(PasSkills=c("DanceofMoon_SpeedingSunset", "CrosstheS
 
 
 ## SoulMaster - Basic Info
-## Xenon Link Check
 SoulMasterBase <- JobBase(ChrInfo=ChrInfo, 
                     MobInfo=MobDefault,
                     SpecSet=SpecDefault, 
@@ -313,7 +312,7 @@ CrosstheStyx <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * SoulMasterCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c((500 + 20 * SoulMasterCore[[2]][5, 2]) * 0.9, 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)
@@ -397,7 +396,7 @@ SoulMasterATK <- Attack(list(DanceofMoon=DanceofMoon, DanceofMoonAir=DanceofMoon
 ## SoulMaster - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * SoulMasterCore[[2]][7, 2], 1, 780, 240, 0.24*89+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * SoulMasterCore[[2]][7, 2], 1, 780, 240, 0.24*(39 + SoulMasterCore[[2]][7, 2])+0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -462,8 +461,8 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     BuffDelays[[i]] <- DelayData$Delay[t]
   } 
   
-  PhalanxTime <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-2)])/1000 + 10
-  SoulContractTime <- PhalanxTime + 6
+  PhalanxTime <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-2)])/1000 + 13
+  SoulContractTime <- PhalanxTime + 3
   
   PhalanxSubTime <- 30 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   SoulContractSubTime <- 90 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -887,8 +886,8 @@ SoulMasterSpecOpt2 <- WindBreakerOptimization2(SoulMasterDealCycleReduction, ATK
 SoulMasterFinalDPM <- WindBreakerDealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 SoulMasterFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 
-DPM12338$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (343590 / 60000)
-DPM12338$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (343590 / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (343590 / 60000)
+DPM12338$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (343650 / 60000)
+DPM12338$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (343650 / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (343650 / 60000)
 
 SoulMasterDealRatio <- DealRatio(SoulMasterDealCycle, SoulMasterFinalDPMwithMax)
 
@@ -897,12 +896,9 @@ colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(SoulMasterDealData, SoulMasterDealData$R4>0)
 
-SoulMasterRR <- SoulMasterDealData[192:413, ]
+SoulMasterRR <- SoulMasterDealData[179:394, ]
 DPM12338$SoulMaster[3] <- sum((SoulMasterRR$Deal))
 
-SoulMaster40s <-  SoulMasterDealData[20:504, ]
+SoulMaster40s <-  SoulMasterDealData[21:476, ]
 DPM12338$SoulMaster[4] <- sum((SoulMaster40s$Deal))
-
-
-
 
