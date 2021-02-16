@@ -99,3 +99,8 @@ SoulMasterDealTL <- DealTimeLine(SoulMasterDealData$Time, SoulMasterDealData$Dea
 barplot(SoulMasterDealTL$Deal/100000000, names.arg=SoulMasterDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="SoulMaster Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+FlameWizardDealTL <- DealTimeLine(FlameWizardDealData$Time, FlameWizardDealData$Deal)
+barplot(FlameWizardDealTL$Deal/100000000, names.arg=FlameWizardDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="FlameWizard Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

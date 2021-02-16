@@ -790,10 +790,15 @@ Cooldown <- function(CoolTime, CoolReduceAvailable, CoolReduceP, CoolReduce) {
 
 
 ## DealCycle Function
-AllTimeBuff <- function(BuffList) {
+AllTimeBuff <- function(BuffList, WillBeAllTimeBuff=c()) {
   BuffList <- data.frame(BuffList)
   BuffList$BuffOpRatio <- ifelse(is.na(BuffList$CoolTime)==T, 1, BuffList$Duration / BuffList$CoolTime)
   AllTimeBuff <- subset(BuffList, BuffList$BuffOpRatio>=1)
+  if(length(WillBeAllTimeBuff>=1)) {
+    for(i in 1:length(WillBeAllTimeBuff)) {
+      AllTimeBuff <- rbind(AllTimeBuff, subset(BuffList, rownames(BuffList)==WillBeAllTimeBuff[i]))
+    }
+  }
   
   AllTimeBuff <- AllTimeBuff[, 1:26]
   AllTimeBuffs <- AllTimeBuff[1, ]
@@ -2344,7 +2349,8 @@ JobSpec <- function(JobBase,
                     MobInfo=MobDefault, 
                     SpecSet=SpecDefault, 
                     WeaponName, 
-                    UnionStance) {
+                    UnionStance, 
+                    JobConstant=1) {
   JobBase$MainStatP <- Passive
   names(JobBase)[length(JobBase)] <- "Passive"
   JobBase$AllTimeBuff <- AllTimeBuff
@@ -2453,7 +2459,7 @@ JobSpec <- function(JobBase,
   SubStat2 <- ifelse(is.na(JobBase$SubStat2)==T, 0, SubStat2)
   CRR <- ifelse(JobBase$CRROver==T, CRR, min(100, CRR))
   FDR <- FDRCalc(c(FDR, ArcaneForceFDR(JobBase$ArcaneForce, MobInfo$Basic$Arc), LevelFDR(JobBase$ChrLv, MobInfo$Basic$Lv), 
-                   (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[19]*100-100)))
+                   (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[19]*100-100), (JobConstant-1)*100))
   ATKSpeed <- max(ATKSpeed, 2)
   Mastery <- min(Mastery, 95)
   if(SubStat2==0) {
