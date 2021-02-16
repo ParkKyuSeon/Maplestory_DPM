@@ -104,3 +104,8 @@ FlameWizardDealTL <- DealTimeLine(FlameWizardDealData$Time, FlameWizardDealData$
 barplot(FlameWizardDealTL$Deal/100000000, names.arg=FlameWizardDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="FlameWizard Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+StrikerDealTL <- DealTimeLine(StrikerDealData$Time, StrikerDealData$Deal)
+barplot(StrikerDealTL$Deal/100000000, names.arg=StrikerDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="Striker Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

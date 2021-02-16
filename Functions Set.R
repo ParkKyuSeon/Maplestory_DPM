@@ -2243,7 +2243,8 @@ JobBase <- function(ChrInfo=ChrInfo,
                     Weapon,
                     WeaponType, 
                     SubWeapon, 
-                    Emblem) {
+                    Emblem, 
+                    CoolReduceHat=F) {
   JobIndex <- c()
   for(i in 1:nrow(ChrInfo)) {
     if(Job==ChrInfo$job[i]) {
@@ -2331,6 +2332,14 @@ JobBase <- function(ChrInfo=ChrInfo,
   
   JobData$SkillLv <- sum(AdeleCore[[3]][, 1]=="CombatOrders")
   JobData$PSkillLv <- sum(AdeleCore[[3]][, 1]=="CombatOrders") + JobData$Ability$PassiveLv
+  
+  if(CoolReduceHat==T) {
+    JobData$ItemSet$MainStatP <- JobData$ItemSet$MainStatP + SpecSet$CoolReduceInfo$MainStatP[2]
+    JobData$CoolReduce <- SpecSet$CoolReduceInfo$CoolReduce[2]
+  } else {
+    JobData$CoolReduce <- 0
+  }
+  
   MainStatP <- 1
   for(i in 1:length(JobData)) {
     if(is.data.frame(JobData[[i]])==T) {
@@ -2428,7 +2437,9 @@ JobSpec <- function(JobBase,
   Mastery <- JobBase$BaseMastery
   BuffDuration <- floor(JobBase$Sensibility/10) ; SummonedDuration <- 0
   ImmuneIgnore <- floor(JobBase$Insight/10)/2
-  CoolTimeReset <- 0 ; SkillLv <- JobBase$SkillLv ; PSkillLv <- JobBase$PSkillLv ; CoolReduceP <- 0 ; CoolReduce <- 0 ; Disorder <- 1
+  CoolTimeReset <- 0 ; SkillLv <- JobBase$SkillLv ; PSkillLv <- JobBase$PSkillLv ; CoolReduceP <- 0 ; 
+  CoolReduce <- JobBase$CoolReduce
+  Disorder <- 1
   AllstatP <- 1 ; MainStatP <- 1
   for(i in 1:length(JobBase)) {
     if(is.data.frame(JobBase[[i]])==T) {

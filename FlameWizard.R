@@ -296,7 +296,7 @@ colnames(info) <- c("option", "value")
 DragonSlaveLast <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(FlameWizardCore[[1]][3, 2]>=40, 20, 0), 2 * FlameWizardCore[[1]][2, 2])
+value <- c(ifelse(FlameWizardCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c((2 * FlameWizardCore[[1]][2, 2]), 90 + FlameWizardSpec$SkillLv)))
 info <- c(350 + 3 * FlameWizardSpec$SkillLv, 10, 750, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -936,7 +936,7 @@ FlameWizardAddATK <- function(DealCycle, ATKFinal, SummonedFinal, FlameWizardCor
   for(i in 1:nrow(DealCycle)) {
     if(max(DealCycle$Skills[i]==c("OrbitalFlame", "DragonSlave", "DragonSlaveLast", "Infernorise", "BlazingOrbitalFlame", 
                                   "FlameDischargeLion2", "FlameDischargeLion3", "FlameDischargeLion4", "FlameDischargeFox2", "FlameDischargeFox3", "FlameDischargeFox4", 
-                                  "InfinityFlameCircleTick", "SalamanderMischiefATK"))==1) {
+                                  "InfinityFlameCircleTick", "SalamanderMischiefATK", "CygnusPhalanx", "CygnusPhalanxIFC"))==1) {
       DealCycle$OverloadMana[i] <- 1
     }
   }
