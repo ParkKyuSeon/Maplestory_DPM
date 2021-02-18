@@ -109,3 +109,8 @@ StrikerDealTL <- DealTimeLine(StrikerDealData$Time, StrikerDealData$Deal)
 barplot(StrikerDealTL$Deal/100000000, names.arg=StrikerDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="Striker Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Deal)
+barplot(BattleMageDealTL$Deal/100000000, names.arg=BattleMageDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="BattleMage Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

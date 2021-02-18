@@ -659,7 +659,7 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DealCycle <- RepATKCycle(DealCycle, c("ArrowRain2"), 3, 0, ATKFinal)
   
   for(i in 1:(nrow(DealCycle))) {
-    if(sum(DealCycle$Skills[i]==c("AfterimageArrowActive", "AfterimageArrowPassive", "HurricaneArrow")) > 0) {
+    if(sum(DealCycle$Skills[i]==c("AfterimageArrowActive", "HurricaneArrow")) > 0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttack")
     }
@@ -744,9 +744,9 @@ colnames(BowmasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(BowmasterDealData, BowmasterDealData$R4>0)
 
-BowmasterRR <- BowmasterDealData[79:794, ]
+BowmasterRR <- BowmasterDealData[79:774, ]
 DPM12338$Bowmaster[3] <- sum((BowmasterRR$Deal))
 
-Bowmaster40s <-  BowmasterDealData[79:1940, ]
+Bowmaster40s <-  BowmasterDealData[79:1876, ]
 DPM12338$Bowmaster[4] <- sum((Bowmaster40s$Deal))
 

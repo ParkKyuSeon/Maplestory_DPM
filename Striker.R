@@ -34,7 +34,7 @@ StrikerBase <- JobBase(ChrInfo=ChrInfo,
 
 ## Striker - Passive
 {option <- factor(c("MainStat"), levels=PSkill)
-value <- c(floor(SoulMasterBase$ChrLv/2))
+value <- c(floor(StrikerBase$ChrLv/2))
 ElementalHarmony <- data.frame(option, value)
 
 option <- factor(c("ATKP"), levels=PSkill)
@@ -374,9 +374,9 @@ colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLastLightning <- rbind(data.frame(option, value), info)}
 
 StrikerATK <- Attack(list(Annihilate=Annihilate, Thunderbolt=Thunderbolt, Typhoon=Typhoon, DeepRising=DeepRising, LightningCascade=LightningCascade, SharkTorpedo=SharkTorpedo, 
-                             LightningGodSpearStrike=LightningGodSpearStrike, LightningGodSpearStrikeShock=LightningGodSpearStrikeShock, LightningSpearMultistrike=LightningSpearMultistrike, 
-                             LightningSpearMultistrikeLast=LightningSpearMultistrikeLast, LightningSpearMultistrikeLightning=LightningSpearMultistrikeLightning, 
-                             LightningSpearMultistrikeLastLightning=LightningSpearMultistrikeLastLightning, SpiderInMirror=SpiderInMirror))
+                          LightningGodSpearStrike=LightningGodSpearStrike, LightningGodSpearStrikeShock=LightningGodSpearStrikeShock, LightningSpearMultistrike=LightningSpearMultistrike, 
+                          LightningSpearMultistrikeLast=LightningSpearMultistrikeLast, LightningSpearMultistrikeLightning=LightningSpearMultistrikeLightning, 
+                          LightningSpearMultistrikeLastLightning=LightningSpearMultistrikeLastLightning, SpiderInMirror=SpiderInMirror))
 
 
 ## Striker - Summoned
@@ -780,6 +780,29 @@ StrikerAddATK <- function(DealCycle, ATKFinal, SummonedFinal) {
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
+  ## Cygnus Phalanx, Spider In Mirror
+  DealCycle <- DCSummonedATKs(DealCycle, Skill=c("CygnusPhalanx"), SummonedFinal)
+  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
+  
+  ## Lightning Stack
+  for(i in 3:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("LightningCascade", "LightningGodSpearStrike", "LightningGodSpearStrikeShock", "CygnusPhalanx"))==1) {
+      DealCycle$LightningStack[i] <- min(5, DealCycle$LightningStack[i-1] + 1)
+    } else if(sum(DealCycle$Skills[i]==c("Thunderbolt", "LightningSpearMultistrike", "LightningSpearMultistrikeLast", "DeepRising"))==1 & 
+              DealCycle$LightningStack[i-1]==DealCycle$LightningStack[i]) {
+      DealCycle$LightningStack[i] <- min(5, DealCycle$LightningStack[i-1] + 1)
+    } else if(sum(DealCycle$Skills[i]!=c("SharkTorpedo", "Typhoon"))==2 & DealCycle$LightningStack[i-1] > DealCycle$LightningStack[i]) {
+      DealCycle$LightningStack[i] <- DealCycle$LightningStack[i-1]
+    }
+  }
+  for(i in 2:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="SharkTorpedo") {
+      DealCycle$LightningStack[i] <- min(5, DealCycle$LightningStack[i-1] + 2)
+    } else if(DealCycle$Skills[i]=="Typhoon") {
+      DealCycle$LightningStack[i] <- 5
+    }
+  }
+  
   ## Arc Charger (Chukroe)
   SkillList <- c("Annihilate", "Thunderbolt", "Typhoon", "DeepRising", "LightningCascade", "SharkTorpedo", 
                  "LightningGodSpearStrike", "LightningGodSpearStrikeShock", "LightningSpearMultistrike", "LightningSpearMultistrikeLast", 
@@ -795,18 +818,7 @@ StrikerAddATK <- function(DealCycle, ATKFinal, SummonedFinal) {
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
-  ## Cygnus Phalanx, Spider In Mirror
-  DealCycle <- DCSummonedATKs(DealCycle, Skill=c("CygnusPhalanx"), SummonedFinal)
-  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
-  
-  ## Link Mastery and Lightning Stack
-  for(i in 2:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("LightningGodSpearStrikeShock", "LightningGodSpearStrikeShockAdd", 
-                                  "CygnusPhalanx", "SpiderInMirrorStart", "SpiderInMirror1", "SpiderInMirror2", "SpiderInMirror3", "SpiderInMirror4", "SpiderInMirror5", "SpiderInMirrorWait"))==1) {
-      DealCycle$LightningStack[i] <- DealCycle$LightningStack[i-1]
-    }
-  }
-  
+  ## Link Mastery
   for(i in 1:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("LightningCascade", "LightningCascadeAdd", 
                                   "LightningGodSpearStrike", "LightningGodSpearStrikeAdd", "LightningGodSpearStrikeShock", "LightningGodSpearStrikeShockAdd", 
