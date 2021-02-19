@@ -253,7 +253,7 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
 ## BattleMage - Attacks
-## Hyper Setting : Dark Aura - Boss Killer / Debuff Aura - Elemental Reset / Shelter - CoolTime Reduce, Persist / Dark Genesis - Reinforce
+## Hyper Setting : Dark Aura - Boss Killer / Debuff Aura - Elemental Reset / Shelter - CoolTime Reduce, Persist / Dark Genesis - Additional Reinforce
 {option <- factor(c("IGR", "FDR"), levels=ASkill) 
 value <- c(IGRCalc(c(20 + 2 * ceiling(BattleMageSpec$SkillLv/3), ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
 info <- c(330 + 3 * BattleMageSpec$SkillLv, 6, 720, NA, NA, NA, NA, F)
@@ -310,15 +310,15 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DarkLightningMarkRemain <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
+option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
+value <- c(20, ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
 info <- c(220 + 4 * BattleMageSpec$SkillLv, 0.6 + 0.02 * BattleMageSpec$SkillLv, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DarkGenesisFA <- rbind(data.frame(option, value), info)
 
-option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(20, ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
 info <- c(520 + 10 * BattleMageSpec$SkillLv, 8, 780, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -857,20 +857,3 @@ DPM12338$BattleMage[3] <- sum((BattleMageRR$Deal))
 
 BattleMage40s <-  BattleMageDealData[19:501, ]
 DPM12338$BattleMage[4] <- sum((BattleMage40s$Deal))
-
-
-
-
-
-
-
-head(subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="BlackMagicAltar"), 40)
-subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="GrimReeper")
-subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="DeathMOD")
-subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="Death")
-subset(BattleMageDealCycle, BattleMageDealCycle$Skills=="SpiderInMirror1")
-BattleMageDealCycle2[0:300, c(1, 2, 15)]
-nrow(subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="DarkLightningMark"))
-nrow(subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="DarkLightningMarkDGFA"))
-nrow(subset(BattleMageDealCycle2, BattleMageDealCycle2$Skills=="DarkLightningMarkRemain"))
-
