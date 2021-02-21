@@ -114,3 +114,18 @@ BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Dea
 barplot(BattleMageDealTL$Deal/100000000, names.arg=BattleMageDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="BattleMage Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+NightWalkerDealTL <- DealTimeLine(NightWalkerDealData$Time, NightWalkerDealData$Deal)
+barplot(NightWalkerDealTL$Deal/100000000, names.arg=NightWalkerDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="NightWalker Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")
+
+NightWalkerDealTL80 <- DealTimeLine(NightWalkerDealData80$Time, NightWalkerDealData80$Deal)
+barplot(NightWalkerDealTL80$Deal/100000000, names.arg=NightWalkerDealTL80$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="NightWalker Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")
+
+NightWalkerDealTL0 <- DealTimeLine(NightWalkerDealData0$Time, NightWalkerDealData0$Deal)
+barplot(NightWalkerDealTL0$Deal/100000000, names.arg=NightWalkerDealTL0$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="NightWalker Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")

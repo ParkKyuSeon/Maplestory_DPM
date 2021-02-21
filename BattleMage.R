@@ -808,7 +808,7 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   ## Overload Mana
   for(i in 1:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkLightning", "DarkLightningAL", "DarkLightningMark", "DarkLightningMarkDGFA",
-                                  "DarkLightningMarkRemain", "DarkGenesis", "BattleKingBar1", "BattleKingBar2"))==1) {
+                                  "DarkLightningMarkRemain", "DarkGenesis", "BattleKingBar1", "BattleKingBar2", "ResistanceLineInfantry", "BlackMagicAltar"))==1) {
       DealCycle$OverloadMana[i] <- 1
     }
   }
