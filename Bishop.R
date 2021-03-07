@@ -1,98 +1,34 @@
 ## Bishop - Data
 ## Bishop - VMatrix
-PasSkills <- c("AngelRay", "HeavensDoor", "Bahamut", "Bigbang", "Genesis")
-PasLvs <- c(50, 50, 50, 50, 25)
-PasMP <- c(10, 10, 10, 10, 5)
-ActSkills <- c("Pray", "AngelofLibra", "PeaceMaker", "DivinePunishment", 
-               "OverloadMana", "EtherealForm", "UnstableMemorize", "MapleWarriors2", "SpiderInMirror")
-ActLvs <- c(25, 25, 25, 25, 25, 1, 25, 25, 25)
-ActMP <- c(5, 5, 5, 5, 5, 0, 5, 5, 5)
-UsefulSkills <- c("CombatOrders", "SharpEyes")
-UsefulLvs <- c(20, 20)
-UsefulMP <- c(0, 0)
-
-CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + length(UsefulSkills)
-if(CoreNumbers > Cores) {warning("Invalid Input")}
-
-MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP)
-if(MPs > MatrixPoints) {warning("Invalid Input")}
-
-PassiveCore <- data.frame(PasSkills, PasLvs + PasMP)
-colnames(PassiveCore) <- c("Passive", "Levels")
-
-ActiveCore <- data.frame(ActSkills, ActLvs + ActMP)
-colnames(ActiveCore) <- c("Active", "Levels")
-
-UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
-colnames(UsefulCore) <- c("Useful", "Levels")
-BishopCore <- list(PassiveCore, ActiveCore, UsefulCore)
+BishopCore <- MatrixSet(PasSkills=c("AngelRay", "HeavensDoor", "Bahamut", "Bigbang", "Genesis"), 
+                          PasLvs=c(50, 50, 50, 50, 50), 
+                          PasMP=c(10, 10, 10, 10, 5), 
+                          ActSkills=c("Pray", "AngelofLibra", "PeaceMaker", "DivinePunishment", 
+                                      CommonV("Wizard", "Adventure")), 
+                          ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                          ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 5), 
+                          UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                          UsefulLvs=c(20, 20), 
+                          UsefulMP=c(0, 0), 
+                          SpecSet=SpecDefault)
 
 
 ## Bishop - Basic Info
-BishopClass1 <- ChrInfo[6, 2]
-BishopClass2 <- ChrInfo[6, 3]
-BishopMainStatType <- ChrInfo[6, 4]
-BishopSubStat1Type <- ChrInfo[6, 5]
-BishopChrLv <- ChrInfo[6, 7]
-BishopUnionLv <- ChrInfo[6, 8]
-BishopArcaneForce <- ChrInfo[6, 9]
-BishopCharisma <- ChrInfo[6, 10]
-BishopInsight <- ChrInfo[6, 11]
-BishopSensibility <- ChrInfo[6, 12]
-BishopBaseMastery <- ChrInfo[6, 13]
-BishopCRROver <- F
-BishopBuffDurationNeeded <- 310
-
-BishopAbility <- Abilities(c("BuffDuration", "DisorderBDR"), c("L", "E"))
-
-BishopLinkBase <- rbind(LinkBase)
-BishopDisorder <- max(LinkBase$Disorder)
-AdventureThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(BishopDisorder==T, (10+ServerLag)/20*18, 0), 0, 0, 0)
-Cadena <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(BishopDisorder==T, 6, 0)+ifelse(BishopChrLv>MobLv, 6, 0), 0, 0, 0)
-BishopLinkBase <- rbind(LinkBase, Mikhail, DemonAvenger, CygnusKnights, Zero)
-BishopLinkBase <- data.frame(BishopLinkBase)
-LinkSet <- c()
-for(i in c(1:9, 11:13)) {
-  LinkSet[i] <- sum(BishopLinkBase[, i]) 
-}
-LinkSet[10] <- IGRCalc(BishopLinkBase[, 10])
-LinkSet <- data.frame(t(LinkSet))
-colnames(LinkSet) <- colnames(BishopLinkBase)[1:13]
-rownames(LinkSet) <- c("Links")
-
-CommonSkillSet <- data.frame(t(colSums(CommonSkills)))
-
-MonsterLife <- colSums(MLTypeI21) ## IGR Logic Needed
-MonsterLife <- data.frame(t(MonsterLife))
-
-Dopings <- colSums(DopingSet) ## IGR Logic Needed
-Dopings <- data.frame(t(Dopings))
-
-Weapon <- rbind(WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", "AR")[, 1:16], SubWeapon[6, ], Emblem[1, ])
-rownames(Weapon) <- c("Weapon", "SubWeapon", "Emblem")
-colnames(Weapon) <- SubWeaponOption
-Weapon <- data.frame(Weapon)
-Weapon <- WeaponAddpotential(Weapon, c("U", "U", "U"), c("A", "A", "O"))
-
-Item <- rbind(SpecSet1, SetOption(SpecSet1, "AR"), PetSetOption(c("D", "D", "D")))
-ItemSet <- c()
-for(i in c(2:10, 17:19)) {
-  ItemSet[i] <- sum(Item[, i])
-}
-ItemSet[16] <- IGRCalc(Item[, 16])
-ItemSet <- data.frame(t(ItemSet))
-colnames(ItemSet) <- colnames(Item)
-rownames(ItemSet) <- c("Item")
-
-Specs <- c("MainStat", "SubStat1", "ATK", "ATKP", "IGR", "BDR", "CRR", "CDMR", "FDR", "ATKSpeed", "Mastery", "BuffDuration", 
-           "SummonedDuration", "ImmuneIgnore", "CoolTimeReset", "SkillLv", "PSkillLv", "CoolReduceP", "CoolReduce", "Disorder", "MainStatP")
-BishopSpec <- data.frame(t(rep(0, 21)))
-colnames(BishopSpec) <- Specs
-
-BishopSpec$SkillLv <- sum(BishopCore[[3]][, 1]=="CombatOrders")
-BishopSpec$PSkillLv <- sum(BishopCore[[3]][, 1]=="CombatOrders") + BishopAbility$PassiveLv
-BishopSpec$MainStatP <- (100 + ItemSet$MainStatP + ItemSet$AllstatP + sum(Weapon$AllstatP) + Dopings$AllstatP + LinkSet$AllstatP) / 100
-
+BishopBase <- JobBase(ChrInfo=ChrInfo, 
+                      MobInfo=MobDefault,
+                      SpecSet=SpecDefault, 
+                      Job="Bishop",
+                      CoreData=BishopCore, 
+                      MikhailLink=T, 
+                      OtherBuffDuration=310, 
+                      AbilList=c("BuffDuration", "DisorderBDR"), 
+                      LinkList=c("Zero", "Mikhail", "DemonAvenger", "CygnusKnights"), 
+                      MonsterLife=MLTypeI21, 
+                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", SpecDefault$WeaponType)[, 1:16],
+                      WeaponType=SpecDefault$WeaponType, 
+                      SubWeapon=SubWeapon[6, ], 
+                      Emblem=Emblem[1, ],
+                      CoolReduceHat=F)
 
 ## Bishop - Passive
 {option <- factor(c("ATK"), levels=PSkill)
@@ -112,19 +48,19 @@ value <- c(40, 70)
 HolyFocus <- data.frame(option, value)
 
 option <- factor(c("IGR"), levels=PSkill)
-value <- c(40 + 4*ceiling(BishopSpec$SkillLv/3))
+value <- c(40 + 4*ceiling(BishopBase$SkillLv/3))
 BigbangDebuff <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
-value <- c(3 * PartyMembers)
+value <- c(3 * General$General$PartyMembers)
 BlessingHarmony <- data.frame(option, value)
 
 option <- factor(c("ATK", "BuffDuration"), levels=PSkill)
-value <- c(30 + 3 * BishopSpec$SkillLv, 50 + 5 * BishopSpec$SkillLv)
+value <- c(30 + 3 * BishopBase$SkillLv, 50 + 5 * BishopBase$SkillLv)
 MasterMagic <- data.frame(option, value)
 
 option <- factor(c("IGR", "BDR"), levels=PSkill)
-value <- c(20 + ceiling(BishopSpec$SkillLv/2), 40)
+value <- c(20 + ceiling(BishopBase$SkillLv/2), 40)
 ArcaneAim <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
@@ -133,10 +69,10 @@ OverloadMana <- data.frame(option, value) ## ATK Skills Only
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(BishopCore[[2]][7, 2])
-UnstableMemorize <- data.frame(option, value)}
+UnstableMemorizePassive <- data.frame(option, value)}
 
 BishopPassive <- Passive(list(SpellMastery=SpellMastery, HighWisdom=HighWisdom, MagicCritical=MagicCritical, HolyFocus=HolyFocus, BigbangDebuff=BigbangDebuff, 
-                              BlessingHarmony=BlessingHarmony, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, UnstableMemorize=UnstableMemorize))
+                              BlessingHarmony=BlessingHarmony, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, UnstableMemorizePassive=UnstableMemorizePassive))
 
 
 ## Bishop - Buff
@@ -149,21 +85,21 @@ MagicBooster <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(40 + BishopSpec$SkillLv, 180, 600, T, T, F, T)
+info <- c(40 + BishopBase$SkillLv, 180, 600, T, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Infinity <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", "BDR", levels=BSkill)
-value <- c(50 + BishopSpec$SkillLv, 10)
+value <- c(50 + BishopBase$SkillLv, 10)
 info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedBless <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
-value <- c(floor((BishopChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(BishopSpec$SkillLv/2))))
-info <- c(900 + 30 * BishopSpec$SkillLv, NA, 0, T, NA, NA, T)
+value <- c(floor((BishopBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(BishopBase$SkillLv/2))))
+info <- c(900 + 30 * BishopBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
@@ -204,7 +140,7 @@ colnames(info) <- c("option", "value")
 PeaceMakerBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * BishopCore[[2]][7, 2]) * MapleSoldier[1, 2]) * BishopSpec$MainStatP), 5 + floor(BishopCore[[2]][7, 2]/2))
+value <- c(floor(((1 + 0.1 * BishopCore[[2]][7, 2]) * MapleSoldier[1, 2]) * BishopBase$MainStatP), 5 + floor(BishopCore[[2]][7, 2]/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -254,71 +190,19 @@ BishopAllTimeBuff <- AllTimeBuff(BishopBuff)
 
 
 ## Bishop - Union & HyperStat & SoulWeapon
-BishopSpec$CRR <- sum(Weapon$CRR) + ItemSet$CRR + MonsterLife$CRR + Dopings$CRR + LinkSet$CRR + BishopPassive$CRR + 
-  (Union8000Chr$CRR) + BishopAbility$CRR + BishopAllTimeBuff$CRR + 5
-BishopSpec$CRR <- ifelse(BishopCRROver==T, BishopSpec$CRR, min(BishopSpec$CRR, 100))
-BishopSpec$BuffDuration <- MonsterLife$BuffDuration + BishopPassive$BuffDuration + Union8000Chr$BuffDuration + floor(BishopSensibility/10) + BishopAbility$BuffDuration
+BishopSpec <- JobSpec(JobBase=BishopBase, 
+                      Passive=BishopPassive, 
+                      AllTimeBuff=BishopAllTimeBuff, 
+                      MobInfo=MobDefault, 
+                      SpecSet=SpecDefault, 
+                      WeaponName="Staff", 
+                      UnionStance=0, 
+                      JobConstant=1.2)
 
-UnionFieldOption <- c("CDMR", "CRR", "BDR", "IGR", "BuffDuration", "MainStat", "SubStat1", "SubStat2", "ATK", "Stance")
-
-UnionBase <- data.frame(t(c(40, 0, 0, 0, 0, 5, 1, 1, 5, 0)))
-colnames(UnionBase) <- UnionFieldOption
-UnionFields <- ifelse(BishopUnionLv==8000, FieldNumbers[2], FieldNumbers[1]) - sum(UnionBase)
-
-CRRs <- CRRGet(UnionFields, BishopBuffDurationNeeded, BishopSpec$BuffDuration, BishopSpec$CRR, BishopCRROver)
-UnionBase <- UnionPlace(UnionFields - max(0, BishopBuffDurationNeeded - BishopSpec$BuffDuration) - CRRs$Union, UnionBase, 
-                        max(0, min(BishopBuffDurationNeeded - BishopSpec$BuffDuration, 40)), CRRs$Union)
-UnionBase$CDMR <- UnionBase$CDMR/2
-UnionBase$MainStat <- UnionBase$MainStat*5
-UnionBase$SubStat1 <- UnionBase$SubStat1*5
-UnionBase$SubStat2 <- UnionBase$SubStat2*5
-UnionRemained <- ifelse(BishopUnionLv==8000, FieldNumbers[2], FieldNumbers[1]) - UnionBase$CDMR * 2 - UnionBase$CRR - UnionBase$BuffDuration - UnionBase$MainStat / 5 - UnionBase$SubStat1 / 5 - 
-  UnionBase$SubStat2 / 5 - UnionBase$ATK - UnionBase$Stance
-
-HyperStatBase <- data.frame(t(c(0, 0, 0, 10, 10, 10, ifelse(CRRs$Hyper<=5, CRRs$Hyper, 5+(CRRs$Hyper-5)/2), 10, 0)))
-colnames(HyperStatBase) <- colnames(HyperStats)[2:10]
-HyperSP <- 0
-for(i in 1:9) {
-  lvs <- HyperStatBase[1, i]
-  HyperStatBase[1, i] <- ifelse(lvs==0, 0, sum(HyperStats[1:lvs, i+1]))
-  HyperSP <- HyperSP + ifelse(lvs==0, 0, sum(HyperStats[1:lvs, 1]))
-}
-
-SoulWeaponOptions <- c("ATK", "ATKP", "CRR")
-SoulWeapon <- data.frame(t(c(20, ifelse(CRRs[1, 3]==0, 3, 0), ifelse(CRRs[1, 3]==12, 12, 0))))
-colnames(SoulWeapon) <- SoulWeaponOptions
-
-
-## Bishop Final Specs W/O UnionBDR&IGR, HyperStatAlpha, Potential
-BishopSpec$MainStat <- floor((sum(Weapon$MainStat) + ItemSet$MainStat + MonsterLife$INT + Dopings$MainStat + LinkSet$MainStat + BishopPassive$MainStat + 
-  BishopAllTimeBuff$MainStat + CommonSkillSet$MainStat + UnionBase$MainStat + 18 + 5 * BishopChrLv) * (100 + ItemSet$MainStatP + ItemSet$AllstatP + sum(Weapon$AllstatP) + 
-  Dopings$AllstatP + LinkSet$AllstatP) / 100) + 10 * BishopArcaneForce + Union8000Chr$INT + 20
-BishopSpec$SubStat1 <- floor((sum(Weapon$SubStat1) + ItemSet$SubStat1 + MonsterLife$LUK + Dopings$SubStat1 + LinkSet$SubStat1 + BishopPassive$SubStat1 + 
-  BishopAllTimeBuff$SubStat1 + CommonSkillSet$SubStat1 + UnionBase$SubStat1 + 4) * (100 + ItemSet$AllstatP + sum(Weapon$AllstatP) + Dopings$AllstatP + LinkSet$AllstatP) / 100) + 
-  Union8000Chr$LUK
-BishopSpec$ATK <- sum(Weapon$ATK) + ItemSet$ATK + MonsterLife$ATK + Dopings$ATK + LinkSet$ATK + BishopPassive$ATK + Union8000Chr$ATK + BishopAbility$CRR + 
-  BishopAllTimeBuff$ATK + CommonSkillSet$ATK + UnionBase$ATK + SoulWeapon$ATK
-BishopSpec$ATKP <- sum(Weapon$ATKP) + BishopPassive$ATKP + BishopAllTimeBuff$ATKP + CommonSkillSet$ATKP + SoulWeapon$ATKP
-BishopSpec$IGR <- IGRCalc(c(IGRCalc(c(Weapon$IGR)), ItemSet$IGR, MonsterLife$IGR, Dopings$IGR, LinkSet$IGR, BishopPassive$IGR, Union8000Chr$IGR, floor(BishopCharisma/5)/2, 
-  BishopAllTimeBuff$IGR, HyperStatBase$IGR))
-BishopSpec$BDR <- sum(Weapon$BDR) + ItemSet$BDR + MonsterLife$BDR + Dopings$BDR + LinkSet$BDR + BishopPassive$BDR + Union8000Chr$BDR + BishopAbility$BDR + BishopAbility$DisorderBDR +
-  BishopAllTimeBuff$BDR + HyperStatBase$BDR + HyperStatBase$DMR
-BishopSpec$CRR <- sum(Weapon$CRR) + ItemSet$CRR + MonsterLife$CRR + Dopings$CRR + LinkSet$CRR + BishopPassive$CRR + 
-  (Union8000Chr$CRR + ifelse(BishopChrLv>=250, 1, 0)) + BishopAbility$CRR + BishopAllTimeBuff$CRR + 5
-BishopSpec$CRR <- ifelse(BishopCRROver==T, BishopSpec$CRR + rowSums(CRRs), min(BishopSpec$CRR + rowSums(CRRs), 100))
-BishopSpec$CDMR <- sum(Weapon$CDMR) + ItemSet$CDMR + MonsterLife$CDMR + Dopings$CDMR + LinkSet$CDMR + BishopPassive$CDMR + BishopAllTimeBuff$CDMR + Union8000Chr$CDMR +
-  HyperStatBase$CDMR + UnionBase$CDMR
-BishopSpec$FDR <- FDRCalc(c(BishopPassive$FDR, BishopAllTimeBuff$FDR, ArcaneForceFDR(BishopArcaneForce, MapArc), LevelFDR(BishopChrLv, MobLv), 
-  (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", "AR")[19]*100-100), 20))
-BishopSpec$ATKSpeed <- max(WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", "AR")[17] - Dopings$ATKSpeed - BishopAllTimeBuff$ATKSpeed - BishopPassive$ATKSpeed, 2)
-BishopSpec$Mastery <- min(BishopBaseMastery + BishopPassive$Mastery, 95)
-BishopSpec$BuffDuration <- BishopSpec$BuffDuration + UnionBase$BuffDuration
-BishopSpec$SummonedDuration <- MonsterLife$SummonedDuration + BishopPassive$SummonDuration + Union8000Chr$SummonedDuration
-BishopSpec$ImmuneIgnore <- BishopPassive$ImmuneIgnore + floor(BishopInsight/10)/2 + BishopAllTimeBuff$ImmuneIgnore
-BishopSpec$CoolTimeReset <- MonsterLife$CoolTimeReset + BishopPassive$CoolTimeReset + BishopAbility$CoolTimeReset
-BishopSpec$CoolReduceP <- Union8000Chr$CoolReduce
-BishopSpec$CoolReduce <- 0
-BishopSpec$Disorder <- max(BishopLinkBase$Disorder, BishopPassive$Disorder, BishopAllTimeBuff$Disorder)
+BishopUnionRemained <- BishopSpec$UnionRemained
+BishopHyperStatBase <- BishopSpec$HyperStatBase
+BishopCoolReduceType <- BishopSpec$CoolReduceType
+BishopSpec <- BishopSpec$Spec
 
 
 ## Bishop - Spider In Mirror
@@ -385,7 +269,7 @@ Skills <- c("EnergyBolt", "HolyArrow", "Heal", "ShiningRay", "HolyFountain", "Di
 Ind <- c(1, 10, 10, 10, 10, 25, 10, 25, 25, 25, 25, 25, 25, 10, 10)
 Prob <- Ind/sum(Ind)
 Delays <- c(Delay(810, 3), Delay(810, 3), Delay(600, 3), Delay(900, 3), 960, 900, 870, Delay(810, 3), Delay(810, 3), 
-            Delay(780, 3), 900, 600, 600, Delay(360, 3), 0)
+            Delay(780, 3), 900, 600, 600, 360, 0)
 BishopUnstable <- data.frame(Skills, Ind, Prob, Delays)
 BishopUnsHolyATKProb <- sum(BishopUnstable$Prob[c(2, 4, 8, 9, 10)])
 
@@ -449,7 +333,7 @@ AngelRay <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(FDRCalc(c(2 * BishopCore[[1]][2, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), ifelse(BishopCore[[1]][2, 2]>=40, 20, 0))
-info <- c(1000, 8, 360, NA, NA, NA, NA, F)
+info <- c(1000, 8, 360, NA, 90, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeavensDoor <- rbind(data.frame(option, value), info)
@@ -477,21 +361,14 @@ DivinePunishmentPre <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(175 + 7 * BishopCore[[2]][4, 2], 10, 1000, 240, 8.5, F, F, F)
+info <- c(225 + 9 * BishopCore[[2]][4, 2], 10, 240, NA, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishment <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(0, 0, 1000, 240, 8.5, F, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-DivinePunishmentLoop <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(0, 0, 120, NA, 8.5, F, F, F)
+option <- factor("FDR", levels=ASkill)
+value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
+info <- c(225 + 9 * BishopCore[[2]][4, 2], 10, 120, NA, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishmentEnd <- rbind(data.frame(option, value), info)
@@ -529,57 +406,70 @@ value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
 info <- c(350 + 14 * BishopCore[[2]][3, 2], 4 * BishopUnsHolyATKProb, 750, 350, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-PeaceMakerafterUns1 <- rbind(data.frame(option, value), info)
+PeaceMakerAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
 info <- c(350 + 14 * BishopCore[[2]][3, 2], 4 * (1-BishopUnsHolyATKProb), 0, 350, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-PeaceMakerafterUns2 <- rbind(data.frame(option, value), info)
+PeaceMakerAfterUns2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
 info <- c(500 + 20 * BishopCore[[2]][3, 2], 8 * BishopUnsHolyATKProb, 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-PeaceMakerExplosionafterUns1 <- rbind(data.frame(option, value), info)
+PeaceMakerExplosionAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
 info <- c(500 + 20 * BishopCore[[2]][3, 2], 8 * (1-BishopUnsHolyATKProb), 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-PeaceMakerExplosionafterUns2 <- rbind(data.frame(option, value), info)
+PeaceMakerExplosionAfterUns2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 6 * BishopCore[[2]][4, 2], 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
+info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-DivinePunishmentWithUns1 <- rbind(data.frame(option, value), info)
+DivinePunishmentAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 6 * BishopCore[[2]][4, 2], 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
+info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-DivinePunishmentWithUns2 <- rbind(data.frame(option, value), info)}
+DivinePunishmentAfterUns2 <- rbind(data.frame(option, value), info)
+
+option <- factor("FDR", levels=ASkill)
+value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
+info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DivinePunishmentEndAfterUns1 <- rbind(data.frame(option, value), info)
+
+option <- factor("FDR", levels=ASkill)
+value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
+info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DivinePunishmentEndAfterUns2 <- rbind(data.frame(option, value), info)}
 
 BishopATK <- Attack(list(EnergyBoltUnstable=EnergyBoltUnstable, HolyArrowUnstable=HolyArrowUnstable, ShiningRayUnstable=ShiningRayUnstable, AngelRayUnstable=AngelRayUnstable, 
                          GenesisUnstable=GenesisUnstable, BigbangUnstable=BigbangUnstable, HeavensDoorUnstable=HeavensDoorUnstable, AngelRay=AngelRay, HeavensDoor=HeavensDoor,
-                         PeaceMaker=PeaceMaker, PeaceMakerExplosion=PeaceMakerExplosion, DivinePunishmentPre=DivinePunishmentPre, DivinePunishment=DivinePunishment, 
-                         DivinePunishmentLoop=DivinePunishmentLoop, DivinePunishmentEnd=DivinePunishmentEnd,
+                         PeaceMaker=PeaceMaker, PeaceMakerExplosion=PeaceMakerExplosion, DivinePunishmentPre=DivinePunishmentPre, DivinePunishment=DivinePunishment, DivinePunishmentEnd=DivinePunishmentEnd,
                          UnstableMemorizePre=UnstableMemorizePre, UnstableMemorizeEnd=UnstableMemorizeEnd, AngelRayAfterUns1=AngelRayAfterUns1, AngelRayAfterUns2=AngelRayAfterUns2, 
-                         PeaceMakerafterUns1=PeaceMakerafterUns1, PeaceMakerafterUns2=PeaceMakerafterUns2, PeaceMakerExplosionafterUns1=PeaceMakerExplosionafterUns1, 
-                         PeaceMakerExplosionafterUns2=PeaceMakerExplosionafterUns2, DivinePunishmentWithUns1=DivinePunishmentWithUns1, DivinePunishmentWithUns2=DivinePunishmentWithUns2,
-                         SpiderInMirror=SpiderInMirror))
+                         PeaceMakerAfterUns1=PeaceMakerAfterUns1, PeaceMakerAfterUns2=PeaceMakerAfterUns2, PeaceMakerExplosionAfterUns1=PeaceMakerExplosionAfterUns1, 
+                         PeaceMakerExplosionAfterUns2=PeaceMakerExplosionAfterUns2, DivinePunishmentAfterUns1=DivinePunishmentAfterUns1, DivinePunishmentAfterUns2=DivinePunishmentAfterUns2, 
+                         DivinePunishmentEndAfterUns1=DivinePunishmentEndAfterUns1, DivinePunishmentEndAfterUns2=DivinePunishmentEndAfterUns2, SpiderInMirror=SpiderInMirror))
 
 
 ## Bishop - Summoned
 {option <- factor(c("FDR", "IGR"), levels=SSkill)
 value <- c(2 * BishopCore[[1]][3, 2], ifelse(BishopCore[[1]][3, 2]>=40, 20, 0))
-info <- c(170 + 2 * BishopSpec$SkillLv, 1, 0, 3030, 260, NA, T, NA, NA, F)
+info <- c(170 + 2 * BishopSpec$SkillLv, 3, 0, 3030, 260, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Bahamut <- rbind(data.frame(option, value), info)
@@ -598,7 +488,7 @@ BishopSummoned <- Summoned(list(Bahamut=Bahamut, AngelofLibra=AngelofLibra, Spid
 
 ## Bishop - DealCycle
 ATKFinal <- data.frame(BishopATK)
-ATKFinal$Delay[c(1:11, 18:26)] <- Delay(ATKFinal$Delay, 2)[c(1:11, 18:26)]
+ATKFinal$Delay[c(1:8, 10, 11, 17:27)] <- Delay(ATKFinal$Delay, 2)[c(1:8, 10, 11, 17:27)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, BishopSpec$CoolReduceP, BishopSpec$CoolReduce)
 
 BuffFinal <- data.frame(BishopBuff)
@@ -614,82 +504,342 @@ DealCycle <- c("Skills", "Time", rownames(BishopBuff))
 BishopDealCycle <- t(rep(0, length(DealCycle)))
 colnames(BishopDealCycle) <- DealCycle
 
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel", "MagicBooster", "AdvancedBless", "MapleSoldier", 
-                                             "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCSummoned(BishopDealCycle, "Bahamut", SummonedFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("Infinity", "EpicAdventure", "SoulContractLink"), BuffFinal) 
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 12)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("DivinePunishmentPre", "DivinePunishment", rep("DivinePunishmentLoop", 8), "DivinePunishmentEnd"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 8)), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("MapleWarriors2"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 6)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 12)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, "SpiderInMirror", ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("Pray"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 14)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 11)), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("SoulContractLink"), BuffFinal) 
-BishopDealCycle <- DCSummoned(BishopDealCycle, "AngelofLibra", SummonedFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("Restraint4"), BuffFinal) 
-BishopDealCycle <- DCATK(BishopDealCycle, c("DivinePunishmentPre", "DivinePunishment", rep("DivinePunishmentLoop", 8), "DivinePunishmentEnd"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("HeavensDoor"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 13)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("EpicAdventure"), BuffFinal) 
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 11)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 9)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("AngelRay"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 8)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 3)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 7)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 4)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 6)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 6)), ATKFinal)
+BishopInfinityCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
+  DealCycle <- DCBuff(DealCycle, c("VengenceofAngel", "MagicBooster", "AdvancedBless", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure"), BuffFinal)
+  DealCycle <- DCATK(DealCycle, c("PeaceMaker"), ATKFinal)
+  PMCool <- subset(ATKFinal, rownames(ATKFinal)=="PeaceMaker")$CoolTime * 1000
+  PMRemain <- PMCool - DealCycle$Time[1]
+  DealCycle <- DCSummoned(DealCycle, "Bahamut", SummonedFinal)
+  PMRemain <- PMCool - DealCycle$Time[1]
+  DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
+  PMRemain <- PMCool - DealCycle$Time[1]
+  
+  Restraint4 <- c(15)
+  DivinePunishmentPre <- c(12, 82.5)
+  HeavensDoor <- c(1)
+  MapleWarriors2 <- c(63)
+  SoulContractLink <- c(31)
+  AngelofLibra <- c(30)
+  SpiderInMirror <- c(50)
+  Pray <- c(48)
+  
+  skills <- list(Restraint4=Restraint4, DivinePunishmentPre=DivinePunishmentPre, HeavensDoor=HeavensDoor, MapleWarriors2=MapleWarriors2, 
+                 SoulContractLink=SoulContractLink, AngelofLibra=AngelofLibra, SpiderInMirror=SpiderInMirror, Pray=Pray)
+  
+  times <- c()
+  for(i in 1:length(skills)) {
+    times <- c(times, skills[[i]])
+  }
+  times <- unique(times)
+  times <- times[order(times, decreasing=T)]
+  
+  skilllist <- list()
+  for(i in 1:length(times)) {
+    skilllist[[i]] <- 1
+    for(j in 1:length(skills)) {
+      if(sum(skills[[j]]==times[[i]])==1) {
+        skilllist[[i]] <- c(skilllist[[i]], names(skills)[[j]])
+      }
+    }
+    skilllist[[i]] <- skilllist[[i]][-1]
+  }
+  names(skilllist) <- times
+  times <- times * 1000
+  
+  p <- 1
+  while(DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+    if(p <= length(times) & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] < times[p] + 500) {
+      for(j in 1:length(skilllist[[p]])) {
+        if(sum(rownames(ATKFinal)==skilllist[[p]][j])==1) {
+          DealCycle <- DCATK(DealCycle, skilllist[[p]][j], ATKFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          if(DealCycle$Skills[nrow(DealCycle)]=="DivinePunishmentPre") {
+            if(times[p]==80000) {
+              for(k in 1:30) {
+                DealCycle <- DCATK(DealCycle, "DivinePunishment", ATKFinal)
+                PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+              }
+              DealCycle <- DCATK(DealCycle, rep("DivinePunishmentEnd", 1), ATKFinal)
+              PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+            } else {
+              for(k in 1:40) {
+                DealCycle <- DCATK(DealCycle, "DivinePunishment", ATKFinal)
+                PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+              }
+              DealCycle <- DCATK(DealCycle, rep("DivinePunishmentEnd", 1), ATKFinal)
+              PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+            }
+          }
+        } else if(sum(rownames(BuffFinal)==skilllist[[p]][j])==1) {
+          DealCycle <- DCBuff(DealCycle, skilllist[[p]][j], BuffFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCSummoned(DealCycle, skilllist[[p]][j], SummonedFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        }
+      }
+      p <- p + 1
+    }
+    if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==0 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==1 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] > times[p] + 11000 & 
+              DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==1 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] < times[p] + 2500 & 
+              DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else {
+      DealCycle <- DCATK(DealCycle, "AngelRay", ATKFinal)
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+    }
+  }
+  return(DealCycle)
+}
+BishopUnsCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
+  DealCycle <- DCBuff(DealCycle, "EpicAdventure", BuffFinal)
+  
+  UnsCool <- subset(ATKFinal, rownames(ATKFinal)=="UnstableMemorizePre")$CoolTime * 1000
+  UnsRemain <- 0 ; UnsDummy <- 0
+  
+  InfTime <- subset(DealCycle, DealCycle$Skills=="Infinity")$Time + subset(BuffFinal, rownames(BuffFinal)=="Infinity")$CoolTime * 1000
+  PMCool <- subset(ATKFinal, rownames(ATKFinal)=="PeaceMaker")$CoolTime * 1000
+  PMRemain <- max(0, PMCool - (DealCycle$Time[nrow(DealCycle)] - max(subset(DealCycle, DealCycle$Skills=="PeaceMaker")$Time)) - DealCycle$Time[1])
+  
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < InfTime + 500) {
+    if(UnsRemain==0) {
+      DealCycle <- DCATK(DealCycle, c("UnstableMemorizePre"), ATKFinal)
+      UnsRemain <- UnsCool - DealCycle$Time[1]
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+      DealCycle <- DCATK(DealCycle, c("UnstableMemorizeEnd"), ATKFinal)
+      UnsRemain <- UnsRemain - DealCycle$Time[1]
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+      DealCycle <- DCBuff(DealCycle, c("VengenceofAngel"), BuffFinal)
+      UnsRemain <- UnsRemain - DealCycle$Time[1]
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+      if(PMRemain==0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < InfTime & UnsDummy <= 5) {
+        DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+        UnsRemain <- max(0, UnsRemain - DealCycle$Time[1])
+        PMRemain <- PMCool - DealCycle$Time[1]
+      }
+      if(UnsDummy != 6) {
+        DealCycle <- DCATK(DealCycle, c("DivinePunishmentPre"), ATKFinal)
+        UnsRemain <- UnsRemain - DealCycle$Time[1]
+        PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        for(i in 1:5) {
+          DealCycle <- DCATK(DealCycle, c("DivinePunishment"), ATKFinal)
+          UnsRemain <- UnsRemain - DealCycle$Time[1]
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        }
+        DealCycle <- DCATK(DealCycle, c("DivinePunishmentEnd"), ATKFinal)
+        UnsRemain <- UnsRemain - DealCycle$Time[1]
+        PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+      }
+      UnsDummy <- UnsDummy + 1
+    } else if(PMRemain==0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < InfTime & UnsDummy <= 5) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      UnsRemain <- max(0, UnsRemain - DealCycle$Time[1])
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else {
+      DealCycle <- DCATK(DealCycle, c("AngelRay"), ATKFinal)
+      UnsRemain <- max(0, UnsRemain - DealCycle$Time[1])
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+    }
+  }
+  return(DealCycle)
+}
+BishopInfinityCycle2 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
+  PMCool <- subset(ATKFinal, rownames(ATKFinal)=="PeaceMaker")$CoolTime * 1000
+  PMRemain <- PMCool - subset(ATKFinal, rownames(ATKFinal)=="PeaceMaker")$Delay - subset(ATKFinal, rownames(ATKFinal)=="UnstableMemorizePre")$Delay - 
+              subset(ATKFinal, rownames(ATKFinal)=="UnstableMemorizeEnd")$Delay - subset(BuffFinal, rownames(BuffFinal)=="VengenceofAngel")$Delay
+  
+  DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
+  PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+  DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyesPart"), BuffFinal)
+  PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+  DealCycle <- DCBuff(DealCycle, c("UsefulCombatOrdersPart"), BuffFinal)
+  PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+  DealCycle <- DCBuff(DealCycle, c("EpicAdventure"), BuffFinal)
+  PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+  
+  DivinePunishmentPre <- c(12, 82.5)
+  HeavensDoor <- c(1)
+  SoulContractLink <- c(31)
+  AngelofLibra <- c(30)
+  
+  skills <- list(DivinePunishmentPre=DivinePunishmentPre, HeavensDoor=HeavensDoor, SoulContractLink=SoulContractLink, AngelofLibra=AngelofLibra)
+  
+  times <- c()
+  for(i in 1:length(skills)) {
+    times <- c(times, skills[[i]])
+  }
+  times <- unique(times)
+  times <- times[order(times, decreasing=T)]
+  
+  skilllist <- list()
+  for(i in 1:length(times)) {
+    skilllist[[i]] <- 1
+    for(j in 1:length(skills)) {
+      if(sum(skills[[j]]==times[[i]])==1) {
+        skilllist[[i]] <- c(skilllist[[i]], names(skills)[[j]])
+      }
+    }
+    skilllist[[i]] <- skilllist[[i]][-1]
+  }
+  names(skilllist) <- times
+  times <- times * 1000
+  
+  p <- 1
+  while(DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+    if(p <= length(times) & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] < times[p] + 500) {
+      for(j in 1:length(skilllist[[p]])) {
+        if(sum(rownames(ATKFinal)==skilllist[[p]][j])==1) {
+          DealCycle <- DCATK(DealCycle, skilllist[[p]][j], ATKFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          if(DealCycle$Skills[nrow(DealCycle)]=="DivinePunishmentPre") {
+            if(times[p]==80000) {
+              for(k in 1:25) {
+                DealCycle <- DCATK(DealCycle, "DivinePunishment", ATKFinal)
+                PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+              }
+              DealCycle <- DCATK(DealCycle, rep("DivinePunishmentEnd", 1), ATKFinal)
+              PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+            } else {
+              for(k in 1:40) {
+                DealCycle <- DCATK(DealCycle, "DivinePunishment", ATKFinal)
+                PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+              }
+              DealCycle <- DCATK(DealCycle, rep("DivinePunishmentEnd", 1), ATKFinal)
+              PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+            }
+          }
+        } else if(sum(rownames(BuffFinal)==skilllist[[p]][j])==1) {
+          DealCycle <- DCBuff(DealCycle, skilllist[[p]][j], BuffFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCSummoned(DealCycle, skilllist[[p]][j], SummonedFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        }
+      }
+      p <- p + 1
+    }
+    if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==0 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==1 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] > times[p] + 11000 &
+              DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==1 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] < times[p] + 2500 &
+              DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else {
+      DealCycle <- DCATK(DealCycle, "AngelRay", ATKFinal)
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+    }
+  }
+  return(DealCycle)
+}
+BishopInfinityCycle3 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
+  DealCycle <- DCBuff(DealCycle, c("VengenceofAngel", "MagicBooster", "AdvancedBless", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure"), BuffFinal)
+  DealCycle <- DCATK(DealCycle, c("PeaceMaker"), ATKFinal)
+  PMCool <- subset(ATKFinal, rownames(ATKFinal)=="PeaceMaker")$CoolTime * 1000
+  PMRemain <- PMCool - DealCycle$Time[1]
+  DealCycle <- DCSummoned(DealCycle, "Bahamut", SummonedFinal)
+  PMRemain <- PMCool - DealCycle$Time[1]
+  DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
+  PMRemain <- PMCool - DealCycle$Time[1]
+  
+  Restraint4 <- c(15)
+  DivinePunishmentPre <- c(12, 82.5)
+  HeavensDoor <- c(1)
+  MapleWarriors2 <- c(63)
+  SoulContractLink <- c(31)
+  AngelofLibra <- c(30)
+  Pray <- c(48)
+  
+  skills <- list(Restraint4=Restraint4, DivinePunishmentPre=DivinePunishmentPre, HeavensDoor=HeavensDoor, MapleWarriors2=MapleWarriors2, 
+                 SoulContractLink=SoulContractLink, AngelofLibra=AngelofLibra, Pray=Pray)
+  
+  times <- c()
+  for(i in 1:length(skills)) {
+    times <- c(times, skills[[i]])
+  }
+  times <- unique(times)
+  times <- times[order(times, decreasing=T)]
+  
+  skilllist <- list()
+  for(i in 1:length(times)) {
+    skilllist[[i]] <- 1
+    for(j in 1:length(skills)) {
+      if(sum(skills[[j]]==times[[i]])==1) {
+        skilllist[[i]] <- c(skilllist[[i]], names(skills)[[j]])
+      }
+    }
+    skilllist[[i]] <- skilllist[[i]][-1]
+  }
+  names(skilllist) <- times
+  times <- times * 1000
+  
+  p <- 1
+  while(DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+    if(p <= length(times) & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] < times[p] + 500) {
+      for(j in 1:length(skilllist[[p]])) {
+        if(sum(rownames(ATKFinal)==skilllist[[p]][j])==1) {
+          DealCycle <- DCATK(DealCycle, skilllist[[p]][j], ATKFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          if(DealCycle$Skills[nrow(DealCycle)]=="DivinePunishmentPre") {
+            if(times[p]==80000) {
+              for(k in 1:30) {
+                DealCycle <- DCATK(DealCycle, "DivinePunishment", ATKFinal)
+                PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+              }
+              DealCycle <- DCATK(DealCycle, rep("DivinePunishmentEnd", 1), ATKFinal)
+              PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+            } else {
+              for(k in 1:40) {
+                DealCycle <- DCATK(DealCycle, "DivinePunishment", ATKFinal)
+                PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+              }
+              DealCycle <- DCATK(DealCycle, rep("DivinePunishmentEnd", 1), ATKFinal)
+              PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+            }
+          }
+        } else if(sum(rownames(BuffFinal)==skilllist[[p]][j])==1) {
+          DealCycle <- DCBuff(DealCycle, skilllist[[p]][j], BuffFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCSummoned(DealCycle, skilllist[[p]][j], SummonedFinal)
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        }
+      }
+      p <- p + 1
+    }
+    if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==0 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==1 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] > times[p] + 11000 & 
+              DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else if(PMRemain==0 & sum("DivinePunishmentPre"==skilllist[[min(p, length(skilllist))]])==1 & DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] < times[p] + 2500 & 
+              DealCycle$Infinity[nrow(DealCycle)] - DealCycle$Time[1] >= 1580) {
+      DealCycle <- DCATK(DealCycle, "PeaceMaker", ATKFinal)
+      PMRemain <- PMCool - DealCycle$Time[1]
+    } else {
+      DealCycle <- DCATK(DealCycle, "AngelRay", ATKFinal)
+      PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+    }
+  }
+  return(DealCycle)
+}
 
+  
+BishopDealCycle <- BishopInfinityCycle(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal)
+BishopDealCycle <- BishopUnsCycle(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 
 ## Bishop Unstable
 Unsdata <- UnstableData(BishopDealCycle, BishopUnstable[12, 3], BuffFinal$Duration[2], BuffFinal$CoolTime[2], BuffFinal$Duration[6])
@@ -717,125 +867,23 @@ BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, BishopSpec$BuffDuration / 100, 0) +
   ifelse(BuffFinal$ServerLag==T, 3, 0)
 
-
-## BishopDealCycle - Unstable Infinity
-BishopDealCycle <- DCBuff(BishopDealCycle, c("Infinity", "MagicBooster", "AdvancedBless", "MapleSoldier", 
-                                             "UsefulSharpEyesPart", "UsefulCombatOrdersPart"), BuffFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 6)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("DivinePunishmentPre", "DivinePunishment", rep("DivinePunishmentLoop", 8), "DivinePunishmentEnd"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCBuff(BishopDealCycle, c("EpicAdventure"), BuffFinal) 
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 4)), ATKFinal)
-BishopDealCycle <- DCSummoned(BishopDealCycle, "AngelofLibra", SummonedFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 10)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c("PeaceMaker"), ATKFinal)
-BishopDealCycle <- DCATK(BishopDealCycle, c(rep("AngelRay", 21)), ATKFinal)
-
+BishopDealCycle <- BishopInfinityCycle2(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 BishopDealCycle <- DealCycleFinal(BishopDealCycle)
-BishopDealCycle <- RepATKCycle(BishopDealCycle, c("DivinePunishment"), 37, 0, ATKFinal)
-BishopDealCycle <- PeaceMakerCycle(BishopDealCycle, 3, ATKFinal, 8 + ServerLag)
+BishopDealCycle <- PeaceMakerCycle(BishopDealCycle, 3, ATKFinal, 8 + General$General$Serverlag)
 BishopDealCycle <- DCSpiderInMirror(BishopDealCycle, SummonedFinal)
 BishopDealCycle <- LibraCycle(BishopDealCycle)
 BishopDealCycle <- BishopUnstableCycle(BishopDealCycle, ATKFinal)
 BishopDealCycle <- BishopInfinity(BishopDealCycle, 6000, 70 + BishopSpec$SkillLv, ServerLag)
 
+
 DealCycle <- c("Skills", "Time", rownames(BishopBuff))
 BishopDealCycle2 <- t(rep(0, length(DealCycle)))
 colnames(BishopDealCycle2) <- DealCycle
 
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel", "MagicBooster", "AdvancedBless", "MapleSoldier", 
-                                             "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCSummoned(BishopDealCycle2, "Bahamut", SummonedFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("Infinity", "EpicAdventure", "SoulContractLink"), BuffFinal) 
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 12)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("DivinePunishmentPre", "DivinePunishment", rep("DivinePunishmentLoop", 8), "DivinePunishmentEnd"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 8)), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("MapleWarriors2"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 6)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("Pray"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 14)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 11)), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("SoulContractLink"), BuffFinal) 
-BishopDealCycle2 <- DCSummoned(BishopDealCycle2, "AngelofLibra", SummonedFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("AngelRay"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("AngelRay"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 15)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("Restraint4"), BuffFinal) 
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("DivinePunishmentPre", "DivinePunishment", rep("DivinePunishmentLoop", 8), "DivinePunishmentEnd"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("HeavensDoor"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 13)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("EpicAdventure"), BuffFinal) 
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 11)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("AngelRay"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 9)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("AngelRay"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("AngelRay"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 8)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 3)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 7)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 4)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("PeaceMaker"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 6)), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizePre"), ATKFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c("UnstableMemorizeEnd"), ATKFinal)
-BishopDealCycle2 <- DCBuff(BishopDealCycle2, c("VengenceofAngel"), BuffFinal)
-BishopDealCycle2 <- DCATK(BishopDealCycle2, c(rep("AngelRay", 7)), ATKFinal)
-
+BishopDealCycle2 <- BishopInfinityCycle3(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
+BishopDealCycle2 <- BishopUnsCycle(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
 BishopDealCycle2 <- DealCycleFinal(BishopDealCycle2)
-BishopDealCycle2 <- RepATKCycle(BishopDealCycle2, c("DivinePunishment"), 37, 0, ATKFinal)
-BishopDealCycle2 <- PeaceMakerCycle(BishopDealCycle2, 3, ATKFinal, 8 + ServerLag)
+BishopDealCycle2 <- PeaceMakerCycle(BishopDealCycle2, 3, ATKFinal, 8 + General$General$Serverlag)
 BishopDealCycle2 <- LibraCycle(BishopDealCycle2)
 BishopDealCycle2 <- BishopUnstableCycle(BishopDealCycle2, ATKFinal)
 BishopDealCycle2 <- BishopInfinity(BishopDealCycle2, 6000, 70 + BishopSpec$SkillLv, ServerLag)
@@ -845,28 +893,29 @@ BishopDealCycle2 <- BishopInfinity(BishopDealCycle2, 6000, 70 + BishopSpec$Skill
 BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, Unsdata)
 BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, Unsdata)
 
-BishopSpecOpt1 <- BishopOptimization1(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, UnionRemained, Unsdata)
+BishopSpecOpt1 <- BishopOptimization1(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BishopUnionRemained, Unsdata)
 BishopSpecOpt <- BishopSpec
 BishopSpecOpt$ATKP <- BishopSpecOpt$ATKP + BishopSpecOpt1$ATKP
 BishopSpecOpt$BDR <- BishopSpecOpt$BDR + BishopSpecOpt1$BDR
 BishopSpecOpt$IGR <- IGRCalc(c(BishopSpecOpt$IGR, BishopSpecOpt1$IGR))
 
-BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, HyperStatBase, BishopChrLv, BishopCRROver, Unsdata)
+BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BishopHyperStatBase, BishopBase$ChrLv, BishopBase$CRROver, Unsdata)
 BishopFinalDPM <- BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, Unsdata)
 BishopFinalDPMwithMax <- BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, Unsdata)
 
-DPM12338$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (211669.8 / 60000)
-DPM12338$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (211669.8 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (211669.8 / 60000)
+DPM12344$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (217267.5 / 60000)
+DPM12344$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (217267.5 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (217267.5 / 60000)
 
 ## PrayFDR Logic Needed
+## Divine Puninshment Stack Logic Needed
 
 BishopDamage <- BishopDealCalcGeneral(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
 Bishop40s <- data.frame(BishopDealCycle$Skills, BishopDealCycle$Time, BishopDealCycle$Restraint4, BishopDealCycle$Infinity, BishopDealCycle$InfinityFDR, BishopDamage)
 colnames(Bishop40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 
-DPM12338$Bishop[3] <- sum(Bishop40s$Damage[341:428]) ## 2,627,388,806,826
-DPM12338$Bishop[4] <- sum(Bishop40s$Damage[264:437]) ## 4,589,763,955,359
+DPM12344$Bishop[3] <- sum(Bishop40s$Damage[341:424]) 
+DPM12344$Bishop[4] <- sum(Bishop40s$Damage[257:424])
 
 BishopDamage2 <- BishopDealCalcGeneral(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
 
-BishopDealRatio(BishopDealCycle, BishopDealCycle2, BishopDamage, BishopDamage2, UnsData)
+BSDealRatio <- BishopDealRatio(BishopDealCycle, BishopDealCycle2, BishopDamage, BishopDamage2, UnsData)

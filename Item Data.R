@@ -617,7 +617,7 @@ for(i in PoYes) {
   if(i!=17 & i!=9) {
     Po <- Potential(c("U", "E", "E"), c("M", "M", "O"))
   } else if(i==9) {
-    Po <- Potential(c("L", "U", "U"), c("M", "M", "O"))
+    Po <- Potential(c("L", "U", "U"), c("M", "M", "M"))
   } else {Po <- Potential(c("L", "U", "U"), c("CDR", "M", "O"))}
   APo <- AddPotential(SpecSet1[i, 1], ChrInfo[1, 7], c("E", "R", "R"), c("MP", "ATK", "O"))
   SpecSet1[i, 9] <- SpecSet1[i, 9] + Po[1, 1] + APo[1, 1]

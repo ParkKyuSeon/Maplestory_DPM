@@ -2164,7 +2164,7 @@ CommonV <- function(class1, class2) {
   cmm1 <- c("AuraWeapon", "OverloadMana", "GuidedArrow", "VenomBurst", "LoadedDice")
   cmm3 <- c("BodyofSteel", "EtherealForm", "CriticalReinforce", "ReadyToDie", "OverDrive")
   
-  cls2 <- c("AdventureWarrior", "AdventureWizard", "AdventureBowman", "AdventureTheif", "AdventurePirate", 
+  cls2 <- c("AdventureWarrior", "AdventureWizard", "AdventureBowman", "AdventureThief", "AdventurePirate", 
             "CygnusKnights", "Heroes", "Resistance", "Demon", "Nova", "Lef", "Anima", "Transcedent", "Supernatural")
   cmm2 <- c("BlitzShield", "UnstableMemorize", "Evolve", "UltimateDarkSight", "PirateFlag", 
             "CygnusPhalanx", "FreudBlessing", "ResistanceLineInfantry", "CallMastema", "Pantheon", "MagicCircuitFullDrive", NA, NA, NA)
@@ -2330,8 +2330,13 @@ JobBase <- function(ChrInfo=ChrInfo,
   }
   JobData$UnionChrs <- UnionChr(UnionPreSet[[i]], Job, SpecSet$Basic$ChrLv)
   
-  JobData$SkillLv <- sum(AdeleCore[[3]][, 1]=="CombatOrders")
-  JobData$PSkillLv <- sum(AdeleCore[[3]][, 1]=="CombatOrders") + JobData$Ability$PassiveLv
+  JobData$SkillLv <- sum(CoreData[[3]][, 1]=="CombatOrders")
+  JobData$PSkillLv <- sum(CoreData[[3]][, 1]=="CombatOrders") + JobData$Ability$PassiveLv
+  
+  if(Job=="Palladin") {
+    JobData$SkillLv <- 2
+    JobData$PSkillLv <- 2 + JobData$Ability$PassiveLv
+  }
   
   if(CoolReduceHat==T) {
     JobData$ItemSet$MainStatP <- JobData$ItemSet$MainStatP + SpecSet$CoolReduceInfo$MainStatP[2]
@@ -2387,7 +2392,7 @@ JobSpec <- function(JobBase,
                  ifelse(UnionPreSet[[i]]$MapleM==F, 0, ifelse(UnionPreSet[[i]]$MapleMGrade=="SS", 4, 3)) - sum(UnionBase)
   CRRs <- CRRGet(UnionFields, JobBase$BuffDurationNeeded > 0, JobBase$BuffDurationNeeded, CRR, JobBase$CRROver)
   UnionBase <- UnionPlace(UnionFields - max(0, JobBase$BuffDurationNeeded - BuffDuration) - CRRs$Union, UnionBase, 
-                          max(0, JobBase$BuffDurationNeeded - BuffDuration), CRRs$Union, UnionStance)
+                          max(0, min(40, JobBase$BuffDurationNeeded - BuffDuration)), CRRs$Union, UnionStance)
   UnionBase$CDMR <- UnionBase$CDMR/2
   UnionBase$MainStat <- UnionBase$MainStat*5
   UnionBase$SubStat1 <- UnionBase$SubStat1*5

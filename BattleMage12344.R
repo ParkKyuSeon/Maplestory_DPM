@@ -65,7 +65,7 @@ BattleMageBase <- JobBase(ChrInfo=ChrInfo,
   DebuffAura <- data.frame(option, value)
   
   option <- factor(c("BDR", "CRR", "CDMR"), levels=PSkill)
-  value <- c(40 + BattleMageBase$SkillLv, 20 + ceiling(BattleMageBase$SkillLv/3), 8)
+  value <- c(40 + BattleMageBase$SkillLv, 20 + ceiling(BattleMageBase$SkillLv/3), 10)
   BattleRage <- data.frame(option, value)
   
   option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
@@ -284,7 +284,7 @@ BattleMageSpec <- BattleMageSpec$Spec
   
   option <- factor("IGR", levels=ASkill) 
   value <- c(20)
-  info <- c(825 + 33 * BattleMageCore[[2]][4, 2], 4, 0, NA, NA, NA, NA, F)
+  info <- c(800 + 32 * BattleMageCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
   info <- data.frame(AInfo, info)
   colnames(info) <- c("option", "value")
   DarkLightningAL <- rbind(data.frame(option, value), info)
@@ -639,7 +639,7 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DC2 <- DealCycle[1, ]
   for(i in 2:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("BlackMagicAltar", "DarkLightning"))==1) {
-      DealCycle$DarkLightningDebuff[i] <- ifelse(DealCycle$AbyssalLightning[i] > 0, 4, 1)
+      DealCycle$DarkLightningDebuff[i] <- ifelse(DealCycle$AbyssalLightning[i] > 0, 6, 1)
     } else if(sum(DealCycle$Skills[i]==c("DarkGenesis", "BattleKingBar1", "BattleKingBar2", "FinishBlow", "FinishBlowUA", "FinishBlowUAMOD"))==1) {
       if(DealCycle$DarkLightningDebuff[i-1] >= 1) {
         DealCycle$DarkLightningDebuff[i] <- DealCycle$DarkLightningDebuff[i-1] - 1
@@ -891,8 +891,8 @@ BattleMageSpecOpt2 <- Optimization2(BattleMageDealCycleReduction, ATKFinal, Buff
 BattleMageFinalDPM <- DealCalc(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 BattleMageFinalDPMwithMax <- DealCalcWithMaxDMR(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 
-DPM12338$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (405300 / 60000)
-DPM12338$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (405300 / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (405300 / 60000)
+DPM12344$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (405300 / 60000)
+DPM12344$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (405300 / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (405300 / 60000)
 
 BattleMageDealRatio <- DealRatio(BattleMageDealCycle, BattleMageFinalDPMwithMax)
 
@@ -902,7 +902,7 @@ colnames(BattleMageDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(BattleMageDealData, BattleMageDealData$R4>0)
 
 BattleMageRR <- BattleMageDealData[18:190, ]
-DPM12338$BattleMage[3] <- sum((BattleMageRR$Deal))
+DPM12344$BattleMage[3] <- sum((BattleMageRR$Deal))
 
 BattleMage40s <- BattleMageDealData[18:457, ]
-DPM12338$BattleMage[4] <- sum((BattleMage40s$Deal))
+DPM12344$BattleMage[4] <- sum((BattleMage40s$Deal))

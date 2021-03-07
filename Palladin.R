@@ -1,108 +1,35 @@
 ## Palladin - Data
 ## Palladin - VMatrix
-PasSkills <- c("Blast", "FinalAttack", "Sanctuary", "LinghtningCharge", "DevineCharge")
-PasLvs <- c(50, 50, 50, 50, 50)
-PasMP <- c(10, 10, 10, 5, 5)
-ActSkills <- c("HolyUnity", "BlessedHammer", "GrandCross", "MightyMjolnir", 
-               "AuraWeapon", "BodyofSteal", "MapleWarriors2", "SpiderInMirror")
-ActLvs <- c(25, 25, 25, 25, 25, 1, 25, 25)
-ActMP <- c(5, 5, 5, 5, 5, 5, 5, 5)
-UsefulSkills <- c("WindBooster", "SharpEyes")
-UsefulLvs <- c(20, 20)
-UsefulMP <- c(0, 0)
+PalladinCore <- MatrixSet(PasSkills=c("Blast", "FinalAttack", "Sanctuary", "LinghtningCharge", "DevineCharge"), 
+                          PasLvs=c(50, 50, 50, 50, 50), 
+                          PasMP=c(10, 10, 10, 5, 5), 
+                          ActSkills=c("HolyUnity", "BlessedHammer", "GrandCross", "MightyMjolnir", 
+                                      CommonV("Warrior", "Adventure")), 
+                          ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
+                          ActMP=c(5, 5, 5, 5, 5, 5, 0, 5, 5), 
+                          UsefulSkills=c("WindBooster", "SharpEyes"), 
+                          UsefulLvs=20, 
+                          UsefulMP=0, 
+                          SpecSet=SpecDefault)
 
-CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + length(UsefulSkills)
-if(CoreNumbers > Cores) {warning("Invalid Input")}
-
-MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP)
-if(MPs > MatrixPoints) {warning("Invalid Input")}
-
-PassiveCore <- data.frame(PasSkills, PasLvs + PasMP)
-colnames(PassiveCore) <- c("Passive", "Levels")
-
-ActiveCore <- data.frame(ActSkills, ActLvs + ActMP)
-colnames(ActiveCore) <- c("Active", "Levels")
-
-UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
-colnames(UsefulCore) <- c("Useful", "Levels")
-PalladinCore <- list(PassiveCore, ActiveCore, UsefulCore)
 
 
 ## Palladin - Basic Info
-PalladinClass1 <- ChrInfo[2, 2]
-PalladinClass2 <- ChrInfo[2, 3]
-PalladinMainStatType <- ChrInfo[2, 4]
-PalladinSubStat1Type <- ChrInfo[2, 5]
-PalladinChrLv <- ChrInfo[2, 7]
-PalladinUnionLv <- ChrInfo[2, 8]
-PalladinArcaneForce <- ChrInfo[2, 9]
-PalladinCharisma <- ChrInfo[2, 10]
-PalladinInsight <- ChrInfo[2, 11]
-PalladinSensibility <- ChrInfo[2, 12]
-PalladinBaseMastery <- ChrInfo[2, 13]
-PalladinCRROver <- F
-PalladinBuffDurationNeeded <- 0
+PalladinBase <- JobBase(ChrInfo=ChrInfo, 
+                        MobInfo=MobDefault,
+                        SpecSet=SpecDefault, 
+                        Job="Palladin",
+                        CoreData=PalladinCore, 
+                        MikhailLink=F, 
+                        OtherBuffDuration=0, 
+                        AbilList=c("BDR", "DisorderBDR"), 
+                        LinkList=c("AdventureWarrior", "Xenon", "DemonAvenger", "Phantom"), 
+                        MonsterLife=MLTypeS21, 
+                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandHammer", SpecDefault$WeaponType)[, 1:16],
+                        WeaponType=SpecDefault$WeaponType, 
+                        SubWeapon=SubWeapon[2, ], 
+                        Emblem=Emblem[1, ])
 
-PalladinAbility <- Abilities(c("BDR", "DisorderBDR"), c("L", "E"))
-
-PalladinLinkBase <- rbind(LinkBase)
-PalladinDisorder <- max(LinkBase$Disorder)
-AdventureThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(PalladinDisorder==T, (10+ServerLag)/20*18, 0), 0, 0, 0)
-Cadena <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(PalladinDisorder==T, 6, 0)+ifelse(PalladinChrLv>MobLv, 6, 0), 0, 0, 0)
-PalladinLinkBase <- rbind(LinkBase, AdventureWarrior, DemonAvenger, Phantom, Zero) ## Cygnus Check Needed
-PalladinLinkBase <- data.frame(PalladinLinkBase)
-LinkSet <- c()
-for(i in c(1:9, 11:13)) {
-  LinkSet[i] <- sum(PalladinLinkBase[, i]) 
-}
-LinkSet[10] <- IGRCalc(PalladinLinkBase[, 10])
-LinkSet <- data.frame(t(LinkSet))
-colnames(LinkSet) <- colnames(PalladinLinkBase)[1:13]
-rownames(LinkSet) <- c("Links")
-
-CommonSkillSet <- data.frame(t(colSums(CommonSkills)))
-
-MonsterLife <- colSums(MLTypeS21) ## IGR Logic Needed
-MonsterLife <- data.frame(t(MonsterLife))
-
-Dopings <- colSums(DopingSet) ## IGR Logic Needed
-Dopings <- data.frame(t(Dopings))
-
-Weapon <- rbind(WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandHammer", "AR")[, 1:16], SubWeapon[2, ], Emblem[1, ])
-rownames(Weapon) <- c("Weapon", "SubWeapon", "Emblem")
-colnames(Weapon) <- SubWeaponOption
-Weapon <- data.frame(Weapon)
-Weapon <- WeaponAddpotential(Weapon, c("U", "U", "U"), c("A", "A", "O"))
-
-Item <- rbind(SpecSet1, SetOption(SpecSet1, "AR"), PetSetOption(c("D", "D", "D")))
-ItemSet <- c()
-for(i in c(2:10, 17:19)) {
-  ItemSet[i] <- sum(Item[, i])
-}
-ItemSet[16] <- IGRCalc(Item[, 16])
-ItemSet <- data.frame(t(ItemSet))
-colnames(ItemSet) <- colnames(Item)
-rownames(ItemSet) <- c("Item")
-
-Specs <- c("MainStat", "SubStat1", "ATK", "ATKP", "IGR", "BDR", "CRR", "CDMR", "FDR", "ATKSpeed", "Mastery", "BuffDuration", 
-           "SummonedDuration", "ImmuneIgnore", "CoolTimeReset", "SkillLv", "PSkillLv", "CoolReduceP", "CoolReduce", "Disorder", "MainStatP")
-PalladinSpec <- data.frame(t(rep(0, 21)))
-colnames(PalladinSpec) <- Specs
-
-
-## Palladin - CombatOrders
-{option <- factor("SkillLv", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-CombatOrders <- rbind(data.frame(option, value), info)}
-PalladinBuff <- Buff(list(CombatOrders=CombatOrders))
-PalladinAllTimeBuff <- AllTimeBuff(PalladinBuff)
-
-PalladinSpec$SkillLv <- PalladinAllTimeBuff$SkillLv
-PalladinSpec$PSkillLv <- PalladinAllTimeBuff$SkillLv + PalladinAbility$PassiveLv
-PalladinSpec$MainStatP <- (100 + ItemSet$MainStatP + ItemSet$AllstatP + sum(Weapon$AllstatP) + Dopings$AllstatP + LinkSet$AllstatP) / 100
 
 
 ## Palladin - Passive
@@ -145,9 +72,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WeaponBooster <- rbind(data.frame(option, value), info)
 
+option <- factor("SkillLv", levels=BSkill)
+value <- c(2)
+info <- c(200, NA, 0, T, NA, NA, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+CombatOrders <- rbind(data.frame(option, value), info)
+
 option <- factor("IGR", levels=BSkill)
 value <- c(50)
-info <- c(80, NA, 1080, F, NA, NA, F)
+info <- c(80, NA, 720, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Threat <- rbind(data.frame(option, value), info)
@@ -160,8 +94,8 @@ colnames(info) <- c("option", "value")
 ElementalForce <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
-value <- c(floor((PalladinChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(PalladinSpec$SkillLv/2))))
-info <- c(900 + 30 * PalladinSpec$SkillLv, NA, 0, T, NA, NA, T)
+value <- c(floor((PalladinChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(PalladinBase$SkillLv/2))))
+info <- c(900 + 30 * PalladinBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
@@ -202,7 +136,7 @@ colnames(info) <- c("option", "value")
 HolyUnity <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * PalladinCore[[2]][7, 2]) * MapleSoldier[1, 2]) * PalladinSpec$MainStatP), 5 + floor(PalladinCore[[2]][7, 2]/2))
+value <- c(floor(((1 + 0.1 * PalladinCore[[2]][8, 2]) * MapleSoldier[1, 2]) * PalladinBase$MainStatP), 5 + floor(PalladinCore[[2]][8, 2]/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -217,77 +151,24 @@ PalladinAllTimeBuff <- AllTimeBuff(PalladinBuff)
 
 
 ## Palladin - Union & HyperStat & SoulWeapon
-PalladinSpec$CRR <- sum(Weapon$CRR) + ItemSet$CRR + MonsterLife$CRR + Dopings$CRR + LinkSet$CRR + PalladinPassive$CRR + 
-  (Union8000Chr$CRR) + PalladinAbility$CRR + PalladinAllTimeBuff$CRR + 5
-PalladinSpec$CRR <- ifelse(PalladinCRROver==T, PalladinSpec$CRR, min(PalladinSpec$CRR, 100))
-PalladinSpec$BuffDuration <- MonsterLife$BuffDuration + PalladinPassive$BuffDuration + Union8000Chr$BuffDuration + floor(PalladinSensibility/10) + PalladinAbility$BuffDuration
+PalladinSpec <- JobSpec(JobBase=PalladinBase, 
+                      Passive=PalladinPassive, 
+                      AllTimeBuff=PalladinAllTimeBuff, 
+                      MobInfo=MobDefault, 
+                      SpecSet=SpecDefault, 
+                      WeaponName="TwohandHammer", 
+                      UnionStance=0)
 
-UnionFieldOption <- c("CDMR", "CRR", "BDR", "IGR", "BuffDuration", "MainStat", "SubStat1", "SubStat2", "ATK", "Stance")
-
-UnionBase <- data.frame(t(c(40, 0, 0, 0, 0, 5, 1, 1, 5, 0)))
-colnames(UnionBase) <- UnionFieldOption
-UnionFields <- ifelse(PalladinUnionLv==8000, FieldNumbers[2], FieldNumbers[1]) - sum(UnionBase)
-
-CRRs <- CRRGet(UnionFields, PalladinBuffDurationNeeded, PalladinSpec$BuffDuration, PalladinSpec$CRR, PalladinCRROver)
-UnionBase <- UnionPlace(UnionFields - max(0, PalladinBuffDurationNeeded - PalladinSpec$BuffDuration) - CRRs$Union, UnionBase, 
-                        max(0, PalladinBuffDurationNeeded - PalladinSpec$BuffDuration), CRRs$Union)
-UnionBase$CDMR <- UnionBase$CDMR/2
-UnionBase$MainStat <- UnionBase$MainStat*5
-UnionBase$SubStat1 <- UnionBase$SubStat1*5
-UnionBase$SubStat2 <- UnionBase$SubStat2*5
-UnionRemained <- ifelse(PalladinUnionLv==8000, FieldNumbers[2], FieldNumbers[1]) - UnionBase$CDMR * 2 - UnionBase$CRR - UnionBase$BuffDuration - UnionBase$MainStat / 5 - UnionBase$SubStat1 / 5 - 
-  UnionBase$SubStat2 / 5 - UnionBase$ATK - UnionBase$Stance
-
-HyperStatBase <- data.frame(t(c(0, 0, 0, 10, 10, 10, ifelse(CRRs$Hyper<=5, CRRs$Hyper, 5+(CRRs$Hyper-5)/2), 10, 0)))
-colnames(HyperStatBase) <- colnames(HyperStats)[2:10]
-HyperSP <- 0
-for(i in 1:9) {
-  lvs <- HyperStatBase[1, i]
-  HyperStatBase[1, i] <- ifelse(lvs==0, 0, sum(HyperStats[1:lvs, i+1]))
-  HyperSP <- HyperSP + ifelse(lvs==0, 0, sum(HyperStats[1:lvs, 1]))
-}
-
-SoulWeaponOptions <- c("ATK", "ATKP", "CRR")
-SoulWeapon <- data.frame(t(c(20, ifelse(CRRs[1, 3]==0, 3, 0), ifelse(CRRs[1, 3]==12, 12, 0))))
-colnames(SoulWeapon) <- SoulWeaponOptions
-
-
-## Palladin Final Specs W/O UnionBDR&IGR, HyperStatAlpha, Potential
-PalladinSpec$MainStat <- floor((sum(Weapon$MainStat) + ItemSet$MainStat + MonsterLife$STR + Dopings$MainStat + LinkSet$MainStat + PalladinPassive$MainStat + 
-  PalladinAllTimeBuff$MainStat + CommonSkillSet$MainStat + UnionBase$MainStat + 18 + 5 * PalladinChrLv) * (100 + ItemSet$MainStatP + ItemSet$AllstatP + sum(Weapon$AllstatP) + 
-  Dopings$AllstatP + LinkSet$AllstatP) / 100) + 10 * PalladinArcaneForce + Union8000Chr$STR + 20
-PalladinSpec$SubStat1 <- floor((sum(Weapon$SubStat1) + ItemSet$SubStat1 + MonsterLife$DEX + Dopings$SubStat1 + LinkSet$SubStat1 + PalladinPassive$SubStat1 + 
-  PalladinAllTimeBuff$SubStat1 + CommonSkillSet$SubStat1 + UnionBase$SubStat1 + 4) * (100 + ItemSet$AllstatP + sum(Weapon$AllstatP) + Dopings$AllstatP + LinkSet$AllstatP) / 100) + 
-  Union8000Chr$DEX
-PalladinSpec$ATK <- sum(Weapon$ATK) + ItemSet$ATK + MonsterLife$ATK + Dopings$ATK + LinkSet$ATK + PalladinPassive$ATK + Union8000Chr$ATK + PalladinAbility$CRR + 
-  PalladinAllTimeBuff$ATK + CommonSkillSet$ATK + UnionBase$ATK + SoulWeapon$ATK
-PalladinSpec$ATKP <- sum(Weapon$ATKP) + PalladinPassive$ATKP + PalladinAllTimeBuff$ATKP + CommonSkillSet$ATKP + SoulWeapon$ATKP
-PalladinSpec$IGR <- IGRCalc(c(IGRCalc(c(Weapon$IGR)), ItemSet$IGR, MonsterLife$IGR, Dopings$IGR, LinkSet$IGR, PalladinPassive$IGR, Union8000Chr$IGR, floor(PalladinCharisma/5)/2, 
-  PalladinAllTimeBuff$IGR, HyperStatBase$IGR))
-PalladinSpec$BDR <- sum(Weapon$BDR) + ItemSet$BDR + MonsterLife$BDR + Dopings$BDR + LinkSet$BDR + PalladinPassive$BDR + Union8000Chr$BDR + PalladinAbility$BDR + PalladinAbility$DisorderBDR + 
-  PalladinAllTimeBuff$BDR + HyperStatBase$BDR + HyperStatBase$DMR
-PalladinSpec$CRR <- sum(Weapon$CRR) + ItemSet$CRR + MonsterLife$CRR + Dopings$CRR + LinkSet$CRR + PalladinPassive$CRR + 
-  (Union8000Chr$CRR + ifelse(PalladinChrLv>=250, 1, 0)) + PalladinAbility$CRR + PalladinAllTimeBuff$CRR + 5
-PalladinSpec$CRR <- ifelse(PalladinCRROver==T, PalladinSpec$CRR + rowSums(CRRs), min(PalladinSpec$CRR + rowSums(CRRs), 100))
-PalladinSpec$CDMR <- sum(Weapon$CDMR) + ItemSet$CDMR + MonsterLife$CDMR + Dopings$CDMR + LinkSet$CDMR + PalladinPassive$CDMR + PalladinAllTimeBuff$CDMR + Union8000Chr$CDMR +
-  HyperStatBase$CDMR + UnionBase$CDMR
-PalladinSpec$FDR <- FDRCalc(c(PalladinPassive$FDR, PalladinAllTimeBuff$FDR, ArcaneForceFDR(PalladinArcaneForce, MapArc), LevelFDR(PalladinChrLv, MobLv), 
-  (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandHammer", "AR")[19]*100-100)))
-PalladinSpec$ATKSpeed <- max(WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandHammer", "AR")[17] - Dopings$ATKSpeed - PalladinAllTimeBuff$ATKSpeed - PalladinPassive$ATKSpeed, 2)
-PalladinSpec$Mastery <- min(PalladinBaseMastery + PalladinPassive$Mastery, 95)
-PalladinSpec$BuffDuration <- PalladinSpec$BuffDuration + UnionBase$BuffDuration
-PalladinSpec$SummonedDuration <- MonsterLife$SummonedDuration + PalladinPassive$SummonDuration + Union8000Chr$SummonedDuration
-PalladinSpec$ImmuneIgnore <- PalladinPassive$ImmuneIgnore + floor(PalladinInsight/10)/2 + PalladinAllTimeBuff$ImmuneIgnore
-PalladinSpec$CoolTimeReset <- MonsterLife$CoolTimeReset + PalladinPassive$CoolTimeReset + PalladinAbility$CoolTimeReset
-PalladinSpec$CoolReduceP <- Union8000Chr$CoolReduce
-PalladinSpec$CoolReduce <- 0
-PalladinSpec$Disorder <- max(PalladinLinkBase$Disorder, PalladinPassive$Disorder, PalladinAllTimeBuff$Disorder)
+PalladinUnionRemained <- PalladinSpec$UnionRemained
+PalladinHyperStatBase <- PalladinSpec$HyperStatBase
+PalladinCoolReduceType <- PalladinSpec$CoolReduceType
+PalladinSpec <- PalladinSpec$Spec
 
 
 ## Palladin - Spider In Mirror
 {option <- factor(levels=ASkill)
 value <- c()
-info <- c(450 + 18 * PalladinCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
+info <- c(450 + 18 * PalladinCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror <- rbind(data.frame(option, value), info) 
@@ -301,35 +182,35 @@ SpiderInMirrorStart <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][8, 2], 8, 0, 0, 50, 250, F, T, F, F)
+info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror1 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][8, 2], 8, 0, 900, 50, 250, F, T, F, F)
+info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][8, 2], 8, 0, 850, 50, 250, F, T, F, F)
+info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror3 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][8, 2], 8, 0, 750, 50, 250, F, T, F, F)
+info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror4 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][8, 2], 8, 0, 650, 50, 250, F, T, F, F)
+info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SpiderInMirror5 <- rbind(data.frame(option, value), info)
@@ -387,14 +268,14 @@ GrandCrossPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(175 + 7 * PalladinCore[[2]][3, 2], 12, 3500, 270, 150, T, F, F)
+info <- c(175 + 7 * PalladinCore[[2]][3, 2], 12, 2600, 210, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(300 + 12 * PalladinCore[[2]][3, 2], 12, 6500, 150, 150, T, F, F)
+info <- c(300 + 12 * PalladinCore[[2]][3, 2], 12, 6050, 150, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossBig <- rbind(data.frame(option, value), info)
@@ -471,83 +352,239 @@ DealCycle <- c("Skills", "Time", rownames(PalladinBuff))
 PalladinDealCycle <- t(rep(0, length(DealCycle)))
 colnames(PalladinDealCycle) <- DealCycle
 
-{PalladinDealCycle <- DCBuff(PalladinDealCycle, c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", 
-                                                 "UsefulSharpEyes", "UsefulWindBooster"), BuffFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("SpiderInMirror"), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("Threat", "AuraWeaponBuff", "MapleWarriors2"), BuffFinal) 
-PalladinDealCycle <- DCSummoned(PalladinDealCycle, Skill="BlessedHammerBig", SummonedFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("EpicAdventure", "SoulContractLink", "HolyUnity", "Restraint4"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("MightyMjolnir", "MightyMjolnirExplosion", "GrandCrossPre", "GrandCrossSmall", "GrandCrossBig", "GrandCrossEnd", 
-                                                "MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 15)), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("Sanctuary", "DivineCharge", rep("Blast", 5), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 14), "MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 15), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("Blast"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("Blast"), ATKFinal)
-PalladinDealCycle <- DCSummoned(PalladinDealCycle, Skill="BlessedHammerBig", SummonedFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 3), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 7), "LightningCharge", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 15), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("Threat"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 14)), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("SoulContractLink"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary", rep("Blast", 2), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 12), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 10), "DivineCharge", rep("Blast", 4), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 10)), ATKFinal)
-PalladinDealCycle <- DCSummoned(PalladinDealCycle, Skill="BlessedHammerBig", SummonedFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("EpicAdventure", "HolyUnity"), BuffFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("MightyMjolnir", "MightyMjolnirExplosion", rep("Blast", 4), "Sanctuary", "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 14), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 6), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 7), "LightningCharge", rep("Blast", 7), "Sanctuary", "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8)), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("Threat"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 4), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 13), "DivineCharge"), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("WeaponBooster", "CombatOrders", "ElementalForce", "UsefulSharpEyes", "UsefulWindBooster", 
-                                                 "AuraWeaponBuff", "MapleWarriors2"), BuffFinal)
-PalladinDealCycle <- DCSummoned(PalladinDealCycle, Skill="BlessedHammerBig", SummonedFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("SoulContractLink", "Restraint4"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("MightyMjolnir", "MightyMjolnirExplosion", "GrandCrossPre", "GrandCrossSmall", "GrandCrossBig", "GrandCrossEnd", 
-                                                "MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("LightningCharge", rep("Blast", 7)), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 14), "MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 15), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 6), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 7), "DivineCharge", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("Blast"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("Blast"), ATKFinal)
-PalladinDealCycle <- DCSummoned(PalladinDealCycle, Skill="BlessedHammerBig", SummonedFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("HolyUnity"), BuffFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8)), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("Threat", "EpicAdventure"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 15), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 15), "LightningCharge"), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("SoulContractLink"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("MightyMjolnir", "MightyMjolnirExplosion", "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 10), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 4), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 17), "Sanctuary", "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 6)), ATKFinal)
-PalladinDealCycle <- DCSummoned(PalladinDealCycle, Skill="BlessedHammerBig", SummonedFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 7), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8), "DivineCharge", "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 5), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 16), "Sanctuary", "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCBuff(PalladinDealCycle, c("Threat"), BuffFinal) 
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 12), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 8), "MightyMjolnir", "MightyMjolnirExplosion"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c(rep("Blast", 6), "Sanctuary"), ATKFinal)
-PalladinDealCycle <- DCATK(PalladinDealCycle, c("LightningCharge", rep("Blast", 10)), ATKFinal)
 
-PalladinDealCycle}
+PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
+                          Period=c(150, 180), CycleTime=360) {
+  BuffSummonedPrior <- c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", "UsefulSharpEyes", "UsefulWindBooster", "EpicAdventure", 
+                         "Threat", "AuraWeaponBuff", "MapleWarriors2", "BlessedHammerBig", "SoulContractLink", "HolyUnity", "Restraint4")
+  Times150 <- c()
+  Times180 <- c(1, 1, 1, 1, 1, 1, 0, 2.5, 1, 1, 3, 2, 1.5, 1)
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  for(i in 1:length(BuffSummonedPrior)) {
+    if(Period==150) {
+      SubTime[i] <- SubTime[i] / ifelse(Times150[i]==0, Inf, Times150[i])
+    } else if(Period==180) {
+      SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
+    }
+  }
+  
+  SubTimeUniques <- unique(SubTime)
+  SubTimeUniques <- SubTimeUniques[SubTimeUniques > 0]
+  TimeTypes <- c()
+  for(i in 1:length(SubTimeUniques)) {
+    Time <- 0 ; r <- 1
+    while(Time < TotalTime) {
+      Time <- SubTimeUniques[i] * r
+      r <- r + 1
+      TimeTypes <- c(TimeTypes, Time)
+    }
+  }
+  TimeTypes <- TimeTypes[TimeTypes < TotalTime]
+  TimeTypes <- unique(TimeTypes)
+  TimeTypes <- TimeTypes[order(TimeTypes)]
+  
+  Buffs <- data.frame(Buff=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  Buffs <- subset(Buffs, Buffs$SubTime > 0)
+  
+  BuffList <- list()
+  BuffList[[1]] <- BuffSummonedPrior
+  for(i in 1:length(TimeTypes)) {
+    s <- c()
+    for(j in 1:nrow(Buffs)) {
+      if(round(TimeTypes[i] / Buffs[j, 2]) == TimeTypes[i] / Buffs[j, 2]) {
+        s <- c(s, Buffs[j, 1])
+      }
+    }
+    BuffList[[i+1]] <- s
+  }
+  
+  DelayDataB <- data.frame(Name=rownames(BuffFinal), Delay=BuffFinal$Delay)
+  DelayDataS <- data.frame(Name=rownames(SummonedFinal), Delay=SummonedFinal$Delay)
+  DelayData <- rbind(DelayDataB, DelayDataS)
+  
+  BuffDelays <- list()
+  for(i in 1:length(BuffList)) {
+    t <- c()
+    for(j in 1:length(BuffList[[i]])) {
+      for(k in 1:nrow(DelayData)) {
+        if(DelayData$Name[k]==BuffList[[i]][j]) {
+          t <- c(t, k)
+        }
+      }
+    }
+    BuffDelays[[i]] <- DelayData$Delay[t]
+  } 
 
+  TotalTime <- TotalTime * 1000
+  DealCycle <- PreDealCycle
+  for(i in 1:length(BuffList[[1]])) {
+    if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
+      DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
+      if(BuffList[[1]][i]=="EpicAdventure") {
+        DealCycle <- DCATK(DealCycle, "DivineCharge", ATKFinal)
+        DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
+      }
+    } else {
+      DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
+    }
+  }
+  
+  SubTimeList <- data.frame(Skills=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  NoSubTime <- subset(SubTimeList, SubTimeList$SubTime==0)$Skills
+  NoSubTimeBuff <- c() ; NoSubTimeSummoned <- c()
+  for(i in 1:length(NoSubTime)) {
+    NoSubTimeBuff <- c(NoSubTimeBuff, NoSubTime[i])
+  }
+  ColNums <- c()
+  for(i in 1:length(NoSubTimeBuff)) {
+    for(j in 1:length(colnames(DealCycle))) {
+      if(NoSubTimeBuff[i]==colnames(DealCycle)[j]) {
+        ColNums[i] <- j
+      }
+    }
+  }
+  ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - (DealCycle$Time[nrow(DealCycle)] - subset(DealCycle, DealCycle$Skills=="DivineCharge")$Time + DealCycle$Time[1])
+  STCool <- subset(ATKFinal, rownames(ATKFinal)=="Sanctuary")$CoolTime * 1000
+  MMCool <- subset(ATKFinal, rownames(ATKFinal)=="MightyMjolnir")$CoolTime * 1000
+  STRemain <- 0 ; MMRemain <- 0
+  GCSubTime <- Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  BuffList[[length(BuffList)+1]] <- BuffList[[1]]
+  BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  
+  for(k in 2:length(BuffList)) {
+    CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
+    BuffEndTime <- c()
+    for(i in 1:length(BuffList[[k]])) {
+      a <- subset(DealCycle, BuffList[[k]][i]==DealCycle$Skills)
+      a <- rbind(a, subset(DealCycle, paste(BuffList[[k]][i], "Summoned", sep="")==DealCycle$Skills))
+      for(j in 1:nrow(CycleBuffList)) {
+        if(CycleBuffList$Skills[j]==BuffList[[k]][i]) {
+          Idx <- j
+          break
+        }
+      }
+      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+        sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
+    }
+    BuffEndTime <- max(BuffEndTime)
+    BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
+    while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
+      for(i in 1:length(ColNums)) {
+        if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
+          DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+        }
+      }
+      ## Grand Cross
+      if(nrow(subset(DealCycle, DealCycle$Skills=="GrandCrossPre"))==0) {
+        DealCycle <- DCATK(DealCycle, "MightyMjolnir", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "MightyMjolnirExplosion", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossPre", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossSmall", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossBig", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossEnd", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        STRemain <- 0 ; MMRemain <- 0
+      } else if(nrow(subset(DealCycle, DealCycle$Skills=="GrandCrossPre")) > 0 & 
+                DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="GrandCrossPre")$Time) > GCSubTime * 1000) {
+        DealCycle <- DCATK(DealCycle, "MightyMjolnir", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "MightyMjolnirExplosion", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossPre", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossSmall", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossBig", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "GrandCrossEnd", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        STRemain <- 0 ; MMRemain <- 0
+      } 
+      ## Charge Buff
+      else if(ChargeBuffRemain <= 2000) {
+        if(nrow(subset(DealCycle, DealCycle$Skills=="LightningCharge"))==0) {
+          DealCycle <- DCATK(DealCycle, "LightningCharge", ATKFinal)
+          ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - DealCycle$Time[1]
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+        } else if(max(subset(DealCycle, DealCycle$Skills=="DivineCharge")$Time) > max(subset(DealCycle, DealCycle$Skills=="LightningCharge")$Time)) {
+          DealCycle <- DCATK(DealCycle, "LightningCharge", ATKFinal)
+          ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - DealCycle$Time[1]
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCATK(DealCycle, "DivineCharge", ATKFinal)
+          ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - DealCycle$Time[1]
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+        }
+      }
+      ## Mighty Mjolnir
+      else if(MMRemain==0) {
+        DealCycle <- DCATK(DealCycle, "MightyMjolnir", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "MightyMjolnirExplosion", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
+        if(sum(BuffList[[k]]=="Restraint4")==1 & BuffEndTime - DealCycle$Time[nrow(DealCycle)] >= 20000 & BuffEndTime - DealCycle$Time[nrow(DealCycle)] <= 35000) {
+          MMRemain <- BuffEndTime - DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[1]
+        } else {
+          MMRemain <- MMCool - DealCycle$Time[1]
+        }
+      }
+      ## Sanctuary
+      else if(STRemain==0) {
+        DealCycle <- DCATK(DealCycle, "Sanctuary", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+        STRemain <- STCool - DealCycle$Time[1]
+      }
+      ## Blast
+      else {
+        DealCycle <- DCATK(DealCycle, "Blast", ATKFinal)
+        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
+      }
+    }
+    
+    if(k != length(BuffList)) {
+      for(i in 1:length(BuffList[[k]])) {
+        if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
+          DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
+          ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
+          ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
+        }
+      }
+    }
+  }
+  
+  return(DealCycle)
+}
+  
+
+
+PalladinDealCycle <- PalladinCycle(PreDealCycle=PalladinDealCycle, 
+                                   ATKFinal=ATKFinal,
+                                   BuffFinal=BuffFinal, 
+                                   SummonedFinal=SummonedFinal, 
+                                   Spec=PalladinSpec,
+                                   Period=180, 
+                                   CycleTime=360)
 PalladinDealCycle <- DealCycleFinal(PalladinDealCycle)
 PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("MightyMjolnir"), 4, 630, ATKFinal)
 PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("MightyMjolnirExplosion"), 4, 630, ATKFinal)
@@ -560,28 +597,30 @@ PalladinDealCycle <- AuraWeaponCycle(PalladinDealCycle)
 PalladinDealCycle <- DCSpiderInMirror(PalladinDealCycle, SummonedFinal)
 PalladinDealCycleReduction <- DealCycleReduction(PalladinDealCycle)
 
+
+## Palladin - Deal Calc
 DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpec)
 
-PalladinSpecOpt1 <- Optimization1(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpec, UnionRemained)
+PalladinSpecOpt1 <- Optimization1(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpec, PalladinUnionRemained)
 PalladinSpecOpt <- PalladinSpec
 PalladinSpecOpt$ATKP <- PalladinSpecOpt$ATKP + PalladinSpecOpt1$ATKP
 PalladinSpecOpt$BDR <- PalladinSpecOpt$BDR + PalladinSpecOpt1$BDR
 PalladinSpecOpt$IGR <- IGRCalc(c(PalladinSpecOpt$IGR, PalladinSpecOpt1$IGR))
 
-PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt, HyperStatBase, PalladinChrLv, PalladinCRROver)
+PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt, PalladinHyperStatBase, PalladinBase$ChrLv, PalladinBase$CRROver)
 PalladinFinalDPM <- DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 PalladinFinalDPMwithMax <- DealCalcWithMaxDMR(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 
-DPM12338$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (345330 / 60000)
-DPM12338$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (345330 / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (345330 / 60000)
+DPM12344$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (345740 / 60000)
+DPM12344$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (345740 / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (345740 / 60000)
 
 PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time, PalladinDealCycle$Restraint4, PalladinFinalDPMwithMax)
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
 
-PalladinRR <- PalladinDealData[25:199, ]
-DPM12338$Palladin[3] <- sum((PalladinRR$Deal)) ## 3,519,543,612,093
+PalladinRR <- PalladinDealData[26:211, ]
+DPM12344$Palladin[3] <- sum((PalladinRR$Deal))
 
-Palladin40s <- PalladinDealData[18:367, ]
-DPM12338$Palladin[4] <- sum((Palladin40s$Deal)) ## 5,506,647,320,042
+Palladin40s <- PalladinDealData[26:375, ]
+DPM12344$Palladin[4] <- sum((Palladin40s$Deal))
 
-DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)
+PalladinDealRatio <- DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)

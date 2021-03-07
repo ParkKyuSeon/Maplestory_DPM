@@ -206,10 +206,10 @@ BlessofCygnus <- rbind(data.frame(option, value), info)}
 
 
 StrikerBuff <- Buff(list(ElementLightning=ElementLightning, KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, ArcCharger=ArcCharger, WindBooster=WindBooster, TyphoonBuff=TyphoonBuff, 
-                             GloryofGardians=GloryofGardians, PrimalBolt=PrimalBolt, LightningStack=LightningStack, LinkMastery=LinkMastery, 
-                             UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, LightningCascadeBuff=LightningCascadeBuff, LightningSpearMultistrikeBuff=LightningSpearMultistrikeBuff, 
-                             OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, LuckyDice5=LuckyDice5, 
-                             BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+                         GloryofGardians=GloryofGardians, PrimalBolt=PrimalBolt, LightningStack=LightningStack, LinkMastery=LinkMastery, 
+                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, LightningCascadeBuff=LightningCascadeBuff, 
+                         LightningSpearMultistrikeBuff=LightningSpearMultistrikeBuff, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, LuckyDice5=LuckyDice5, 
+                         BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 ## PetBuff : ElementLightning, KnuckleBooster, WindBooster
 StrikerAllTimeBuff <- AllTimeBuff(StrikerBuff)
 
@@ -368,13 +368,13 @@ LightningSpearMultistrikeLightning <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(725 + 29 * StrikerCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(725 + 29 * StrikerCore[[2]][4, 2], 6, 0, 180, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLastLightning <- rbind(data.frame(option, value), info)}
 
-StrikerATK <- Attack(list(Annihilate=Annihilate, Thunderbolt=Thunderbolt, Typhoon=Typhoon, DeepRising=DeepRising, LightningCascade=LightningCascade, SharkTorpedo=SharkTorpedo, 
-                          LightningGodSpearStrike=LightningGodSpearStrike, LightningGodSpearStrikeShock=LightningGodSpearStrikeShock, LightningSpearMultistrike=LightningSpearMultistrike, 
+StrikerATK <- Attack(list(Annihilate=Annihilate, Thunderbolt=Thunderbolt, Typhoon=Typhoon, DeepRising=DeepRising, LightningCascade=LightningCascade, 
+                          SharkTorpedo=SharkTorpedo, LightningGodSpearStrike=LightningGodSpearStrike, LightningGodSpearStrikeShock=LightningGodSpearStrikeShock, LightningSpearMultistrike=LightningSpearMultistrike, 
                           LightningSpearMultistrikeLast=LightningSpearMultistrikeLast, LightningSpearMultistrikeLightning=LightningSpearMultistrikeLightning, 
                           LightningSpearMultistrikeLastLightning=LightningSpearMultistrikeLastLightning, SpiderInMirror=SpiderInMirror))
 
@@ -417,7 +417,7 @@ StrikerSkipATK$Typhoon <- c(T, T, F, T, F, T, F, F, T, T, F, F, F)
 StrikerSkipATK$DeepRising <- c(T, T, T, F, F, T, F, F, T, T, F, F, F)
 StrikerSkipATK$SharkTorpedo <- c(T, T, T, T, F, F, F, F, T, T, F, F, F)
 StrikerSkipATK$LightningSpearMultistrike <- c(T, T, T, T, F, T, F, F, T, T, F, F, F)
-StrikerSkipATK$LightningSpearMultistrikeLast <- c(T, T, T, T, F, T, F, F, T, T, F, F, F)
+StrikerSkipATK$LightningSpearMultistrikeLast <- c(T, T, T, T, F, T, F, F, T, F, F, F, F)
 StrikerSkipATK$SkippedDelay <- c(Delay(630, StrikerSpec$ATKSpeed), Delay(690, StrikerSpec$ATKSpeed), Delay(540, StrikerSpec$ATKSpeed), Delay(540, StrikerSpec$ATKSpeed), 0, 
                                  Delay(480, StrikerSpec$ATKSpeed), 0, 0, Delay(300, StrikerSpec$ATKSpeed), Delay(600, StrikerSpec$ATKSpeed), 0, 0, 0)
 StrikerSkipATK <- subset(StrikerSkipATK, StrikerSkipATK$SkippedDelay>0)
@@ -753,6 +753,8 @@ StrikerAddATK <- function(DealCycle, ATKFinal, SummonedFinal) {
   EndTime <- subset(DealCycle, DealCycle$Skills=="End")$Time
   DealCycle <- DealCycle[DealCycle$Time <= EndTime, ]
   
+  DealCycle <- RepATKCycle(DealCycle, "LightningSpearMultistrikeLastLightning", 3, 0, ATKFinal)
+  
   ## Lightning Cascade (Sinnoehapil) - Lightning
   LC <- subset(DealCycle, DealCycle$Skills=="LightningCascadeBuff")
   Ind <- rownames(LC)
@@ -874,8 +876,8 @@ StrikerSpecOpt2 <- StrikerOptimization2(StrikerDealCycleReduction, ATKFinal, Buf
 StrikerFinalDPM <- StrikerDealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 StrikerFinalDPMwithMax <- StrikerDealCalcWithMaxDMR(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 
-DPM12338$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (246090 / 60000)
-DPM12338$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (246090 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (246090 / 60000)
+DPM12344$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (246090 / 60000)
+DPM12344$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (246090 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (246090 / 60000)
 
 StrikerDealRatio <- DealRatio(StrikerDealCycle, StrikerFinalDPMwithMax)
 
@@ -884,8 +886,8 @@ colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(StrikerDealData, StrikerDealData$R4>0)
 
-StrikerRR <- StrikerDealData[34:225, ]
-DPM12338$Striker[3] <- sum((StrikerRR$Deal))
+StrikerRR <- StrikerDealData[34:230, ]
+DPM12344$Striker[3] <- sum((StrikerRR$Deal))
 
-Striker40s <- StrikerDealData[34:463, ]
-DPM12338$Striker[4] <- sum((Striker40s$Deal))
+Striker40s <- StrikerDealData[34:468, ]
+DPM12344$Striker[4] <- sum((Striker40s$Deal))

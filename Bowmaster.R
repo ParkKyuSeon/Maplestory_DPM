@@ -101,7 +101,7 @@ AdvancedQuiver <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "ATK"), levels=BSkill)
 value <- c(20, 50)
-info <- c(30, 90, 900, F, F, F, T)
+info <- c(30, 90, 540, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Preperation <- rbind(data.frame(option, value), info)
@@ -122,7 +122,7 @@ UsefulCombatOrders <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(15 + floor(BowmasterCore[[2]][1, 2]/2))
-info <- c(40 + BowmasterCore[[2]][1, 2], 120, 810, F, T, F, T)
+info <- c(40 + BowmasterCore[[2]][1, 2], 120, 510, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ArrowRainBuff <- rbind(data.frame(option, value), info)
@@ -136,7 +136,7 @@ AfterimageArrowBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKP", levels=BSkill)
 value <- c(5 + floor(BowmasterCore[[2]][3, 2]/2))
-info <- c(30, 120, 720, F, T, F, T)
+info <- c(30, 120, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 QuiverFullBurst <- rbind(data.frame(option, value), info)
@@ -170,8 +170,8 @@ colnames(info) <- c("option", "value")
 QuiverPoisonDummy <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(80)
-info <- c(1, 9, 0, F, F, F, F)
+value <- c(35)
+info <- c(5, 6, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MotalBlowDummy <- rbind(data.frame(option, value), info)}
@@ -302,14 +302,14 @@ AdvancedFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * BowmasterCore[[2]][1, 2], 8, 0, 1000, NA, NA, NA, F)
+info <- c(700 + 28 * BowmasterCore[[2]][1, 2], 7, 0, 1000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ArrowRain1 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * BowmasterCore[[2]][1, 2], 8, 0, 1000, NA, NA, NA, F)
+info <- c(700 + 28 * BowmasterCore[[2]][1, 2], 7, 0, 1000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ArrowRain2 <- rbind(data.frame(option, value), info)
@@ -609,7 +609,7 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   
   RainTime <- 5000 ; QuiverFlameTime <- 2000 ; MirageTime <- 7500 ; t <- 1
   for(i in 1:(nrow(DealCycle)-1)) {
-    if(sum(DealCycle$Skills[i]==c("AfterimageArrowActive", "AfterimageArrowPassive", "HurricaneArrow")) > 0) {
+    if(sum(DealCycle$Skills[i]==c("AfterimageArrowActive", "HurricaneArrow")) > 0) {
       if(DealCycle$ArrowRainBuff[i] > 0 & RainTime >= 5000) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         if(t==1) {
@@ -678,22 +678,25 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   
   MotalIdx <- 0
-  for(i in 1:(nrow(DealCycle))) {
-    if(sum(DealCycle$Skills[i]==c("HurricaneArrow", "ArrowRain1", "ArrowRain2", "QuiverFlame", "SilhouetteMirage", "GuidedArrow", "SpiderInMirror")) > 0) {
-      if(MotalIdx==9) {
-        DealCycle$MotalBlowDummy[i] <- 1
+  for(i in 1:(nrow(DealCycle)-1)) {
+    if(sum(DealCycle$Skills[i]==c("HurricaneArrow", "AfterimageArrowActive")) > 0) {
+      DealCycle$MotalBlowDummy[i] <- max(0, DealCycle$MotalBlowDummy[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]))
+      if(MotalIdx==30) {
+        DealCycle$MotalBlowDummy[i] <- 5000
         MotalIdx <- 0
-      } else {
+      } else if(DealCycle$MotalBlowDummy[i] == 0) {
         MotalIdx <- MotalIdx + 1
       }
+    } else {
+      DealCycle$MotalBlowDummy[i] <- max(0, DealCycle$MotalBlowDummy[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]))
     }
   }
   
   ArmorCT <- Cooldown(9, T, BowmasterSpec$CoolReduceP, BowmasterSpec$CoolReduce) * 1000
   ArmorDummy <- 0 ; CoolCut <- 0
   for(i in 1:(nrow(DealCycle)-1)) {
-    if(sum(DealCycle$Skills[i]==c("HurricaneArrow", "ArrowRain1", "ArrowRain2", "QuiverFlame", "SilhouetteMirage", "GuidedArrow", "SpiderInMirror")) > 0) {
-      if(ArmorDummy==0 & sum(DealCycle$Skills[i]==c("HurricaneArrow", "SpiderInMirror")) > 0) {
+    if(sum(DealCycle$Skills[i]==c("HurricaneArrow", "ArrowRain1", "ArrowRain2", "QuiverFlame", "SilhouetteMirage", "GuidedArrow", "AfterimageArrowActive")) > 0) {
+      if(ArmorDummy==0 & sum(DealCycle$Skills[i]==c("HurricaneArrow", "AfterimageArrowActive")) > 0) {
         DealCycle$ArmorPiercingDummy[i] <- 1
         ArmorDummy <- ArmorCT
         CoolCut <- 0
@@ -734,8 +737,8 @@ BowmasterSpecOpt2 <- Optimization2(BowmasterDealCycleReduction, ATKFinal, BuffFi
 BowmasterFinalDPM <- DealCalc(BowmasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt2)
 BowmasterFinalDPMwithMax <- DealCalcWithMaxDMR(BowmasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt2)
 
-DPM12338$Bowmaster[1] <- sum(na.omit(BowmasterFinalDPMwithMax)) / (239160 / 60000)
-DPM12338$Bowmaster[2] <- sum(na.omit(BowmasterFinalDPM)) / (239160 / 60000) - sum(na.omit(BowmasterFinalDPMwithMax)) / (239160 / 60000)
+DPM12344$Bowmaster[1] <- sum(na.omit(BowmasterFinalDPMwithMax)) / (237660 / 60000)
+DPM12344$Bowmaster[2] <- sum(na.omit(BowmasterFinalDPM)) / (237660 / 60000) - sum(na.omit(BowmasterFinalDPMwithMax)) / (237660 / 60000)
 
 BowmasterDealRatio <- DealRatio(BowmasterDealCycle, BowmasterFinalDPMwithMax)
 
@@ -744,9 +747,9 @@ colnames(BowmasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(BowmasterDealData, BowmasterDealData$R4>0)
 
-BowmasterRR <- BowmasterDealData[79:774, ]
-DPM12338$Bowmaster[3] <- sum((BowmasterRR$Deal))
+BowmasterRR <- BowmasterDealData[71:768, ]
+DPM12344$Bowmaster[3] <- sum((BowmasterRR$Deal))
 
-Bowmaster40s <-  BowmasterDealData[79:1876, ]
-DPM12338$Bowmaster[4] <- sum((Bowmaster40s$Deal))
+Bowmaster40s <-  BowmasterDealData[71:1884, ]
+DPM12344$Bowmaster[4] <- sum((Bowmaster40s$Deal))
 

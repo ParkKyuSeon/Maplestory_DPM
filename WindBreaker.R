@@ -1,102 +1,38 @@
 ## WindBreaker - Data
 ## WindBreaker - VMatrix
-PasSkills <- c("SongofSky", "TriflingWhim", "StormBringer", "FairyTurn", "PinpointPierce", "Monsoon")
-PasLvs <- c(50, 50, 50, 50, 50, 50)
-PasMP <- c(10, 10, 10, 0, 0, 0)
-ActSkills <- c("HowlingGale", "IdleWhim", "WindWall", "VortexSphere",
-               "GuidedArrow", "CygnusPhalanx", "CriticalReinforce", "BlessofCygnus", "SpiderInMirror")
-ActLvs <- c(25, 25, 25, 25, 25, 25, 25, 25, 25)
-ActMP <- c(5, 5, 5, 5, 5, 5, 5, 5, 5)
-UsefulSkills <- c("CombatOrders")
-UsefulLvs <- c(20)
-UsefulMP <- c(0)
-
-CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + length(UsefulSkills)
-if(CoreNumbers > Cores) {warning("Invalid Input")}
-
-MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP)
-if(MPs > MatrixPoints) {warning("Invalid Input")}
-
-PassiveCore <- data.frame(PasSkills, PasLvs + PasMP)
-colnames(PassiveCore) <- c("Passive", "Levels")
-
-ActiveCore <- data.frame(ActSkills, ActLvs + ActMP)
-colnames(ActiveCore) <- c("Active", "Levels")
-
-UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
-colnames(UsefulCore) <- c("Useful", "Levels")
-WindBreakerCore <- list(PassiveCore, ActiveCore, UsefulCore)
+WindBreakerCore <- MatrixSet(PasSkills=c("SongofSky", "TriflingWhim", "StormBringer", "FairyTurn", "PinpointPierce", "Monsoon"), 
+                             PasLvs=c(50, 50, 50, 50, 50, 50), 
+                             PasMP=c(10, 10, 10, 0, 0, 0), 
+                             ActSkills=c("HowlingGale", "IdleWhim", "WindWall", "VortexSphere", 
+                                         CommonV("Bowman", "CygnusKnights")), 
+                             ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                             ActMP=c(5, 5, 5, 5, 5, 5, 5, 5, 5), 
+                             UsefulSkills=c("CombatOrders"), 
+                             UsefulLvs=20, 
+                             UsefulMP=0, 
+                             SpecSet=SpecDefault)
 
 
 ## WindBreaker - Basic Info
-WindBreakerClass1 <- ChrInfo[19, 2]
-WindBreakerClass2 <- ChrInfo[19, 3]
-WindBreakerMainStatType <- ChrInfo[19, 4]
-WindBreakerSubStat1Type <- ChrInfo[19, 5]
-WindBreakerChrLv <- ChrInfo[19, 7]
-WindBreakerUnionLv <- ChrInfo[19, 8]
-WindBreakerArcaneForce <- ChrInfo[19, 9]
-WindBreakerCharisma <- ChrInfo[19, 10]
-WindBreakerInsight <- ChrInfo[19, 11]
-WindBreakerSensibility <- ChrInfo[19, 12]
-WindBreakerBaseMastery <- ChrInfo[19, 13]
-WindBreakerCRROver <- T
-WindBreakerBuffDurationNeeded <- ceiling((171 / 110 - 1)*100)
-
-WindBreakerAbility <- Abilities(c("BDR", "BuffDuration"), c("L", "E"))
-
-WindBreakerLinkBase <- rbind(LinkBase)
-WindBreakerDisorder <- max(LinkBase$Disorder)
-AdventureThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(WindBreakerDisorder==T, (10+ServerLag)/20*18, 0), 0, 0, 0)
-Cadena <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(WindBreakerDisorder==T, 6, 0)+ifelse(WindBreakerChrLv>MobLv, 6, 0), 0, 0, 0)
-WindBreakerLinkBase <- rbind(LinkBase, Mikhail, DemonAvenger, Phantom, CygnusKnights)
-WindBreakerLinkBase <- data.frame(WindBreakerLinkBase)
-LinkSet <- c()
-for(i in c(1:9, 11:13)) {
-  LinkSet[i] <- sum(WindBreakerLinkBase[, i]) 
-}
-LinkSet[10] <- IGRCalc(WindBreakerLinkBase[, 10])
-LinkSet <- data.frame(t(LinkSet))
-colnames(LinkSet) <- colnames(WindBreakerLinkBase)[1:13]
-rownames(LinkSet) <- c("Links")
-
-CommonSkillSet <- data.frame(t(colSums(CommonSkills)))
-
-MonsterLife <- colSums(MLTypeD21) ## IGR Logic Needed
-MonsterLife <- data.frame(t(MonsterLife))
-
-Dopings <- colSums(DopingSet) ## IGR Logic Needed
-Dopings <- data.frame(t(Dopings))
-
-Weapon <- rbind(WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", "AR")[, 1:16], SubWeapon[19, ], Emblem[3, ])
-rownames(Weapon) <- c("Weapon", "SubWeapon", "Emblem")
-colnames(Weapon) <- SubWeaponOption
-Weapon <- data.frame(Weapon)
-Weapon <- WeaponAddpotential(Weapon, c("U", "U", "U"), c("A", "A", "O"))
-
-Item <- rbind(SpecSet1, SetOption(SpecSet1, "AR"), PetSetOption(c("D", "D", "D")))
-ItemSet <- c()
-for(i in c(2:10, 17:19)) {
-  ItemSet[i] <- sum(Item[, i])
-}
-ItemSet[16] <- IGRCalc(Item[, 16])
-ItemSet <- data.frame(t(ItemSet))
-colnames(ItemSet) <- colnames(Item)
-rownames(ItemSet) <- c("Item")
-
-Specs <- c("MainStat", "SubStat1", "ATK", "ATKP", "IGR", "BDR", "CRR", "CDMR", "FDR", "ATKSpeed", "Mastery", "BuffDuration", 
-           "SummonedDuration", "ImmuneIgnore", "CoolTimeReset", "SkillLv", "PSkillLv", "CoolReduceP", "CoolReduce", "Disorder", "MainStatP")
-WindBreakerSpec <- data.frame(t(rep(0, 21)))
-colnames(WindBreakerSpec) <- Specs
-
-WindBreakerSpec$SkillLv <- sum(WindBreakerCore[[3]][, 1]=="CombatOrders")
-WindBreakerSpec$PSkillLv <- sum(WindBreakerCore[[3]][, 1]=="CombatOrders") + WindBreakerAbility$PassiveLv
-WindBreakerSpec$MainStatP <- (100 + ItemSet$MainStatP + ItemSet$AllstatP + sum(Weapon$AllstatP) + Dopings$AllstatP + LinkSet$AllstatP + (15 + floor(WindBreakerSpec$PSkillLv/3))) / 100 ## WindBlessing DEXP
+WindBreakerBase <- JobBase(ChrInfo=ChrInfo, 
+                         MobInfo=MobDefault,
+                         SpecSet=SpecDefault, 
+                         Job="WindBreaker",
+                         CoreData=WindBreakerCore, 
+                         MikhailLink=T, 
+                         OtherBuffDuration=0, 
+                         AbilList=c("BDR", "BuffDuration"), 
+                         LinkList=c("Mikhail", "CygnusKnights", "DemonAvenger", "Phantom"), 
+                         MonsterLife=MLTypeD21, 
+                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", SpecDefault$WeaponType)[, 1:16],
+                         WeaponType=SpecDefault$WeaponType, 
+                         SubWeapon=SubWeapon[19, ], 
+                         Emblem=Emblem[3, ])
 
 
 ## WindBreaker - Passive
 {option <- factor(c("MainStat"), levels=PSkill)
-value <- c(floor(WindBreakerChrLv/2))
+value <- c(floor(WindBreakerBase$ChrLv/2))
 ElementalHarmony <- data.frame(option, value)
 
 option <- factor(c("ATKP"), levels=PSkill)
@@ -112,11 +48,11 @@ value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
 option <- factor(c("ATKP", "MainStatP"), levels=PSkill)
-value <- c(10 + ceiling(WindBreakerSpec$PSkillLv/3), 15 + floor(WindBreakerSpec$PSkillLv/3))
+value <- c(10 + ceiling(WindBreakerBase$PSkillLv/3), 15 + floor(WindBreakerBase$PSkillLv/3))
 WindBlessing <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "FDR", "CDMR", "BDR"), levels=PSkill)
-value <- c(70 + ceiling(WindBreakerSpec$PSkillLv/2), 30 + WindBreakerSpec$PSkillLv, 25 + ceiling(WindBreakerSpec$PSkillLv/3), 20 + floor(WindBreakerSpec$PSkillLv/2), 40 + WindBreakerSpec$PSkillLv)
+value <- c(70 + ceiling(WindBreakerBase$PSkillLv/2), 30 + WindBreakerBase$PSkillLv, 25 + ceiling(WindBreakerBase$PSkillLv/3), 20 + floor(WindBreakerBase$PSkillLv/2), 40 + WindBreakerBase$PSkillLv)
 BowExpert <- data.frame(option, value)}
 
 WindBreakerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, WhisperoftheWind=WhisperoftheWind, PhysicalTraining=PhysicalTraining, 
@@ -153,22 +89,22 @@ colnames(info) <- c("option", "value")
 PinpointPierceBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATK", "DMR", "IGR", "CRR", "ATKSpeed"), levels=BSkill)
-value <- c(50 + WindBreakerSpec$SkillLv, 25 + 2 * floor(WindBreakerSpec$SkillLv/2), 15 + floor(WindBreakerSpec$SkillLv/3), 25 + floor(WindBreakerSpec$SkillLv/2), 1)
+value <- c(50 + WindBreakerBase$SkillLv, 25 + 2 * floor(WindBreakerBase$SkillLv/2), 15 + floor(WindBreakerBase$SkillLv/3), 25 + floor(WindBreakerBase$SkillLv/2), 1)
 info <- c(200, NA, 180, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AlbatrossMaximum <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(20 + ceiling(WindBreakerSpec$SkillLv/2), 15 + ceiling(WindBreakerSpec$SkillLv/2))
-info <- c(300 + 3 * WindBreakerSpec$SkillLv, NA, 0, T, NA, NA, T)
+value <- c(20 + ceiling(WindBreakerBase$SkillLv/2), 15 + ceiling(WindBreakerBase$SkillLv/2))
+info <- c(300 + 3 * WindBreakerBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
-value <- c(floor((WindBreakerChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(WindBreakerSpec$SkillLv/2))))
-info <- c(900 + 30 * WindBreakerSpec$SkillLv, NA, 0, T, NA, NA, T)
+value <- c(floor((WindBreakerBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(WindBreakerBase$SkillLv/2))))
+info <- c(900 + 30 * WindBreakerBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
@@ -202,7 +138,7 @@ colnames(info) <- c("option", "value")
 WindWallBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("CDMR", levels=BSkill)
-value <- c(WindBreakerSpec$CRR * (0.2 + 0.01 * WindBreakerCore[[2]][7, 2]))
+value <- c(0)
 info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -213,8 +149,7 @@ value <- c()
 info <- c(45, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-BlessofCygnus <- rbind(data.frame(option, value), info)
-}
+BlessofCygnus <- rbind(data.frame(option, value), info)}
 
 ## PetBuff : SharpEyes, BowBooster, StormBringer
 WindBreakerBuff <- Buff(list(ElementStorm=ElementStorm, BowBooster=BowBooster, SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, AlbatrossMaximum=AlbatrossMaximum, 
@@ -225,76 +160,23 @@ WindBreakerAllTimeBuff <- AllTimeBuff(WindBreakerBuff)
 
 
 ## WindBreaker - Union & HyperStat & SoulWeapon
-WindBreakerSpec$CRR <- sum(Weapon$CRR) + ItemSet$CRR + MonsterLife$CRR + Dopings$CRR + LinkSet$CRR + WindBreakerPassive$CRR + 
-  (Union8000Chr$CRR) + WindBreakerAbility$CRR + WindBreakerAllTimeBuff$CRR + 5
-WindBreakerSpec$CRR <- ifelse(WindBreakerCRROver==T, WindBreakerSpec$CRR, min(WindBreakerSpec$CRR, 100))
-WindBreakerSpec$BuffDuration <- MonsterLife$BuffDuration + WindBreakerPassive$BuffDuration + Union8000Chr$BuffDuration + floor(WindBreakerSensibility/10) + WindBreakerAbility$BuffDuration
+WindBreakerSpec <- JobSpec(JobBase=WindBreakerBase, 
+                           Passive=WindBreakerPassive, 
+                           AllTimeBuff=WindBreakerAllTimeBuff, 
+                           MobInfo=MobDefault, 
+                           SpecSet=SpecDefault, 
+                           WeaponName="Bow", 
+                           UnionStance=0)
 
-UnionFieldOption <- c("CDMR", "CRR", "BDR", "IGR", "BuffDuration", "MainStat", "SubStat1", "SubStat2", "ATK", "Stance")
-
-UnionBase <- data.frame(t(c(40, 0, 0, 0, 0, 5, 1, 1, 5, 0)))
-colnames(UnionBase) <- UnionFieldOption
-UnionFields <- ifelse(WindBreakerUnionLv==8000, FieldNumbers[2], FieldNumbers[1]) - sum(UnionBase)
-
-CRRs <- CRRGet(UnionFields, WindBreakerBuffDurationNeeded, WindBreakerSpec$BuffDuration, WindBreakerSpec$CRR, WindBreakerCRROver)
-UnionBase <- UnionPlace(UnionFields - max(0, WindBreakerBuffDurationNeeded - WindBreakerSpec$BuffDuration) - CRRs$Union, UnionBase, 
-                        max(0, WindBreakerBuffDurationNeeded - WindBreakerSpec$BuffDuration), CRRs$Union)
-UnionBase$CDMR <- UnionBase$CDMR/2
-UnionBase$MainStat <- UnionBase$MainStat*5
-UnionBase$SubStat1 <- UnionBase$SubStat1*5
-UnionBase$SubStat2 <- UnionBase$SubStat2*5
-UnionRemained <- ifelse(WindBreakerUnionLv==8000, FieldNumbers[2], FieldNumbers[1]) - UnionBase$CDMR * 2 - UnionBase$CRR - UnionBase$BuffDuration - UnionBase$MainStat / 5 - UnionBase$SubStat1 / 5 - 
-  UnionBase$SubStat2 / 5 - UnionBase$ATK - UnionBase$Stance
-
-HyperStatBase <- data.frame(t(c(0, 0, 0, 10, 10, 10, ifelse(CRRs$Hyper<=5, CRRs$Hyper, 5+(CRRs$Hyper-5)/2), 10, 0)))
-colnames(HyperStatBase) <- colnames(HyperStats)[2:10]
-HyperSP <- 0
-for(i in 1:9) {
-  lvs <- HyperStatBase[1, i]
-  HyperStatBase[1, i] <- ifelse(lvs==0, 0, sum(HyperStats[1:lvs, i+1]))
-  HyperSP <- HyperSP + ifelse(lvs==0, 0, sum(HyperStats[1:lvs, 1]))
-}
-
-SoulWeaponOptions <- c("ATK", "ATKP", "CRR")
-SoulWeapon <- data.frame(t(c(20, ifelse(CRRs[1, 3]==0, 3, 0), ifelse(CRRs[1, 3]==12, 12, 0))))
-colnames(SoulWeapon) <- SoulWeaponOptions
-
-
-## WindBreaker Final Specs W/O UnionBDR&IGR, HyperStatAlpha, Potential
-WindBreakerSpec$MainStat <- floor((sum(Weapon$MainStat) + ItemSet$MainStat + MonsterLife$DEX + Dopings$MainStat + LinkSet$MainStat + WindBreakerPassive$MainStat + 
-  WindBreakerAllTimeBuff$MainStat + CommonSkillSet$MainStat + UnionBase$MainStat + 18 + 5 * WindBreakerChrLv) * (100 + ItemSet$MainStatP + ItemSet$AllstatP + sum(Weapon$AllstatP) + 
-  Dopings$AllstatP + LinkSet$AllstatP + WindBreakerPassive$MainStatP) / 100) + 10 * WindBreakerArcaneForce + Union8000Chr$DEX + 20
-WindBreakerSpec$SubStat1 <- floor((sum(Weapon$SubStat1) + ItemSet$SubStat1 + MonsterLife$STR + Dopings$SubStat1 + LinkSet$SubStat1 + WindBreakerPassive$SubStat1 + 
-  WindBreakerAllTimeBuff$SubStat1 + CommonSkillSet$SubStat1 + UnionBase$SubStat1 + 4) * (100 + ItemSet$AllstatP + sum(Weapon$AllstatP) + Dopings$AllstatP + LinkSet$AllstatP) / 100) + 
-  Union8000Chr$STR
-WindBreakerSpec$ATK <- sum(Weapon$ATK) + ItemSet$ATK + MonsterLife$ATK + Dopings$ATK + LinkSet$ATK + WindBreakerPassive$ATK + Union8000Chr$ATK + WindBreakerAbility$CRR + 
-  WindBreakerAllTimeBuff$ATK + CommonSkillSet$ATK + UnionBase$ATK + SoulWeapon$ATK
-WindBreakerSpec$ATKP <- sum(Weapon$ATKP) + WindBreakerPassive$ATKP + WindBreakerAllTimeBuff$ATKP + CommonSkillSet$ATKP + SoulWeapon$ATKP
-WindBreakerSpec$IGR <- IGRCalc(c(IGRCalc(c(Weapon$IGR)), ItemSet$IGR, MonsterLife$IGR, Dopings$IGR, LinkSet$IGR, WindBreakerPassive$IGR, Union8000Chr$IGR, floor(WindBreakerCharisma/5)/2, 
-  WindBreakerAllTimeBuff$IGR, HyperStatBase$IGR))
-WindBreakerSpec$BDR <- sum(Weapon$BDR) + ItemSet$BDR + MonsterLife$BDR + Dopings$BDR + LinkSet$BDR + WindBreakerPassive$BDR + Union8000Chr$BDR + WindBreakerAbility$BDR + WindBreakerAbility$DisorderBDR + 
-  WindBreakerAllTimeBuff$BDR + HyperStatBase$BDR + HyperStatBase$DMR
-WindBreakerSpec$CRR <- sum(Weapon$CRR) + ItemSet$CRR + MonsterLife$CRR + Dopings$CRR + LinkSet$CRR + WindBreakerPassive$CRR + 
-  (Union8000Chr$CRR + ifelse(WindBreakerChrLv>=250, 1, 0)) + WindBreakerAbility$CRR + WindBreakerAllTimeBuff$CRR + 5
-WindBreakerSpec$CRR <- ifelse(WindBreakerCRROver==T, WindBreakerSpec$CRR + rowSums(CRRs), min(WindBreakerSpec$CRR + rowSums(CRRs), 100))
-WindBreakerSpec$CDMR <- sum(Weapon$CDMR) + ItemSet$CDMR + MonsterLife$CDMR + Dopings$CDMR + LinkSet$CDMR + WindBreakerPassive$CDMR + WindBreakerAllTimeBuff$CDMR + Union8000Chr$CDMR +
-  HyperStatBase$CDMR + UnionBase$CDMR
-WindBreakerSpec$FDR <- FDRCalc(c(WindBreakerPassive$FDR, WindBreakerAllTimeBuff$FDR, ArcaneForceFDR(WindBreakerArcaneForce, MapArc), LevelFDR(WindBreakerChrLv, MobLv), 
-  (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", "AR")[19]*100-100)))
-WindBreakerSpec$ATKSpeed <- max(WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", "AR")[17] - Dopings$ATKSpeed - WindBreakerAllTimeBuff$ATKSpeed - WindBreakerPassive$ATKSpeed, 2)
-WindBreakerSpec$Mastery <- min(WindBreakerBaseMastery + WindBreakerPassive$Mastery, 95)
-WindBreakerSpec$BuffDuration <- WindBreakerSpec$BuffDuration + UnionBase$BuffDuration
-WindBreakerSpec$SummonedDuration <- MonsterLife$SummonedDuration + WindBreakerPassive$SummonDuration + Union8000Chr$SummonedDuration
-WindBreakerSpec$ImmuneIgnore <- WindBreakerPassive$ImmuneIgnore + floor(WindBreakerInsight/10)/2 + WindBreakerAllTimeBuff$ImmuneIgnore
-WindBreakerSpec$CoolTimeReset <- MonsterLife$CoolTimeReset + WindBreakerPassive$CoolTimeReset + WindBreakerAbility$CoolTimeReset
-WindBreakerSpec$CoolReduceP <- Union8000Chr$CoolReduce
-WindBreakerSpec$CoolReduce <- 0
-WindBreakerSpec$Disorder <- max(WindBreakerLinkBase$Disorder, WindBreakerPassive$Disorder, WindBreakerAllTimeBuff$Disorder)
+WindBreakerUnionRemained <- WindBreakerSpec$UnionRemained
+WindBreakerHyperStatBase <- WindBreakerSpec$HyperStatBase
+WindBreakerCoolReduceType <- WindBreakerSpec$CoolReduceType
+WindBreakerSpec <- WindBreakerSpec$Spec
 
 
 ## WindBreaker - CriticalReinforce(RE)
 {option <- factor("CDMR", levels=BSkill)
-value <- c(WindBreakerSpec$CRR * (0.2 + 0.01 * WindBreakerCore[[2]][7, 2]))
+value <- c(WindBreakerSpec$CRR * (0.2 + 0.01 * WindBreakerCore[[2]][6, 2]))
 info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -464,7 +346,7 @@ GuidedArrow <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * WindBreakerCore[[2]][6, 2], 1, 780, 240, 0.24*(39 + WindBreakerCore[[2]][6, 2])+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * WindBreakerCore[[2]][7, 2], 1, 780, 240, 0.24*(39 + WindBreakerCore[[2]][6, 2])+0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -492,150 +374,224 @@ DealCycle <- c("Skills", "Time", rownames(WindBreakerBuff))
 WindBreakerDealCycle <- t(rep(0, length(DealCycle)))
 colnames(WindBreakerDealCycle) <- DealCycle
 
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("BowBooster", "SharpEyes", "StormBringer", "ElementStorm", "SylphsAid", "AlbatrossMaximum", 
-                                                     "MapleSoldier", "UsefulCombatOrders", "GloryofGardians"), BuffFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("GuidedArrow"), SummonedFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("SpiderInMirror"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff", "BlessofCygnus"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("WindWall"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("WindWallBuff", "SoulContractLink", "CriticalReinforce", "Restraint4"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleBig"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphereGust"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphere"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 76)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 72)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 19)), ATKFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 17), "PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 28)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 27)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphereGust"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphere"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 41)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 71)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 13)), ATKFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("GuidedArrow"), SummonedFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 33), "PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 3)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 16)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 55)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 3)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphereGust"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphere"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 67)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 23)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 41)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 70)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 76)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 32)), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("StormBringer", "GloryofGardians"), BuffFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("GuidedArrow"), SummonedFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("WindWall"), ATKFinal)                                          
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("WindWallBuff", "SoulContractLink", "CriticalReinforce"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphereGust"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphere"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 38)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleBig"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 33)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 76)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 36)), ATKFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 3)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 19)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 29)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphereGust"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphere"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 41)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 54)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 17)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 29)), ATKFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("GuidedArrow"), SummonedFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 24), "PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 5)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 61)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("HowlingGaleSmall"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 10)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphereGust"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("VortexSphere"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 70)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 33)), ATKFinal)
-WindBreakerDealCycle <- DCSummoned(WindBreakerDealCycle, c("CygnusPhalanx"), SummonedFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 38)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("PinpointPierce"), ATKFinal)
-WindBreakerDealCycle <- DCBuff(WindBreakerDealCycle, c("PinpointPierceBuff"), BuffFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 70)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 76)), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimFirst"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c("IdleWhimRemain"), ATKFinal)
-WindBreakerDealCycle <- DCATK(WindBreakerDealCycle, c(rep("SongofSky", 6)), ATKFinal)
+WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
+                          Period=c(120), CycleTime=240) {
+  BuffSummonedPrior <- c("BowBooster", "SharpEyes", "StormBringer", "ElementStorm", "SylphsAid", "AlbatrossMaximum", "MapleSoldier", "UsefulCombatOrders", "GloryofGardians", 
+                         "GuidedArrow", "CygnusPhalanx", "PinpointPierceBuff", "BlessofCygnus", "WindWallBuff", "SoulContractLink", "CriticalReinforce", "Restraint4")
+  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5, 0.5, 0, 2, 4, 4, 0.5, 1, 1, 1, 0.5)
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  for(i in 1:length(BuffSummonedPrior)) {
+    SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
+  }
+  
+  SubTimeUniques <- unique(SubTime)
+  SubTimeUniques <- SubTimeUniques[SubTimeUniques > 0]
+  TimeTypes <- c()
+  for(i in 1:length(SubTimeUniques)) {
+    Time <- 0 ; r <- 1
+    while(Time < TotalTime) {
+      Time <- SubTimeUniques[i] * r
+      r <- r + 1
+      TimeTypes <- c(TimeTypes, Time)
+    }
+  }
+  TimeTypes <- TimeTypes[TimeTypes < TotalTime]
+  TimeTypes <- unique(TimeTypes)
+  TimeTypes <- TimeTypes[order(TimeTypes)]
+  
+  Buffs <- data.frame(Buff=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  Buffs <- subset(Buffs, Buffs$SubTime > 0)
+  
+  BuffList <- list()
+  BuffList[[1]] <- BuffSummonedPrior
+  for(i in 1:length(TimeTypes)) {
+    s <- c()
+    for(j in 1:nrow(Buffs)) {
+      if(round(TimeTypes[i] / Buffs[j, 2]) == TimeTypes[i] / Buffs[j, 2]) {
+        s <- c(s, Buffs[j, 1])
+      }
+    }
+    BuffList[[i+1]] <- s
+  }
+  
+  DelayDataB <- data.frame(Name=rownames(BuffFinal), Delay=BuffFinal$Delay)
+  DelayDataS <- data.frame(Name=rownames(SummonedFinal), Delay=SummonedFinal$Delay)
+  DelayData <- rbind(DelayDataB, DelayDataS)
+  
+  BuffDelays <- list()
+  for(i in 1:length(BuffList)) {
+    t <- c()
+    for(j in 1:length(BuffList[[i]])) {
+      for(k in 1:nrow(DelayData)) {
+        if(DelayData$Name[k]==BuffList[[i]][j]) {
+          t <- c(t, k)
+        }
+      }
+    }
+    BuffDelays[[i]] <- DelayData$Delay[t]
+  } 
+  
+  TotalTime <- TotalTime * 1000
+  DealCycle <- PreDealCycle
+  for(i in 1:length(BuffList[[1]])) {
+    if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
+      if(BuffList[[1]][i]=="PinpointPierceBuff") {
+        DealCycle <- DCATK(DealCycle, "PinpointPierce", ATKFinal)
+      } else if(BuffList[[1]][i]=="WindWallBuff") {
+        DealCycle <- DCATK(DealCycle, "WindWall", ATKFinal)
+      }
+      DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
+      if(BuffList[[1]][i]=="GloryofGardians") {
+        DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
+      }
+    } else {
+      DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
+    }
+  }
+  
+  SubTimeList <- data.frame(Skills=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  NoSubTime <- subset(SubTimeList, SubTimeList$SubTime==0)$Skills
+  NoSubTimeBuff <- c() ; NoSubTimeSummoned <- c()
+  for(i in 1:length(NoSubTime)) {
+    NoSubTimeBuff <- c(NoSubTimeBuff, NoSubTime[i])
+  }
+  ColNums <- c()
+  for(i in 1:length(NoSubTimeBuff)) {
+    for(j in 1:length(colnames(DealCycle))) {
+      if(NoSubTimeBuff[i]==colnames(DealCycle)[j]) {
+        ColNums[i] <- j
+      }
+    }
+  }
+  GaleBigCool <- 40000
+  GaleSmallCool <- 20000
+  IWCool <- subset(ATKFinal, rownames(ATKFinal)=="IdleWhimFirst")$CoolTime * 1000
+  VSCool <- subset(ATKFinal, rownames(ATKFinal)=="VortexSphere")$CoolTime * 1000
+  GaleRemain <- 0 ; IWRemain <- 0 ; VSRemain <- 0 ; GaleDummy <- 0
+  BuffList[[length(BuffList)+1]] <- BuffList[[1]]
+  BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  
+  for(k in 2:length(BuffList)) {
+    CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
+    BuffEndTime <- c()
+    for(i in 1:length(BuffList[[k]])) {
+      a <- subset(DealCycle, BuffList[[k]][i]==DealCycle$Skills)
+      a <- rbind(a, subset(DealCycle, paste(BuffList[[k]][i], "Summoned", sep="")==DealCycle$Skills))
+      for(j in 1:nrow(CycleBuffList)) {
+        if(CycleBuffList$Skills[j]==BuffList[[k]][i]) {
+          Idx <- j
+          break
+        }
+      }
+      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+        sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
+    }
+    BuffEndTime <- max(BuffEndTime)
+    BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
+    while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
+      for(i in 1:length(ColNums)) {
+        if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
+          DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+        }
+      }
+      ## Vortex Sphere
+      if(VSRemain==0) {
+        DealCycle <- DCATK(DealCycle, "VortexSphereGust", ATKFinal)
+        DealCycle <- DCATK(DealCycle, "VortexSphere", ATKFinal)
+        GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+        IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+        VSRemain <- VSCool - DealCycle$Time[1]
+      } 
+      ## Howling Gale(Big)
+      else if(GaleRemain==0 & GaleDummy==0) {
+        DealCycle <- DCATK(DealCycle, "HowlingGaleBig", ATKFinal)
+        GaleRemain <- GaleSmallCool - DealCycle$Time[1]
+        IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+        GaleDummy <- GaleDummy + 1
+      }
+      else if(GaleRemain==0 & GaleDummy==5) {
+        DealCycle <- DCATK(DealCycle, "HowlingGaleBig", ATKFinal)
+        GaleRemain <- GaleSmallCool - DealCycle$Time[1]
+        IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+        GaleDummy <- GaleDummy + 1
+      }
+      ## Howling Gale(Small) 
+      else if(GaleRemain==0 & GaleDummy<=8) {
+        DealCycle <- DCATK(DealCycle, "HowlingGaleSmall", ATKFinal)
+        IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+        GaleDummy <- GaleDummy + 1
+        if(GaleDummy==4) {
+          GaleRemain <- GaleBigCool - DealCycle$Time[1]
+        } else {
+          GaleRemain <- GaleSmallCool - DealCycle$Time[1]
+        }
+      }
+      ## Idle Whim
+      else if(IWRemain==0) {
+        DealCycle <- DCATK(DealCycle, "IdleWhimFirst", ATKFinal)
+        DealCycle <- DCATK(DealCycle, "IdleWhimRemain", ATKFinal)
+        IWRemain <- IWCool - DealCycle$Time[1]
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+        GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+      }
+      ## Song of Sky
+      else {
+        DealCycle <- DCATK(DealCycle, "SongofSky", ATKFinal)
+        IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+        GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+      }
+    }
+    
+    if(k != length(BuffList)) {
+      for(i in 1:length(BuffList[[k]])) {
+        if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
+          if(BuffList[[k]][i]=="PinpointPierceBuff") {
+            DealCycle <- DCATK(DealCycle, "PinpointPierce", ATKFinal)
+            IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+            VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+            GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+          } else if(BuffList[[k]][i]=="WindWallBuff") {
+            DealCycle <- DCATK(DealCycle, "WindWall", ATKFinal)
+            IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+            VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+            GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+          }
+          DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
+          IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+          VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+          GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
+          IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+          VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+          GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
+        }
+      }
+    }
+  }
+  
+  VSFirst <- min(subset(DealCycle, DealCycle$Skills=="VortexSphereGust")$Time)
+  VSRemain <- VSRemain - VSFirst
+  while(VSRemain > 0) {
+    DealCycle <- DCATK(DealCycle, "SongofSky", ATKFinal)
+    VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+  }
+  return(DealCycle)
+}
 
+WindBreakerDealCycle <- WindBreakerCycle(PreDealCycle=WindBreakerDealCycle, 
+                                         ATKFinal=ATKFinal,
+                                         BuffFinal=BuffFinal, 
+                                         SummonedFinal=SummonedFinal, 
+                                         Spec=WindBreakerSpec,
+                                         Period=120, 
+                                         CycleTime=240)
 WindBreakerDealCycle <- DealCycleFinal(WindBreakerDealCycle)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphere", 17, 540, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphereGust", 1, 2400, ATKFinal)
@@ -646,31 +602,32 @@ WindBreakerDealCycle <- DCSummonedATKs(WindBreakerDealCycle, Skill=c("GuidedArro
 WindBreakerDealCycle <- AddATKsCycleWB(WindBreakerDealCycle)
 WindBreakerDealCycle <- DCSpiderInMirror(WindBreakerDealCycle, SummonedFinal)
 WindBreakerDealCycle <- BlessofCygnusCycle(WindBreakerDealCycle, 6000, ServerLag, WindBreakerCore[[2]][8, 2])
-
 WindBreakerDealCycleReduction <- DealCycleReduction(WindBreakerDealCycle, "BlessofCygnusBDR")
 
 sum(na.omit(WindBreakerDealCalc(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec)))
 
-WindBreakerSpecOpt1 <- WindBreakerOptimization1(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec, UnionRemained)
+WindBreakerSpecOpt1 <- WindBreakerOptimization1(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec, WindBreakerUnionRemained)
 WindBreakerSpecOpt <- WindBreakerSpec
 WindBreakerSpecOpt$ATKP <- WindBreakerSpecOpt$ATKP + WindBreakerSpecOpt1$ATKP
 WindBreakerSpecOpt$BDR <- WindBreakerSpecOpt$BDR + WindBreakerSpecOpt1$BDR
 WindBreakerSpecOpt$IGR <- IGRCalc(c(WindBreakerSpecOpt$IGR, WindBreakerSpecOpt1$IGR))
 
-WindBreakerSpecOpt2 <- WindBreakerOptimization2(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, HyperStatBase, WindBreakerChrLv, WindBreakerCRROver)
+WindBreakerSpecOpt2 <- WindBreakerOptimization2(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, WindBreakerHyperStatBase, WindBreakerBase$ChrLv, WindBreakerBase$CRROver)
+
 WindBreakerFinalDPM <- WindBreakerDealCalc(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 WindBreakerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 
-DPM12338$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (222920 / 60000)
-DPM12338$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (222920 / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (222920 / 60000)
+
+DPM12344$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (235230 / 60000)
+DPM12344$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (235230 / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (235230 / 60000)
 
 WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCycle$Time, WindBreakerDealCycle$Restraint4, WindBreakerFinalDPMwithMax)
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 
-WindBreakerRR <- WindBreakerDealData[126:1197, ]
-DPM12338$WindBreaker[3] <- sum((WindBreakerRR$Deal)) ## 2,971,470,062,667
+WindBreakerRR <- WindBreakerDealData[114:1139, ]
+DPM12344$WindBreaker[3] <- sum((WindBreakerRR$Deal))
 
-WindBreaker40s <- WindBreakerDealData[126:2585, ]
-DPM12338$WindBreaker[4] <- sum((WindBreaker40s$Deal)) ## 5,029,342,027,630
+WindBreaker40s <- WindBreakerDealData[114:2484, ]
+DPM12344$WindBreaker[4] <- sum((WindBreaker40s$Deal))
 
-DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)
+WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)

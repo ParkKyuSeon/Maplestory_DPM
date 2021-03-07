@@ -167,7 +167,7 @@ Elysion <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30, 180, 810, F, T, F, F)
+info <- c(30, 180, 360, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulEclipse <- rbind(data.frame(option, value), info)
@@ -368,6 +368,27 @@ ElysionCrack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
+info <- c(150 + 6 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+ElysionCrack1 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill) 
+value <- c()
+info <- c(225 + 9 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+ElysionCrack2 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill) 
+value <- c()
+info <- c(350 + 14 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+ElysionCrack3 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill) 
+value <- c()
 info <- c(450 + 18 * SoulMasterCore[[2]][3, 2], 7, 0, 1000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -389,7 +410,8 @@ FlareSlash <- rbind(data.frame(option, value), info)}
 
 SoulMasterATK <- Attack(list(DanceofMoon=DanceofMoon, DanceofMoonAir=DanceofMoonAir, SpeedingSunset=SpeedingSunset, SpeedingSunsetAir=SpeedingSunsetAir, SolunarSlashATK=SolunarSlashATK, CrosstheStyx=CrosstheStyx, 
                              AuraWeapon=AuraWeapon, CDAfterimageRS=CDAfterimageRS, CDAfterimageFM=CDAfterimageFM, DanceofMoonCD=DanceofMoonCD, DanceofMoonAirCD=DanceofMoonAirCD, 
-                             SpeedingSunsetCD=SpeedingSunsetCD, SpeedingSunsetAirCD=SpeedingSunsetAirCD, ElysionCrack=ElysionCrack, SoulEclipseEC=SoulEclipseEC, SoulEclipseSD=SoulEclipseSD, 
+                             SpeedingSunsetCD=SpeedingSunsetCD, SpeedingSunsetAirCD=SpeedingSunsetAirCD, ElysionCrack=ElysionCrack, ElysionCrack1=ElysionCrack1, ElysionCrack2=ElysionCrack2, ElysionCrack3=ElysionCrack3,
+                             SoulEclipseEC=SoulEclipseEC, SoulEclipseSD=SoulEclipseSD, 
                              FlareSlash=FlareSlash, SpiderInMirror=SpiderInMirror))
 
 
@@ -730,13 +752,25 @@ SoulMasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   for(i in 1:(nrow(DealCycle)-1)) {
     if(DealCycle$Skills[i]=="Elysion") {
       CrackDummy <- 0
-    } else if(DealCycle$Skills[i]=="CrosstheStyx" & CrackDummy==6) {
+    } else if(DealCycle$Skills[i]=="CrosstheStyx" & CrackDummy==5) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("ElysionCrack")
       CrackDummy <- 0
       CrackCool <- 5000
     } else if(DealCycle$Skills[i]=="CrosstheStyx" & CrackCool==0) {
       CrackDummy <- CrackDummy + 1
+    } 
+    if(DealCycle$Skills[i]=="CrosstheStyx" & DealCycle$Elysion[i+1]==0 & DealCycle$Elysion[i] > 0) {
+      if(CrackDummy==1) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- c("ElysionCrack1")
+      } else if(CrackDummy==2 | CrackDummy==3) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- c("ElysionCrack2")
+      } else if(CrackDummy==4 | CrackDummy==5) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- c("ElysionCrack3")
+      }
     }
     CrackCool <- max(0, CrackCool - (DealCycle$Time[i+1] - DealCycle$Time[i]))
   }
@@ -851,6 +885,9 @@ SoulMasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- RepATKCycle(DealCycle, "SoulEclipseSD", 5, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "CrosstheStyx", 5, 60, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "ElysionCrack", 5, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "ElysionCrack1", 5, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "ElysionCrack2", 5, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "ElysionCrack3", 5, 0, ATKFinal)
   DealCycle <- DCSummonedATKs(DealCycle, Skill=c("CygnusPhalanx"), SummonedFinal)
   DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   return(DealCycle)
@@ -886,8 +923,8 @@ SoulMasterSpecOpt2 <- WindBreakerOptimization2(SoulMasterDealCycleReduction, ATK
 SoulMasterFinalDPM <- WindBreakerDealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 SoulMasterFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 
-DPM12338$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (343650 / 60000)
-DPM12338$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (343650 / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (343650 / 60000)
+DPM12344$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (343320 / 60000)
+DPM12344$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (343320 / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (343320 / 60000)
 
 SoulMasterDealRatio <- DealRatio(SoulMasterDealCycle, SoulMasterFinalDPMwithMax)
 
@@ -896,9 +933,8 @@ colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(SoulMasterDealData, SoulMasterDealData$R4>0)
 
-SoulMasterRR <- SoulMasterDealData[179:394, ]
-DPM12338$SoulMaster[3] <- sum((SoulMasterRR$Deal))
+SoulMasterRR <- SoulMasterDealData[194:401, ]
+DPM12344$SoulMaster[3] <- sum((SoulMasterRR$Deal))
 
-SoulMaster40s <-  SoulMasterDealData[21:476, ]
-DPM12338$SoulMaster[4] <- sum((SoulMaster40s$Deal))
-
+SoulMaster40s <-  SoulMasterDealData[20:482, ]
+DPM12344$SoulMaster[4] <- sum((SoulMaster40s$Deal))

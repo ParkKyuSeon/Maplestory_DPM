@@ -285,7 +285,7 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 ## Mercedes - Attacks
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(MercedesCore[[1]][5, 2]>=40, 20, 0), 3 * MercedesCore[[1]][5, 2])
-info <- c(415 + 2 * MercedesSpec$SkillLv, 5, 1290, NA, 10, T, T, F)
+info <- c(445 + 2 * MercedesSpec$SkillLv, 5, 1290, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UnicornSpike <- rbind(data.frame(option, value), info)
@@ -313,7 +313,7 @@ AdvancedStrikeDualShot <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(MercedesCore[[1]][4, 2]>=40, 20, 0), 2 * MercedesCore[[1]][4, 2])
-info <- c(400, 10, 900, NA, 8, F, F, F)
+info <- c(460, 10, 900, NA, 8, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WrathofEnlil <- rbind(data.frame(option, value), info)
@@ -334,7 +334,7 @@ BreathofIrkallaPre <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * MercedesCore[[2]][2, 2], 8, 8500, 150, 150, T, F, F)
+info <- c(400 + 16 * MercedesCore[[2]][2, 2], 8, 8020, 150, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathofIrkalla <- rbind(data.frame(option, value), info)
@@ -760,7 +760,7 @@ MercedesDealCycle <- MercedesCycle(PreDealCycle = MercedesDealCycle,
                                    CycleTime = 300, 
                                    SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)))
 MercedesDealCycle <- DCSummonedATKs(MercedesDealCycle, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
-MercedesDealCycle <- RepATKCycle(MercedesDealCycle, c("BreathofIrkalla"), 52, 150, ATKFinal)
+MercedesDealCycle <- RepATKCycle(MercedesDealCycle, c("BreathofIrkalla"), 52, 0, ATKFinal)
 MercedesDealCycle <- MercedesAddATK(MercedesDealCycle)
 MercedesDealCycle <- DCSpiderInMirror(MercedesDealCycle, SummonedFinal)
 MercedesDealCycleReduction <- DealCycleReduction(MercedesDealCycle)
@@ -779,23 +779,6 @@ MercedesSpecOpt$IGR <- IGRCalc(c(MercedesSpecOpt$IGR, MercedesSpecOpt1$IGR))
 MercedesSpecOpt2 <- Optimization2(MercedesDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt, MercedesHyperStatBase, MercedesBase$ChrLv, MercedesBase$CRROver)
 MercedesFinalDPM <- DealCalc(MercedesDealCycle, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2)
 MercedesFinalDPMwithMax <- DealCalcWithMaxDMR(MercedesDealCycle, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2)
-
-DPM12338$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax)) / (282740 / 60000)
-DPM12338$Mercedes[2] <- sum(na.omit(MercedesFinalDPM)) / (282740 / 60000) - sum(na.omit(MercedesFinalDPMwithMax)) / (282740 / 60000)
-
-MercedesDealRatio <- DealRatio(MercedesDealCycle, MercedesFinalDPMwithMax)
-
-MercedesDealData <- data.frame(MercedesDealCycle$Skills, MercedesDealCycle$Time, MercedesDealCycle$Restraint4, MercedesFinalDPMwithMax, MercedesFinalDPM-MercedesFinalDPMwithMax)
-colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(MercedesDealData, MercedesDealData$R4>0)
-
-MercedesRR <- MercedesDealData[42:448, ]
-DPM12338$Mercedes[3] <- sum((MercedesRR$Deal))
-
-Mercedes40s <-  MercedesDealData[42:1314, ]
-DPM12338$Mercedes[4] <- sum((Mercedes40s$Deal))
-
 
 
 
@@ -816,7 +799,7 @@ MercedesDealCycle2 <- MercedesCycle(PreDealCycle = MercedesDealCycle2,
                                     CycleTime = 360, 
                                     SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)))
 MercedesDealCycle2 <- DCSummonedATKs(MercedesDealCycle2, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
-MercedesDealCycle2 <- RepATKCycle(MercedesDealCycle2, c("BreathofIrkalla"), 52, 150, ATKFinal)
+MercedesDealCycle2 <- RepATKCycle(MercedesDealCycle2, c("BreathofIrkalla"), 52, 0, ATKFinal)
 MercedesDealCycle2 <- MercedesAddATK(MercedesDealCycle2)
 MercedesDealCycle2 <- DCSpiderInMirror(MercedesDealCycle2, SummonedFinal)
 MercedesDealCycleReduction2 <- DealCycleReduction(MercedesDealCycle2)
@@ -836,8 +819,8 @@ MercedesSpecOpt2_2 <- Optimization2(MercedesDealCycleReduction2, ATKFinal, BuffF
 MercedesFinalDPM2 <- DealCalc(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 MercedesFinalDPMwithMax2 <- DealCalcWithMaxDMR(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 
-DPM12338$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (338660 / 60000)
-DPM12338$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (338660 / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (338660 / 60000)
+DPM12344$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (338660 / 60000)
+DPM12344$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (338660 / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (338660 / 60000)
 
 MercedesDealRatio <- DealRatio(MercedesDealCycle2, MercedesFinalDPMwithMax2)
 
@@ -846,8 +829,8 @@ colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(MercedesDealData, MercedesDealData$R4>0)
 
-MercedesRR <- MercedesDealData[42:448, ]
-DPM12338$Mercedes[3] <- sum((MercedesRR$Deal))
+MercedesRR <- MercedesDealData[42:464, ]
+DPM12344$Mercedes[3] <- sum((MercedesRR$Deal))
 
-Mercedes40s <-  MercedesDealData[42:1314, ]
-DPM12338$Mercedes[4] <- sum((Mercedes40s$Deal))
+Mercedes40s <-  MercedesDealData[42:1318, ]
+DPM12344$Mercedes[4] <- sum((Mercedes40s$Deal))
