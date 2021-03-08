@@ -374,7 +374,7 @@ InfinityFlameCircleTick <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill) 
 value <- c(50)
-info <- c(0, 0, 540, 0, NA, NA, NA, F)
+info <- c(500 + 20 * FlameWizardCore[[2]][3, 2], 7, 540, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 InfinityFlameCircleEnd <- rbind(data.frame(option, value), info)
@@ -808,7 +808,7 @@ FlameWizardCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
   
   while(DC2$FlameDischargeStack[nrow(DC2)] < 2 |
         (DealCycle$Time[nrow(DealCycle)] - max(subset(DealCycle, DealCycle$Skills=="DragonSlaveLast")$Time) + 
-        min(subset(DealCycle, DealCycle$Skills=="DragonSlave")$Time)) < 90000) {
+         min(subset(DealCycle, DealCycle$Skills=="DragonSlave")$Time)) < 90000) {
     if(BlazingRemain == 0) {
       DealCycle <- DCATK(DealCycle, "BlazingOrbitalFlame", ATKFinal)
       ExtinctionRemain <- max(0, ExtinctionRemain - DealCycle$Time[1])

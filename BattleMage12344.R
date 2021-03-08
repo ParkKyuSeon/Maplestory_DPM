@@ -368,7 +368,7 @@ BattleMageATK <- Attack(list(FinishBlow=FinishBlow, FinishBlowUA=FinishBlowUA, F
 ## BattleMage - Summoned
 {option <- factor(levels=SSkill)
   value <- c()
-  info <- c(800 + 32 * BattleMageCore[[2]][2, 2], 4, 690, 1125, 40, F, F, NA, NA, F)
+  info <- c(800 + 32 * BattleMageCore[[2]][2, 2], 4, 690, 1125, 40, 50, F, F, F, F)
   info <- data.frame(SInfo, info)
   colnames(info) <- c("option", "value")
   BlackMagicAltar <- rbind(data.frame(option, value), info)
@@ -493,6 +493,7 @@ BattleMageCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   }
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   KingbarCool <- 13000
   KingbarRemain <- 0
   GenesisCool <- subset(ATKFinal, rownames(ATKFinal)=="DarkGenesis")$CoolTime * 1000
@@ -510,10 +511,13 @@ BattleMageCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
           break
         }
       }
-      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
         sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
     }
     BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {
@@ -891,8 +895,8 @@ BattleMageSpecOpt2 <- Optimization2(BattleMageDealCycleReduction, ATKFinal, Buff
 BattleMageFinalDPM <- DealCalc(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 BattleMageFinalDPMwithMax <- DealCalcWithMaxDMR(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 
-DPM12344$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (405300 / 60000)
-DPM12344$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (405300 / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (405300 / 60000)
+DPM12344$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (403860 / 60000)
+DPM12344$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (403860 / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (403860 / 60000)
 
 BattleMageDealRatio <- DealRatio(BattleMageDealCycle, BattleMageFinalDPMwithMax)
 

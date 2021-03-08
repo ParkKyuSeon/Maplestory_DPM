@@ -483,6 +483,7 @@ NightLordCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
   TNRemain <- 0 ; SRRemain <- 0
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   RTDDummy <- 0
 
   for(k in 2:length(BuffList)) {
@@ -504,10 +505,13 @@ NightLordCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
           break
         }
       }
-      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+      BuffEndTime[i] <- max(a$Time) + ifelse(BuffList[[k]][i]=="ReadyToDie2Stack", subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000)) + 
         sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
     }
     BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {
@@ -580,8 +584,8 @@ NightLordSpecOpt2 <- Optimization2(NightLordDealCycleReduction, ATKFinal, BuffFi
 NightLordFinalDPM <- DealCalc(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt2)
 NightLordFinalDPMwithMax <- DealCalcWithMaxDMR(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt2)
 
-DPM12344$NightLord[1] <- sum(na.omit(NightLordFinalDPMwithMax)) / (368400 / 60000)
-DPM12344$NightLord[2] <- sum(na.omit(NightLordFinalDPM)) / (368400 / 60000) - sum(na.omit(NightLordFinalDPMwithMax)) / (368400 / 60000)
+DPM12344$NightLord[1] <- sum(na.omit(NightLordFinalDPMwithMax)) / (362400 / 60000)
+DPM12344$NightLord[2] <- sum(na.omit(NightLordFinalDPM)) / (362400 / 60000) - sum(na.omit(NightLordFinalDPMwithMax)) / (362400 / 60000)
 
 NightLordDealData <- data.frame(NightLordDealCycle$Skills, NightLordDealCycle$Time, NightLordDealCycle$Restraint4, NightLordFinalDPMwithMax)
 colnames(NightLordDealData) <- c("Skills", "Time", "R4", "Deal")

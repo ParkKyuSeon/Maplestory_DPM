@@ -83,7 +83,7 @@ SylphsAid <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR"), levels=BSkill)
 value <- c(15, 15)
-info <- c(30, 40, 0, F, F, F, F)
+info <- c(30, NA, 0, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PinpointPierceBuff <- rbind(data.frame(option, value), info)
@@ -472,6 +472,7 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
   GaleRemain <- 0 ; IWRemain <- 0 ; VSRemain <- 0 ; GaleDummy <- 0
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   
   for(k in 2:length(BuffList)) {
     CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
@@ -485,10 +486,13 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
           break
         }
       }
-      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
         sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
     }
     BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {
@@ -525,7 +529,7 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
         IWRemain <- max(0, IWRemain - DealCycle$Time[1])
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
         GaleDummy <- GaleDummy + 1
-        if(GaleDummy==4) {
+        if(GaleDummy==5) {
           GaleRemain <- GaleBigCool - DealCycle$Time[1]
         } else {
           GaleRemain <- GaleSmallCool - DealCycle$Time[1]
@@ -618,8 +622,8 @@ WindBreakerFinalDPM <- WindBreakerDealCalc(WindBreakerDealCycle, ATKFinal, BuffF
 WindBreakerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 
 
-DPM12344$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (235230 / 60000)
-DPM12344$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (235230 / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (235230 / 60000)
+DPM12344$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (233310 / 60000)
+DPM12344$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (233310 / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (233310 / 60000)
 
 WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCycle$Time, WindBreakerDealCycle$Restraint4, WindBreakerFinalDPMwithMax)
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
@@ -627,7 +631,7 @@ colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 WindBreakerRR <- WindBreakerDealData[114:1139, ]
 DPM12344$WindBreaker[3] <- sum((WindBreakerRR$Deal))
 
-WindBreaker40s <- WindBreakerDealData[114:2484, ]
+WindBreaker40s <- WindBreakerDealData[114:2496, ]
 DPM12344$WindBreaker[4] <- sum((WindBreaker40s$Deal))
 
 WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)

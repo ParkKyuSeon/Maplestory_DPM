@@ -379,7 +379,7 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
                            Period=178.5, CycleTime=357) {
   BuffSummonedPrior <- c("DualBladeBooster", "MirrorImaging", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "HiddenBladeBuff", "FlashBangBuff", "FinalCutBuff",
                          "MapleWarriors2", "UltimateDarkSight", "SoulContractLink", "ReadyToDie2Stack", "Restraint4")
-  Times180 <- c(1, 1, 1, 1, 1, 1, 0, 2, 3, 1, 1, 2, 2, 1)
+  Times180 <- c(1, 1, 1, 1, 1, 0, 1, 2, 0, 1, 1, 2, 2, 1)
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -447,7 +447,6 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
       } else if(DealCycle$Skills[nrow(DealCycle)] == "FinalCutBuff") {
         DealCycle <- DCATK(DealCycle, "FinalCut", ATKFinal)
         DealCycle <- DCATK(DealCycle, "SuddenRaid", ATKFinal)
-        SRDummy <- 0
       } else if(DealCycle$Skills[nrow(DealCycle)] == "FlashBangBuff") {
         DealCycle <- DCATK(DealCycle, "FlashBang", ATKFinal)
       }
@@ -472,11 +471,12 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
   }
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   SRCool <- subset(ATKFinal, rownames(ATKFinal)=="SuddenRaid")$CoolTime * 1000
   SRRemain <- subset(ATKFinal, rownames(ATKFinal)=="SuddenRaid")$CoolTime * 1000 - subset(DealCycle, DealCycle$Skills=="SuddenRaid")$Time - DealCycle$Time[1]
   BTCool <- subset(ATKFinal, rownames(ATKFinal)=="BladeTornado")$CoolTime * 1000
   KFCool <- subset(ATKFinal, rownames(ATKFinal)=="KarmaFury")$CoolTime * 1000
-  BSCool <- (subset(BuffFinal, rownames(BuffFinal)=="UltimateDarkSight")$CoolTime) / 2 * 1000
+  BSCool <- subset(ATKFinal, rownames(ATKFinal)=="BladeStorm")$CoolTime * 1000
   BTRemain <- 0 ; KFRemain <- 0 ; BSRemain <- 0
 
   for(k in 2:length(BuffList)) {
@@ -491,15 +491,40 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
           break
         }
       }
-      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
         sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
     }
     BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
-          DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+          if(colnames(DealCycle)[ColNums[i]]=="FinalCutBuff") {
+            DealCycle <- DCATK(DealCycle, "FinalCutPre", ATKFinal)
+            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+            DealCycle <- DCBuff(DealCycle, "FinalCutBuff", BuffFinal)
+            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+            DealCycle <- DCATK(DealCycle, "FinalCut", ATKFinal)
+            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+          } else {
+            DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+          }
         }
       }
       ## Blade Tornado
@@ -524,7 +549,7 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
         BSRemain <- max(0, BSRemain - DealCycle$Time[1])
       }
       ## Blade Storm, Asura
-      else if(BSRemain==0 & BTRemain > BTCool - 2000) {
+      else if(BSRemain==0 & BTRemain > BTCool - 2000 & DealCycle$ReadyToDie2Stack[nrow(DealCycle)] > 0) {
         DealCycle <- DCATK(DealCycle, "BladeStormPre", ATKFinal)
         KFRemain <- max(0, KFRemain - DealCycle$Time[1])
         BTRemain <- max(0, BTRemain - DealCycle$Time[1])
@@ -577,13 +602,12 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
         BSRemain <- max(0, BSRemain - DealCycle$Time[1])
       }
       ## Sudden Raid
-      else if(SRRemain==0 & SRDummy==0) {
+      else if(SRRemain==0) {
         DealCycle <- DCATK(DealCycle, "SuddenRaid", ATKFinal)
         KFRemain <- max(0, KFRemain - DealCycle$Time[1])
         BTRemain <- max(0, BTRemain - DealCycle$Time[1])
         SRRemain <- SRCool - DealCycle$Time[1]
         BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-        SRDummy <- 1
       }
       ## Phantom Blow
       else {
@@ -598,31 +622,12 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
     if(k != length(BuffList)) {
       for(i in 1:length(BuffList[[k]])) {
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
-          if(BuffList[[k]][i]=="FinalCutBuff") {
-            DealCycle <- DCATK(DealCycle, "FinalCutPre", ATKFinal)
-            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
-            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
-            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-          }
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           KFRemain <- max(0, KFRemain - DealCycle$Time[1])
           BTRemain <- max(0, BTRemain - DealCycle$Time[1])
           SRRemain <- max(0, SRRemain - DealCycle$Time[1])
           BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-          if(DealCycle$Skills[nrow(DealCycle)] == "FinalCutBuff") {
-            DealCycle <- DCATK(DealCycle, "FinalCut", ATKFinal)
-            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
-            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
-            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-            DealCycle <- DCATK(DealCycle, "SuddenRaid", ATKFinal)
-            KFRemain <- max(0, KFRemain - DealCycle$Time[1])
-            BTRemain <- max(0, BTRemain - DealCycle$Time[1])
-            SRRemain <- max(0, SRRemain - DealCycle$Time[1])
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-            SRDummy <- 0
-          } else if(DealCycle$Skills[nrow(DealCycle)] == "FlashBangBuff") {
+          if(DealCycle$Skills[nrow(DealCycle)] == "FlashBangBuff") {
             DealCycle <- DCATK(DealCycle, "FlashBang", ATKFinal)
             KFRemain <- max(0, KFRemain - DealCycle$Time[1])
             BTRemain <- max(0, BTRemain - DealCycle$Time[1])
@@ -660,6 +665,8 @@ DualBladeDealCycle <- AddATKCycleDualBlade(DualBladeDealCycle)
 DualBladeDealCycle <- DCSpiderInMirror(DualBladeDealCycle, SummonedFinal)
 DualBladeDealCycleReduction <- DealCycleReduction(DualBladeDealCycle)
 
+
+
 sum(na.omit(DealCalc(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpec)))
 
 DualBladeSpecOpt1 <- Optimization1(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpec, DualBladeUnionRemained)
@@ -672,8 +679,8 @@ DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFi
 DualBladeFinalDPM <- DealCalc(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 DualBladeFinalDPMwithMax <- DealCalcWithMaxDMR(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 
-DPM12344$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (366560 / 60000)
-DPM12344$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (366560 / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (366560 / 60000)
+DPM12344$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (360700 / 60000)
+DPM12344$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (360700 / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (360700 / 60000)
 
 DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Time, DualBladeDealCycle$Restraint4, DualBladeFinalDPMwithMax)
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")

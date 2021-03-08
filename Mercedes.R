@@ -586,6 +586,7 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
   IrkallaSubTime <- Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   
   for(k in 2:length(BuffList)) {
     CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
@@ -599,10 +600,13 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
           break
         }
       }
-      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
         sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
     }
     BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {

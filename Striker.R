@@ -514,6 +514,7 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
   }
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   DealCycle$LightningStack <- 5
   Link <- 0
   
@@ -551,10 +552,13 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
           break
         }
       }
-      BuffEndTime[i] <- max(a$Time) + subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000 + 
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
         sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
     }
     BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {
@@ -876,8 +880,8 @@ StrikerSpecOpt2 <- StrikerOptimization2(StrikerDealCycleReduction, ATKFinal, Buf
 StrikerFinalDPM <- StrikerDealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 StrikerFinalDPMwithMax <- StrikerDealCalcWithMaxDMR(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 
-DPM12344$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (246090 / 60000)
-DPM12344$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (246090 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (246090 / 60000)
+DPM12344$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (240540 / 60000)
+DPM12344$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (240540 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (240540 / 60000)
 
 StrikerDealRatio <- DealRatio(StrikerDealCycle, StrikerFinalDPMwithMax)
 
@@ -889,5 +893,5 @@ subset(StrikerDealData, StrikerDealData$R4>0)
 StrikerRR <- StrikerDealData[34:230, ]
 DPM12344$Striker[3] <- sum((StrikerRR$Deal))
 
-Striker40s <- StrikerDealData[34:468, ]
+Striker40s <- StrikerDealData[34:479, ]
 DPM12344$Striker[4] <- sum((Striker40s$Deal))
