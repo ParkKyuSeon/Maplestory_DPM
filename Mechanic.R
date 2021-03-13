@@ -22,12 +22,12 @@ MechanicBase <- JobBase(ChrInfo=ChrInfo,
                     CoreData=MechanicCore, 
                     MikhailLink=F, 
                     OtherBuffDuration=0, 
-                    AbilList=c("PassiveLv", "DisorderBDR"), 
+                    AbilList=c("BDR", "DisorderBDR"), 
                     LinkList=c("CygnusKnights", "Xenon", "DemonAvenger", "Zero"), 
                     MonsterLife=MLTypeD21, 
                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Gun", SpecDefault$WeaponType)[, 1:16],
                     WeaponType=SpecDefault$WeaponType, 
-                    SubWeapon=SubWeapon[1, ], 
+                    SubWeapon=SubWeapon[29, ], 
                     Emblem=Emblem[1, ], 
                     CoolReduceHat=T)
 
@@ -181,7 +181,7 @@ UsefulCombatOrders <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(1)
-info <- c(10, 200, 0, F, T, F, F)
+info <- c(8.67, 200, 0, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MetalArmorFullburstBuff <- rbind(data.frame(option, value), info)
@@ -341,10 +341,24 @@ HomingMissileBomberTime <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(MechanicCore[[1]][2, 2]>=40, 20, 0), 2 * MechanicCore[[1]][2, 2])
-info <- c(300, 7, 780, 600, NA, NA, NA, T)
+info <- c(500, 9 + MechanicSpec$PSkillLv, 780, NA, NA, NA, NA, T)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-HomingMissileMetalArmorFullBust <- rbind(data.frame(option, value), info)
+HomingMissileMetalArmor <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(MechanicCore[[1]][2, 2]>=40, 20, 0), 2 * MechanicCore[[1]][2, 2])
+info <- c(500, 10, 780, NA, NA, NA, NA, T)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+HomingMissileMetalArmorBomber <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(MechanicCore[[1]][2, 2]>=40, 20, 0), 2 * MechanicCore[[1]][2, 2])
+info <- c(500, 7, 780, 600, NA, NA, NA, T)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+HomingMissileMetalArmorAdd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(MechanicCore[[1]][3, 2]>=40, 20, 0), 2 * MechanicCore[[1]][3, 2])
@@ -389,8 +403,8 @@ colnames(info) <- c("option", "value")
 MetalArmorFullburstEnd <- rbind(data.frame(option, value), info)}
 
 MechanicATK <- Attack(list(MassiveFire=MassiveFire, MassiveFireExplosion=MassiveFireExplosion, RM1Explosion=RM1Explosion, MagneticFieldExplosion=MagneticFieldExplosion, 
-                           HomingMissile=HomingMissile, HomingMissileBomberTime=HomingMissileBomberTime, HomingMissileMetalArmorFullBust=HomingMissileMetalArmorFullBust, 
-                           DistortionField=DistortionField, MultipleOptionMissile=MultipleOptionMissile, MicroMissileContainer=MicroMissileContainer, 
+                           HomingMissile=HomingMissile, HomingMissileBomberTime=HomingMissileBomberTime, HomingMissileMetalArmor=HomingMissileMetalArmor, HomingMissileMetalArmorBomber=HomingMissileMetalArmorBomber, 
+                           HomingMissileMetalArmorAdd=HomingMissileMetalArmorAdd, DistortionField=DistortionField, MultipleOptionMissile=MultipleOptionMissile, MicroMissileContainer=MicroMissileContainer, 
                            MetalArmorFullburstPre=MetalArmorFullburstPre, MetalArmorFullburst=MetalArmorFullburst, MetalArmorFullburstEnd=MetalArmorFullburstEnd,
                            SpiderInMirror=SpiderInMirror))
 
@@ -707,22 +721,22 @@ MechanicSpecOpt$BDR <- MechanicSpecOpt$BDR + MechanicSpecOpt1$BDR
 MechanicSpecOpt$IGR <- IGRCalc(c(MechanicSpecOpt$IGR, MechanicSpecOpt1$IGR))
 
 MechanicSpecOpt2 <- LuckyDiceOptimization2(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, HyperStatBase, MechanicChrLv, MechanicCRROver, 
-                                           LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))
-MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))
-MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))
+                                           LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
+MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
+MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
 
-DPM12344$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (380630 / 60000)
-DPM12344$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (380630 / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (380630 / 60000)
+DPM12344$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (380540 / 60000)
+DPM12344$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (380540 / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (380540 / 60000)
 
 MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time, MechanicDealCycle$Restraint4, 
                                LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(1, 0, 0)))
 colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(MechanicDealData, MechanicDealData$R4>0)
 
-MechanicRR <- MechanicDealData[46:322, ]
+MechanicRR <- MechanicDealData[46:339, ]
 DPM12344$Mechanic[3] <- sum((MechanicRR$Deal))
 
-Mechanic40s <-  MechanicDealData[46:711, ]
+Mechanic40s <-  MechanicDealData[46:733, ]
 DPM12344$Mechanic[4] <- sum((Mechanic40s$Deal))
 
 DealRatio(MechanicDealCycle, MechanicFinalDPMwithMax)

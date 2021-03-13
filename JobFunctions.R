@@ -2172,7 +2172,7 @@ RoyalGuardCycle <- function(DealCycle, ATKSkillList, RoyalGuardCoolTime) {
     DealCycle <- DCATK(DealCycle, "RoyalGuard", ATKSkillList)
   } else {
     if(DealCycle$Time[nrow(DealCycle)] - RG$Time[nrow(RG)] >= RGCool) {
-      DealCycle[1, 2:ncol(DealCycle)] <- 0
+      DealCycle[1, 2:ncol(DealCycle)] <- 30
       DealCycle <- DCATK(DealCycle, "RoyalGuard", ATKSkillList)
     } else if(DealCycle$Time[nrow(DealCycle)] - RG$Time[nrow(RG)] + DealCycle$Time[1] >= RGCool) {
       DealCycle[1, 2:ncol(DealCycle)] <- round(RGCool - (DealCycle$Time[nrow(DealCycle)] - RG$Time[nrow(RG)]))
@@ -2879,23 +2879,24 @@ MechanicAddATKCycle <- function(DealCycle, ATKSkillList) {
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="MetalArmorFullburstBuff") {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "HomingMissileMetalArmorFullBust"
+      DealCycle$Skills[nrow(DealCycle)] <- "HomingMissileMetalArmorAdd"
     }
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ]
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
-  DealCycle <- RepATKCycle(DealCycle, "HomingMissileMetalArmorFullBust", 15, 0, ATKSkillList)
+  DealCycle <- RepATKCycle(DealCycle, "HomingMissileMetalArmorAdd", 15, 0, ATKSkillList)
   
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="MassiveFire" & DealCycle$MetalArmorFullburstExhaust[i]==0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("HomingMissile")
-    } else if(DealCycle$Skills[i]=="HomingMissileMetalArmorFullBust") {
+    } else if(DealCycle$Skills[i]=="HomingMissileMetalArmorAdd") {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- c("HomingMissile")
+      DealCycle$Skills[nrow(DealCycle)] <- c("HomingMissileMetalArmor")
     }
   }
+  
   
   DealCycle <- DealCycle[order(DealCycle$Time), ]
   rownames(DealCycle) <- 1:nrow(DealCycle)
@@ -2904,6 +2905,9 @@ MechanicAddATKCycle <- function(DealCycle, ATKSkillList) {
     if(DealCycle$Skills[i]=="HomingMissile" & DealCycle$BomberTime[i]>0 & DealCycle$MetalArmorFullburstExhaust[i]==0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("HomingMissileBomberTime")
+    } else if(DealCycle$Skills[i]=="HomingMissileMetalArmor" & DealCycle$BomberTime[i]>0 & DealCycle$MetalArmorFullburstExhaust[i]==0) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("HomingMissileMetalArmorBomber")
     }
   }
   
