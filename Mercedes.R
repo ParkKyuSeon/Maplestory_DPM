@@ -327,14 +327,14 @@ ElementalGhostTree <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 210, NA, 150, T, F, F)
+info <- c(0, 0, 840, NA, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathofIrkallaPre <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * MercedesCore[[2]][2, 2], 8, 8020, 150, 150, T, F, F)
+info <- c(400 + 16 * MercedesCore[[2]][2, 2], 8, 7660, 150, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathofIrkalla <- rbind(data.frame(option, value), info)
@@ -823,8 +823,8 @@ MercedesSpecOpt2_2 <- Optimization2(MercedesDealCycleReduction2, ATKFinal, BuffF
 MercedesFinalDPM2 <- DealCalc(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 MercedesFinalDPMwithMax2 <- DealCalcWithMaxDMR(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 
-DPM12344$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (338660 / 60000)
-DPM12344$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (338660 / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (338660 / 60000)
+DPM12344$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (338720 / 60000)
+DPM12344$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (338720 / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (338720 / 60000)
 
 MercedesDealRatio <- DealRatio(MercedesDealCycle2, MercedesFinalDPMwithMax2)
 
@@ -833,8 +833,8 @@ colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(MercedesDealData, MercedesDealData$R4>0)
 
-MercedesRR <- MercedesDealData[42:464, ]
+MercedesRR <- MercedesDealData[42:452, ]
 DPM12344$Mercedes[3] <- sum((MercedesRR$Deal))
 
-Mercedes40s <-  MercedesDealData[42:1318, ]
+Mercedes40s <-  MercedesDealData[42:1314, ]
 DPM12344$Mercedes[4] <- sum((Mercedes40s$Deal))

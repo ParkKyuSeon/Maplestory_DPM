@@ -192,7 +192,7 @@ OverDriveExhaust <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(20)
-info <- c(180, 180, 540 + 990, F, T, F, T)
+info <- c(180, 180, 990, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
@@ -880,8 +880,8 @@ StrikerSpecOpt2 <- StrikerOptimization2(StrikerDealCycleReduction, ATKFinal, Buf
 StrikerFinalDPM <- StrikerDealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 StrikerFinalDPMwithMax <- StrikerDealCalcWithMaxDMR(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 
-DPM12344$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (240540 / 60000)
-DPM12344$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (240540 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (240540 / 60000)
+DPM12344$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (240480 / 60000)
+DPM12344$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (240480 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (240480 / 60000)
 
 StrikerDealRatio <- DealRatio(StrikerDealCycle, StrikerFinalDPMwithMax)
 

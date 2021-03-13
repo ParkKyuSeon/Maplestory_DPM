@@ -134,3 +134,5 @@ ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle2$Time, ArchMageTCDamage2)
 barplot(ArchMageTCDealTL$Deal/100000000, names.arg=ArchMageTCDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="ArchMageTC Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+

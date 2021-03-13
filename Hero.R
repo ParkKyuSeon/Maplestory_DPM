@@ -562,7 +562,7 @@ HeroDealCycle <- HeroCycle(PreDealCycle=HeroDealCycle,
                                    ATKFinal=ATKFinal,
                                    BuffFinal=BuffFinal, 
                                    SummonedFinal=SummonedFinal, 
-                                   Spec=PalladinSpec,
+                                   Spec=HeroSpec,
                                    Period=240, 
                                    CycleTime=240)
 HeroDealCycle <- DealCycleFinal(HeroDealCycle)

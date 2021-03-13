@@ -283,7 +283,7 @@ AsuraPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(2 * DualBladeCore[[1]][3, 2], 100)
-info <- c(420, 4, 9040, 300, 60, F, F, F)
+info <- c(420, 4, 9400, 300, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Asura <- rbind(data.frame(option, value), info)
@@ -304,7 +304,7 @@ BladeStormPre <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(350 + 10 * DualBladeCore[[2]][1, 2], 5, 9760, 210, 90, T, F, F)
+info <- c(350 + 10 * DualBladeCore[[2]][1, 2], 5, 9880, 210, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeStorm <- rbind(data.frame(option, value), info)
@@ -659,7 +659,7 @@ DualBladeDealCycle <- HuntedEdgeCycle(DualBladeDealCycle, ATKFinal$CoolTime[16] 
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "HuntedEdge", 5, 30, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "KarmaFury", 5, 0, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "BladeTornado", 5, 0, ATKFinal)
-DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "Asura", 31, 0, ATKFinal)
+DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "Asura", 32, 0, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "BladeStorm", 48, 0, ATKFinal)
 DualBladeDealCycle <- AddATKCycleDualBlade(DualBladeDealCycle)
 DualBladeDealCycle <- DCSpiderInMirror(DualBladeDealCycle, SummonedFinal)
@@ -679,14 +679,14 @@ DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFi
 DualBladeFinalDPM <- DealCalc(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 DualBladeFinalDPMwithMax <- DealCalcWithMaxDMR(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 
-DPM12344$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (360700 / 60000)
-DPM12344$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (360700 / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (360700 / 60000)
+DPM12344$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (360460 / 60000)
+DPM12344$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (360460 / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (360460 / 60000)
 
 DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Time, DualBladeDealCycle$Restraint4, DualBladeFinalDPMwithMax)
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(DualBladeDealData, DualBladeDealData$R4>0)
 
-DualBladeRR <- DualBladeDealData[30:282, ]
+DualBladeRR <- DualBladeDealData[30:279, ]
 DPM12344$DualBlader[3] <- sum((DualBladeRR$Deal))
 
 DualBlade40s <- DualBladeDealData[30:542, ]

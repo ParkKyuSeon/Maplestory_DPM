@@ -368,7 +368,7 @@ BattleMageATK <- Attack(list(FinishBlow=FinishBlow, FinishBlowUA=FinishBlowUA, F
 ## BattleMage - Summoned
 {option <- factor(levels=SSkill)
   value <- c()
-  info <- c(800 + 32 * BattleMageCore[[2]][2, 2], 4, 690, 1125, 40, 50, F, F, F, F)
+  info <- c(800 + 32 * BattleMageCore[[2]][2, 2], 4, 690, 1140, 40, 50, F, F, F, F)
   info <- data.frame(SInfo, info)
   colnames(info) <- c("option", "value")
   BlackMagicAltar <- rbind(data.frame(option, value), info)

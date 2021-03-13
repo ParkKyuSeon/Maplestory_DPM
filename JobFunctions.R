@@ -2835,7 +2835,7 @@ MechCarrierCycle <- function(DealCycle, SummonedSkillList) {
   rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
-RM1Cycle <- function(DealCycle, RM1Duration, RM1CoolTime, SummonedSkillList) {
+RM1MFCycle <- function(DealCycle, RM1Duration, RM1CoolTime, MFDuration, MFCoolTime, SummonedSkillList) {
   maxtime <- max(DealCycle$Time)
   DealCycle <- DCSummonedATKs(DealCycle, c("RM1"), SummonedFinal)
   if(RM1Duration < RM1CoolTime) {
@@ -2848,6 +2848,25 @@ RM1Cycle <- function(DealCycle, RM1Duration, RM1CoolTime, SummonedSkillList) {
   rownames(DealCycle) <- 1:nrow(DealCycle)
   for(i in 2:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="RM1Explosion") {
+      for(j in 3:ncol(DealCycle)) {
+        DealCycle[i, j] <- ifelse(DealCycle[i-1, j]>0, max(DealCycle[i-1, j] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
+      }
+    }
+  }
+  DealCycle <- subset(DealCycle, DealCycle$Time <= maxtime)
+  
+  maxtime <- max(DealCycle$Time)
+  DealCycle <- DCSummonedATKs(DealCycle, c("MagneticField"), SummonedFinal)
+  if(MFDuration < MFCoolTime) {
+    MF <- subset(DealCycle, DealCycle$Skills=="MagneticFieldSummoned")
+    MF$Skills <- "MagneticFieldExplosion"
+    MF$Time <- MF$Time + 1000 * MFDuration
+  }
+  DealCycle <- rbind(DealCycle, MF)
+  DealCycle <- DealCycle[order(DealCycle$Time), ]
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  for(i in 2:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="MagneticFieldExplosion") {
       for(j in 3:ncol(DealCycle)) {
         DealCycle[i, j] <- ifelse(DealCycle[i-1, j]>0, max(DealCycle[i-1, j] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
       }

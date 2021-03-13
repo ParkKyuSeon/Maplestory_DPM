@@ -374,7 +374,7 @@ InfinityFlameCircleTick <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill) 
 value <- c(50)
-info <- c(500 + 20 * FlameWizardCore[[2]][3, 2], 7, 540, 0, NA, NA, NA, F)
+info <- c(500 + 20 * FlameWizardCore[[2]][3, 2], 7, 90, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 InfinityFlameCircleEnd <- rbind(data.frame(option, value), info)
@@ -517,7 +517,7 @@ FlameWizardCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
   DragonSlaveCool <- 90000 ; InfernoCool <- subset(ATKFinal, rownames(ATKFinal)=="Infernorise")$CoolTime * 1000
   DischargeCool <- subset(ATKFinal, rownames(ATKFinal)=="FlameDischargeLion2")$CoolTime * 1000 + 3000
   BlazingCool <- subset(ATKFinal, rownames(ATKFinal)=="BlazingOrbitalFlame")$CoolTime * 1000
-  ExtinctionCool <- 10000
+  ExtinctionCool <- 9500
   DragonSlaveRemain <- 0 ; InfernoRemain <- 0 ; DischargeRemain <- 0 ; BlazingRemain <- 0 ; ExtinctionRemain <- 0
   DealCycle$FlameDischargeStack[nrow(DealCycle)] <- 0 ; DealCycle$InfinityFlameCircleStack[nrow(DealCycle)] <- 15
   DC2 <- data.frame()
@@ -701,7 +701,7 @@ FlameWizardCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
         InfernoRemain <- max(0, InfernoRemain - DealCycle$Time[1])
         DischargeRemain <- max(0, DischargeRemain - DealCycle$Time[1])
         BlazingRemain <- max(0, BlazingRemain - DealCycle$Time[1])
-        DealCycle$InfinityFlameCircleStack[nrow(DealCycle)] <- 180000 + 240
+        DealCycle$InfinityFlameCircleStack[nrow(DealCycle)] <- 180000 + 120
         
         for(i in 1:79) {
           DealCycle <- DCATK(DealCycle, "InfinityFlameCircleTick", ATKFinal)
@@ -1027,8 +1027,8 @@ FlameWizardSpecOpt2 <- FlameWizardOptimization2(FlameWizardDealCycleReduction, A
 FlameWizardFinalDPM <- FlameWizardDealCalc(FlameWizardDealCycle, ATKFinal, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 FlameWizardFinalDPMwithMax <- FlameWizardDealCalcWithMaxDMR(FlameWizardDealCycle, ATKFinal, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 
-DPM12344$FlameWizard[1] <- sum(na.omit(FlameWizardFinalDPMwithMax)) / (369020 / 60000)
-DPM12344$FlameWizard[2] <- sum(na.omit(FlameWizardFinalDPM)) / (369020 / 60000) - sum(na.omit(FlameWizardFinalDPMwithMax)) / (369020 / 60000)
+DPM12344$FlameWizard[1] <- sum(na.omit(FlameWizardFinalDPMwithMax)) / (368570 / 60000)
+DPM12344$FlameWizard[2] <- sum(na.omit(FlameWizardFinalDPM)) / (368570 / 60000) - sum(na.omit(FlameWizardFinalDPMwithMax)) / (368570 / 60000)
 
 FlameWizardDealRatio <- DealRatio(FlameWizardDealCycle, FlameWizardFinalDPMwithMax)
 
@@ -1037,10 +1037,10 @@ colnames(FlameWizardDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(FlameWizardDealData, FlameWizardDealData$R4>0)
 
-FlameWizardRR <- FlameWizardDealData[91:254, ]
+FlameWizardRR <- FlameWizardDealData[91:258, ]
 DPM12344$FlameWizard[3] <- sum((FlameWizardRR$Deal))
 
-FlameWizard40s <- FlameWizardDealData[37:581, ]
+FlameWizard40s <- FlameWizardDealData[37:578, ]
 DPM12344$FlameWizard[4] <- sum((FlameWizard40s$Deal))
 
 
@@ -1068,12 +1068,12 @@ FlameWizardDealCycleReduction2 <- DealCycleReduction(FlameWizardDealCycle2, c("B
 FlameWizardFinalDPM1250 <- FlameWizardDealCalc(FlameWizardDealCycle2, ATKFinal285, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 FlameWizardFinalDPMwithMax1250 <- FlameWizardDealCalcWithMaxDMR(FlameWizardDealCycle2, ATKFinal285, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 
-FW1250DPM <- sum(na.omit(FlameWizardFinalDPM1250)) / (368735 / 60000)
+FW1250DPM <- sum(na.omit(FlameWizardFinalDPM1250)) / (369410 / 60000)
 
 FlameWizardDealData2 <- data.frame(FlameWizardDealCycle2$Skills, FlameWizardDealCycle2$Time, FlameWizardDealCycle2$Restraint4, FlameWizardFinalDPMwithMax1250)
 colnames(FlameWizardDealData2) <- c("Skills", "Time", "R4", "Deal")
 
 subset(FlameWizardDealData2, FlameWizardDealData2$R4>0)
 
-FW1250R4 <- sum(FlameWizardDealData2$Deal[91:254])
-FW125040s <- sum(FlameWizardDealData2$Deal[37:571])
+FW1250R4 <- sum(FlameWizardDealData2$Deal[91:258])
+FW125040s <- sum(FlameWizardDealData2$Deal[37:570])

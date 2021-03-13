@@ -275,7 +275,7 @@ GrandCrossSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(300 + 12 * PalladinCore[[2]][3, 2], 12, 6050, 150, 150, T, F, F)
+info <- c(300 + 12 * PalladinCore[[2]][3, 2], 12, 6500, 150, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossBig <- rbind(data.frame(option, value), info)
@@ -615,16 +615,17 @@ PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFina
 PalladinFinalDPM <- DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 PalladinFinalDPMwithMax <- DealCalcWithMaxDMR(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 
-DPM12344$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (345740 / 60000)
-DPM12344$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (345740 / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (345740 / 60000)
+DPM12344$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (345380 / 60000)
+DPM12344$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (345380 / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (345380 / 60000)
 
 PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time, PalladinDealCycle$Restraint4, PalladinFinalDPMwithMax)
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
+subset(PalladinDealData, PalladinDealData$R4>0)
 
-PalladinRR <- PalladinDealData[26:211, ]
+PalladinRR <- PalladinDealData[26:209, ]
 DPM12344$Palladin[3] <- sum((PalladinRR$Deal))
 
-Palladin40s <- PalladinDealData[26:375, ]
+Palladin40s <- PalladinDealData[26:373, ]
 DPM12344$Palladin[4] <- sum((Palladin40s$Deal))
 
 PalladinDealRatio <- DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)
