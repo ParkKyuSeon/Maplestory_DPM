@@ -510,7 +510,7 @@ DeusSateliteWait <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=SSkill)
 value <- c(floor(IlliumCore[[2]][5, 2] / 10) + 8)
-info <- c((500 + 20 * IlliumCore[[2]][2, 2]) * 2, 12, 210, 3030, 30, 180, F, T, F, F)
+info <- c((500 + 20 * IlliumCore[[2]][2, 2]) * 2, 12, 210, 3030, 40, 180, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Gramholder <- rbind(data.frame(option, value), info)}
@@ -880,5 +880,5 @@ subset(IlliumDealData, IlliumDealData$R4 > 0)
 IlliumRR <- IlliumDealData[220:403, ]
 DPM12344$Illium[3] <- sum((IlliumRR$Deal))
 
-Illium40s <- IlliumDealData[220:670, ]
+Illium40s <- IlliumDealData[220:676, ]
 DPM12344$Illium[4] <- sum((Illium40s$Deal))
