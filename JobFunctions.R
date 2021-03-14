@@ -1940,19 +1940,23 @@ MarksmanDistance <- function(MarksmanDealCycle) {
       MarksmanDealCycle$MotalBlow[i] <- 1
     }
     ## DistancingSense
-    if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "TrueSnipe", "FullBustShot", "SpiderInMirror", "FinalAttack"))==1) {
+    if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "FullBustShot", "GuidedArrow", "SpiderInMirror", "FinalAttack"))==1) {
       MarksmanDealCycle$DistancingSense[i] <- 1
     }
     ## Distance 0
     if(max(MarksmanDealCycle$Skills[i]==c("SpiderInMirror1", "SpiderInMirror2", "SpiderInMirror3", "SpiderInMirror4", "SpiderInMirror5", "Evolve", "Freezer"))==1) {
       MarksmanDealCycle$Distance0[i] <- 1
     }
+    ## Distance 400
+    if(max(MarksmanDealCycle$Skills[i]==c("TrueSnipe"))==1) {
+      MarksmanDealCycle$DistanceSenseTrueSnipe[i] <- 1
+    }
     ## LastmanStanding
     if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "TrueSnipe", "FullbustShot", "FinalAttack", "SpiderInMirror"))==1) {
       MarksmanDealCycle$LastmanStanding[i] <- 1
     }
     ## WeaknessFinding
-    if(max(MarksmanDealCycle$Skills[i]==c("SpiderInMirror", "Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "FullbustShot", "FinalAttack"))==1) {
+    if(max(MarksmanDealCycle$Skills[i]==c("SpiderInMirror", "Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "FullbustShot", "GuidedArrow", "FinalAttack"))==1) {
       MarksmanDealCycle$WeaknessFinding[i] <- 1
     }
   }

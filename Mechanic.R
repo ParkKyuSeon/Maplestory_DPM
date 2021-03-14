@@ -14,7 +14,6 @@ MechanicCore <- MatrixSet(PasSkills=c("MassiveFire", "HomingMissile", "Distortio
 
 
 ## Mechanic - Basic Info
-## Link Check Needed
 MechanicBase <- JobBase(ChrInfo=ChrInfo, 
                     MobInfo=MobDefault,
                     SpecSet=SpecDefault, 

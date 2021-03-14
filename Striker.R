@@ -14,7 +14,6 @@ StrikerCore <- MatrixSet(PasSkills=c("Annihilate", "Thunderbolt", "Typhoon", "De
 
 
 ## Striker - Basic Info
-## Link Check Needed
 StrikerBase <- JobBase(ChrInfo=ChrInfo, 
                        MobInfo=MobDefault,
                        SpecSet=SpecDefault, 
