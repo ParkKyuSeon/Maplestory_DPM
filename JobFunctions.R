@@ -3604,26 +3604,29 @@ JavelinBuffLogic <- function(DealCycle) {
 SoulofCrystalBuffLogic <- function(DealCycle) {
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="GloryWing") {
-      DealCycle$SoulofCrystal1Glory[i] <- DealCycle$SoulofCrystal1[i]
-      DealCycle$SoulofCrystal2Glory[i] <- DealCycle$SoulofCrystal2[i]
+      DealCycle$SoulofCrystal1Glory[i] <- ifelse(DealCycle$SoulofCrystal1[i]==0, 0, max(DealCycle$SoulofCrystal1[i], DealCycle$SoulofCrystal2[i]))
+      DealCycle$SoulofCrystal2Glory[i] <- ifelse(DealCycle$SoulofCrystal2[i]==0, 0, max(DealCycle$SoulofCrystal1[i], DealCycle$SoulofCrystal2[i]))
       DealCycle$SoulofCrystal1[i] <- 0
       DealCycle$SoulofCrystal2[i] <- 0
     }
   }
   
   for(i in 2:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("GloryWing", "SoulofCrystal1", "SoulofCrystal2"))==0) {
-      DealCycle$SoulofCrystal1[i] <- ifelse(DealCycle$SoulofCrystal1[i-1]>0, max(DealCycle$SoulofCrystal1[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
-      DealCycle$SoulofCrystal2[i] <- ifelse(DealCycle$SoulofCrystal2[i-1]>0, max(DealCycle$SoulofCrystal2[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
+    if(sum(DealCycle$Skills[i]==c("GloryWing"))==0) {
       DealCycle$SoulofCrystal1Glory[i] <- ifelse(DealCycle$SoulofCrystal1Glory[i-1]>0, max(DealCycle$SoulofCrystal1Glory[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
       DealCycle$SoulofCrystal2Glory[i] <- ifelse(DealCycle$SoulofCrystal2Glory[i-1]>0, max(DealCycle$SoulofCrystal2Glory[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
     }
   }
   
-  for(i in 1:nrow(DealCycle)) {
-    if(DealCycle$GloryWing[i]==0) {
-      DealCycle$SoulofCrystal1Glory[i] <- 0
-      DealCycle$SoulofCrystal2Glory[i] <- 0
+  for(i in 2:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("GloryWing", "SoulofCrystal1"))==0) {
+      DealCycle$SoulofCrystal1[i] <- ifelse(DealCycle$SoulofCrystal1[i-1]>0, max(DealCycle$SoulofCrystal1[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
+    }
+  }
+  
+  for(i in 2:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("GloryWing", "SoulofCrystal2"))==0) {
+      DealCycle$SoulofCrystal2[i] <- ifelse(DealCycle$SoulofCrystal2[i-1]>0, max(DealCycle$SoulofCrystal2[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]), 0), 0)
     }
   }
   return(DealCycle)
@@ -3879,7 +3882,7 @@ MCFCycle <- function(DealCycle, ActivationSkills) {
   rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
-AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, DestructionCoolTime) {
+AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, DestructionCoolTime, SoulofCrystalReactionCoolTime) {
   ## Destruction
   DC1 <- data.frame(t(rep(0, ncol(DealCycle))))
   colnames(DC1) <- colnames(DealCycle)
@@ -3914,32 +3917,13 @@ AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, Destructio
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle) 
   
-  ## SoulofCrystal
+  ## Soul of Crystal (Spectrum, Javelin Add ATK)
   for(i in 1:nrow(DealCycle)) {
-    if(max(DealCycle$Skills[i]==c("Destruction"))==1) {
-      if(DealCycle$SoulofCrystal1[i] > 0) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- c("DestructionSoul")
-      }
-      if(DealCycle$SoulofCrystal2[i] > 0) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- c("DestructionSoul")
-      }
-      if(DealCycle$SoulofCrystal2[i] > 0 & DealCycle$SoulofCrystal1[i] > 0) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- c("JavelinAddATK")
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- c("JavelinAddFragment")
-      }
-    } else if(max(DealCycle$Skills[i]==c("Domination"))==1) {
-      if(DealCycle$SoulofCrystal1[i] > 0) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- c("DominationSoul")
-      }
-      if(DealCycle$SoulofCrystal2[i] > 0) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- c("DominationSoul")
-      }
+    if(DealCycle$SoulofCrystal2[i] > 0 & DealCycle$SoulofCrystal1[i] > 0 & DealCycle$Skills[i]=="Javelin") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("JavelinAddATK")
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("JavelinAddFragment")
     } else if(max(DealCycle$Skills[i]==c("ReactionSpectrum"))==1) {
       if(DealCycle$SoulofCrystal1[i] > 0) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
@@ -3949,6 +3933,120 @@ AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, Destructio
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- c("ReactionSpectrum")
       }
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  ## Soul of Crystal Destruction
+  SOC1 <- subset(DealCycle, DealCycle$Skills=="SoulofCrystal1")
+  Ind <- rownames(SOC1)
+  Ind[length(Ind)+1] <- nrow(SOC1)
+  Ind <- as.numeric(Ind)
+  
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    
+    time <- 4001
+    while(p < Ind[i+1] & DealCycle$SoulofCrystal1[p] > 0) {
+      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Javelin"))==1) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("DestructionSoul")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    if(nrow(DC) >= 2) {
+      DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  SOC2 <- subset(DealCycle, DealCycle$Skills=="SoulofCrystal2")
+  Ind <- rownames(SOC2)
+  Ind[length(Ind)+1] <- nrow(SOC2)
+  Ind <- as.numeric(Ind)
+  
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    
+    time <- 4001
+    while(p < Ind[i+1] & DealCycle$SoulofCrystal2[p] > 0) {
+      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Javelin"))==1) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("DestructionSoul")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    if(nrow(DC) >= 2) {
+      DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  ## Soul of Crystal Domination
+  SOC1 <- subset(DealCycle, DealCycle$Skills=="SoulofCrystal1")
+  Ind <- rownames(SOC1)
+  Ind[length(Ind)+1] <- nrow(SOC1)
+  Ind <- as.numeric(Ind)
+  
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    
+    time <- 4001
+    while(p < Ind[i+1] & DealCycle$SoulofCrystal1[p] > 0) {
+      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Orb"))==1) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("DominationSoul")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    if(nrow(DC) >= 2) {
+      DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  SOC2 <- subset(DealCycle, DealCycle$Skills=="SoulofCrystal2")
+  Ind <- rownames(SOC2)
+  Ind[length(Ind)+1] <- nrow(SOC2)
+  Ind <- as.numeric(Ind)
+  
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    
+    time <- 4001
+    while(p < Ind[i+1] & DealCycle$SoulofCrystal2[p] > 0) {
+      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Orb"))==1) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("DominationSoul")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    if(nrow(DC) >= 2) {
+      DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
     }
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
