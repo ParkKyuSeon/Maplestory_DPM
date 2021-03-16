@@ -426,7 +426,7 @@ AuraWeapon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * AdeleCore[[2]][6, 2], 3, 0, 0, NA, NA, NA, F)
+info <- c(500 + 20 * AdeleCore[[2]][7, 2], 3, 0, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicCircuitFullDrive <- rbind(data.frame(option, value), info)}
