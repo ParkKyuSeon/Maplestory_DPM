@@ -3700,10 +3700,10 @@ DeusExMachinaLogic <- function(DealCycle, DeusDuration, SummonedSkillList) {
     while(t < DeusDuration * 1000) {
       DC1 <- rbind(DC1, DC1[1, ])
       DC1[p, 1] <- DEUS[s1]
-      DC1[p, 2] <- DC1[p-1, 2] + SummonedSkillList$SubTime[k[s1]]
+      DC1[p, 2] <- DC1[p-1, 2] + ifelse(sum(m==c(1, 10, 20))==1, 30, SummonedSkillList$SubTime[k[s1]])
       t <- t + SummonedSkillList$SubTime[k[s1]]
-      m <- ifelse(m==41, 1, m + 1)
-      s1 <- ifelse(m<=10, 1, ifelse(m<=20, 2, ifelse(m<=40, 3, 4)))
+      m <- ifelse(m==40, 1, m + 1)
+      s1 <- ifelse(m <= 9, 1, ifelse(m <= 19, 2, ifelse(m <= 39, 3, 4)))
       p <- p + 1
     }
     DC1 <- subset(DC1, DC1$Time<=maxtime)
@@ -3800,10 +3800,10 @@ DeusExMachinaLogic <- function(DealCycle, DeusDuration, SummonedSkillList) {
     while(t < LiyoDuration[i]) {
       DC1 <- rbind(DC1, DC1[1, ])
       DC1[p, 1] <- LIYO[s1]
-      DC1[p, 2] <- DC1[p-1, 2] + SummonedSkillList$SubTime[k[s1]]
+      DC1[p, 2] <- DC1[p-1, 2] + ifelse(sum(m==c(1, 10, 20))==1, 30, SummonedSkillList$SubTime[k[s1]])
       t <- t + SummonedSkillList$SubTime[k[s1]]
-      m <- ifelse(m==41, 1, m + 1)
-      s1 <- ifelse(m<=10, 1, ifelse(m<=20, 2, ifelse(m<=40, 3, 4)))
+      m <- ifelse(m == 40, 1, m + 1)
+      s1 <- ifelse(m <= 9, 1, ifelse(m <= 19, 2, ifelse(m <= 39, 3, 4)))
       p <- p + 1
     }
     DC1 <- subset(DC1, DC1$Time<=maxtime)
