@@ -375,7 +375,7 @@ MarksmanATK <- Attack(list(Snipe=Snipe, SplitArrow=SplitArrow, ChargedArrowStart
 ## Marksman - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 15 * MarksmanCore[[2]][6, 2], 7, 600, 3030, 40, 105, F, T, F, F)
+info <- c(450 + 15 * MarksmanCore[[2]][7, 2], 7, 600, 3030, 40, 105, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Evolve <- rbind(data.frame(option, value), info) 

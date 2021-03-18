@@ -2208,7 +2208,7 @@ AWCSCycleMikhail <- function(DealCycle) {
     
     time <- DealCycle[p, 2] - DealCycle[p-1, 2]
     while(p < Ind[i+1] & DealCycle$AuraWeaponBuff[p] > 0) {
-      if(time>5000 & max(DealCycle$Skills[p]==c("SoulAssault", "ShingingCross", "DeadlyCharge", "LightForceRay", "ClaiomhSolais", "SoulLightSlash"))==1) {
+      if(time>5000 & max(DealCycle$Skills[p]==c("SoulAssault", "ShingingCross", "DeadlyCharge", "ClaiomhSolais", "SoulLightSlash"))==1) {
         DC <- rbind(DC, DealCycle[p, ])
         DC[nrow(DC), 1] <- c("AuraWeapon")
         time <- DealCycle[p+1, 2] - DealCycle[p, 2]

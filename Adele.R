@@ -475,7 +475,15 @@ colnames(AdeleDealCycle) <- DealCycle
 AdeleDealCycle <- data.frame(AdeleDealCycle)
 AdeleDealCycle$Ether <- 400
 
-AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Period=180) {
+AdeleATKFinal <- function(ATKFinal, Hyper=c("Nobility", "TriggerBK", "Dike")) {
+  ATKFinal$BDR[rownames(ATKFinal)=="Divide"] <- ifelse(Hyper=="TriggerBK", ATKFinal$BDR[rownames(ATKFinal)=="Divide"] + 20, ATKFinal$BDR[rownames(ATKFinal)=="Divide"])
+  return(ATKFinal)
+}
+AdeleBuffFinal <- function(BuffFinal, ShieldRate=100) {
+  BuffFinal$BDR[rownames(BuffFinal)=="Nobility"] <- BuffFinal$BDR[rownames(BuffFinal)=="Nobility"] * (ShieldRate / 100)
+  return(BuffFinal)
+}
+AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Period=180, Hyper=c("Nobility", "TriggerBK", "Dike")) {
   DealCycle <- PreDealCycle
   Period <- Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   ## First Cycle
@@ -510,7 +518,11 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   ## Ether 400 & Storm
   DealCycle <- AdeleBuffCycle(DealCycle, c("GatheringDebuff"), BuffFinal)
   DealCycle <- AdeleATKCycle(DealCycle, c("Gathering", "Blossom1st", rep("Divide", 14)), ATKFinal)
-  DealCycle <- AdeleBuffCycle(DealCycle, c("Nobility"), BuffFinal)
+  if(Hyper=="Nobility") {
+    DealCycle <- AdeleBuffCycle(DealCycle, c("Nobility"), BuffFinal)
+  } else {
+    DealCycle <- AdeleATKCycle(DealCycle, c(rep("Divide", 1)), ATKFinal)
+  }
   DealCycle <- AdeleBuffCycle(DealCycle, c("SoulContractLink"), BuffFinal)
   DealCycle <- AdeleBuffCycle(DealCycle, c("ResonanceBuff"), BuffFinal)
   DealCycle <- AdeleATKCycle(DealCycle, c("Resonance", "ResonanceMove"), ATKFinal)
@@ -605,7 +617,11 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   ## Ether 400 & Storm
   DealCycle <- AdeleBuffCycle(DealCycle, c("GatheringDebuff"), BuffFinal)
   DealCycle <- AdeleATKCycle(DealCycle, c("Gathering", "Blossom1st", rep("Divide", 14)), ATKFinal)
-  DealCycle <- AdeleBuffCycle(DealCycle, c("Nobility"), BuffFinal)
+  if(Hyper=="Nobility") {
+    DealCycle <- AdeleBuffCycle(DealCycle, c("Nobility"), BuffFinal)
+  } else {
+    DealCycle <- AdeleATKCycle(DealCycle, c(rep("Divide", 1)), ATKFinal)
+  }
   DealCycle <- AdeleBuffCycle(DealCycle, c("SoulContractLink"), BuffFinal)
   DealCycle <- AdeleBuffCycle(DealCycle, c("ResonanceBuff"), BuffFinal)
   DealCycle <- AdeleATKCycle(DealCycle, c("Resonance", "ResonanceMove"), ATKFinal)
@@ -682,40 +698,44 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   return(DealCycle)
 }
 
-AdeleDealCycle <- AdeleCycle(PreDealCycle=AdeleDealCycle, 
-                             ATKFinal=ATKFinal, 
-                             BuffFinal=BuffFinal, 
-                             SummonedFinal=SummonedFinal, 
-                             Spec=AdeleSpec)
-AdeleDealCycle <- DealCycleFinal(AdeleDealCycle)
-AdeleDealCycle <- RuinTerritoryCycle(AdeleDealCycle, ATKFinal)
-AdeleDealCycle <- GatheringBlossomWonderCreationCycle(AdeleDealCycle, ATKFinal)
-AdeleDealCycle <- StormRepATKCycle(AdeleDealCycle, ATKFinal)
-AdeleDealCycle <- AdeleOrderCycle(AdeleDealCycle, SummonedFinal)
-AdeleDealCycle <- RepATKCycle(AdeleDealCycle, "Infinite", 29, 0, ATKFinal)
-AdeleDealCycle <- RepATKCycle(AdeleDealCycle, "Restore", 10, 3000, ATKFinal)
-AdeleDealCycle <- AdeleMCFAWCycle(AdeleDealCycle, c("Resonance", "Gathering", "Divide", "Blossom1st", "Marker", "RuinStart", "InfiniteStart", "Infinite", "StormStart", "Storm", "Order"), ("Divide"))
-AdeleDealCycle <- DCSpiderInMirror(AdeleDealCycle, SummonedFinal)
-AdeleDealCycleReduction <- DealCycleReduction(AdeleDealCycle)
 
-DealCalc(AdeleDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AdeleSpec)
+## Main - Trigger - Boss Killer
+ATKFinalTrigger <- AdeleATKFinal(ATKFinal, Hyper="TriggerBK")
+AdeleDealCycleTrigger <- AdeleCycle(PreDealCycle=AdeleDealCycle, 
+                                    ATKFinal=ATKFinalTrigger, 
+                                    BuffFinal=BuffFinal, 
+                                    SummonedFinal=SummonedFinal, 
+                                    Spec=AdeleSpec, 
+                                    Hyper="TriggerBK")
+AdeleDealCycleTrigger <- DealCycleFinal(AdeleDealCycleTrigger)
+AdeleDealCycleTrigger <- RuinTerritoryCycle(AdeleDealCycleTrigger, ATKFinalTrigger)
+AdeleDealCycleTrigger <- GatheringBlossomWonderCreationCycle(AdeleDealCycleTrigger, ATKFinalTrigger)
+AdeleDealCycleTrigger <- StormRepATKCycle(AdeleDealCycleTrigger, ATKFinalTrigger)
+AdeleDealCycleTrigger <- AdeleOrderCycle(AdeleDealCycleTrigger, SummonedFinal)
+AdeleDealCycleTrigger <- RepATKCycle(AdeleDealCycleTrigger, "Infinite", 29, 0, ATKFinalTrigger)
+AdeleDealCycleTrigger <- RepATKCycle(AdeleDealCycleTrigger, "Restore", 10, 3000, ATKFinalTrigger)
+AdeleDealCycleTrigger <- AdeleMCFAWCycle(AdeleDealCycleTrigger, c("Resonance", "Gathering", "Divide", "Blossom1st", "Marker", "RuinStart", "InfiniteStart", "Infinite", "StormStart", "Storm", "Order"), ("Divide"))
+AdeleDealCycleTrigger <- DCSpiderInMirror(AdeleDealCycleTrigger, SummonedFinal)
+AdeleDealCycleTriggerReduction <- DealCycleReduction(AdeleDealCycleTrigger)
 
-AdeleSpecOpt1 <- Optimization1(AdeleDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AdeleSpec, AdeleUnionRemained)
+DealCalc(AdeleDealCycleTriggerReduction, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpec)
+
+AdeleSpecOpt1 <- Optimization1(AdeleDealCycleTriggerReduction, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpec, AdeleUnionRemained)
 AdeleSpecOpt <- AdeleSpec
 AdeleSpecOpt$ATKP <- AdeleSpecOpt$ATKP + AdeleSpecOpt1$ATKP
 AdeleSpecOpt$BDR <- AdeleSpecOpt$BDR + AdeleSpecOpt1$BDR
 AdeleSpecOpt$IGR <- IGRCalc(c(AdeleSpecOpt$IGR, AdeleSpecOpt1$IGR))
 
-AdeleSpecOpt2 <- Optimization2(AdeleDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt, AdeleHyperStatBase, AdeleBase$ChrLv, AdeleBase$CRROver)
-AdeleFinalDPM <- DealCalc(AdeleDealCycle, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt2)
-AdeleFinalDPMwithMax <- DealCalcWithMaxDMR(AdeleDealCycle, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt2)
+AdeleSpecOpt2 <- Optimization2(AdeleDealCycleTriggerReduction, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt, AdeleHyperStatBase, AdeleBase$ChrLv, AdeleBase$CRROver)
+AdeleFinalDPM <- DealCalc(AdeleDealCycleTrigger, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt2)
+AdeleFinalDPMwithMax <- DealCalcWithMaxDMR(AdeleDealCycleTrigger, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 
-DPM12344$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (341070 / 60000)
-DPM12344$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (341070 / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (341070 / 60000)
+DPM12344$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (341190 / 60000)
+DPM12344$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (341190 / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (341190 / 60000)
 
-AdeleDealRatio <- DealRatio(AdeleDealCycle, AdeleFinalDPMwithMax)
+AdeleDealRatio <- DealRatio(AdeleDealCycleTrigger, AdeleFinalDPMwithMax)
 
-AdeleDealData <- data.frame(AdeleDealCycle$Skills, AdeleDealCycle$Time, AdeleDealCycle$Restraint4, AdeleFinalDPMwithMax, AdeleFinalDPM-AdeleFinalDPMwithMax)
+AdeleDealData <- data.frame(AdeleDealCycleTrigger$Skills, AdeleDealCycleTrigger$Time, AdeleDealCycleTrigger$Restraint4, AdeleFinalDPMwithMax, AdeleFinalDPM-AdeleFinalDPMwithMax)
 colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AdeleDealData, AdeleDealData$R4 > 0)
 
@@ -724,3 +744,108 @@ DPM12344$Adele[3] <- sum((AdeleRR$Deal))
 
 Adele40s <-  AdeleDealData[17:668, ]
 DPM12344$Adele[4] <- sum((Adele40s$Deal))
+
+
+## Other Hypers - Nobility
+AdeleDealCycleNobility <- AdeleCycle(PreDealCycle=AdeleDealCycle, 
+                             ATKFinal=ATKFinal, 
+                             BuffFinal=BuffFinal, 
+                             SummonedFinal=SummonedFinal, 
+                             Spec=AdeleSpec, 
+                             Hyper="Nobility")
+AdeleDealCycleNobility <- DealCycleFinal(AdeleDealCycleNobility)
+AdeleDealCycleNobility <- RuinTerritoryCycle(AdeleDealCycleNobility, ATKFinal)
+AdeleDealCycleNobility <- GatheringBlossomWonderCreationCycle(AdeleDealCycleNobility, ATKFinal)
+AdeleDealCycleNobility <- StormRepATKCycle(AdeleDealCycleNobility, ATKFinal)
+AdeleDealCycleNobility <- AdeleOrderCycle(AdeleDealCycleNobility, SummonedFinal)
+AdeleDealCycleNobility <- RepATKCycle(AdeleDealCycleNobility, "Infinite", 29, 0, ATKFinal)
+AdeleDealCycleNobility <- RepATKCycle(AdeleDealCycleNobility, "Restore", 10, 3000, ATKFinal)
+AdeleDealCycleNobility <- AdeleMCFAWCycle(AdeleDealCycleNobility, c("Resonance", "Gathering", "Divide", "Blossom1st", "Marker", "RuinStart", "InfiniteStart", "Infinite", "StormStart", "Storm", "Order"), ("Divide"))
+AdeleDealCycleNobility <- DCSpiderInMirror(AdeleDealCycleNobility, SummonedFinal)
+AdeleDealCycleNobilityReduction <- DealCycleReduction(AdeleDealCycleNobility)
+
+AdeleDPMNobility <- DealCalcWithMaxDMR(AdeleDealCycleNobility, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt2)
+
+NobilityDPM <- sum(na.omit(AdeleDPMNobility)) / (341070 / 60000)
+
+AdeleDealDataNobility <- data.frame(AdeleDealCycleNobility$Skills, AdeleDealCycleNobility$Time, AdeleDealCycleNobility$Restraint4, AdeleDPMNobility)
+colnames(AdeleDealDataNobility) <- c("Skills", "Time", "R4", "Deal")
+subset(AdeleDealDataNobility, AdeleDealDataNobility$R4 > 0)
+
+AdeleRRNobility <- AdeleDealDataNobility[165:577, ]
+NobilityRR <- sum((AdeleRRNobility$Deal))
+
+Adele40sNobility <-  AdeleDealDataNobility[17:668, ]
+Nobility40s <- sum((Adele40sNobility$Deal))
+
+
+## Other Hypers - Dike
+DealCycle <- c("Skills", "Time", rownames(AdeleBuff))
+AdeleDealCycle <- t(rep(0, length(DealCycle)))
+colnames(AdeleDealCycle) <- DealCycle
+AdeleDealCycle <- data.frame(AdeleDealCycle)
+AdeleDealCycle$Ether <- 400
+
+ATKFinalDike <- AdeleATKFinal(ATKFinal, Hyper="Dike")
+AdeleDealCycleDike <- AdeleCycle(PreDealCycle=AdeleDealCycle, 
+                                 ATKFinal=ATKFinalDike, 
+                                 BuffFinal=BuffFinal, 
+                                 SummonedFinal=SummonedFinal, 
+                                 Spec=AdeleSpec, 
+                                 Hyper="Dike")
+AdeleDealCycleDike <- DealCycleFinal(AdeleDealCycleDike)
+AdeleDealCycleDike <- RuinTerritoryCycle(AdeleDealCycleDike, ATKFinalDike)
+AdeleDealCycleDike <- GatheringBlossomWonderCreationCycle(AdeleDealCycleDike, ATKFinalDike)
+AdeleDealCycleDike <- StormRepATKCycle(AdeleDealCycleDike, ATKFinalDike)
+AdeleDealCycleDike <- AdeleOrderCycle(AdeleDealCycleDike, SummonedFinal)
+AdeleDealCycleDike <- RepATKCycle(AdeleDealCycleDike, "Infinite", 29, 0, ATKFinalDike)
+AdeleDealCycleDike <- RepATKCycle(AdeleDealCycleDike, "Restore", 10, 3000, ATKFinalDike)
+AdeleDealCycleDike <- AdeleMCFAWCycle(AdeleDealCycleDike, c("Resonance", "Gathering", "Divide", "Blossom1st", "Marker", "RuinStart", "InfiniteStart", "Infinite", "StormStart", "Storm", "Order"), ("Divide"))
+AdeleDealCycleDike <- DCSpiderInMirror(AdeleDealCycleDike, SummonedFinal)
+AdeleDealCycleDikeReduction <- DealCycleReduction(AdeleDealCycleDike)
+
+AdeleDPMDike <- DealCalc(AdeleDealCycleDike, ATKFinalDike, BuffFinal, SummonedFinal, AdeleSpecOpt2)
+DikeDPM <- sum(na.omit(AdeleDPMDike)) / (341190 / 60000)
+
+AdeleDealDataDike <- data.frame(AdeleDealCycleDike$Skills, AdeleDealCycleDike$Time, AdeleDealCycleDike$Restraint4, AdeleDPMDike)
+colnames(AdeleDealDataDike) <- c("Skills", "Time", "R4", "Deal")
+subset(AdeleDealDataDike, AdeleDealDataDike$R4 > 0)
+
+AdeleRRDike <- AdeleDealDataDike[165:577, ]
+DikeR4 <- sum((AdeleRRDike$Deal))
+
+Adele40sDike <- AdeleDealDataDike[17:668, ]
+Dike40s <- sum((Adele40sDike$Deal))
+
+
+## Other Hypers - Nobility 50%
+BuffFinalNobility50 <- AdeleBuffFinal(BuffFinal, ShieldRate=50)
+AdeleDealCycleNobility50 <- AdeleCycle(PreDealCycle=AdeleDealCycle, 
+                             ATKFinal=ATKFinal, 
+                             BuffFinal=BuffFinalNobility50, 
+                             SummonedFinal=SummonedFinal, 
+                             Spec=AdeleSpec, 
+                             Hyper="Nobility")
+AdeleDealCycleNobility50 <- DealCycleFinal(AdeleDealCycleNobility50)
+AdeleDealCycleNobility50 <- RuinTerritoryCycle(AdeleDealCycleNobility50, ATKFinal)
+AdeleDealCycleNobility50 <- GatheringBlossomWonderCreationCycle(AdeleDealCycleNobility50, ATKFinal)
+AdeleDealCycleNobility50 <- StormRepATKCycle(AdeleDealCycleNobility50, ATKFinal)
+AdeleDealCycleNobility50 <- AdeleOrderCycle(AdeleDealCycleNobility50, SummonedFinal)
+AdeleDealCycleNobility50 <- RepATKCycle(AdeleDealCycleNobility50, "Infinite", 29, 0, ATKFinal)
+AdeleDealCycleNobility50 <- RepATKCycle(AdeleDealCycleNobility50, "Restore", 10, 3000, ATKFinal)
+AdeleDealCycleNobility50 <- AdeleMCFAWCycle(AdeleDealCycleNobility50, c("Resonance", "Gathering", "Divide", "Blossom1st", "Marker", "RuinStart", "InfiniteStart", "Infinite", "StormStart", "Storm", "Order"), ("Divide"))
+AdeleDealCycleNobility50 <- DCSpiderInMirror(AdeleDealCycleNobility50, SummonedFinal)
+AdeleDealCycleNobility50Reduction <- DealCycleReduction(AdeleDealCycleNobility50)
+
+AdeleDPMNobility50 <- DealCalc(AdeleDealCycleNobility50, ATKFinal, BuffFinalNobility50, SummonedFinal, AdeleSpecOpt2)
+Nobility50DPM <- sum(na.omit(AdeleDPMNobility50)) / (341070 / 60000)
+
+AdeleDealDataNobility50 <- data.frame(AdeleDealCycleNobility50$Skills, AdeleDealCycleNobility50$Time, AdeleDealCycleNobility50$Restraint4, AdeleDPMNobility50)
+colnames(AdeleDealDataNobility50) <- c("Skills", "Time", "R4", "Deal")
+subset(AdeleDealDataNobility50, AdeleDealDataNobility50$R4 > 0)
+
+AdeleRRNobility50 <- AdeleDealDataNobility50[165:577, ]
+Nobility50R4 <- sum((AdeleRRNobility50$Deal))
+
+Adele40sNobility50 <- AdeleDealDataNobility50[17:668, ]
+Nobility5040s <- sum((Adele40sNobility50$Deal))

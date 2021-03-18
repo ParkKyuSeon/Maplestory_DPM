@@ -737,7 +737,7 @@ subset(MikhailDealData, MikhailDealData$R4 > 0)
 MikhailRR <- MikhailDealData[46:203, ]
 DPM12344$Mikhail[3] <- sum((MikhailRR$Deal))
 
-Mikhail40s <-  MikhailDealData[46:417, ]
+Mikhail40s <-  MikhailDealData[46:416, ]
 DPM12344$Mikhail[4] <- sum((Mikhail40s$Deal))
 
 DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)

@@ -22,7 +22,7 @@ BattleMageBase <- JobBase(ChrInfo=ChrInfo,
                           MikhailLink=F, 
                           OtherBuffDuration=0, 
                           AbilList=c("BDR", "DisorderBDR"), 
-                          LinkList=c("CygnusKnights", "Illium", "DemonAvenger", "Phantom"), 
+                          LinkList=c("CygnusKnights", "Xenon", "DemonAvenger", "Phantom"), 
                           MonsterLife=MLTypeI21, 
                           Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", SpecDefault$WeaponType)[, 1:16],
                           WeaponType=SpecDefault$WeaponType, 
@@ -255,109 +255,109 @@ BattleMageSpec <- BattleMageSpec$Spec
 ## BattleMage - Attacks
 ## Hyper Setting : Dark Aura - Boss Killer / Debuff Aura - Elemental Reset / Shelter - CoolTime Reduce, Persist / Dark Genesis - Additional Reinforce
 {option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(IGRCalc(c(20 + 2 * ceiling(BattleMageSpec$SkillLv/3), ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
-  info <- c(330 + 3 * BattleMageSpec$SkillLv, 6, 720, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  FinishBlow <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(IGRCalc(c(50, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
-  info <- c(300, 12, 720, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  FinishBlowUA <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(IGRCalc(c(50, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
-  info <- c(300, 13, 720, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  FinishBlowUAMOD <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-  value <- c(60 + BattleMageSpec$SkillLv, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][2, 2])
-  info <- c(225, 4, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DarkLightning <- rbind(data.frame(option, value), info)
-  
-  option <- factor("IGR", levels=ASkill) 
-  value <- c(20)
-  info <- c(800 + 32 * BattleMageCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DarkLightningAL <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-  value <- c(80 + BattleMageSpec$SkillLv, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][2, 2])
-  info <- c(350, 4, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DarkLightningMark <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-  value <- c(80 + BattleMageSpec$SkillLv, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][2, 2])
-  info <- c(350, 4 * (0.6 + 0.02 * BattleMageSpec$SkillLv), 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DarkLightningMarkDGFA <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-  value <- c(20, ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
-  info <- c(220 + 4 * BattleMageSpec$SkillLv, 0.6 + 0.02 * BattleMageSpec$SkillLv, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DarkGenesisFA <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
-  info <- c(520 + 10 * BattleMageSpec$SkillLv, 8, 780, NA, 30, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DarkGenesis <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][4, 2])
-  info <- c(200 + BattleMageBase$ChrLv, 12, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  Death <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(50, 2 * BattleMageCore[[1]][4, 2])))
-  info <- c(200 + BattleMageBase$ChrLv, 12, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  DeathMOD <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][4, 2])
-  info <- c(650, 2, 180, NA, 13, F, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BattleKingBar1 <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill) 
-  value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][4, 2])
-  info <- c(650, 5, 330, NA, 13, F, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BattleKingBar2 <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill) 
-  value <- c()
-  info <- c(800 + 32 * BattleMageCore[[2]][3, 2], 12, 0, 4000, 0, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  GrimReeper <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill) 
-  value <- c()
-  info <- c(800 + 32 * BattleMageCore[[2]][3, 2], 12, 0, 2000, 0, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  GrimReeperMOD <- rbind(data.frame(option, value), info)}
+value <- c(IGRCalc(c(20 + 2 * ceiling(BattleMageSpec$SkillLv/3), ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
+info <- c(330 + 3 * BattleMageSpec$SkillLv, 6, 810, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+FinishBlow <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(IGRCalc(c(50, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
+info <- c(300, 12, 810, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+FinishBlowUA <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(IGRCalc(c(50, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0))), 2 * BattleMageCore[[1]][1, 2])
+info <- c(300, 13, 810, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+FinishBlowUAMOD <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
+value <- c(60 + BattleMageSpec$SkillLv, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][2, 2])
+info <- c(225, 4, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DarkLightning <- rbind(data.frame(option, value), info)
+
+option <- factor("IGR", levels=ASkill) 
+value <- c(20)
+info <- c(800 + 32 * BattleMageCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DarkLightningAL <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
+value <- c(80 + BattleMageSpec$SkillLv, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][2, 2])
+info <- c(350, 4, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DarkLightningMark <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
+value <- c(80 + BattleMageSpec$SkillLv, ifelse(BattleMageCore[[1]][1, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][2, 2])
+info <- c(350, 4 * (0.6 + 0.02 * BattleMageSpec$SkillLv), 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DarkLightningMarkDGFA <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
+value <- c(20, ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
+info <- c(220 + 4 * BattleMageSpec$SkillLv, 0.6 + 0.02 * BattleMageSpec$SkillLv, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DarkGenesisFA <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(BattleMageCore[[1]][3, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][3, 2])
+info <- c(520 + 10 * BattleMageSpec$SkillLv, 8, 900, NA, 30, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DarkGenesis <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][4, 2])
+info <- c(200 + BattleMageBase$ChrLv, 12, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+Death <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(50, 2 * BattleMageCore[[1]][4, 2])))
+info <- c(200 + BattleMageBase$ChrLv, 12, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DeathMOD <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][4, 2])
+info <- c(650, 2, 240, NA, 13, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BattleKingBar1 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(BattleMageCore[[1]][4, 2]>=40, 20, 0), 2 * BattleMageCore[[1]][4, 2])
+info <- c(650, 5, 300, NA, 13, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BattleKingBar2 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill) 
+value <- c()
+info <- c(800 + 32 * BattleMageCore[[2]][3, 2], 12, 0, 4000, 0, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+GrimReeper <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill) 
+value <- c()
+info <- c(800 + 32 * BattleMageCore[[2]][3, 2], 12, 0, 2000, 0, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+GrimReeperMOD <- rbind(data.frame(option, value), info)}
 
 BattleMageATK <- Attack(list(FinishBlow=FinishBlow, FinishBlowUA=FinishBlowUA, FinishBlowUAMOD=FinishBlowUAMOD, DarkLightning=DarkLightning, DarkLightningAL=DarkLightningAL, 
                              DarkLightningMark=DarkLightningMark, DarkLightningMarkDGFA=DarkLightningMarkDGFA, DarkGenesisFA=DarkGenesisFA, DarkGenesis=DarkGenesis, 
@@ -386,7 +386,7 @@ BattleMageSummoned <- Summoned(list(BlackMagicAltar=BlackMagicAltar, ResistanceL
 
 ## BattleMage - Deal Cycle and Deal Calculation
 ATKFinal <- data.frame(BattleMageATK)
-ATKFinal$Delay[c(-1, -2, -3, -9, -12, -13)] <- Delay(ATKFinal$Delay, BattleMageSpec$ATKSpeed)[c(-1, -2, -3, -9, -12, -13)]
+ATKFinal$Delay <- Delay(ATKFinal$Delay, BattleMageSpec$ATKSpeed)
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, BattleMageSpec$CoolReduceP, BattleMageSpec$CoolReduce)
 
 BuffFinal <- data.frame(BattleMageBuff)
@@ -398,6 +398,21 @@ SummonedFinal <- data.frame(BattleMageSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, BattleMageSpec$CoolReduceP, BattleMageSpec$CoolReduce)
 SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$SummonedDurationAvailable==T, SummonedFinal$Duration * BattleMageSpec$SummonedDuration / 100, 0)
 
+BattleMageDL <- function(ATKFinal, TeleportDelay=90) {
+  TelshotSkills <- c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkGenesis", "BattleKingBar2")
+  ATKFinal2 <- ATKFinal[1, ]
+  ATKFinal2 <- ATKFinal2[-1, ]
+  for(i in 1:nrow(ATKFinal)) {
+    if(sum(rownames(ATKFinal)[i]==TelshotSkills)==1) {
+      ATKFinal2 <- rbind(ATKFinal2, ATKFinal[i, ])
+      rownames(ATKFinal2)[nrow(ATKFinal2)] <- paste(rownames(ATKFinal2)[nrow(ATKFinal2)], "DL", sep="")
+      ATKFinal2$Delay[nrow(ATKFinal2)] <- ATKFinal2$Delay[nrow(ATKFinal2)] + TeleportDelay
+    }
+  }
+  ATKFinal <- rbind(ATKFinal, ATKFinal2)
+  return(ATKFinal)
+}
+ATKFinal <- BattleMageDL(ATKFinal, 90)
 
 ## BattleMage - DealCycle
 DealCycle <- c("Skills", "Time", rownames(BattleMageBuff))
@@ -529,33 +544,64 @@ BattleMageCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
       }
       ## Dark Genesis
       if(GenesisRemain == 0) {
-        DealCycle <- DCATK(DealCycle, "DarkGenesis", ATKFinal)
-        DealCycle$DarkGenesisCoolDown[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="DarkGenesisCoolDown")$Duration * 1000
-        GenesisRemain <- GenesisCool - DealCycle$Time[1]
-        KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        if(DealCycle$AbyssalLightning[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+          DealCycle <- DCATK(DealCycle, "DarkGenesis", ATKFinal)
+          DealCycle$DarkGenesisCoolDown[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="DarkGenesisCoolDown")$Duration * 1000
+          GenesisRemain <- GenesisCool - DealCycle$Time[1]
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCATK(DealCycle, "DarkGenesisDL", ATKFinal)
+          DealCycle$DarkGenesisCoolDown[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="DarkGenesisCoolDown")$Duration * 1000
+          GenesisRemain <- GenesisCool - DealCycle$Time[1]
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        }
       } ## BattleKing Bar
       else if(KingbarRemain == 0) {
         DealCycle <- DCATK(DealCycle, "BattleKingBar1", ATKFinal)
         GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
         KingbarRemain <- KingbarCool - DealCycle$Time[1]
-        DealCycle <- DCATK(DealCycle, "BattleKingBar2", ATKFinal)
-        GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
-        KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        if(DealCycle$AbyssalLightning[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+          DealCycle <- DCATK(DealCycle, "BattleKingBar2", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCATK(DealCycle, "BattleKingBar2DL", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        }
       } ## Finish Blow (Union Aura & Master of Death)
       else if(DealCycle$UnionAura[nrow(DealCycle)] > 0 & DealCycle$MasterofDeath[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATK(DealCycle, "FinishBlowUAMOD", ATKFinal)
-        GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
-        KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        if(DealCycle$AbyssalLightning[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+          DealCycle <- DCATK(DealCycle, "FinishBlowUAMOD", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCATK(DealCycle, "FinishBlowUAMODDL", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        }
       } ## Finish Blow (Union Aura)
       else if(DealCycle$UnionAura[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATK(DealCycle, "FinishBlowUA", ATKFinal)
-        GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
-        KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        if(DealCycle$AbyssalLightning[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+          DealCycle <- DCATK(DealCycle, "FinishBlowUA", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCATK(DealCycle, "FinishBlowUADL", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        }
       } ## Finish Blow
       else {
-        DealCycle <- DCATK(DealCycle, "FinishBlow", ATKFinal)
-        GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
-        KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        if(DealCycle$AbyssalLightning[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+          DealCycle <- DCATK(DealCycle, "FinishBlow", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCATK(DealCycle, "FinishBlowDL", ATKFinal)
+          GenesisRemain <- max(0, GenesisRemain - DealCycle$Time[1])
+          KingbarRemain <- max(0, KingbarRemain - DealCycle$Time[1])
+        }
       }
     }
     
@@ -578,11 +624,11 @@ BattleMageCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
 }
 BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   ## Dark Lightning
-  DC2 <- subset(DealCycle, DealCycle$Skills=="FinishBlow")
-  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUA"))
-  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUAMOD"))
-  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="DarkGenesis"))
-  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="BattleKingBar2"))
+  DC2 <- subset(DealCycle, DealCycle$Skills=="FinishBlowDL")
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUADL"))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUAMODDL"))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="DarkGenesisDL"))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="BattleKingBar2DL"))
   DC2$Skills <- "DarkLightning"
   DealCycle <- rbind(DealCycle, DC2)
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
@@ -615,6 +661,10 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUA" & DealCycle$DarkGenesisCoolDown > 0))
   DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUAMOD" & DealCycle$DarkGenesisCoolDown > 0))
   DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="BattleKingBar2" & DealCycle$DarkGenesisCoolDown > 0))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowDL" & DealCycle$DarkGenesisCoolDown > 0))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUADL" & DealCycle$DarkGenesisCoolDown > 0))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="FinishBlowUAMODDL" & DealCycle$DarkGenesisCoolDown > 0))
+  DC2 <- rbind(DC2, subset(DealCycle, DealCycle$Skills=="BattleKingBar2DL" & DealCycle$DarkGenesisCoolDown > 0))
   
   DC2$Skills <- "DarkGenesisFA"
   DealCycle <- rbind(DealCycle, DC2)
@@ -644,7 +694,8 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   for(i in 2:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("BlackMagicAltar", "DarkLightning"))==1) {
       DealCycle$DarkLightningDebuff[i] <- ifelse(DealCycle$AbyssalLightning[i] > 0, 6, 1)
-    } else if(sum(DealCycle$Skills[i]==c("DarkGenesis", "BattleKingBar1", "BattleKingBar2", "FinishBlow", "FinishBlowUA", "FinishBlowUAMOD"))==1) {
+    } else if(sum(DealCycle$Skills[i]==c("DarkGenesis", "BattleKingBar1", "BattleKingBar2", "FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", 
+                                         "DarkGenesisDL", "BattleKingBar2DL", "FinishBlowDL", "FinishBlowUADL", "FinishBlowUAMODDL"))==1) {
       if(DealCycle$DarkLightningDebuff[i-1] >= 1) {
         DealCycle$DarkLightningDebuff[i] <- DealCycle$DarkLightningDebuff[i-1] - 1
         DC2 <- rbind(DC2, DealCycle[i, ])
@@ -796,7 +847,8 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DC2 <- DealCycle[1, ]
   for(i in 1:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("FinishBlowUA", "FinishBlowUAMOD", "DarkGenesis", "DarkLightning", "DarkLightningAL", 
-                                  "DarkLightningMark", "Death", "DeathMOD", "BlackMagicAltar"))==1 & DealCycle$MasterofDeath[i] > 0) {
+                                  "DarkLightningMark", "Death", "DeathMOD", "BlackMagicAltar", 
+                                  "FinishBlowUADL", "FinishBlowUAMODDL", "DarkGenesisDL"))==1 & DealCycle$MasterofDeath[i] > 0) {
       DeathRemain <- max(0, DeathRemain - 500)
       DeathStack <- max(0, DeathStack - 1)
     } else if(sum(DealCycle$Skills[i]==c("DarkGenesisFA", "DarkLightningMarkDGFA"))==1 & DealCycle$MasterofDeath[i] > 0) {
@@ -806,14 +858,16 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
       DeathRemain <- max(0, DeathRemain - 500 * (1 - as.numeric(substr(DealCycle$Skills[i], 18, 19)) / 100))
       DeathStack <- max(0, DeathStack - (1 - as.numeric(substr(DealCycle$Skills[i], 18, 19)) / 100))
     } else if(sum(DealCycle$Skills[i]==c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkGenesis", "DarkLightning", "DarkLightningAL", 
-                                         "DarkLightningMark", "Death", "DeathMOD", "BattleKingBar1", "BattleKingBar2", "GrimReeper", "GrimReeperMOD", "BlackMagicAltar"))==1) {
+                                         "DarkLightningMark", "Death", "DeathMOD", "BattleKingBar1", "BattleKingBar2", "GrimReeper", "GrimReeperMOD", "BlackMagicAltar", 
+                                         "FinishBlowDL", "FinishBlowUADL", "FinishBlowUAMODDL", "DarkGenesisDL", "BattleKingBar2DL"))==1) {
       DeathStack <- max(0, DeathStack - 1)
     } else if(sum(DealCycle$Skills[i]==c("DarkGenesisFA", "DarkLightningMarkDGFA"))==1) {
       DeathStack <- max(0, DeathStack - (0.6 + 0.02 * BattleMageSpec$SkillLv))
     } else if(substr(DealCycle$Skills[i], 1, 17)=="DarkLightningMark") {
       DeathStack <- max(0, DeathStack - (1 - as.numeric(substr(DealCycle$Skills[i], 18, 19)) / 100))
     }
-    if(sum(DealCycle$Skills[i]==c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkGenesis", "BattleKingBar1", "BattleKingBar2"))==1 & 
+    if(sum(DealCycle$Skills[i]==c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkGenesis", "BattleKingBar1", "BattleKingBar2", 
+                                  "FinishBlowDL", "FinishBlowUADL", "FinishBlowUAMODDL", "DarkGenesisDL", "BattleKingBar2DL"))==1 & 
        DeathRemain == 0 & DeathStack == 0) {
       DC2 <- rbind(DC2, DealCycle[i, ])
       DeathRemain <- DeathCool
@@ -842,7 +896,8 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   ## Overload Mana
   for(i in 1:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkLightning", "DarkLightningAL", "DarkLightningMark", "DarkLightningMarkDGFA",
-                                  "DarkGenesis", "BattleKingBar1", "BattleKingBar2", "ResistanceLineInfantry", "BlackMagicAltar"))==1) {
+                                  "DarkGenesis", "BattleKingBar1", "BattleKingBar2", "ResistanceLineInfantry", "BlackMagicAltar", 
+                                  "FinishBlowDL", "FinishBlowUADL", "FinishBlowUAMODDL", "DarkGenesisDL", "BattleKingBar2DL"))==1) {
       DealCycle$OverloadMana[i] <- 1
     } else if(substr(DealCycle$Skills[i], 1, 17)=="DarkLightningMark") {
       DealCycle$OverloadMana[i] <- 1
@@ -895,8 +950,8 @@ BattleMageSpecOpt2 <- Optimization2(BattleMageDealCycleReduction, ATKFinal, Buff
 BattleMageFinalDPM <- DealCalc(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 BattleMageFinalDPMwithMax <- DealCalcWithMaxDMR(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 
-DPM12344$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (403860 / 60000)
-DPM12344$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (403860 / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (403860 / 60000)
+DPM12344$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (403050 / 60000)
+DPM12344$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (403050 / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (403050 / 60000)
 
 BattleMageDealRatio <- DealRatio(BattleMageDealCycle, BattleMageFinalDPMwithMax)
 
@@ -905,8 +960,8 @@ colnames(BattleMageDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(BattleMageDealData, BattleMageDealData$R4>0)
 
-BattleMageRR <- BattleMageDealData[18:190, ]
+BattleMageRR <- BattleMageDealData[18:187, ]
 DPM12344$BattleMage[3] <- sum((BattleMageRR$Deal))
 
-BattleMage40s <- BattleMageDealData[18:457, ]
+BattleMage40s <- BattleMageDealData[18:445, ]
 DPM12344$BattleMage[4] <- sum((BattleMage40s$Deal))
