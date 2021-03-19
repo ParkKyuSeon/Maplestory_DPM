@@ -883,6 +883,8 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   DealCycle <- DCATKSkip(DealCycle, "CardinalTransition", ATKFinal, SkipStructure)
   DealCycle$CurseTransitionDebuff[nrow(DealCycle)] <- 15000
   DealCycle <- RelicGauge(DealCycle, BuffFinal)
+  DealCycle <- DCATKSkip(DealCycle, "CardinalDischarge", ATKFinal, SkipStructure)
+  DealCycle <- RelicGauge(DealCycle, BuffFinal)
   DealCycle <- DealCycleFinal(DealCycle)
   return(DealCycle)
 }
@@ -906,8 +908,6 @@ PathFinderAddATK <- function(DealCycle, ATKFinal, SummonedFinal, BarrierDuration
   ## Additional Discharge, Additional Blast
   for(i in 1:(nrow(DealCycle))) {
     if(DealCycle$Skills[i]=="CardinalDischarge" & DealCycle$RelicChange[i]==1) {
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- c("AdditionalBlast")
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("AdditionalBlast")
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
@@ -963,8 +963,8 @@ PathFinderSpecOpt2 <- Optimization2(PathFinderDealCycleReduction, ATKFinal, Buff
 PathFinderFinalDPM <- DealCalc(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
 PathFinderFinalDPMwithMax <- DealCalcWithMaxDMR(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
 
-DPM12344$PathFinder[1] <- sum(na.omit(PathFinderFinalDPMwithMax)) / (244710 / 60000)
-DPM12344$PathFinder[2] <- sum(na.omit(PathFinderFinalDPM)) / (244710 / 60000) - sum(na.omit(PathFinderFinalDPMwithMax)) / (244710 / 60000)
+DPM12344$PathFinder[1] <- sum(na.omit(PathFinderFinalDPMwithMax)) / (244830 / 60000)
+DPM12344$PathFinder[2] <- sum(na.omit(PathFinderFinalDPM)) / (244830 / 60000) - sum(na.omit(PathFinderFinalDPMwithMax)) / (244830 / 60000)
 
 PathFinderDealRatio <- DealRatio(PathFinderDealCycle, PathFinderFinalDPMwithMax)
 
@@ -973,10 +973,10 @@ colnames(PathFinderDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(PathFinderDealData, PathFinderDealData$R4>0)
 
-PathFinderRR <- PathFinderDealData[61:469, ]
+PathFinderRR <- PathFinderDealData[59:445, ]
 DPM12344$PathFinder[3] <- sum((PathFinderRR$Deal))
 
-PathFinder40s <- PathFinderDealData[32:983, ]
+PathFinder40s <- PathFinderDealData[27:912, ]
 DPM12344$PathFinder[4] <- sum((PathFinder40s$Deal))
 
 
@@ -1003,15 +1003,15 @@ PathFinderDealCycle60Reduction <- DealCycleReduction(PathFinderDealCycle60)
 PathFinder60ms <- DealCalc(PathFinderDealCycle60, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
 PathFinder60ms <- DealCalcWithMaxDMR(PathFinderDealCycle60, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
 
-PathFinder60msDPM <- sum(na.omit(PathFinder60ms)) / (244920 / 60000)
+PathFinder60msDPM <- sum(na.omit(PathFinder60ms)) / (245070 / 60000)
 
 PathFinderDealData60ms <- data.frame(PathFinderDealCycle60$Skills, PathFinderDealCycle60$Time, PathFinderDealCycle60$Restraint4, PathFinder60ms)
 colnames(PathFinderDealData60ms) <- c("Skills", "Time", "R4", "Deal")
 
 subset(PathFinderDealData60ms, PathFinderDealData60ms$R4>0)
 
-PathFinder60msRR <- PathFinderDealData60ms[61:464, ]
+PathFinder60msRR <- PathFinderDealData60ms[59:440, ]
 PathFinder60msRR <- sum((PathFinder60msRR$Deal))
 
-PathFinder60ms40s <- PathFinderDealData60ms[32:973, ]
+PathFinder60ms40s <- PathFinderDealData60ms[27:916, ]
 PathFinder60ms40s <- sum((PathFinder60ms40s$Deal))
