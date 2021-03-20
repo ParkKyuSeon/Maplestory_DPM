@@ -2390,7 +2390,7 @@ JobSpec <- function(JobBase,
   UnionFields <- UnionPreSet[[i]]$SSSChrs * 5 + UnionPreSet[[i]]$SSChrs * 4 + UnionPreSet[[i]]$SChrs * 3 + 
                  ifelse(JobBase$ChrLv>=250, 5, ifelse(JobBase$ChrLv>=200, 4, 3)) + 
                  ifelse(UnionPreSet[[i]]$MapleM==F, 0, ifelse(UnionPreSet[[i]]$MapleMGrade=="SS", 4, 3)) - sum(UnionBase)
-  CRRs <- CRRGet(UnionFields, JobBase$BuffDurationNeeded > 0, JobBase$BuffDurationNeeded, CRR, JobBase$CRROver)
+  CRRs <- CRRGet(UnionFields, JobBase$BuffDurationNeeded, BuffDuration, CRR, JobBase$CRROver)
   UnionBase <- UnionPlace(UnionFields - max(0, JobBase$BuffDurationNeeded - BuffDuration) - CRRs$Union, UnionBase, 
                           max(0, min(40, JobBase$BuffDurationNeeded - BuffDuration)), CRRs$Union, UnionStance)
   UnionBase$CDMR <- UnionBase$CDMR/2
@@ -2493,5 +2493,6 @@ JobSpec <- function(JobBase,
   }
   
   Spec <- list(Spec=Spec, UnionRemained=UnionRemained, HyperStatBase=HyperStatBase, CoolReduceType=SpecSet$CoolReduceInfo)
+  print(CRRs)
   return(Spec)
 }

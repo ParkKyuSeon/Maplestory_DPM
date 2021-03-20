@@ -1094,7 +1094,7 @@ ArchMageTCSpecOpt$ATKP <- ArchMageTCSpecOpt$ATKP + ArchMageTCSpecOpt1$ATKP
 ArchMageTCSpecOpt$BDR <- ArchMageTCSpecOpt$BDR + ArchMageTCSpecOpt1$BDR
 ArchMageTCSpecOpt$IGR <- IGRCalc(c(ArchMageTCSpecOpt$IGR, ArchMageTCSpecOpt1$IGR))
 
-ArchMageTCSpecOpt2 <- TCOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, HyperStatBase, ArchMageTCBase$ChrLv, ArchMageTCBase$CRROver, Unsdata)
+ArchMageTCSpecOpt2 <- TCOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, ArchMageTCHyperStatBase, ArchMageTCBase$ChrLv, ArchMageTCBase$CRROver, Unsdata)
 ArchMageTCFinalDPM <- TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, Unsdata)
 ArchMageTCFinalDPMwithMax <- TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, Unsdata)
 

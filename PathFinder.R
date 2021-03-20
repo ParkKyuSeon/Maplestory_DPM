@@ -338,15 +338,15 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ComboAssaultBlast2 <- rbind(data.frame(option, value), info) 
 
-option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(100, 100)
+option <- factor(c("FDR", "IGR", "BDR"), levels=ASkill)
+value <- c(FDRCalc(c(10, 100)), 100, 70 + PathFinderSpec$PSkillLv)
 info <- c(400 + 20 * PathFinderCore[[2]][1, 2], 15, 1800, 60, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UltimateBlast <- rbind(data.frame(option, value), info) 
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor(c("FDR", "IGR", "BDR"), levels=ASkill)
+value <- c(10, 20, 70 + PathFinderSpec$PSkillLv)
 info <- c(400 + 20 * PathFinderCore[[2]][2, 2], 5, 720, 270, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -1013,5 +1013,5 @@ subset(PathFinderDealData60ms, PathFinderDealData60ms$R4>0)
 PathFinder60msRR <- PathFinderDealData60ms[59:440, ]
 PathFinder60msRR <- sum((PathFinder60msRR$Deal))
 
-PathFinder60ms40s <- PathFinderDealData60ms[27:916, ]
+PathFinder60ms40s <- PathFinderDealData60ms[27:903, ]
 PathFinder60ms40s <- sum((PathFinder60ms40s$Deal))
