@@ -139,3 +139,8 @@ PathFinderDealTL <- DealTimeLine(PathFinderDealCycle$Time, PathFinderDealData$De
 barplot(PathFinderDealTL$Deal/100000000, names.arg=PathFinderDealTL$Time, ylim=c(0, 30000),
         cex.axis=1, cex.names=0.7, las=2, main="PathFinder Deal Time Line")
 abline(h=2500 * 1:12, col="gray60")
+
+LuminousDealTL <- DealTimeLine(LuminousDealCycle$Time, LuminousDealData$Deal)
+barplot(LuminousDealTL$Deal/100000000, names.arg=LuminousDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, main="Luminous Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")
