@@ -14,6 +14,7 @@ LuminousCore <- MatrixSet(PasSkills=c("LightReflection", "Apocalypse", "Absolute
 
 
 ## Luminous - Basic Info
+## Link Check Needed
 LuminousBase <- JobBase(ChrInfo=ChrInfo, 
                         MobInfo=MobDefault,
                         SpecSet=SpecDefault, 

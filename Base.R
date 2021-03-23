@@ -4,7 +4,7 @@ options("max.print"=100000)
 
 
 ## Character Info
-job <- c("Hero", "Palladin", "DarkKinght", "ArchMageFP", "ArchMageTC", "Bishop", "Bowmaster", "Marksman", "PathFinder",
+job <- c("Hero", "Palladin", "DarkKnight", "ArchMageFP", "ArchMageTC", "Bishop", "Bowmaster", "Marksman", "PathFinder",
          "NightLord", "Shadower", "DualBlader", "Viper", "Captain", "CannonMaster", 
          "Mikhail", "SoulMaster", "FlameWizard", "WindBreaker", "NightWalker", "Striker", 
          "Aran", "Evan", "Luminous", "Mercedes", "Phantom", "Eunwol", 
