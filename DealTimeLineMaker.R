@@ -175,3 +175,9 @@ abline(h=2500 * 1:12, col="gray60")
 abline(h=DPM12344$DarkKnight[1]/1200000000, col="black", lwd=3)
 sum(abs(DarkKnightDealTL$Deal/100000000 - DPM12344$DarkKnight[1]/1200000000) / (DPM12344$DarkKnight[1]/1200000000)) / length(DarkKnightDealTL$Deal)
 
+PhantomDealTL <- DealTimeLine(PhantomDealData$Time, PhantomDealData$Deal)
+barplot(PhantomDealTL$Deal/100000000, names.arg=PhantomDealTL$Time, ylim=c(0, 30000),
+        cex.axis=1, cex.names=0.7, las=2, border=NA, col="skyblue", main="Phantom Deal Time Line")
+abline(h=2500 * 1:12, col="gray60")
+abline(h=DPM12344$Phantom[1]/1200000000, col="black", lwd=3)
+sum(abs(PhantomDealTL$Deal/100000000 - DPM12344$Phantom[1]/1200000000) / (DPM12344$Phantom[1]/1200000000)) / length(PhantomDealTL$Deal)

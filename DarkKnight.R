@@ -32,7 +32,7 @@ DarkKnightBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## DarkKnight - Passive
-## Hyper : Beholder - Reinforce, Beholder - Buff Reinforce, Gungnir Descent - Ignore Guard, Gugnir Descent - Reinforce, Reincarnation - Damage,
+## Hyper : Beholder - Reinforce, Beholder - Buff Reinforce, Gungnir Descent - Ignore Guard, Gugnir Descent - Reinforce, Reincarnation - Damage
 {option <- factor(c("ATKSpeed", "BDR"), levels=PSkill)
 value <- c(1, 5)
 WeaponMastery <- data.frame(option, value) ## Spear Only
