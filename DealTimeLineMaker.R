@@ -14,170 +14,200 @@ DealTimeLine <- function(Time, Deal, BreakTime=5000) {
   for(i in 1:length(Deals)) {
     DealTL[i] <- sum(Deals[[i]])
   }
-  DealTL <- data.frame(Times[1:length(Times)-1]/1000, DealTL)
+  DealTL <- data.frame(Times[1:length(Times)-1]/1000, DealTL/100000000)
   colnames(DealTL) <- c("Time", "Deal")
   return(DealTL)
 }
+TLGraph <- function(DealTL, DealTime, JobName, Cumulative=F, MaxDeal=30000) {
+  AVGDeal <- sum(DealTL$Deal) / DealTime * 5
+  if(Cumulative==T) {
+    CumDeal <- c()
+    for(i in 1:nrow(DealTL)) {
+      CumDeal[i] <- sum(DealTL$Deal[1:i])
+    }
+    DealTL <- cbind(DealTL, CumDeal)
+    colnames(DealTL) <- c("Time", "Deal", "CumDeal")
+    DealTL <- subset(DealTL, DealTL$Time<=360)
+  }
+  
+  
+  if(Cumulative==T) {
+    barplot(DealTL$CumDeal, names.arg=DealTL$Time, space=0, ylim=c(0, ceiling(max(DealTL$CumDeal)/50000)*50000),
+            cex.axis=1, cex.names=0.7, las=2, border="gray60", col="skyblue", 
+            main=paste(JobName, "Deal Time Line(Cumulative)"))
+    abline(h=25000 * 1:100, col="gray80")
+    curve(x * AVGDeal, 0, nrow(DealTL), col="gray40", lwd=3, add=T, 
+          xlim=c(0, nrow(DealTL)))
+  } else {
+    barplot(DealTL$Deal, names.arg=DealTL$Time, ylim=c(0, MaxDeal),
+            cex.axis=1, cex.names=0.7, las=2, border=NA, col="skyblue", 
+            main=paste(JobName, "Deal Time Line(Non-cumulative)"))
+    abline(h=2500 * 1:100, col="gray80")
+    abline(h=AVGDeal, col="gray40", lwd=3)
+  }
+}
+DealIrr <- function(DealTL, DealTime) {
+  AVGDeal <- sum(DealTL$Deal) / DealTime * 5
+  DealTL <- DealTL[1:(nrow(DealTL)-1), ]
+  Irr <- sum(abs(DealTL$Deal - AVGDeal) / AVGDeal) / length(DealTL$Deal)
+  return(Irr)
+}
 
-NightLordDealTL <- DealTimeLine(NightLordDealData$Time, NightLordDealData$Deal)
-barplot(NightLordDealTL$Deal/100000000, names.arg=NightLordDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="NightLord Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$NightLord[1]/1200000000, col="skyblue", lwd=3)
-sum(abs(NightLordDealTL$Deal/100000000 - DPM12344$NightLord[1]/1200000000) / (DPM12344$NightLord[1]/1200000000)) / length(NightLordDealTL$Deal)
 
-AdeleDealTL <- DealTimeLine(AdeleDealData$Time, AdeleDealData$Deal)
-barplot(AdeleDealTL$Deal/100000000, names.arg=AdeleDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Adele Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$Adele[1]/1200000000, col="skyblue", lwd=3)
-sum(abs(AdeleDealTL$Deal/100000000 - DPM12344$Adele[1]/1200000000) / (DPM12344$Adele[1]/1200000000)) / length(AdeleDealTL$Deal)
-
-ArchmageFPDealTL <- DealTimeLine(ArchmageFPDealCycle2$Time, ArchmageFPDamage2)
-barplot(ArchmageFPDealTL$Deal/100000000, names.arg=ArchmageFPDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Archmage FP Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$ArchMageFP[1]/1200000000, col="skyblue", lwd=3)
-
-BishopDealTL <- DealTimeLine(BishopDealCycle2$Time, BishopDamage2)
-barplot(BishopDealTL$Deal/100000000, names.arg=BishopDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Bishop Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-
-DualBladeDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
-barplot(DualBladeDealTL$Deal/100000000, names.arg=DualBladeDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="DualBlade Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-
+## Hero
 HeroDealTL <- DealTimeLine(HeroDealData$Time, HeroDealData$Deal)
-barplot(HeroDealTL$Deal/100000000, names.arg=HeroDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Hero Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(HeroDealTL$Deal/100000000 - DPM12344$Hero[1]/1200000000) / (DPM12344$Hero[1]/1200000000)) / length(HeroDealTL$Deal)
+TLGraph(HeroDealTL, max(HeroDealData$Time)/1000, "Hero", F)
+TLGraph(HeroDealTL, max(HeroDealData$Time)/1000, "Hero", T)
+DealIrr(HeroDealTL, max(HeroDealData$Time)/1000)
 
-IlliumDealTL <- DealTimeLine(IlliumDealData$Time, IlliumDealData$Deal)
-barplot(IlliumDealTL$Deal/100000000, names.arg=IlliumDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Illium Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$Illium[1]/1200000000, col="skyblue", lwd=3)
-sum(abs(IlliumDealTL$Deal/100000000 - DPM12344$Illium[1]/1200000000) / (DPM12344$Illium[1]/1200000000)) / length(IlliumDealTL$Deal)
-
-MarksmanDealTL <- DealTimeLine(MarksmanDealCycle$Time, MarksmanFinalDPMwithMax)
-barplot(MarksmanDealTL$Deal/100000000, names.arg=MarksmanDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Marksman Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(MarksmanDealTL$Deal/100000000 - DPM12344$Marksman[1]/1200000000) / (DPM12344$Marksman[1]/1200000000)) / length(MarksmanDealTL$Deal)
-
-MechanicDealTL <- DealTimeLine(MechanicDealData$Time, MechanicDealData$Deal)
-barplot(MechanicDealTL$Deal/100000000, names.arg=MechanicDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Mechanic Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-
-MikhailDealTL <- DealTimeLine(MikhailDealData$Time, MikhailDealData$Deal)
-barplot(MikhailDealTL$Deal/100000000, names.arg=MikhailDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Mikhail Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(MikhailDealTL$Deal/100000000 - DPM12344$Mikhail[1]/1200000000) / (DPM12344$Mikhail[1]/1200000000)) / length(MikhailDealTL$Deal)
-
+## Palladin
 PalladinDealTL <- DealTimeLine(PalladinDealData$Time, PalladinDealData$Deal)
-barplot(PalladinDealTL$Deal/100000000, names.arg=PalladinDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Palladin Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(PalladinDealTL$Deal/100000000 - DPM12344$Palladin[1]/1200000000) / (DPM12344$Palladin[1]/1200000000)) / length(PalladinDealTL$Deal)
+TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Palladin", F)
+TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Palladin", T)
+DealIrr(PalladinDealTL, max(PalladinDealData$Time)/1000)
 
-WindBreakerDealTL <- DealTimeLine(WindBreakerDealData$Time, WindBreakerDealData$Deal)
-barplot(WindBreakerDealTL$Deal/100000000, names.arg=WindBreakerDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="WindBreaker Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$WindBreaker[1]/1200000000, col="skyblue", lwd=3)
-sum(abs(WindBreakerDealTL$Deal/100000000 - DPM12344$WindBreaker[1]/1200000000) / (DPM12344$WindBreaker[1]/1200000000)) / length(WindBreakerDealTL$Deal)
-
-MercedesDealTL <- DealTimeLine(MercedesDealData$Time, MercedesDealData$Deal)
-barplot(MercedesDealTL$Deal/100000000, names.arg=MercedesDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Mercedes Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(MercedesDealTL$Deal/100000000 - DPM12344$Mercedes[1]/1200000000) / (DPM12344$Mercedes[1]/1200000000)) / length(MercedesDealTL$Deal)
-
-BowmasterDealTL <- DealTimeLine(BowmasterDealData$Time, BowmasterDealData$Deal)
-barplot(BowmasterDealTL$Deal/100000000, names.arg=BowmasterDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Bowmaster Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(BowmasterDealTL$Deal/100000000 - DPM12344$Bowmaster[1]/1200000000) / (DPM12344$Bowmaster[1]/1200000000)) / length(BowmasterDealTL$Deal)
-
-AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
-barplot(AranDealTL$Deal/100000000, names.arg=AranDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Aran Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(AranDealTL$Deal/100000000 - DPM12344$Aran[1]/1200000000) / (DPM12344$Aran[1]/1200000000)) / length(AranDealTL$Deal)
-
-SoulMasterDealTL <- DealTimeLine(SoulMasterDealData$Time, SoulMasterDealData$Deal)
-barplot(SoulMasterDealTL$Deal/100000000, names.arg=SoulMasterDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, border=NA, col="skyblue", main="SoulMaster Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$SoulMaster[1]/1200000000, col="Black", lwd=3)
-sum(abs(SoulMasterDealTL$Deal/100000000 - DPM12344$SoulMaster[1]/1200000000) / (DPM12344$SoulMaster[1]/1200000000)) / length(SoulMasterDealTL$Deal)
-
-FlameWizardDealTL <- DealTimeLine(FlameWizardDealData$Time, FlameWizardDealData$Deal)
-barplot(FlameWizardDealTL$Deal/100000000, names.arg=FlameWizardDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="FlameWizard Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(FlameWizardDealTL$Deal/100000000 - DPM12344$FlameWizard[1]/1200000000) / (DPM12344$FlameWizard[1]/1200000000)) / length(FlameWizardDealTL$Deal)
-
-StrikerDealTL <- DealTimeLine(StrikerDealData$Time, StrikerDealData$Deal)
-barplot(StrikerDealTL$Deal/100000000, names.arg=StrikerDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Striker Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(StrikerDealTL$Deal/100000000 - DPM12344$Striker[1]/1200000000) / (DPM12344$Striker[1]/1200000000)) / length(StrikerDealTL$Deal)
-
-BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Deal)
-barplot(BattleMageDealTL$Deal/100000000, names.arg=BattleMageDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="BattleMage Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(BattleMageDealTL$Deal/100000000 - DPM12344$BattleMage[1]/1200000000) / (DPM12344$BattleMage[1]/1200000000)) / length(BattleMageDealTL$Deal)
-
-NightWalkerDealTL <- DealTimeLine(NightWalkerDealData$Time, NightWalkerDealData$Deal)
-barplot(NightWalkerDealTL$Deal/100000000, names.arg=NightWalkerDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="NightWalker Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(NightWalkerDealTL$Deal/100000000 - DPM12344$NightWalker[1]/1200000000) / (DPM12344$NightWalker[1]/1200000000)) / length(NightWalkerDealTL$Deal)
-
-NightWalkerDealTL80 <- DealTimeLine(NightWalkerDealData80$Time, NightWalkerDealData80$Deal)
-barplot(NightWalkerDealTL80$Deal/100000000, names.arg=NightWalkerDealTL80$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="NightWalker Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-
-NightWalkerDealTL0 <- DealTimeLine(NightWalkerDealData0$Time, NightWalkerDealData0$Deal)
-barplot(NightWalkerDealTL0$Deal/100000000, names.arg=NightWalkerDealTL0$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="NightWalker Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-
-ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle2$Time, ArchMageTCDamage2)
-barplot(ArchMageTCDealTL$Deal/100000000, names.arg=ArchMageTCDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="ArchMageTC Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-
-PathFinderDealTL <- DealTimeLine(PathFinderDealCycle$Time, PathFinderDealData$Deal)
-barplot(PathFinderDealTL$Deal/100000000, names.arg=PathFinderDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="PathFinder Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(PathFinderDealTL$Deal/100000000 - DPM12344$PathFinder[1]/1200000000) / (DPM12344$PathFinder[1]/1200000000)) / length(PathFinderDealTL$Deal)
-
-LuminousDealTL <- DealTimeLine(LuminousDealCycle$Time, LuminousDealData$Deal)
-barplot(LuminousDealTL$Deal/100000000, names.arg=LuminousDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, main="Luminous Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-sum(abs(LuminousDealTL$Deal/100000000 - DPM12344$Luminous[1]/1200000000) / (DPM12344$Luminous[1]/1200000000)) / length(LuminousDealTL$Deal)
-
+## DarkKnight
 DarkKnightDealTL <- DealTimeLine(DarkKnightDealData$Time, DarkKnightDealData$Deal)
-barplot(DarkKnightDealTL$Deal/100000000, names.arg=DarkKnightDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, border=NA, col="skyblue", main="DarkKnight Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$DarkKnight[1]/1200000000, col="black", lwd=3)
-sum(abs(DarkKnightDealTL$Deal/100000000 - DPM12344$DarkKnight[1]/1200000000) / (DPM12344$DarkKnight[1]/1200000000)) / length(DarkKnightDealTL$Deal)
+TLGraph(DarkKnightDealTL, max(DarkKnightDealData$Time)/1000, "DarkKnight", F)
+TLGraph(DarkKnightDealTL, max(DarkKnightDealData$Time)/1000, "DarkKnight", T)
+DealIrr(DarkKnightDealTL, max(DarkKnightDealData$Time)/1000)
 
+## ArchMageFP
+ArchMageFPDealTL <- DealTimeLine(ArchMageFPDealCycle2$Time, ArchMageFPDamage2)
+TLGraph(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000, "ArchMageFP", F)
+TLGraph(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000, "ArchMageFP", T)
+DealIrr(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000)
+
+## ArchMageTC
+ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle2$Time, ArchMageTCDamage2)
+TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageTC", F)
+TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageTC", T)
+DealIrr(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000)
+
+## Bishop
+BishopDealTL <- DealTimeLine(BishopDealCycle2$Time, BishopDamage2)
+TLGraph(BishopDealTL, max(BishopDealCycle2$Time)/1000, "Bishop", F)
+TLGraph(BishopDealTL, max(BishopDealCycle2$Time)/1000, "Bishop", T)
+DealIrr(BishopDealTL, max(BishopDealCycle2$Time)/1000)
+
+## Bowmaster
+BowmasterDealTL <- DealTimeLine(BowmasterDealData$Time, BowmasterDealData$Deal)
+TLGraph(BowmasterDealTL, max(BowmasterDealData$Time)/1000, "Bowmaster", F)
+TLGraph(BowmasterDealTL, max(BowmasterDealData$Time)/1000, "Bowmaster", T)
+DealIrr(BowmasterDealTL, max(BowmasterDealData$Time)/1000)
+
+## Marksman
+MarksmanDealTL <- DealTimeLine(MarksmanDealCycle$Time, MarksmanFinalDPMwithMax)
+TLGraph(MarksmanDealTL, max(MarksmanDealCycle$Time)/1000, "Marksman", F)
+TLGraph(MarksmanDealTL, max(MarksmanDealCycle$Time)/1000, "Marksman", T)
+DealIrr(MarksmanDealTL, max(MarksmanDealCycle$Time)/1000)
+
+## PathFinder
+PathFinderDealTL <- DealTimeLine(PathFinderDealData$Time, PathFinderDealData$Deal)
+TLGraph(PathFinderDealTL, max(PathFinderDealData$Time)/1000, "PathFinder", F)
+TLGraph(PathFinderDealTL, max(PathFinderDealData$Time)/1000, "PathFinder", T)
+DealIrr(PathFinderDealTL, max(PathFinderDealData$Time)/1000)
+
+## NightLord
+NightLordDealTL <- DealTimeLine(NightLordDealData$Time, NightLordDealData$Deal)
+TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", F)
+TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", T)
+DealIrr(NightLordDealTL, max(NightLordDealData$Time)/1000)
+
+abs(NightLordDealTL$Deal - (DPM12344$NightLord[1]/12000000000))^2
+
+## DualBlade
+DualBladeDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
+TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", F)
+TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", T)
+DealIrr(DualBladeDealTL, max(DualBladeDealData$Time)/1000)
+
+## Mikhail
+MikhailDealTL <- DealTimeLine(MikhailDealData$Time, MikhailDealData$Deal)
+TLGraph(MikhailDealTL, max(MikhailDealData$Time)/1000, "Mikhail", F)
+TLGraph(MikhailDealTL, max(MikhailDealData$Time)/1000, "Mikhail", T)
+DealIrr(MikhailDealTL, max(MikhailDealData$Time)/1000)
+
+## SoulMaster
+SoulMasterDealTL <- DealTimeLine(SoulMasterDealData$Time, SoulMasterDealData$Deal)
+TLGraph(SoulMasterDealTL, max(SoulMasterDealData$Time)/1000, "SoulMaster", F)
+TLGraph(SoulMasterDealTL, max(SoulMasterDealData$Time)/1000, "SoulMaster", T)
+DealIrr(SoulMasterDealTL, max(SoulMasterDealData$Time)/1000)
+
+## FlameWizard
+FlameWizardDealTL <- DealTimeLine(FlameWizardDealData$Time, FlameWizardDealData$Deal)
+TLGraph(FlameWizardDealTL, max(FlameWizardDealData$Time)/1000, "FlameWizard", F)
+TLGraph(FlameWizardDealTL, max(FlameWizardDealData$Time)/1000, "FlameWizard", T)
+DealIrr(FlameWizardDealTL, max(FlameWizardDealData$Time)/1000)
+
+## WindBreaker
+WindBreakerDealTL <- DealTimeLine(WindBreakerDealData$Time, WindBreakerDealData$Deal)
+TLGraph(WindBreakerDealTL, max(WindBreakerDealData$Time)/1000, "WindBreaker", F)
+TLGraph(WindBreakerDealTL, max(WindBreakerDealData$Time)/1000, "WindBreaker", T)
+DealIrr(WindBreakerDealTL, max(WindBreakerDealData$Time)/1000)
+
+## NightWalker
+NightWalkerDealTL <- DealTimeLine(NightWalkerDealData$Time, NightWalkerDealData$Deal)
+TLGraph(NightWalkerDealTL, max(NightWalkerDealData$Time)/1000, "NightWalker", F)
+TLGraph(NightWalkerDealTL, max(NightWalkerDealData$Time)/1000, "NightWalker", T)
+DealIrr(NightWalkerDealTL, max(NightWalkerDealData$Time)/1000)
+
+## Striker
+StrikerDealTL <- DealTimeLine(StrikerDealData$Time, StrikerDealData$Deal)
+TLGraph(StrikerDealTL, max(StrikerDealData$Time)/1000, "Striker", F)
+TLGraph(StrikerDealTL, max(StrikerDealData$Time)/1000, "Striker", T)
+DealIrr(StrikerDealTL, max(StrikerDealData$Time)/1000)
+
+## Aran
+AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
+TLGraph(AranDealTL, max(AranDealData$Time)/1000, "Aran", F)
+TLGraph(AranDealTL, max(AranDealData$Time)/1000, "Aran", T)
+DealIrr(AranDealTL, max(AranDealData$Time)/1000)
+
+## Luminous
+LuminousDealTL <- DealTimeLine(LuminousDealData$Time, LuminousDealData$Deal)
+TLGraph(LuminousDealTL, max(LuminousDealData$Time)/1000, "Luminous", F)
+TLGraph(LuminousDealTL, max(LuminousDealData$Time)/1000, "Luminous", T)
+DealIrr(LuminousDealTL, max(LuminousDealData$Time)/1000)
+
+## Mercedes
+MercedesDealTL <- DealTimeLine(MercedesDealData$Time, MercedesDealData$Deal)
+TLGraph(MercedesDealTL, max(MercedesDealData$Time)/1000, "Mercedes", F)
+TLGraph(MercedesDealTL, max(MercedesDealData$Time)/1000, "Mercedes", T)
+DealIrr(MercedesDealTL, max(MercedesDealData$Time)/1000)
+
+## Phantom
 PhantomDealTL <- DealTimeLine(PhantomDealData$Time, PhantomDealData$Deal)
-barplot(PhantomDealTL$Deal/100000000, names.arg=PhantomDealTL$Time, ylim=c(0, 30000),
-        cex.axis=1, cex.names=0.7, las=2, border=NA, col="skyblue", main="Phantom Deal Time Line")
-abline(h=2500 * 1:12, col="gray60")
-abline(h=DPM12344$Phantom[1]/1200000000, col="black", lwd=3)
-sum(abs(PhantomDealTL$Deal/100000000 - DPM12344$Phantom[1]/1200000000) / (DPM12344$Phantom[1]/1200000000)) / length(PhantomDealTL$Deal)
+TLGraph(PhantomDealTL, max(PhantomDealData$Time)/1000, "Phantom", F)
+TLGraph(PhantomDealTL, max(PhantomDealData$Time)/1000, "Phantom", T)
+DealIrr(PhantomDealTL, max(PhantomDealData$Time)/1000)
+
+## Eunwol
+EunwolDealTL <- DealTimeLine(EunwolDealDataFixed$Time, EunwolDealDataFixed$Deal)
+TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", F)
+TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", T)
+DealIrr(EunwolDealTL, max(EunwolDealData$Time)/1000)
+
+## BattleMage
+BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Deal)
+TLGraph(BattleMageDealTL, max(BattleMageDealData$Time)/1000, "BattleMage", F)
+TLGraph(BattleMageDealTL, max(BattleMageDealData$Time)/1000, "BattleMage", T)
+DealIrr(BattleMageDealTL, max(BattleMageDealData$Time)/1000)
+
+## Mechanic
+MechanicDealTL <- DealTimeLine(MechanicDealData$Time, MechanicDealData$Deal)
+TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", F)
+TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", T)
+DealIrr(MechanicDealTL, max(MechanicDealData$Time)/1000)
+
+## Illium
+IlliumDealTL <- DealTimeLine(IlliumDealData$Time, IlliumDealData$Deal)
+TLGraph(IlliumDealTL, max(IlliumDealData$Time)/1000, "Illium", F)
+TLGraph(IlliumDealTL, max(IlliumDealData$Time)/1000, "Illium", T)
+DealIrr(IlliumDealTL, max(IlliumDealData$Time)/1000)
+
+## Adele
+AdeleDealTL <- DealTimeLine(AdeleDealData$Time, AdeleDealData$Deal)
+TLGraph(AdeleDealTL, max(AdeleDealData$Time)/1000, "Adele", F)
+TLGraph(AdeleDealTL, max(AdeleDealData$Time)/1000, "Adele", T)
+DealIrr(AdeleDealTL, max(AdeleDealData$Time)/1000)

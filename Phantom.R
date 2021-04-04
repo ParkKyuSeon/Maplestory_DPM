@@ -15,20 +15,20 @@ PhantomCore <- MatrixSet(PasSkills=c("UltimateDrive", "TempestofCard", "RoseCart
 
 ## Phantom - Basic Info
 PhantomBase <- JobBase(ChrInfo=ChrInfo, 
-                          MobInfo=MobDefault,
-                          SpecSet=SpecDefault, 
-                          Job="Phantom",
-                          CoreData=PhantomCore, 
-                          MikhailLink=T, 
-                          OtherBuffDuration=0, 
-                          AbilList=c("BDR", "BuffDuration"), 
-                          LinkList=c("Phantom", "DemonAvenger", "Mikhail", "Xenon"), 
-                          MonsterLife=MLTypeL21, 
-                          Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Cane", SpecDefault$WeaponType)[, 1:16],
-                          WeaponType=SpecDefault$WeaponType, 
-                          SubWeapon=SubWeapon[3, ], 
-                          Emblem=Emblem[1, ], 
-                          CoolReduceHat=T)
+                       MobInfo=MobDefault,
+                       SpecSet=SpecDefault, 
+                       Job="Phantom",
+                       CoreData=PhantomCore, 
+                       MikhailLink=T, 
+                       OtherBuffDuration=0, 
+                       AbilList=c("BDR", "BuffDuration"), 
+                       LinkList=c("Phantom", "DemonAvenger", "Mikhail", "Xenon"), 
+                       MonsterLife=MLTypeL21, 
+                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Cane", SpecDefault$WeaponType)[, 1:16],
+                       WeaponType=SpecDefault$WeaponType, 
+                       SubWeapon=SubWeapon[3, ], 
+                       Emblem=Emblem[1, ], 
+                       CoolReduceHat=T)
 
 
 ## Phantom - Passive
@@ -711,7 +711,7 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   DealCycle$NoirCarteStack[1] <- 0
   for(i in 2:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("UltimateDrive", "TempestofCard", "Joker", "LiftBreak", "MarkofPhantom", "MarkofPhantomFinal", 
-                                  "BlackJack", "BlackJackLast", "RoseCarteFinale", "Twilight1"))==1) {
+                                  "BlackJack", "BlackJackLast", "RoseCarteFinale", "Twilight1", "FinalCut", "SpiderInMirror"))==1) {
       DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
@@ -780,8 +780,8 @@ colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(PhantomDealData, PhantomDealData$R4>0)
 
-PhantomRR <- PhantomDealData[24:441, ]
+PhantomRR <- PhantomDealData[26:443, ]
 DPM12344$Phantom[3] <- sum((PhantomRR$Deal))
 
-Phantom40s <- PhantomDealData[24:870, ]
+Phantom40s <- PhantomDealData[26:872, ]
 DPM12344$Phantom[4] <- sum((Phantom40s$Deal))

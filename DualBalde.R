@@ -359,12 +359,12 @@ DualBladeSummoned <- Summoned(list(SpiderInMirrorStart=SpiderInMirrorStart,
 ATKFinal <- data.frame(DualBladeATK)
 ATKFinal$Delay[c(-3, -7, -8, -9, -10, -11, -12)] <- Delay(ATKFinal$Delay, DualBladeSpec$ATKSpeed)[c(-3, -7, -8, -9, -10, -11, -12)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, DualBladeSpec$CoolReduceP, DualBladeSpec$CoolReduce)
-ATKFinal <- AddATKRateSkills("ShadowPartner", BuffFinal, ATKFinal, c("PhantomBlow", "FinalCut", "SuddenRaid", "Asura", "BladeStormPre", "BladeStorm", "KarmaFury", "BladeTornadoPre", "BladeTornado", "HuntedEdge"))
 
 BuffFinal <- data.frame(DualBladeBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, DualBladeSpec$CoolReduceP, DualBladeSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, DualBladeSpec$BuffDuration / 100, 0) +
   ifelse(BuffFinal$ServerLag==T, 3, 0)
+ATKFinal <- AddATKRateSkills("MirrorImaging", BuffFinal, ATKFinal, c("PhantomBlow", "FinalCut", "SuddenRaid", "Asura", "BladeStormPre", "BladeStorm", "KarmaFury", "BladeTornadoPre", "BladeTornado", "HuntedEdge"))
 
 SummonedFinal <- data.frame(DualBladeSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, DualBladeSpec$CoolReduceP, DualBladeSpec$CoolReduce)
