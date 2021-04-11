@@ -24,7 +24,7 @@ BlasterBase <- JobBase(ChrInfo=ChrInfo,
                       OtherBuffDuration=0, 
                       AbilList=c("BDR", "DisorderBDR"), 
                       LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Zero"), 
-                      MonsterLife=MLTypeS21, 
+                      MonsterLife=MLTypeS22, 
                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "GuntletRevolver", SpecDefault$WeaponType)[, 1:16],
                       WeaponType=SpecDefault$WeaponType, 
                       SubWeapon=SubWeapon[26, ], 
@@ -327,8 +327,8 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HammerSmashShockwave <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor("BDR", levels=ASkill)
+value <- c(10)
 info <- c(215 + BlasterSpec$PSkillLv, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -577,8 +577,38 @@ BlasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         RLRemain <- RLCool - DealCycle$Time[1]
         DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
       }
+      ## Vulcan Punch
+      else if(VPRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="VulcanPunch")) < 4 & DealCycle$CylinderGauge[nrow(DealCycle)] >= 2 & 
+              DealCycle$MaximizeCannon[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+        DealCycle <- DCATK(DealCycle, "VulcanPunchPre", ATKFinal)
+        VPRemain <- VPCool - DealCycle$Time[1]
+        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+        DealCycle <- DCATK(DealCycle, "VulcanPunch", ATKFinal)
+        VPRemain <- max(0, VPRemain - DealCycle$Time[1])
+        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+        DealCycle <- DCATK(DealCycle, "VulcanPunchEnd", ATKFinal)
+        VPRemain <- max(0, VPRemain - DealCycle$Time[1])
+        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+      }
+      else if(VPRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="VulcanPunch")) < 4 & DealCycle$CylinderOverload[nrow(DealCycle)] - DealCycle$Time[1] >= 4000) {
+        DealCycle <- DCATK(DealCycle, "VulcanPunchPre", ATKFinal)
+        VPRemain <- VPCool - DealCycle$Time[1]
+        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+        DealCycle <- DCATK(DealCycle, "VulcanPunch", ATKFinal)
+        VPRemain <- max(0, VPRemain - DealCycle$Time[1])
+        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+        DealCycle <- DCATK(DealCycle, "VulcanPunchEnd", ATKFinal)
+        VPRemain <- max(0, VPRemain - DealCycle$Time[1])
+        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+      }
       ## Release File Bunker - Hammer Smash
-      else if(DealCycle$CylinderGauge[nrow(DealCycle)] == 6 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= 233000) {
+      else if(DealCycle$CylinderGauge[nrow(DealCycle)] >= 6 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= 233000) {
         DealCycle <- DCATK(DealCycle, "ReleasePileBunker", ATKFinal)
         VPRemain <- max(0, VPRemain - DealCycle$Time[1])
         RLRemain <- max(0, RLRemain - DealCycle$Time[1])
@@ -602,11 +632,11 @@ BlasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DCATK(DealCycle, "MagnumPunch", ATKFinal)
           VPRemain <- max(0, VPRemain - DealCycle$Time[1])
           RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-          DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, min(6, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1), DealCycle$CylinderGauge[nrow(DealCycle)-1])
+          DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1, DealCycle$CylinderGauge[nrow(DealCycle)-1])
           DealCycle <- DCATK(DealCycle, "DoubleFang", ATKFinal)
           VPRemain <- max(0, VPRemain - DealCycle$Time[1])
           RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-          DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, min(6, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1), DealCycle$CylinderGauge[nrow(DealCycle)-1])
+          DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1, DealCycle$CylinderGauge[nrow(DealCycle)-1])
           DealCycle <- DCATK(DealCycle, "Ducking", ATKFinal)
           VPRemain <- max(0, VPRemain - DealCycle$Time[1])
           RLRemain <- max(0, RLRemain - DealCycle$Time[1])
@@ -629,31 +659,16 @@ BlasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         RLRemain <- max(0, RLRemain - DealCycle$Time[1])
         DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
       }
-      ## Vulcan Punch
-      else if(VPRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="VulcanPunch")) < 4) {
-        DealCycle <- DCATK(DealCycle, "VulcanPunchPre", ATKFinal)
-        VPRemain <- VPCool - DealCycle$Time[1]
-        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
-        DealCycle <- DCATK(DealCycle, "VulcanPunch", ATKFinal)
-        VPRemain <- max(0, VPRemain - DealCycle$Time[1])
-        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
-        DealCycle <- DCATK(DealCycle, "VulcanPunchEnd", ATKFinal)
-        VPRemain <- max(0, VPRemain - DealCycle$Time[1])
-        RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-        DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
-      }
       ## Magnum Punch - Double Fang
       else {
         DealCycle <- DCATK(DealCycle, "MagnumPunch", ATKFinal)
         VPRemain <- max(0, VPRemain - DealCycle$Time[1])
         RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-        DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, min(6, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1), DealCycle$CylinderGauge[nrow(DealCycle)-1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1, DealCycle$CylinderGauge[nrow(DealCycle)-1])
         DealCycle <- DCATK(DealCycle, "DoubleFang", ATKFinal)
         VPRemain <- max(0, VPRemain - DealCycle$Time[1])
         RLRemain <- max(0, RLRemain - DealCycle$Time[1])
-        DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, min(6, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1), DealCycle$CylinderGauge[nrow(DealCycle)-1])
+        DealCycle$CylinderGauge[nrow(DealCycle)] <- ifelse(DealCycle$CylinderOverload[nrow(DealCycle)] == 0, DealCycle$CylinderGauge[nrow(DealCycle)-1] + 1, DealCycle$CylinderGauge[nrow(DealCycle)-1])
         DealCycle <- DCATK(DealCycle, "Ducking", ATKFinal)
         VPRemain <- max(0, VPRemain - DealCycle$Time[1])
         RLRemain <- max(0, RLRemain - DealCycle$Time[1])
@@ -715,11 +730,21 @@ BlasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   
   ## Hammer Smash Shockwave / Vulcan Punch
   DealCycle <- RepATKCycle(DealCycle, "HammerSmashShockwave", 4, 1000, ATKFinal)
+  for(i in 2:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="HammerSmashShockwave") {
+      DealCycle$CylinderGauge[i] <- DealCycle$CylinderGauge[i-1]
+    }
+  }
   DealCycle <- RepATKCycle(DealCycle, "VulcanPunch", 24, 0, ATKFinal)
+  for(i in 2:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="VulcanPunch") {
+      DealCycle$CylinderGauge[i] <- ifelse(DealCycle$CylinderGauge[i-1] > 0, min(7, DealCycle$CylinderGauge[i-1] + 1), DealCycle$CylinderGauge[i-1])
+    }
+  }
   
   ## Revolving Cannon Mastery
   for(i in 1:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("MagnumPunch", "DoubleFang", "HammerSmash", "BurningBreaker", "VulcanPunchPre", "VulcanPunch"))==1 & DealCycle$CylinderGauge[i] > 0) {
+    if(sum(DealCycle$Skills[i]==c("MagnumPunch", "DoubleFang", "HammerSmash", "BurningBreaker", "VulcanPunchPre", "VulcanPunch"))==1 & DealCycle$CylinderGauge[i] > 1) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "RevolvingCannonMastery"
     } else if(sum(DealCycle$Skills[i]==c("MagnumPunch", "DoubleFang", "HammerSmash", "BurningBreaker", "VulcanPunchPre", "VulcanPunch"))==1 & DealCycle$CylinderOverload[i] > 0) {
@@ -758,6 +783,16 @@ BlasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   ## Spider In Mirror
   DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   
+  ## Dummy Reduction
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]!="RevolvingCannonMastery") {
+      DealCycle$CylinderGauge[i] <- 0
+    } else if(DealCycle$Skills[i]=="RevolvingCannonMastery" & DealCycle$CylinderGauge[i] > 0) {
+      DealCycle$CylinderGauge[i] <- max(0, min(5, DealCycle$CylinderGauge[i] - 2))
+    } else if(DealCycle$Skills[i]=="RevolvingCannonMastery" & DealCycle$CylinderOverload[i] > 0) {
+      DealCycle$CylinderGauge[i] <- 5
+    }
+  }
   return(DealCycle)
 }
 
@@ -777,15 +812,15 @@ BlasterDealData <- data.frame(BlasterDealCycle$Skills, DealCalc(BlasterDealCycle
 colnames(BlasterDealData) <- c("Skills", "Deal")
 
 ## Damage Optimization
-BlasterSpecOpt1 <- Optimization1(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpec, BlasterUnionRemained)
+BlasterSpecOpt1 <- BlasterOptimization1(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpec, BlasterUnionRemained)
 BlasterSpecOpt <- BlasterSpec
 BlasterSpecOpt$ATKP <- BlasterSpecOpt$ATKP + BlasterSpecOpt1$ATKP
 BlasterSpecOpt$BDR <- BlasterSpecOpt$BDR + BlasterSpecOpt1$BDR
 BlasterSpecOpt$IGR <- IGRCalc(c(BlasterSpecOpt$IGR, BlasterSpecOpt1$IGR))
 
-BlasterSpecOpt2 <- Optimization2(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, BlasterHyperStatBase, BlasterBase$ChrLv, BlasterBase$CRROver)
-BlasterFinalDPM <- DealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
-BlasterFinalDPMwithMax <- DealCalcWithMaxDMR(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+BlasterSpecOpt2 <- BlasterOptimization2(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, BlasterHyperStatBase, BlasterBase$ChrLv, BlasterBase$CRROver)
+BlasterFinalDPM <- BlasterDealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+BlasterFinalDPMwithMax <- BlasterDealCalcWithMaxDMR(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 
 DPM12344$Blaster[1] <- sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
 DPM12344$Blaster[2] <- sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
@@ -797,10 +832,10 @@ colnames(BlasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(BlasterDealData, BlasterDealData$R4>0)
 
-BlasterRR <- BlasterDealData[20:260, ]
+BlasterRR <- BlasterDealData[20:279, ]
 DPM12344$Blaster[3] <- sum((BlasterRR$Deal))
 
-Blaster40s <- BlasterDealData[20:785, ]
+Blaster40s <- BlasterDealData[20:800, ]
 DPM12344$Blaster[4] <- sum((Blaster40s$Deal))
 
 
@@ -821,7 +856,7 @@ BlasterDealCycle540 <- DealCycleFinal(BlasterDealCycle540)
 BlasterDealCycle540 <- BlasterAddATK(BlasterDealCycle540, ATKFinal, BuffFinal, SummonedFinal)
 BlasterDealCycle540Reduction <- DealCycleReduction(BlasterDealCycle540)
 
-Blaster540 <- DealCalcWithMaxDMR(BlasterDealCycle540, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+Blaster540 <- BlasterDealCalcWithMaxDMR(BlasterDealCycle540, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 BlasterDPM540 <- sum(na.omit(Blaster540)) / (max(BlasterDealCycle540$Time) / 60000)
 
 BlasterDealData540 <- data.frame(BlasterDealCycle540$Skills, BlasterDealCycle540$Time, BlasterDealCycle540$Restraint4, Blaster540)
@@ -829,10 +864,10 @@ colnames(BlasterDealData540) <- c("Skills", "Time", "R4", "Deal")
 
 subset(BlasterDealData540, BlasterDealData540$R4>0)
 
-BlasterRR540 <- BlasterDealData540[20:252, ]
+BlasterRR540 <- BlasterDealData540[20:272, ]
 BlasterRR540 <- sum((BlasterRR540$Deal))
 
-Blaster40s540 <- BlasterDealData540[20:753, ]
+Blaster40s540 <- BlasterDealData540[20:768, ]
 Blaster40s540 <- sum((Blaster40s540$Deal))
 
 
@@ -853,7 +888,7 @@ BlasterDealCycle480 <- DealCycleFinal(BlasterDealCycle480)
 BlasterDealCycle480 <- BlasterAddATK(BlasterDealCycle480, ATKFinal, BuffFinal, SummonedFinal)
 BlasterDealCycle480Reduction <- DealCycleReduction(BlasterDealCycle480)
 
-Blaster480 <- DealCalcWithMaxDMR(BlasterDealCycle480, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+Blaster480 <- BlasterDealCalcWithMaxDMR(BlasterDealCycle480, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 BlasterDPM480 <- sum(na.omit(Blaster480)) / (max(BlasterDealCycle480$Time) / 60000)
 
 BlasterDealData480 <- data.frame(BlasterDealCycle480$Skills, BlasterDealCycle480$Time, BlasterDealCycle480$Restraint4, Blaster480)
@@ -861,8 +896,8 @@ colnames(BlasterDealData480) <- c("Skills", "Time", "R4", "Deal")
 
 subset(BlasterDealData480, BlasterDealData480$R4>0)
 
-BlasterRR480 <- BlasterDealData480[20:270, ]
+BlasterRR480 <- BlasterDealData480[20:290, ]
 BlasterRR480 <- sum((BlasterRR480$Deal))
 
-Blaster40s480 <- BlasterDealData480[20:823, ]
+Blaster40s480 <- BlasterDealData480[20:835, ]
 Blaster40s480 <- sum((Blaster40s480$Deal))
