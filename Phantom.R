@@ -26,8 +26,8 @@ PhantomBase <- JobBase(ChrInfo=ChrInfo,
                        MonsterLife=MLTypeL21, 
                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Cane", SpecDefault$WeaponType)[, 1:16],
                        WeaponType=SpecDefault$WeaponType, 
-                       SubWeapon=SubWeapon[3, ], 
-                       Emblem=Emblem[1, ], 
+                       SubWeapon=SubWeapon[24, ], 
+                       Emblem=Emblem[2, ], 
                        CoolReduceHat=T)
 
 

@@ -114,8 +114,6 @@ TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", F)
 TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", T)
 DealIrr(NightLordDealTL, max(NightLordDealData$Time)/1000)
 
-abs(NightLordDealTL$Deal - (DPM12344$NightLord[1]/12000000000))^2
-
 ## DualBlade
 DualBladeDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
 TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", F)
@@ -187,6 +185,12 @@ EunwolDealTL <- DealTimeLine(EunwolDealDataFixed$Time, EunwolDealDataFixed$Deal)
 TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", F)
 TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", T)
 DealIrr(EunwolDealTL, max(EunwolDealData$Time)/1000)
+
+## Blaster
+BlasterDealTL <- DealTimeLine(BlasterDealData$Time, BlasterDealData$Deal)
+TLGraph(BlasterDealTL, max(BlasterDealData$Time)/1000, "Blaster", F)
+TLGraph(BlasterDealTL, max(BlasterDealData$Time)/1000, "Blaster", T)
+DealIrr(BlasterDealTL, max(BlasterDealData$Time)/1000)
 
 ## BattleMage
 BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Deal)

@@ -27,8 +27,8 @@ EunwolBase <- JobBase(ChrInfo=ChrInfo,
                       MonsterLife=MLTypeS21, 
                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", SpecDefault$WeaponType)[, 1:16],
                       WeaponType=SpecDefault$WeaponType, 
-                      SubWeapon=SubWeapon[3, ], 
-                      Emblem=Emblem[1, ], 
+                      SubWeapon=SubWeapon[25, ], 
+                      Emblem=Emblem[2, ], 
                       CoolReduceHat=T)
 
 
@@ -1090,7 +1090,7 @@ EunwolAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, BunhonFi
     colnames(DC) <- colnames(DealCycle)
     p <- Ind[i] + 1
     
-    time <- DealCycle[p, 2] - DealCycle[p-1, 2]
+    time <- 2001
     while(p < Ind[i+1] & DealCycle$JeongryeongJipsok[p] > 0) {
       if(time > 2000 & max(DealCycle$Skills[p]==c("BunhonGyeokchamATK", "SohonJangmak", "Gwicham", "PashwaeCheoljoHoe", "BulyeouryeongPashwaeYeongwon"))==1) {
         for(j in 1:length(JJSkills)) {
