@@ -120,11 +120,11 @@ DominatorUpgrade <- function(UpgradeOption) {
 
 
 ## StarForce Function
-sfstat <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/starforcestat.csv"
+sfstat <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/starforcestat.csv"
 sfstat <- read.csv(sfstat, header=T, row.names=1)
-sfatk <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/starforceatk.csv"
+sfatk <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/starforceatk.csv"
 sfatk <- read.csv(sfatk, header=T, row.names=1)
-sfsup <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/superior.csv"
+sfsup <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/superior.csv"
 sfsup <- read.csv(sfsup, header=T, row.names=1)
 colnames(sfstat) <- c("100", "110", "120", "130", "140", "150", "160", "200")
 colnames(sfatk) <- c("100", "110", "120", "130", "140", "150", "160", "200")
@@ -163,7 +163,7 @@ Starforce <- function(ReqLv, Superior=F, Stars, ClassOnly=c(T, F), Gloves=c(T, F
 
 
 ## AmazingReinforce Function
-amaze <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/amazingstar.csv"
+amaze <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/amazingstar.csv"
 amaze <- read.csv(amaze, header=T, row.names=1)
 colnames(sfsup) <- c("100", "110", "120", "130", "140", "150")
 Amazing <- function(ReqLv, Stars, ItemType=c("Acc", "Armor"), ClassOnly=c(T, F), BonusRate, InitialSubStat2) {
@@ -357,10 +357,10 @@ ItemTypes <- c("Sword", "Hammer", "TwohandSword", "TwohandAxe", "TwohandHammer",
                "Bow", "Crossbow", "AincientBow", "DualBowgun", 
                "Wristband", "Dagger", "Cane", "Chain", "Fan",
                "Gun", "Knuckle", "HandCannon", "EnergySword", "SoulShooter")
-wsfstat <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/starforcestat.csv"
+wsfstat <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/starforcestat.csv"
 wsfstat <- read.csv(wsfstat, header=T, row.names=1)
 wsfstat <- wsfstat[, 6:8]
-wsfatk <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/weaponsfatk.csv"
+wsfatk <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/weaponsfatk.csv"
 wsfatk <- read.csv(wsfatk, header=T, row.names=1)
 colnames(wsfstat) <- c(150, 160, 200)
 colnames(wsfatk) <- c(150, 160, 200)
@@ -1534,7 +1534,7 @@ DealRatio <- function(DealCycle, DealData) {
 
 
 ## Damage Optimization Function
-PotentialList <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/potentiallist.csv"
+PotentialList <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/potentiallist.csv"
 PotentialList <- read.csv(PotentialList)
 PotIGR <- c(0, 30, 40, 58, 64, 74.8, 78.4, 84.88, 89.416, 92.5912)
 PotList <- list()
