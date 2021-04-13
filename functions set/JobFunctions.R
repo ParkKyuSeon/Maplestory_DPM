@@ -222,7 +222,7 @@ HeroDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList,
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK + DealCycle$ComboATK[i]) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$ComboBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$ComboBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$ComboFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -315,7 +315,7 @@ HeroDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedS
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK + DealCycle$ComboATK[i]) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$ComboBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$ComboBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$ComboFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
@@ -1104,7 +1104,7 @@ BishopDealCalc <- function(DealCycle1, DealCycle2, ATKSkillsList, BuffList, Summ
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
           CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes
       }
@@ -1216,7 +1216,7 @@ BishopDealCalcWithMaxDMR <- function(DealCycle1, DealCycle2, ATKSkillsList, Buff
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
           CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
         Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes
@@ -1610,7 +1610,7 @@ BishopDealCalcGeneral <- function(DealCycle, ATKSkillsList, BuffList, SummonedSk
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
           CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
         Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes
@@ -1709,7 +1709,7 @@ BishopDealCalcGeneralWithoutMax <- function(DealCycle, ATKSkillsList, BuffList, 
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
           CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
         Deal[i] <- Deal[i] * Skills$AttackTimes
@@ -2387,7 +2387,7 @@ WindBreakerDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkil
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -2480,7 +2480,7 @@ WindBreakerDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, Su
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
@@ -4198,7 +4198,7 @@ FlameWizardDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkil
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$SalamanderMischiefStack[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -4291,7 +4291,7 @@ FlameWizardDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, Su
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$SalamanderMischiefStack[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
@@ -4668,7 +4668,7 @@ StrikerDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsLi
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$LightningStack[i] * 9)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$LightningStack[i] * 9)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -4761,7 +4761,7 @@ StrikerDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, Summon
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$LightningStack[i] * 9)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$LightningStack[i] * 9)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$BlessofCygnusBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
@@ -5139,7 +5139,7 @@ TCDealCalc <- function(DealCycle1, DealCycle2, ATKSkillsList, BuffList, Summoned
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobGuard) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobDefault$Basic$Guard) / 100 * 
           (100 + SpecEach$BDR + Skills$BDR + DealCycle$FrostEffectStackCalc[i] * 12) / 100 * CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR + DealCycle$FrostEffectStackCalc[i] * 3) / 100 * 
           (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes
@@ -5252,7 +5252,7 @@ TCDealCalcWithMaxDMR <- function(DealCycle1, DealCycle2, ATKSkillsList, BuffList
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobGuard) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobDefault$Basic$Guard) / 100 * 
           (100 + SpecEach$BDR + Skills$BDR + DealCycle$FrostEffectStackCalc[i] * 12) / 100 * CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR + DealCycle$FrostEffectStackCalc[i] * 3) / 100 * 
           (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
@@ -5647,7 +5647,7 @@ TCDealCalcGeneral <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkills
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobGuard) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobDefault$Basic$Guard) / 100 * 
           (100 + SpecEach$BDR + Skills$BDR + DealCycle$FrostEffectStackCalc[i] * 12) / 100 * CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR + DealCycle$FrostEffectStackCalc[i] * 3) / 100 * 
           (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
@@ -5747,7 +5747,7 @@ TCDealCalcGeneralWithoutMax <- function(DealCycle, ATKSkillsList, BuffList, Summ
         Deal[i] <- 0
       } else {
         Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobGuard) / 100 * 
+          (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR, DealCycle$FrostEffectStackCalc[i] * 5 * 0.2)), MobDefault$Basic$Guard) / 100 * 
           (100 + SpecEach$BDR + Skills$BDR + DealCycle$FrostEffectStackCalc[i] * 12) / 100 * CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR + DealCycle$FrostEffectStackCalc[i] * 3) / 100 * 
           (FDRCalc(c(SpecEach$FDR, Skills$FDR, DealCycle$InfinityFDR[i])) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
           ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
@@ -5887,7 +5887,7 @@ LuminousDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsL
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$DarkCrescendoBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$DarkCrescendoBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -5980,7 +5980,7 @@ LuminousDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, Summo
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$DarkCrescendoBDR[i]) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR + DealCycle$DarkCrescendoBDR[i]) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
@@ -6357,7 +6357,7 @@ EunwolDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsLis
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR + DealCycle$GwimunjinStack[i]) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -6450,7 +6450,7 @@ EunwolDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, Summone
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR + DealCycle$GwimunjinStack[i]) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
@@ -6844,7 +6844,7 @@ BlasterDealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsLi
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, ((1.1^DealCycle$CylinderGauge[i])-1)*100)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
@@ -6937,7 +6937,7 @@ BlasterDealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, Summon
       Deal[i] <- 0
     } else {
       Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobGuard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR, ((1.1^DealCycle$CylinderGauge[i])-1)*100)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(PhysicsImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
       Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
