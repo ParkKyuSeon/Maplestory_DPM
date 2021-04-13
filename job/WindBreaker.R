@@ -1,3 +1,12 @@
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Base.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Common.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Item%20Data.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/PreSets.R")
+
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/functions%20set/Functions%20Set.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/functions%20set/JobFunctions.R")
+
+
 ## WindBreaker - Data
 ## WindBreaker - VMatrix
 WindBreakerCore <- MatrixSet(PasSkills=c("SongofSky", "TriflingWhim", "StormBringer", "FairyTurn", "PinpointPierce", "Monsoon"), 

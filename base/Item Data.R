@@ -628,5 +628,3 @@ for(i in PoYes) {
   SpecSet1[i, 7] <- SpecSet1[i, 7] + APo[1, 4]
 }
 }
-
-View(SpecSet1)
