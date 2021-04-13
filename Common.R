@@ -103,7 +103,6 @@ HyperStats <- data.frame(HyperStats)
 lv <- 140:275
 ptsperlv <- floor((lv-110)/10)
 lvpts <- data.frame(lv, ptsperlv)
-sum(subset(lvpts, lvpts$lv<=ChrLv)[, 2])
 
 
 
@@ -281,7 +280,7 @@ Movable <- T
 {AdventureWarrior <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # HPRecovery
 AdventureWizard <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 0, 1)
 AdventureBowman <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0)
-AdventureThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Disorder==T, (10+ServerLag)/20*18, 0), 0, 0, 0)
+AdventureThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Disorder==T, (10+General$General$Serverlag)/20*18, 0), 0, 0, 0)
 AdventurePirates <- c(70, 70, 70, 1225, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 Mikhail <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Stance
 CygnusKnights <- c(0, 0, 0, 0, 0, 25, 25, 0, 0, 0, 0, 0, 0, 0)
@@ -296,9 +295,9 @@ Mercedes <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Exp
 Phantom <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0)
 Eunwol <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Survive
 Kaiser <- c(0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Kaiser : DMR 3% per Morph Gauge
-Cadena <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Disorder==T, 6, 0)+ifelse(ChrLv>MobLv, 6, 0), 0, 0, 0)
+Cadena <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Disorder==T, 6, 0)+ifelse(SpecDefault$Basic$ChrLv > MobDefault$Basic$Lv, 6, 0), 0, 0, 0)
 AngelicBuster <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # DMR Buff
-Adele <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 + min(PartyMembers * 2, 8), 0, 0, 0)
+Adele <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 + min(General$General$PartyMembers * 2, 8), 0, 0, 0)
 Illium <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Movable==T, 12, 0), 0, 0, 0)
 Ark <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0)
 Zero <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0)

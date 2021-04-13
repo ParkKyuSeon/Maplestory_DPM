@@ -36,21 +36,6 @@ ChrInfo <- data.frame(job, class1, class2, MainStat, SubStat1, SubStat2, BaseMas
 
 
 ## DPMs
-DPM <- data.frame(t(rep(0, 43)))
-DPM <- rbind(DPM, DPM)
-colnames(DPM) <- job
-rownames(DPM) <- c("DPM", "DamageLeakage")
-
-DPMTver <- data.frame(t(rep(0, 43)))
-DPMTver <- rbind(DPMTver, DPMTver)
-colnames(DPMTver) <- job
-rownames(DPMTver) <- c("DPM", "DamageLeakage")
-
-DPM12338 <- data.frame(t(rep(0, 43)))
-DPM12338 <- rbind(DPM12338, DPM12338, DPM12338, DPM12338)
-colnames(DPM12338) <- job
-rownames(DPM12338) <- c("DPM", "DamageLeakage", "Restraint", "40s")
-
 DPM12344 <- data.frame(t(rep(0, 43)))
 DPM12344 <- rbind(DPM12344, DPM12344, DPM12344, DPM12344)
 colnames(DPM12344) <- job
