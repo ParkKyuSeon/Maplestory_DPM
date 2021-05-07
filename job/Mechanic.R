@@ -7,10 +7,13 @@ MechanicCore <- MatrixSet(PasSkills=c("MassiveFire", "HomingMissile", "Distortio
                                   CommonV("Pirate", "Resistance")), 
                       ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
                       ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 0), 
+                      BlinkLv=1, 
+                      BlinkMP=0, 
                       UsefulSkills=c("CombatOrders", "SharpEyes"), 
                       UsefulLvs=20, 
                       UsefulMP=0, 
-                      SpecSet=SpecDefault)
+                      SpecSet=SpecDefault, 
+                      SelfBind=F)
 
 
 ## Mechanic - Basic Info
@@ -19,11 +22,10 @@ MechanicBase <- JobBase(ChrInfo=ChrInfo,
                     SpecSet=SpecDefault, 
                     Job="Mechanic",
                     CoreData=MechanicCore, 
-                    MikhailLink=F, 
-                    OtherBuffDuration=0, 
+                    BuffDurationNeeded=0, 
                     AbilList=c("BDR", "DisorderBDR"), 
                     LinkList=c("CygnusKnights", "Xenon", "DemonAvenger", "Zero"), 
-                    MonsterLife=MLTypeD21, 
+                    MonsterLife=MLTypeD22, 
                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Gun", SpecDefault$WeaponType)[, 1:16],
                     WeaponType=SpecDefault$WeaponType, 
                     SubWeapon=SubWeapon[29, ], 
@@ -66,10 +68,14 @@ RobotMastery <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(10 + MechanicCore[[2]][5, 2])
-LoadedDice <- data.frame(option, value)}
+LoadedDice <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(MechanicCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 MechanicPassive <- Passive(list(MechanicParts=MechanicParts, HiddenPiece=HiddenPiece, MechanicMastery=MechanicMastery, PhysicalTraining=PhysicalTraining, MetalArmorTank=MetalArmorTank, 
-                                OverTuning=OverTuning, MetalArmorExtreme=MetalArmorExtreme, RobotMastery=RobotMastery, LoadedDice=LoadedDice))
+                                OverTuning=OverTuning, MetalArmorExtreme=MetalArmorExtreme, RobotMastery=RobotMastery, LoadedDice=LoadedDice, BlinkPassive=BlinkPassive))
 
 
 ## Mechanic - Buff
@@ -166,14 +172,14 @@ WillofLiberty <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * MechanicCore[[3]][2, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * MechanicCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * MechanicCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * MechanicCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -218,7 +224,7 @@ MechanicBuff <- Buff(list(MechanicBooster=MechanicBooster, SupportWaiver=Support
                           LuckyDice555=LuckyDice555, BomberTime=BomberTime, WillofLiberty=WillofLiberty, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                           MetalArmorFullburstBuff=MetalArmorFullburstBuff, MetalArmorFullburstExhaust=MetalArmorFullburstExhaust, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, MapleWarriors2=MapleWarriors2,
                           Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : MechanicBooster, MapleSoldier
+## PetBuff : MechanicBooster, UsefulSharpEyes, UsefulCombatOrders
 MechanicAllTimeBuff <- AllTimeBuff(MechanicBuff)
 
 
@@ -481,10 +487,10 @@ MechanicCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   BuffSummonedPrior <- c("MechanicBooster", "MapleSoldier", "SupportWaiver", "OpenGate", "LuckyDice5", "UsefulSharpEyes", "UsefulCombatOrders", "WillofLiberty", 
                          "RM7", "RM1Buff", "MagneticFieldBuff", "MultipleOptionBuff", "OverDrive", "MapleWarriors2", "MechCarrierBuff", 
                          "SoulContractLink", "BomberTime", "Restraint4")
-  Times188 <- c(1, 1, 2, 0.5, 1, 1, 1, 0, 
+  Times188 <- c(1, 1, 2, 0.5, 1, 0, 0, 0, 
                 2, 3, 1.5, 1, 3, 1, 1, 
                 2, 1, 1)
-  Times200 <- c(1, 1, 2, 0.5, 1, 1, 1, 0, 
+  Times200 <- c(1, 1, 2, 0.5, 1, 0, 0, 0, 
                 2, 3.5, 1.5, 1, 3, 1, 1, 
                 2, 2, 1)
   
@@ -611,6 +617,8 @@ MechanicCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+          DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         }
       }
       ## Micro Missile Container + Resistance Line Infantry
@@ -724,8 +732,8 @@ MechanicSpecOpt2 <- LuckyDiceOptimization2(MechanicDealCycleReduction, ATKFinal,
 MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
 MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
 
-DPM12344$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (380540 / 60000)
-DPM12344$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (380540 / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (380540 / 60000)
+DPM12347$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
+DPM12347$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (max(MechanicDealCycle$Time) / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
 
 MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time, MechanicDealCycle$Restraint4, 
                                LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(1, 0, 0)))
@@ -733,9 +741,9 @@ colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(MechanicDealData, MechanicDealData$R4>0)
 
 MechanicRR <- MechanicDealData[46:339, ]
-DPM12344$Mechanic[3] <- sum((MechanicRR$Deal))
+DPM12347$Mechanic[3] <- sum((MechanicRR$Deal))
 
-Mechanic40s <-  MechanicDealData[46:733, ]
-DPM12344$Mechanic[4] <- sum((Mechanic40s$Deal))
+Mechanic40s <-  MechanicDealData[46:734, ]
+DPM12347$Mechanic[4] <- sum((Mechanic40s$Deal))
 
 DealRatio(MechanicDealCycle, MechanicFinalDPMwithMax)

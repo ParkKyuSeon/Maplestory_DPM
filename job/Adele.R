@@ -1,16 +1,19 @@
 ## Adele - Data
 ## Adele - VMatrix
 AdeleCore <- MatrixSet(PasSkills=c("Divide", "Order_Grave", "Territory_Tred", "Creation_Gathering", "Blossom", "Shard_Wonder", "Impale_Resonance_Marker"), 
-                        PasLvs=c(50, 50, 50, 50, 50, 50, 50), 
-                        PasMP=c(10, 10, 10, 10, 10, 5, 5), 
-                        ActSkills=c("Ruin", "Infinite", "Restore", "Storm", 
-                                    CommonV("Warrior", "Lef")), 
-                        ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                        ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                        UsefulSkills=c("CombatOrders", "SharpEyes"), 
-                        UsefulLvs=20, 
-                        UsefulMP=0, 
-                        SpecSet=SpecDefault)
+                       PasLvs=c(50, 50, 50, 50, 50, 50, 50), 
+                       PasMP=c(10, 10, 10, 10, 10, 5, 5), 
+                       ActSkills=c("Ruin", "Infinite", "Restore", "Storm", 
+                                   CommonV("Warrior", "Lef")), 
+                       ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                       ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
+                       BlinkLv=1, 
+                       BlinkMP=0, 
+                       UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                       UsefulLvs=20, 
+                       UsefulMP=0, 
+                       SpecSet=SpecDefault, 
+                       SelfBind=F)
 
 
 
@@ -20,10 +23,9 @@ AdeleBase <- JobBase(ChrInfo=ChrInfo,
                      SpecSet=SpecDefault, 
                      Job="Adele",
                      CoreData=AdeleCore, 
-                     MikhailLink=F, 
-                     OtherBuffDuration=0, 
+                     BuffDurationNeeded=0, 
                      AbilList=c("BDR", "DisorderBDR"), 
-                     LinkList=c("Adele", "Phantom", "DemonAvenger", "Xenon"), 
+                     LinkList=c("Adele", "CygnusKnights", "DemonAvenger", "Xenon"), 
                      MonsterLife=MLTypeS21, 
                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Tuner", SpecDefault$WeaponType)[, 1:16],
                      WeaponType=SpecDefault$WeaponType, 
@@ -76,10 +78,14 @@ GraveDebuff <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(AdeleCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)}
+BodyofStealPassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(AdeleCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 AdelePassive <- Passive(list(MagicCircuit=MagicCircuit, Pace=Pace, Rudiment=Rudiment, Mastery=Mastery, Train=Train, 
-                             Ascent=Ascent, Expert=Expert, Demolition=Demolition, Attain=Attain, GraveDebuff=GraveDebuff, BodyofStealPassive=BodyofStealPassive))
+                             Ascent=Ascent, Expert=Expert, Demolition=Demolition, Attain=Attain, GraveDebuff=GraveDebuff, BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
 
 
 ## Adele - Buff
@@ -141,14 +147,14 @@ RestoreBuff <- rbind(data.frame(option, value), info) ## EtherPlus
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * AdeleCore[[3]][2, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * AdeleCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * AdeleCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * AdeleCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -220,7 +226,7 @@ AdeleBuff <- Buff(list(Booster=Booster, ResonanceBuff=ResonanceBuff, GatheringDe
                        InfiniteBuff=InfiniteBuff, RestoreBuff=RestoreBuff, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, AuraWeaponBuff=AuraWeaponBuff, 
                        MagicCircuitFullDriveBuff=MagicCircuitFullDriveBuff, BlessofGrandis=BlessofGrandis, Restraint4=Restraint4, SoulContractLink=SoulContractLink, EtherRecovery=EtherRecovery,
                        Order1=Order1, Order2=Order2, Order3=Order3, OrderRestore=OrderRestore, Ether=Ether))
-## PetBuff : Booster, MapleSoldier
+## PetBuff : Booster, UsefulSharpEyes, UsefulCombatOrders
 AdeleAllTimeBuff <- AllTimeBuff(AdeleBuff)
 
 
@@ -548,6 +554,15 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= Period * 1000 + 2100) {
     if(DealCycle$RaceofGod[nrow(DealCycle)] < 3000) {
       DealCycle <- AdeleBuffCycle(DealCycle, "RaceofGod", BuffFinal)
+    } 
+    if(DealCycle$UsefulSharpEyes[nrow(DealCycle)] < 3000) {
+      DealCycle <- AdeleBuffCycle(DealCycle, "UsefulSharpEyes", BuffFinal)
+    }
+    if(DealCycle$UsefulCombatOrders[nrow(DealCycle)] < 3000) {
+      DealCycle <- AdeleBuffCycle(DealCycle, "UsefulCombatOrders", BuffFinal)
+    }
+    if(DealCycle$Booster[nrow(DealCycle)] < 3000) {
+      DealCycle <- AdeleBuffCycle(DealCycle, "Booster", BuffFinal)
     }
     ## Order Summon
     if(DealCycle$Ether[nrow(DealCycle)] == 400 & (Period * 1000 + 2100) - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) > 10000) {
@@ -648,6 +663,15 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
     if(DealCycle$RaceofGod[nrow(DealCycle)] < 3000) {
       DealCycle <- AdeleBuffCycle(DealCycle, "RaceofGod", BuffFinal)
     }
+    if(DealCycle$UsefulSharpEyes[nrow(DealCycle)] < 3000) {
+      DealCycle <- AdeleBuffCycle(DealCycle, "UsefulSharpEyes", BuffFinal)
+    }
+    if(DealCycle$UsefulCombatOrders[nrow(DealCycle)] < 3000) {
+      DealCycle <- AdeleBuffCycle(DealCycle, "UsefulCombatOrders", BuffFinal)
+    }
+    if(DealCycle$Booster[nrow(DealCycle)] < 3000) {
+      DealCycle <- AdeleBuffCycle(DealCycle, "Booster", BuffFinal)
+    }
     ## Order Summon
     if(DealCycle$Ether[nrow(DealCycle)] == 400 & (Period * 2000 + 2100) - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) > 10000) {
       if(DealCycle$Order1[nrow(DealCycle)] - DealCycle$Time[1] <= 10000) {
@@ -730,8 +754,8 @@ AdeleSpecOpt2 <- Optimization2(AdeleDealCycleTriggerReduction, ATKFinalTrigger, 
 AdeleFinalDPM <- DealCalc(AdeleDealCycleTrigger, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 AdeleFinalDPMwithMax <- DealCalcWithMaxDMR(AdeleDealCycleTrigger, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 
-DPM12344$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (341190 / 60000)
-DPM12344$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (341190 / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (341190 / 60000)
+DPM12347$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (max(AdeleDealCycleTrigger$Time) / 60000)
+DPM12347$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (max(AdeleDealCycleTrigger$Time) / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (max(AdeleDealCycleTrigger$Time) / 60000)
 
 AdeleDealRatio <- DealRatio(AdeleDealCycleTrigger, AdeleFinalDPMwithMax)
 
@@ -740,10 +764,10 @@ colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AdeleDealData, AdeleDealData$R4 > 0)
 
 AdeleRR <- AdeleDealData[165:577, ]
-DPM12344$Adele[3] <- sum((AdeleRR$Deal))
+DPM12347$Adele[3] <- sum((AdeleRR$Deal))
 
 Adele40s <-  AdeleDealData[17:668, ]
-DPM12344$Adele[4] <- sum((Adele40s$Deal))
+DPM12347$Adele[4] <- sum((Adele40s$Deal))
 
 
 ## Other Hypers - Nobility
@@ -766,7 +790,7 @@ AdeleDealCycleNobilityReduction <- DealCycleReduction(AdeleDealCycleNobility)
 
 AdeleDPMNobility <- DealCalcWithMaxDMR(AdeleDealCycleNobility, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 
-NobilityDPM <- sum(na.omit(AdeleDPMNobility)) / (341070 / 60000)
+NobilityDPM <- sum(na.omit(AdeleDPMNobility)) / (max(AdeleDealCycleNobility$Time) / 60000)
 
 AdeleDealDataNobility <- data.frame(AdeleDealCycleNobility$Skills, AdeleDealCycleNobility$Time, AdeleDealCycleNobility$Restraint4, AdeleDPMNobility)
 colnames(AdeleDealDataNobility) <- c("Skills", "Time", "R4", "Deal")
@@ -805,7 +829,7 @@ AdeleDealCycleDike <- DCSpiderInMirror(AdeleDealCycleDike, SummonedFinal)
 AdeleDealCycleDikeReduction <- DealCycleReduction(AdeleDealCycleDike)
 
 AdeleDPMDike <- DealCalc(AdeleDealCycleDike, ATKFinalDike, BuffFinal, SummonedFinal, AdeleSpecOpt2)
-DikeDPM <- sum(na.omit(AdeleDPMDike)) / (341190 / 60000)
+DikeDPM <- sum(na.omit(AdeleDPMDike)) / (max(AdeleDealCycleDike$Time) / 60000)
 
 AdeleDealDataDike <- data.frame(AdeleDealCycleDike$Skills, AdeleDealCycleDike$Time, AdeleDealCycleDike$Restraint4, AdeleDPMDike)
 colnames(AdeleDealDataDike) <- c("Skills", "Time", "R4", "Deal")
@@ -838,7 +862,7 @@ AdeleDealCycleNobility50 <- DCSpiderInMirror(AdeleDealCycleNobility50, SummonedF
 AdeleDealCycleNobility50Reduction <- DealCycleReduction(AdeleDealCycleNobility50)
 
 AdeleDPMNobility50 <- DealCalc(AdeleDealCycleNobility50, ATKFinal, BuffFinalNobility50, SummonedFinal, AdeleSpecOpt2)
-Nobility50DPM <- sum(na.omit(AdeleDPMNobility50)) / (341070 / 60000)
+Nobility50DPM <- sum(na.omit(AdeleDPMNobility50)) / (max(AdeleDealCycleNobility50$Time) / 60000)
 
 AdeleDealDataNobility50 <- data.frame(AdeleDealCycleNobility50$Skills, AdeleDealCycleNobility50$Time, AdeleDealCycleNobility50$Restraint4, AdeleDPMNobility50)
 colnames(AdeleDealDataNobility50) <- c("Skills", "Time", "R4", "Deal")

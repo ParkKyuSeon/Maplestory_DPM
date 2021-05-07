@@ -7,10 +7,13 @@ EunwolCore <- MatrixSet(PasSkills=c("Gwicham", "SohonJangmak", "Bulyeouryeong", 
                                     CommonV("Pirate", "Heroes")), 
                         ActLvs=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
                         ActMP=c(5, 5, 5, 5, 0, 5, 0, 5, 5), 
+                        BlinkLv=1, 
+                        BlinkMP=0, 
                         UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
                         UsefulLvs=20, 
                         UsefulMP=0, 
-                        SpecSet=SpecDefault)
+                        SpecSet=SpecDefault, 
+                        SelfBind=T)
 
 
 ## Eunwol - Basic Info
@@ -20,8 +23,7 @@ EunwolBase <- JobBase(ChrInfo=ChrInfo,
                       SpecSet=SpecDefault, 
                       Job="Eunwol",
                       CoreData=EunwolCore, 
-                      MikhailLink=F, 
-                      OtherBuffDuration=0, 
+                      BuffDurationNeeded=0, 
                       AbilList=c("BDR", "DisorderBDR"), 
                       LinkList=c("Eunwol", "DemonAvenger", "Phantom", "AdventureBowman"), 
                       MonsterLife=MLTypeS21, 
@@ -67,11 +69,15 @@ YakjeomGanpa <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(10 + EunwolCore[[2]][5, 2])
-LoadedDicePassive <- data.frame(option, value)}
+LoadedDicePassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(EunwolCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 EunwolPassive <- Passive(list(JeongryeongChinhwa=JeongryeongChinhwa, JeongryeongGyeolsok2=JeongryeongGyeolsok2, GeunryeokDanryeon=GeunryeokDanryeon, 
                               JeongryeongGyeolsok3=JeongryeongGyeolsok3, Yakhwa=Yakhwa, JeongryeongGyeolsok4=JeongryeongGyeolsok4, GogeupKnuckleSukryeon=GogeupKnuckleSukryeon, 
-                              YakjeomGanpa=YakjeomGanpa, LoadedDicePassive=LoadedDicePassive))
+                              YakjeomGanpa=YakjeomGanpa, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive))
 
 
 ## Eunwol - Buff
@@ -133,21 +139,21 @@ JeongryeongGyeolsokMax <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * EunwolCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * EunwolCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * EunwolCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * EunwolCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * EunwolCore[[3]][3, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * EunwolCore[[3]][3, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulWindBooster <- rbind(data.frame(option, value), info)
@@ -214,7 +220,7 @@ EunwolBuff <- Buff(list(MapleSoldier=MapleSoldier, SohonGyeolgye=SohonGyeolgye, 
                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, 
                         JeongryeongJipsok=JeongryeongJipsok, GwimunjinBuff=GwimunjinBuff, GwimunjinDebuff=GwimunjinDebuff, GwimunjinStack=GwimunjinStack, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
                         LuckyDice5=LuckyDice5, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : MapleSoldier
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster
 EunwolAllTimeBuff <- AllTimeBuff(EunwolBuff)
 
 
@@ -714,6 +720,17 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
     }
+    ## Useful Skills
+    if(DealCycle$UsefulSharpEyes[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+      DealCycle <- DCBuff(DealCycle, "UsefulSharpEyes", BuffFinal)
+      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
+    if(DealCycle$UsefulCombatOrders[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+      DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
+      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
     ## Heroes Oath
     if(DealCycle$HeroesOath[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
       DealCycle <- DCBuff(DealCycle, "HeroesOath", BuffFinal)
@@ -781,14 +798,6 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
       
       DealCycle <- DCATK(DealCycle, "PashwaeYeongwonLast", ATKFinal)
-      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
-      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-      
-      DealCycle <- DCBuff(DealCycle, "UsefulSharpEyes", BuffFinal)
-      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
-      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-      
-      DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
       SohonCount <- 4
@@ -888,6 +897,17 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
     ## Lucky Dice
     if(DealCycle$LuckyDice5[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
       DealCycle <- DCBuff(DealCycle, "LuckyDice5", BuffFinal)
+      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
+    ## Useful Skills
+    if(DealCycle$UsefulSharpEyes[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+      DealCycle <- DCBuff(DealCycle, "UsefulSharpEyes", BuffFinal)
+      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
+    if(DealCycle$UsefulCombatOrders[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+      DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
     }
@@ -996,6 +1016,17 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
     ## Lucky Dice
     if(DealCycle$LuckyDice5[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
       DealCycle <- DCBuff(DealCycle, "LuckyDice5", BuffFinal)
+      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
+    ## Useful Skills
+    if(DealCycle$UsefulSharpEyes[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+      DealCycle <- DCBuff(DealCycle, "UsefulSharpEyes", BuffFinal)
+      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
+    if(DealCycle$UsefulCombatOrders[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+      DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
     }
@@ -1409,7 +1440,7 @@ EunwolDealCycleFixed <- EunwolDummyReduction(EunwolDealCycleFixed)
 EunwolDealCycleFixed <- OverDriveExhaustBuff(EunwolDealCycleFixed, BuffFinal$Duration[16], BuffFinal$CoolTime[16])
 
 EunwolFinalDPMFixed <- EunwolYakjeomGanpa(EunwolDealCycleFixed, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
-DPM12344$Eunwol[1] <- sum(na.omit(EunwolFinalDPMFixed)) / (max(EunwolDealCycle$Time) / 60000)
+DPM12347$Eunwol[1] <- sum(na.omit(EunwolFinalDPMFixed)) / (max(EunwolDealCycle$Time) / 60000)
 
 EunwolDealCycleFixedGanpaon <- EunwolDealCycleFixed
 EunwolDealCycleFixedGanpaon$YakjeomGanpaAdd <- 1
@@ -1421,10 +1452,10 @@ EunwolDealDataFixed <- data.frame(EunwolDealCycleFixed$Skills, EunwolDealCycleFi
 colnames(EunwolDealDataFixed) <- c("Skills", "Time", "R4", "Deal", "DealGanpa")
 
 EunwolRRFixed <- EunwolDealDataFixed[51:1579, ]
-DPM12344$Eunwol[3] <- sum((EunwolRRFixed$Deal))
+DPM12347$Eunwol[3] <- sum((EunwolRRFixed$Deal))
 
 Eunwol40sFixed <- EunwolDealDataFixed[51:3597, ]
-DPM12344$Eunwol[4] <- sum((Eunwol40sFixed$Deal))
+DPM12347$Eunwol[4] <- sum((Eunwol40sFixed$Deal))
 
 FixedGanpaRR <- sum((EunwolRRFixed$DealGanpa))
 FixedGanpa40s <- sum((Eunwol40sFixed$DealGanpa))

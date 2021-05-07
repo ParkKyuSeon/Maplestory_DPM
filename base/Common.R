@@ -203,67 +203,94 @@ MLTypeS11 <- rbind(FrankenRoid, Leica, ReeperSpector, EliteBloodTooth,
 
 
 ### Farm Level 30(26 Slots) + No Bigeup, Serf, MiniSpider, LightLumi, Pierre, VonBon
-#### STR Type 2-1 : STR, SummonedDuration=T(F), FinalATKDMR=F, CRR=F
+#### STR Type 2-1 : STR, SummonedDuration=F, FinalATKDMR=F, CRR=F
 MLTypeS21 <- rbind(FrankenRoid, ReeperSpector, EliteBloodTooth, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   Oberon, Beril, AkairumPriest, PapulatusClock, CoupleYeti, GoldYeti,
+                   Oberon, Beril, AkairumPriest, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeS21) <- MonsterLifeSpecs
 
 #### STR Type 2-2 : STR, SummonedDuration=F, FinalATKDMR=T, CRR=F
 MLTypeS22 <- rbind(FrankenRoid, ReeperSpector, EliteBloodTooth, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   Oberon, Beril, Puso, AkairumPriest, PapulatusClock, CoupleYeti,
+                   Oberon, Beril, Puso, AkairumPriest, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeS22) <- MonsterLifeSpecs
 
-#### DEX Type 2-1 : DEX, SummonedDuration=T(F), FinalATKDMR=F, CRR=F
+#### STR Type 2-3 : STR, SummonedDuration=T, FinalATKDMR=F, CRR=F
+MLTypeS23 <- rbind(FrankenRoid, ReeperSpector, EliteBloodTooth, NineTailedFox, 
+                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
+                   Oberon, GoldYeti, CoupleYeti, AkairumPriest, Phantom, Eunwol, Rang,
+                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
+colnames(MLTypeS23) <- MonsterLifeSpecs
+
+#### DEX Type 2-1 : DEX, SummonedDuration=F, FinalATKDMR=F, CRR=F
 MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, CoupleYeti, GoldYeti, 
+                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeD21) <- MonsterLifeSpecs
+
+#### DEX Type 2-2 : DEX, SummonedDuration=T, FinalATKDMR=F, CRR=F
+MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
+                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
+                   Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
+                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
+colnames(MLTypeD22) <- MonsterLifeSpecs
 
 #### DEX Type 2-3 : DEX, SummonedDuration=F, FinalATKDMR=T, CRR=F
 MLTypeD23 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, Puso, PapulatusClock, CoupleYeti,
+                   Oberon, Beril, Puso, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli,  
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeD23) <- MonsterLifeSpecs
 
-#### INT Type 2-1 : INT, SummonedDuration=T(F), FinalATKDMR=F, CRR=F
+#### INT Type 2-1 : INT, SummonedDuration=F, FinalATKDMR=F, CRR=F
 MLTypeI21 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedFox,
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, CoupleYeti, GoldYeti,
+                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeI21) <- MonsterLifeSpecs
+
+#### INT Type 2-1 : INT, SummonedDuration=T, FinalATKDMR=F, CRR=F
+MLTypeI22 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedFox,
+                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
+                   Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
+                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
+colnames(MLTypeI22) <- MonsterLifeSpecs
 
 #### LUK Type 2-1 : LUK, SummonedDuration=F, FinalATKDMR=F, CRR=F
 MLTypeL21 <- rbind(Dunas, Hogeol, EliteBloodTooth, Papulatus, LightSoul, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, CoupleYeti,
+                   Oberon, Beril, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeL21) <- MonsterLifeSpecs
 
 #### LUK Type 2-2 : LUK, SummonedDuration=T, FinalATKDMR=F, CRR=F
 MLTypeL22 <- rbind(Dunas, Hogeol, EliteBloodTooth, Papulatus, LightSoul, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, CoupleYeti, GoldYeti, 
+                   CoupleYeti, GoldYeti, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica
+#### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeL22) <- MonsterLifeSpecs
 
 ### Farm Level 40(28 Slots)

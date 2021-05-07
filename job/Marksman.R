@@ -7,10 +7,13 @@ MarksmanCore <- MatrixSet(PasSkills=c("Snipe", "Piercing", "Freezer", "FinalAtta
                                     CommonV("Bowman", "Adventure")), 
                         ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
                         ActMP=c(5, 5, 5, 5, 5, 5, 5, 5, 5), 
+                        BlinkLv=1, 
+                        BlinkMP=0, 
                         UsefulSkills=c("CombatOrders", "WindBooster"), 
                         UsefulLvs=20, 
                         UsefulMP=0, 
-                        SpecSet=SpecDefault)
+                        SpecSet=SpecDefault,
+                        SelfBind=F)
 
 
 
@@ -20,9 +23,8 @@ MarksmanBase <- JobBase(ChrInfo=ChrInfo,
                        SpecSet=SpecDefault, 
                        Job="Marksman",
                        CoreData=MarksmanCore, 
-                       MikhailLink=T, 
-                       OtherBuffDuration=0, 
-                       AbilList=c("BDR", "BuffDuration"), 
+                       BuffDurationNeeded=0, 
+                       AbilList=c("BDR", "DisorderBDR"), 
                        LinkList=c("AdventureBowman", "Mikhail", "DemonAvenger", "Phantom"), 
                        MonsterLife=MLTypeD21, 
                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Crossbow", SpecDefault$WeaponType)[, 1:16],
@@ -63,10 +65,14 @@ IllusionStep <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
 value <- c(15 + MarksmanBase$PSkillLv)
-AdditionalBolt <- data.frame(option, value)}
+AdditionalBolt <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(MarksmanCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 MarksmanPassive <- Passive(list(CriticalShot, PhysicalTraining, CrossbowMastery, ExtremeArchery, Marksmanship, 
-                                IllusionStep, CrossbowExpert, AdditionalBolt))
+                                IllusionStep, CrossbowExpert, AdditionalBolt, BlinkPassive))
 
 
 ## Marksman - Buff
@@ -80,7 +86,7 @@ CrossbowBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(300, NA, 0, T, NA, NA, T)
+info <- c(300, NA, 840, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulArrow <- rbind(data.frame(option, value), info)
@@ -94,21 +100,21 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(20 + ceiling(MarksmanBase$SkillLv/2), 15 + ceiling(MarksmanBase$SkillLv/2))
-info <- c(300 + 3 * MarksmanBase$SkillLv, NA, 0, T, NA, NA, T)
+info <- c(300 + 3 * MarksmanBase$SkillLv, NA, 900, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * MarksmanCore[[3]][2, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * MarksmanCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulWindBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * MarksmanCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * MarksmanCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -210,7 +216,7 @@ MarksmanBuff <- Buff(list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, 
                           SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, DistanceSenseTrueSnipe=DistanceSenseTrueSnipe, 
                           DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
                           Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-### PetBuff : CrossbowBooster, SoulArrow, SharpEyes
+### PetBuff : CrossbowBooster(990ms), UsefulCombatOrders(1500ms), UsefulWindBooster(900ms)
 MarksmanAllTimeBuff <- AllTimeBuff(MarksmanBuff)
 
 
@@ -453,7 +459,7 @@ MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T
 MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
 MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
 MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 11)), T, ATKFinal)
+MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 12)), T, ATKFinal)
 
 MarksmanDealCycle <- DealCycleFinal(MarksmanDealCycle)
 MarksmanDealCycle <- AddATKsCycle(MarksmanDealCycle)
@@ -482,20 +488,20 @@ MarksmanFinalDPM <- DealCalc(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFin
 MarksmanFinalDPMwithMax <- DealCalcWithMaxDMR(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
 sum(na.omit(MarksmanFinalDPM - MarksmanFinalDPMwithMax))
 
-DPM12344$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(233940/60000)
-DPM12344$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(233940/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(233940/60000)
+DPM12347$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(max(MarksmanDealCycle$Time)/60000)
+DPM12347$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(max(MarksmanDealCycle$Time)/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(max(MarksmanDealCycle$Time)/60000)
 
 
 ## Restraint Deal and 40s Damage
 MRestraint <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(MRestraint) <- c("Skills", "Damage", "Time", "R4")
 MRestraint <- subset(MRestraint, MRestraint$R4>0)
-DPM12344$Marksman[3] <- sum(MRestraint$Damage)
+DPM12347$Marksman[3] <- sum(MRestraint$Damage)
 
 Marksman40s <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(Marksman40s) <- c("Skills", "Damage", "Time", "R4")
 Marksman40s <- Marksman40s[36:357, ]
-DPM12344$Marksman[4] <- sum((Marksman40s$Damage))
+DPM12347$Marksman[4] <- sum((Marksman40s$Damage))
 
 
 ## Marksman Deal Ratio
@@ -513,7 +519,7 @@ CrossbowBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(300, NA, 0, T, NA, NA, T)
+info <- c(300, NA, 840, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulArrow <- rbind(data.frame(option, value), info)
@@ -527,21 +533,21 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(20 + ceiling(MarksmanBase$SkillLv/2), 15 + ceiling(MarksmanBase$SkillLv/2))
-info <- c(300 + 3 * MarksmanBase$SkillLv, NA, 0, T, NA, NA, T)
+info <- c(300 + 3 * MarksmanBase$SkillLv, NA, 900, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * MarksmanCore[[3]][2, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * MarksmanCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulWindBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * MarksmanCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * MarksmanCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -688,7 +694,7 @@ MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)),
 MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
 MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
 MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 11)), T, ATKFinal)
+MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 12)), T, ATKFinal)
 
 MarksmanDealCycle0 <- DealCycleFinal(MarksmanDealCycle0)
 MarksmanDealCycle0 <- AddATKsCycle(MarksmanDealCycle0)
@@ -703,7 +709,7 @@ MarksmanDealCycle0Reduction <- DealCycleReduction(MarksmanDealCycle0)}
 MarksmanFinalDPM0 <- DealCalc(MarksmanDealCycle0, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
 MarksmanFinalDPMwithMax0 <- DealCalcWithMaxDMR(MarksmanDealCycle0, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
 
-Marksman0 <- sum(na.omit(MarksmanFinalDPMwithMax0))/(233940/60000)
+Marksman0 <- sum(na.omit(MarksmanFinalDPMwithMax0))/(max(MarksmanDealCycle0$Time)/60000)
 
 MRestraint0 <- data.frame(MarksmanDealCycle0$Skills, MarksmanFinalDPMwithMax0, MarksmanDealCycle0$Time, MarksmanDealCycle0$Restraint4)
 colnames(MRestraint0) <- c("Skills", "Damage", "Time", "R4")

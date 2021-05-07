@@ -7,10 +7,13 @@ BowmasterCore <- MatrixSet(PasSkills=c("HurricaneArrow", "ArrowPlatter", "Advanc
                                        CommonV("Bowman", "Adventure")), 
                            ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
                            ActMP=c(5, 5, 5, 5, 5, 5, 0, 5, 0), 
+                           BlinkLv=1, 
+                           BlinkMP=0, 
                            UsefulSkills="CombatOrders", 
                            UsefulLvs=20, 
                            UsefulMP=0, 
-                           SpecSet=SpecDefault)
+                           SpecSet=SpecDefault, 
+                           SelfBind=F)
 
 
 ## Bowmaster - Basic Info
@@ -19,9 +22,8 @@ BowmasterBase <- JobBase(ChrInfo=ChrInfo,
                        SpecSet=SpecDefault, 
                        Job="Bowmaster",
                        CoreData=BowmasterCore, 
-                       MikhailLink=T, 
-                       OtherBuffDuration=0, 
-                       AbilList=c("BDR", "BuffDuration"), 
+                       BuffDurationNeeded=0, 
+                       AbilList=c("BDR", "DisorderBDR"), 
                        LinkList=c("Mikhail", "DemonAvenger", "Phantom", "AdventureBowman"), 
                        MonsterLife=MLTypeD23, 
                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", SpecDefault$WeaponType)[, 1:16],
@@ -57,10 +59,14 @@ IllusionStep <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(20 + ceiling(BowmasterBase$PSkillLv / 2))
-AdvancedFinalAttack <- data.frame(option, value)}
+AdvancedFinalAttack <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(BowmasterCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 BowmasterPassive <- Passive(list(CriticalShot, PhysicalTraining, ExtremeArchery, MarksmanShip, BowExpert, 
-                                 IllusionStep, AdvancedFinalAttack))
+                                 IllusionStep, AdvancedFinalAttack, BlinkPassive))
 
 
 ## Bowmaster - Buff
@@ -73,7 +79,7 @@ BowBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(300, NA, 0, T, NA, NA, T)
+info <- c(300, NA, 810, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulArrow <- rbind(data.frame(option, value), info)
@@ -115,7 +121,7 @@ EpicAdventure <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * BowmasterCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * BowmasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -180,7 +186,7 @@ BowmasterBuff <- Buff(list(BowBooster=BowBooster, SoulArrow=SoulArrow, MapleSold
                            Preperation=Preperation, EpicAdventure=EpicAdventure, UsefulCombatOrders=UsefulCombatOrders, ArrowRainBuff=ArrowRainBuff, AfterimageArrowBuff=AfterimageArrowBuff, 
                            QuiverFullBurst=QuiverFullBurst, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, ArmorPiercingDummy=ArmorPiercingDummy, 
                            QuiverPoisonDummy=QuiverPoisonDummy, MotalBlowDummy=MotalBlowDummy, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff :BowBooster, SoulArrow, SharpEyes
+## Petbuff :BowBooster(990ms), UsefulCombatOrders(1500ms), SharpEyes(900ms)
 BowmasterAllTimeBuff <- AllTimeBuff(BowmasterBuff)
 
 
@@ -409,7 +415,7 @@ BowmasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
                           Period=c(120), CycleTime, SummonSkillPeriod) {
   BuffSummonedPrior <- c("BowBooster", "SoulArrow", "SharpEyes", "MapleSoldier", "EpicAdventure", "UsefulCombatOrders", "GuidedArrow", "Evolve", "ArrowPlatter", 
                          "MapleWarriors2", "Preperation", "ArrowRainBuff", "SoulContractLink", "AdvancedQuiver", "QuiverFullBurst", "CriticalReinforce", "Restraint4", "AfterimageArrowBuff")
-  Times120 <- c(0, 0, 0, 0, 0, 0.5, 2, 1, 4, 0.5, 1, 1, 1, 4, 1, 1, 0.5, 4)
+  Times120 <- c(0, 0, 0, 0, 0, 0, 2, 1, 4, 0.5, 1, 1, 1, 4, 1, 1, 0.5, 4)
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -741,8 +747,8 @@ BowmasterSpecOpt2 <- Optimization2(BowmasterDealCycleReduction, ATKFinal, BuffFi
 BowmasterFinalDPM <- DealCalc(BowmasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt2)
 BowmasterFinalDPMwithMax <- DealCalcWithMaxDMR(BowmasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt2)
 
-DPM12344$Bowmaster[1] <- sum(na.omit(BowmasterFinalDPMwithMax)) / (237660 / 60000)
-DPM12344$Bowmaster[2] <- sum(na.omit(BowmasterFinalDPM)) / (237660 / 60000) - sum(na.omit(BowmasterFinalDPMwithMax)) / (237660 / 60000)
+DPM12347$Bowmaster[1] <- sum(na.omit(BowmasterFinalDPMwithMax)) / (max(BowmasterDealCycle$Time) / 60000)
+DPM12347$Bowmaster[2] <- sum(na.omit(BowmasterFinalDPM)) / (max(BowmasterDealCycle$Time) / 60000) - sum(na.omit(BowmasterFinalDPMwithMax)) / (max(BowmasterDealCycle$Time) / 60000)
 
 BowmasterDealRatio <- DealRatio(BowmasterDealCycle, BowmasterFinalDPMwithMax)
 
@@ -752,8 +758,8 @@ colnames(BowmasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(BowmasterDealData, BowmasterDealData$R4>0)
 
 BowmasterRR <- BowmasterDealData[71:768, ]
-DPM12344$Bowmaster[3] <- sum((BowmasterRR$Deal))
+DPM12347$Bowmaster[3] <- sum((BowmasterRR$Deal))
 
-Bowmaster40s <-  BowmasterDealData[71:1884, ]
-DPM12344$Bowmaster[4] <- sum((Bowmaster40s$Deal))
+Bowmaster40s <-  BowmasterDealData[71:1876, ]
+DPM12347$Bowmaster[4] <- sum((Bowmaster40s$Deal))
 

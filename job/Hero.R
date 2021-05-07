@@ -1,16 +1,19 @@
 ## Hero - Data
 ## Hero - VMatrix
 HeroCore <- MatrixSet(PasSkills=c("RagingBlow", "RageUprising", "AdvancedFinalAttack", "Incising", "Panic"), 
-                          PasLvs=c(50, 50, 50, 50, 50), 
-                          PasMP=c(10, 10, 10, 10, 10), 
-                          ActSkills=c("SwordofBurningSoul", "ComboDeathfault", "ComboInstinct", "SwordIllusion",
-                                      CommonV("Warrior", "Adventure")), 
-                          ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
-                          ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
-                          UsefulSkills=c("WindBooster", "CombatOrders", "SharpEyes"), 
-                          UsefulLvs=20, 
-                          UsefulMP=0, 
-                          SpecSet=SpecDefault)
+                      PasLvs=c(50, 50, 50, 50, 50), 
+                      PasMP=c(10, 10, 10, 10, 10), 
+                      ActSkills=c("SwordofBurningSoul", "ComboDeathfault", "ComboInstinct", "SwordIllusion",
+                                  CommonV("Warrior", "Adventure")), 
+                      ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
+                      ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
+                      BlinkLv=1, 
+                      BlinkMP=0, 
+                      UsefulSkills=c("WindBooster", "CombatOrders", "SharpEyes"), 
+                      UsefulLvs=20, 
+                      UsefulMP=0, 
+                      SpecSet=SpecDefault, 
+                      SelfBind=F)
 
 
 ## Hero - Basic Info
@@ -20,8 +23,7 @@ HeroBase <- JobBase(ChrInfo=ChrInfo,
                     SpecSet=SpecDefault, 
                     Job="Hero",
                     CoreData=HeroCore, 
-                    MikhailLink=F, 
-                    OtherBuffDuration=0, 
+                    BuffDurationNeeded=0, 
                     AbilList=c("BDR", "DisorderBDR"), 
                     LinkList=c("AdventureWarrior", "AdventureBowman", "DemonAvenger", "Phantom"), 
                     MonsterLife=MLTypeS22, 
@@ -63,22 +65,26 @@ AdvancedFinalAttack <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(HeroCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)}
+BodyofStealPassive <- data.frame(option, value)
 
-HeroPassive <- Passive(list(WeaponMastery, PhysicalTraining, ChanceAttack, Enrage, AdvancedCombo, CombatMastery, AdvancedFinalAttack, BodyofStealPassive))
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(HeroCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
+
+HeroPassive <- Passive(list(WeaponMastery, PhysicalTraining, ChanceAttack, Enrage, AdvancedCombo, CombatMastery, AdvancedFinalAttack, BodyofStealPassive, BlinkPassive))
 
 
 ## Hero - Buff
 {option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 990, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WeaponBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 1080, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Fury <- rbind(data.frame(option, value), info)
@@ -106,21 +112,21 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * HeroCore[[3]][3, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * HeroCore[[3]][3, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * HeroCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * HeroCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulWindBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * HeroCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * HeroCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -171,7 +177,7 @@ HeroBuff <- Buff(list(WeaponBooster=WeaponBooster, Fury=Fury, PanicBuff=PanicBuf
                       UsefulSharpEyes=UsefulSharpEyes, UsefulWindBooster=UsefulWindBooster, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, 
                       Valhalla=Valhalla, ComboInstinct=ComboInstinct, ComboDeathfaultBuff=ComboDeathfaultBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
                       Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : Fury, WeaponBooster, MapleWarriors
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster
 HeroAllTimeBuff <- AllTimeBuff(HeroBuff)
 
 
@@ -362,7 +368,7 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   BuffSummonedPrior <- c("WeaponBooster", "Fury", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "UsefulWindBooster", "EpicAdventure", 
                          "AuraWeaponBuff", "MapleWarriors2", "SwordofBurningSoul", "Valhalla", "SoulContractLink", "ComboInstinct", "Restraint4")
   
-  Times240 <- c(1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 2, 1, 1)
+  Times240 <- c(0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1)
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
@@ -484,6 +490,8 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+          RURemain <- max(0, RURemain - DealCycle$Time[1])
+          SIRemain <- max(0, SIRemain - DealCycle$Time[1])
         }
       }
       ## Panic
@@ -555,8 +563,6 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   return(DealCycle)
 }
       
-      
-
 
 HeroDealCycle <- HeroCycle(PreDealCycle=HeroDealCycle, 
                                    ATKFinal=ATKFinal,
@@ -587,17 +593,17 @@ HeroSpecOpt2 <- HeroOptimization2(HeroDealCycleReduction, ATKFinal, BuffFinal, S
 HeroFinalDPM <- HeroDealCalc(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt2)
 HeroFinalDPMwithMax <- HeroDealCalcWithMaxDMR(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt2)
 
-DPM12344$Hero[1] <- sum(na.omit(HeroFinalDPMwithMax)) / (230130 / 60000)
-DPM12344$Hero[2] <- sum(na.omit(HeroFinalDPM)) / (230130 / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (230130 / 60000)
+DPM12347$Hero[1] <- sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000)
+DPM12347$Hero[2] <- sum(na.omit(HeroFinalDPM)) / (max(HeroDealCycle$Time) / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000)
 
 HeroDealData <- data.frame(HeroDealCycle$Skills, HeroDealCycle$Time, HeroDealCycle$Restraint4, HeroFinalDPMwithMax)
 colnames(HeroDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(HeroDealData, HeroDealData$R4>0)
 
 HeroRR <- HeroDealData[58:180, ]
-DPM12344$Hero[3] <- sum((HeroRR$Deal))
+DPM12347$Hero[3] <- sum((HeroRR$Deal))
 
 Hero40s <- HeroDealData[31:362, ]
-DPM12344$Hero[4] <- sum((Hero40s$Deal)) 
+DPM12347$Hero[4] <- sum((Hero40s$Deal)) 
 
 DealRatio(HeroDealCycle, HeroFinalDPMwithMax)

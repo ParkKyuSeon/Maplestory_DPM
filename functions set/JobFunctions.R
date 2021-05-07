@@ -983,19 +983,19 @@ BishopUnstableCycle <- function(DealCycle, ATKSkillsList) {
   rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
-UnstableData <- function(DealCycle, UnstableProb, InfinityDuration, InfinityCoolTime, UsefulSkillDuration) {
+UnstableData <- function(DealCycle, DealCycle2, UnstableProb, InfinityDuration, InfinityCoolTime) {
   Infs <- DealCycle[DealCycle$Skills=="Infinity", ]
   Uns <- DealCycle[DealCycle$Skills=="UnstableMemorizeEnd", ]
   
   inftime <- Infs$Time
   unstime <- Uns$Time
   
-  times <- (Uns$Time - Infs$Time) / 1000 + InfinityDuration
+  times <- Uns$Time / 1000 + (DealCycle$Time[nrow(DealCycle)] - Infs$Time[2]) / 1000
   prob <- UnstableProb
   for(i in 2:length(times)) {
     prob[i] <- UnstableProb * (1 - sum(prob[1 : i-1]))
   }
-  times[length(times)+1] <- InfinityCoolTime
+  times[length(times)+1] <- (Infs$Time[2] / 1000) * 0.5 + (DealCycle2$Time[nrow(DealCycle2)] / 1000) * 0.5
   prob[length(prob)+1] <- 1 - sum(prob[1 : length(prob)])
   weight <- times*prob
   weightsum <- sum(weight)
@@ -1007,13 +1007,8 @@ UnstableData <- function(DealCycle, UnstableProb, InfinityDuration, InfinityCool
   unsdata <- data.frame(weight)
   rownames(unsdata) <- c(1:(length(ratio)-1), "Fail")
   
-  remaintimes <- c()
-  for(i in 1:length(times)) {
-    remaintimes[i] <- max(times[i] - (UsefulSkillDuration - 3), 0) * prob[i]
-  }
-  remain <- sum(remaintimes)
-  uns <- list(unsdata, remain, weightsum)
-  names(uns) <- c("UnsRatio", "BuffNeeded", "DealCycleTime")
+  uns <- list(unsdata, weightsum)
+  names(uns) <- c("UnsRatio", "DealCycleTime")
   
   return(uns)
 }

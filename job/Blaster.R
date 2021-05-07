@@ -7,10 +7,13 @@ BlasterCore <- MatrixSet(PasSkills=c("MagnumPunch", "DoubleFang", "RevolvingCann
                                      CommonV("Warrior", "Resistance")), 
                          ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
                          ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
+                         BlinkLv=1, 
+                         BlinkMP=0, 
                          UsefulSkills=c("SharpEyes", "CombatOrders"), 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault)
+                         SpecSet=SpecDefault, 
+                         SelfBind=F)
 
 
 ## Blaster - Basic Info
@@ -20,8 +23,7 @@ BlasterBase <- JobBase(ChrInfo=ChrInfo,
                       SpecSet=SpecDefault, 
                       Job="Blaster",
                       CoreData=BlasterCore, 
-                      MikhailLink=F, 
-                      OtherBuffDuration=0, 
+                      BuffDurationNeeded=0, 
                       AbilList=c("BDR", "DisorderBDR"), 
                       LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Zero"), 
                       MonsterLife=MLTypeS22, 
@@ -63,10 +65,15 @@ CombinationTrainingII <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(BlasterCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)}
+BodyofStealPassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(BlasterCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 BlasterPassive <- Passive(list(GuntletMastery=GuntletMastery, PhysicalTraining=PhysicalTraining, ChargeMastery=ChargeMastery, CombinationTraining=CombinationTraining, 
-                               GuntletExpert=GuntletExpert, AdvancedChargeMastery=AdvancedChargeMastery, CombinationTrainingII=CombinationTrainingII, BodyofStealPassive=BodyofStealPassive))
+                               GuntletExpert=GuntletExpert, AdvancedChargeMastery=AdvancedChargeMastery, CombinationTrainingII=CombinationTrainingII, 
+                               BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
 
 
 ## Blaster - Buff
@@ -128,14 +135,14 @@ MaximizeCannonRevolvingBunkerBDR <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * BlasterCore[[3]][2, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * BlasterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * BlasterCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * BlasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -173,7 +180,7 @@ BlasterBuff <- Buff(list(GuntletBooster=GuntletBooster, MapleSoldier=MapleSoldie
                          UsefulCombatOrders=UsefulCombatOrders, BunkerBusterBuff=BunkerBusterBuff, AfterimageShockBuff=AfterimageShockBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
                          Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 BlasterAllTimeBuff <- AllTimeBuff(BlasterBuff)
-## PetBuff : GuntleBooster, MapleWarriors
+## PetBuff : GuntleBooster, UsefulSharpEyes, UsefulCombatOrders
 
 
 ## Blaster - Union & HyperStat & SoulWeapon
@@ -451,7 +458,7 @@ BlasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   BuffSummonedPrior <- c("GuntletBooster", "MapleSoldier", "WillofLiberty", "UsefulSharpEyes", "UsefulCombatOrders", 
                          "AfterimageShockBuff", "AuraWeaponBuff", "MaximizeCannon", "MapleWarriors2", "BunkerBusterBuff", "SoulContractLink", "Restraint4")
   
-  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 
+  Times120 <- c(0.5, 0.5, 0, 0, 0, 
                 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5)
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -822,8 +829,8 @@ BlasterSpecOpt2 <- BlasterOptimization2(BlasterDealCycleReduction, ATKFinal, Buf
 BlasterFinalDPM <- BlasterDealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 BlasterFinalDPMwithMax <- BlasterDealCalcWithMaxDMR(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 
-DPM12344$Blaster[1] <- sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
-DPM12344$Blaster[2] <- sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
+DPM12347$Blaster[1] <- sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
+DPM12347$Blaster[2] <- sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
 
 BlasterDealRatio <- DealRatio(BlasterDealCycle, BlasterFinalDPMwithMax)
 
@@ -832,11 +839,11 @@ colnames(BlasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(BlasterDealData, BlasterDealData$R4>0)
 
-BlasterRR <- BlasterDealData[20:279, ]
-DPM12344$Blaster[3] <- sum((BlasterRR$Deal))
+BlasterRR <- BlasterDealData[19:275, ]
+DPM12347$Blaster[3] <- sum((BlasterRR$Deal))
 
-Blaster40s <- BlasterDealData[20:800, ]
-DPM12344$Blaster[4] <- sum((Blaster40s$Deal))
+Blaster40s <- BlasterDealData[19:798, ]
+DPM12347$Blaster[4] <- sum((Blaster40s$Deal))
 
 
 ## Mag - Fang 540ms
@@ -864,10 +871,10 @@ colnames(BlasterDealData540) <- c("Skills", "Time", "R4", "Deal")
 
 subset(BlasterDealData540, BlasterDealData540$R4>0)
 
-BlasterRR540 <- BlasterDealData540[20:272, ]
+BlasterRR540 <- BlasterDealData540[19:268, ]
 BlasterRR540 <- sum((BlasterRR540$Deal))
 
-Blaster40s540 <- BlasterDealData540[20:768, ]
+Blaster40s540 <- BlasterDealData540[19:766, ]
 Blaster40s540 <- sum((Blaster40s540$Deal))
 
 
@@ -896,8 +903,8 @@ colnames(BlasterDealData480) <- c("Skills", "Time", "R4", "Deal")
 
 subset(BlasterDealData480, BlasterDealData480$R4>0)
 
-BlasterRR480 <- BlasterDealData480[20:290, ]
+BlasterRR480 <- BlasterDealData480[19:286, ]
 BlasterRR480 <- sum((BlasterRR480$Deal))
 
-Blaster40s480 <- BlasterDealData480[20:835, ]
+Blaster40s480 <- BlasterDealData480[19:833, ]
 Blaster40s480 <- sum((Blaster40s480$Deal))

@@ -2200,14 +2200,17 @@ MatrixSet <- function(PasSkills,
                       ActSkills, 
                       ActLvs, 
                       ActMP, 
+                      BlinkLv=1, 
+                      BlinkMP=0, 
                       UsefulSkills, 
                       UsefulLvs, 
                       UsefulMP, 
-                      SpecSet=SpecDefault) {
-  Cores <- floor((SpecSet$Basic$ChrLv - 200) / 5) + 5
+                      SpecSet=SpecDefault, 
+                      SelfBind=F) {
+  Cores <- floor((SpecSet$Basic$ChrLv - 200) / 5) + 5 + 2
   MatrixPoints <- SpecSet$Basic$ChrLv - 200
   
-  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + length(UsefulSkills)
+  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + 1 + ifelse(SelfBind==F, 1, 0) + length(UsefulSkills)
   if(CoreNumbers > Cores) {warning("Invalid Input : Cores Exceeded") 
     stop()}
   
@@ -2220,6 +2223,15 @@ MatrixSet <- function(PasSkills,
   
   ActiveCore <- data.frame(ActSkills, ActLvs + ActMP)
   colnames(ActiveCore) <- c("Active", "Levels")
+  
+  Blink <- data.frame(Active="Blink", Levels=BlinkLv + BlinkMP)
+  ErdaNova <- data.frame(Active="ErdaNova", Levels=1)
+  ErdaWill <- data.frame(Active="ErdaWill", Levels=1)
+  if(SelfBind==F) {
+    ActiveCore <- rbind(ActiveCore, Blink, ErdaNova, ErdaWill)
+  } else {
+    ActiveCore <- rbind(ActiveCore, Blink, ErdaWill)
+  }
   
   UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
   colnames(UsefulCore) <- c("Useful", "Levels")
@@ -2235,8 +2247,7 @@ JobBase <- function(ChrInfo=ChrInfo,
                     SpecSet=SpecDefault, 
                     Job,
                     CoreData,
-                    MikhailLink, 
-                    OtherBuffDuration, 
+                    BuffDurationNeeded, 
                     AbilList, 
                     LinkList, 
                     MonsterLife, 
@@ -2268,8 +2279,7 @@ JobBase <- function(ChrInfo=ChrInfo,
     }
   }
   CoolReduceP <- UnionChr(UnionPreSet[[i]], Job, SpecSet$Basic$ChrLv)$CoolReduceP
-  MikhailLinkCoolTime <- 180 * ((100 - CoolReduceP) / 100)
-  JobData$BuffDurationNeeded <- max(OtherBuffDuration, ifelse(MikhailLink==T, ceiling((MikhailLinkCoolTime / 110 - 1) * 100), 0))
+  JobData$BuffDurationNeeded <- BuffDurationNeeded
   
   InfoList2 <- c("ChrLv", "UnionLv", "ArcaneForce", "ArcaneForceStat", "AuthenticForce", "Charisma", "Insight", "Sensibility")
   t <- length(JobData)

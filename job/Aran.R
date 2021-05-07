@@ -7,10 +7,13 @@ AranCore <- MatrixSet(PasSkills=c("Swing", "FinalBlow", "Beyonder", "HuntersTarg
                                   CommonV("Warrior", "Heroes")), 
                       ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
                       ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
+                      BlinkLv=1, 
+                      BlinkMP=0, 
                       UsefulSkills=c("SharpEyes", "CombatOrders"), 
                       UsefulLvs=20, 
                       UsefulMP=0, 
-                      SpecSet=SpecDefault)
+                      SpecSet=SpecDefault, 
+                      SelfBind=F)
 
 
 ## Aran - Basic Info
@@ -19,10 +22,9 @@ AranBase <- JobBase(ChrInfo=ChrInfo,
                     SpecSet=SpecDefault, 
                     Job="Aran",
                     CoreData=AranCore, 
-                    MikhailLink=F, 
-                    OtherBuffDuration=0, 
+                    BuffDurationNeeded=0, 
                     AbilList=c("BDR", "DisorderBDR"), 
-                    LinkList=c("CygnusKnights", "Aran", "DemonAvenger", "Phantom"), 
+                    LinkList=c("CygnusKnights", "Aran", "DemonAvenger", "CygnusKnights"), 
                     MonsterLife=MLTypeS22, 
                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Polarm", SpecDefault$WeaponType)[, 1:16],
                     WeaponType=SpecDefault$WeaponType, 
@@ -67,19 +69,23 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(30 + AranBase$PSkillLv)
 AdvancedFinalAttack <- data.frame(option, value)
 
-option <- factor(c(AranCore[[2]][6, 2]), levels=PSkill)
+option <- factor(c("MainStat"), levels=PSkill)
 value <- c(AranCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)}
+BodyofStealPassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(AranCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 AranPassive <- Passive(list(RegainedMemory=RegainedMemory, SnowCharge=SnowCharge, PolarmMastery=PolarmMastery, PhysicalTraining=PhysicalTraining, 
                             AdvancedComboAbility=AdvancedComboAbility, Might=Might, CleavingAttack=CleavingAttack, HighMastery=HighMastery, AdvancedFinalAttack=AdvancedFinalAttack, 
-                            BodyofStealPassive=BodyofStealPassive))
+                            BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
 
 
 ## Aran - Buff
 {option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PolarmBooster <- rbind(data.frame(option, value), info)
@@ -107,7 +113,7 @@ AdrenalineGenerator <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessingMaha <- rbind(data.frame(option, value), info)
@@ -135,14 +141,14 @@ HeroesOath <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * AranCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * AranCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * AranCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * AranCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -193,7 +199,7 @@ AranBuff <- Buff(list(PolarmBooster=PolarmBooster, SnowCharge=SnowCharge, Adrena
                       BlessingMaha=BlessingMaha, MapleSoldier=MapleSoldier, SwingBuff=SwingBuff, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                       InstallMahaBuff=InstallMahaBuff, DireWolfCurse=DireWolfCurse, DireWolfCurseStack=DireWolfCurseStack, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, Combo=Combo, 
                       Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : PolarmBooster, SnowCharge, BlessingMaha
+## Petbuff : SnowCharge(900ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
 AranAllTimeBuff <- AllTimeBuff(AranBuff)
 
 
@@ -640,7 +646,8 @@ AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStru
     if(DealCycle$HeroesOath[nrow(DealCycle)] - DealCycle$Time[1] < 3000) {
       DealCycle <- DCBuff(DealCycle, "HeroesOath", BuffFinal)
       DealCycle <- ComboF(DealCycle, 0, ADDummy)
-    } else if(CycleDummy == 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & BMCoolDown == 0) {
+    } 
+    else if(CycleDummy == 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & BMCoolDown == 0) {
       DealCycle <- DCATK(DealCycle, "BrandishMahaCommand", ATKFinal)
       DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 30
       DealCycle <- ComboF(DealCycle, 30, ADDummy)
@@ -868,8 +875,8 @@ AranSpecOpt2 <- Optimization2(AranDealCycleReduction, ATKFinal, BuffFinal, Summo
 AranFinalDPM <- DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
 AranFinalDPMwithMax <- DealCalcWithMaxDMR(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
 
-DPM12344$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (241020 / 60000)
-DPM12344$Aran[2] <- sum(na.omit(AranFinalDPM)) / (241020 / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (241020 / 60000)
+DPM12347$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
+DPM12347$Aran[2] <- sum(na.omit(AranFinalDPM)) / (max(240000, max(AranDealCycle$Time)) / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
 
 AranDealRatio <- DealRatio(AranDealCycle, AranFinalDPMwithMax)
 
@@ -879,11 +886,7 @@ colnames(AranDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AranDealData, AranDealData$R4>0)
 
 AranRR <- AranDealData[151:664, ]
-DPM12344$Aran[3] <- sum((AranRR$Deal))
+DPM12347$Aran[3] <- sum((AranRR$Deal))
 
 Aran40s <-  AranDealData[151:1008, ]
-DPM12344$Aran[4] <- sum((Aran40s$Deal))
-
-
-
-
+DPM12347$Aran[4] <- sum((Aran40s$Deal))

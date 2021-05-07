@@ -6,11 +6,14 @@ DarkKnightCore <- MatrixSet(PasSkills=c("GungnirDescent", "Beholder", "FinalAtta
                             ActSkills=c("DarkSpear", "BeholderImpact", "PierceCyclone", "DarknessAura", 
                                         CommonV("Warrior", "Adventure")), 
                             ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
-                            ActMP=c(5, 5, 5, 5, 5, 5, 0, 5, 5), 
+                            ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5),
+                            BlinkLv=1, 
+                            BlinkMP=5, 
                             UsefulSkills=c("SharpEyes", "CombatOrders"), 
                             UsefulLvs=20, 
                             UsefulMP=0, 
-                            SpecSet=SpecDefault)
+                            SpecSet=SpecDefault, 
+                            SelfBind=F)
 
 
 ## DarkKnight - Basic Info
@@ -19,8 +22,7 @@ DarkKnightBase <- JobBase(ChrInfo=ChrInfo,
                           SpecSet=SpecDefault, 
                           Job="DarkKnight",
                           CoreData=DarkKnightCore, 
-                          MikhailLink=F, 
-                          OtherBuffDuration=85, 
+                          BuffDurationNeeded=85, 
                           AbilList=c("BuffDuration", "DisorderBDR"), 
                           LinkList=c("Xenon", "CygnusKnights", "DemonAvenger", "AdventureWarrior"), 
                           MonsterLife=MLTypeS21, 
@@ -67,10 +69,15 @@ AdvancedWeaponMastery <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(DarkKnightCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)}
+BodyofStealPassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(DarkKnightCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 DarkKnightPassive <- Passive(list(WeaponMastery=WeaponMastery, PhysicalTraining=PhysicalTraining, CrossOverChainPassive=CrossOverChainPassive, LordofDarkness=LordofDarkness, BeholdersBuff=BeholdersBuff, 
-                                  SacrificePassive=SacrificePassive, ReincarnationPassive=ReincarnationPassive, AdvancedWeaponMastery=AdvancedWeaponMastery, BodyofStealPassive=BodyofStealPassive))
+                                  SacrificePassive=SacrificePassive, ReincarnationPassive=ReincarnationPassive, AdvancedWeaponMastery=AdvancedWeaponMastery, 
+                                  BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
 
 
 ## DarkKnight - Buff
@@ -90,14 +97,14 @@ IronWall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HyperBody <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(20)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 720, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CrossOverChain <- rbind(data.frame(option, value), info)
@@ -146,14 +153,14 @@ DarkThirst <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * DarkKnightCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * DarkKnightCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * DarkKnightCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * DarkKnightCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -184,7 +191,7 @@ DarkKnightBuff <- Buff(list(WeaponBooster=WeaponBooster, IronWall=IronWall, Hype
                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, DarknessAuraBuff=DarknessAuraBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
                          Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 DarkKnightAllTimeBuff <- AllTimeBuff(DarkKnightBuff)
-## PetBuff : WeaponBooster, HyperBody, CrossOverChain
+## PetBuff : WeaponBooster(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms)
 
 
 ## DarkKnight - Union & HyperStat & SoulWeapon
@@ -391,7 +398,7 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     BuffSummonedPrior <- c(BuffSummonedPrior, "Reincarnation")
   }
   
-  Times180 <- c(0.5, 0.5, 0.5, 0.5, 0.5, 1, 1, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
                 3, 1, 1, 1)
   if(Reincarnation==T) {
     Times180 <- c(Times180, 0.25)
@@ -726,8 +733,8 @@ DarkKnightSpecOpt2 <- Optimization2(DarkKnightDealCycleReduction, ATKFinal, Buff
 DarkKnightFinalDPM <- DealCalc(DarkKnightDealCycle, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt2)
 DarkKnightFinalDPMwithMax <- DealCalcWithMaxDMR(DarkKnightDealCycle, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt2)
 
-DPM12344$DarkKnight[1] <- sum(na.omit(DarkKnightFinalDPMwithMax)) / (682920 / 60000)
-DPM12344$DarkKnight[2] <- sum(na.omit(DarkKnightFinalDPM)) / (682920 / 60000) - sum(na.omit(DarkKnightFinalDPMwithMax)) / (682920 / 60000)
+DPM12347$DarkKnight[1] <- sum(na.omit(DarkKnightFinalDPMwithMax)) / (max(DarkKnightDealCycle$Time) / 60000)
+DPM12347$DarkKnight[2] <- sum(na.omit(DarkKnightFinalDPM)) / (max(DarkKnightDealCycle$Time) / 60000) - sum(na.omit(DarkKnightFinalDPMwithMax)) / (max(DarkKnightDealCycle$Time) / 60000)
 
 DarkKnightDealRatio <- DealRatio(DarkKnightDealCycle, DarkKnightFinalDPMwithMax)
 
@@ -736,11 +743,11 @@ colnames(DarkKnightDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(DarkKnightDealData, DarkKnightDealData$R4>0)
 
-DarkKnightRR <- DarkKnightDealData[264:392, ]
-DPM12344$DarkKnight[3] <- sum((DarkKnightRR$Deal))
+DarkKnightRR <- DarkKnightDealData[260:390, ]
+DPM12347$DarkKnight[3] <- sum((DarkKnightRR$Deal))
 
-DarkKnight40s <- DarkKnightDealData[94:388, ]
-DPM12344$DarkKnight[4] <- sum((DarkKnight40s$Deal))
+DarkKnight40s <- DarkKnightDealData[90:387, ]
+DPM12347$DarkKnight[4] <- sum((DarkKnight40s$Deal))
 
 
 ## Reincarnation OFF
@@ -765,15 +772,15 @@ DarkKnightDealCycleReincOff <- DarkKnightAddATK(DealCycle=DarkKnightDealCycleRei
 
 DarkKnightReincOff <- DealCalcWithMaxDMR(DarkKnightDealCycleReincOff, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt2)
 
-ReincOffDPM <- sum(na.omit(DarkKnightReincOff)) / (682920 / 60000)
+ReincOffDPM <- sum(na.omit(DarkKnightReincOff)) / (max(DarkKnightDealCycleReincOff$Time) / 60000)
 
 ReincOffDealData <- data.frame(DarkKnightDealCycleReincOff$Skills, DarkKnightDealCycleReincOff$Time, DarkKnightDealCycleReincOff$Restraint4, DarkKnightReincOff)
 colnames(ReincOffDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(ReincOffDealData, ReincOffDealData$R4>0)
 
-DarkKnightReincOffRR <- ReincOffDealData[263:391, ]
+DarkKnightReincOffRR <- ReincOffDealData[259:389, ]
 ReincOffRR <- sum((DarkKnightReincOffRR$Deal))
 
-DarkKnightReincOff40s <- ReincOffDealData[93:387, ]
+DarkKnightReincOff40s <- ReincOffDealData[89:386, ]
 ReincOff40s <- sum((DarkKnightReincOff40s$Deal))
