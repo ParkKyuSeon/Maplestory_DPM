@@ -240,7 +240,7 @@ MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox,
 colnames(MLTypeD21) <- MonsterLifeSpecs
 
 #### DEX Type 2-2 : DEX, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
+MLTypeD22 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
                    Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
