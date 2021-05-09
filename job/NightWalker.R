@@ -6,11 +6,14 @@ NightWalkerCore <- MatrixSet(PasSkills=c("QuintupleThrow", "ShadowBat", "Darknes
                              ActSkills=c("ShadowSpear", "ShadowServantExtend", "ShadowBite", "RapidThrow", 
                                          CommonV("Thief", "CygnusKnights")), 
                              ActLvs=c(25, 25, 25, 25, 1, 25, 25, 25, 25), 
-                             ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 5), 
+                             ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 0), 
+                             BlinkLv=1, 
+                             BlinkMP=5, 
                              UsefulSkills=c("SharpEyes", "CombatOrders"), 
                              UsefulLvs=20, 
                              UsefulMP=0, 
-                             SpecSet=SpecDefault)
+                             SpecSet=SpecDefault,
+                             SelfBind=F)
 
 
 ## NightWalker - Basic Info
@@ -20,9 +23,8 @@ NightWalkerBase <- JobBase(ChrInfo=ChrInfo,
                            SpecSet=SpecDefault, 
                            Job="NightWalker",
                            CoreData=NightWalkerCore, 
-                           MikhailLink=T, 
-                           OtherBuffDuration=0, 
-                           AbilList=c("BDR", "BuffDuration"), 
+                           BuffDurationNeeded=0, 
+                           AbilList=c("BDR", "DisorderBDR"), 
                            LinkList=c("CygnusKnights", "Mikhail", "DemonAvenger", "Phantom"), 
                            MonsterLife=MLTypeL21, 
                            Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Wristband", SpecDefault$WeaponType)[, 1:16],
@@ -75,11 +77,15 @@ DarknessBlessing <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(NightWalkerCore[[2]][5, 2])
-ReadyToDiePassive <- data.frame(option, value)}
+ReadyToDiePassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(NightWalkerCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 NightWalkerPassive <- Passive(list(FlameJavelin=FlameJavelin, ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementLightningPassive=ElementLightningPassive, ThrowingMastery=ThrowingMastery, 
                                    CriticalThrow=CriticalThrow, PhysicalTraining=PhysicalTraining, Adrenaline=Adrenaline, ThrowingExpert=ThrowingExpert, DarknessBlessing=DarknessBlessing, 
-                                   ReadyToDiePassive=ReadyToDiePassive))
+                                   ReadyToDiePassive=ReadyToDiePassive, BlinkPassive=BlinkPassive))
 
 
 ## NightWalker - Buff
@@ -92,7 +98,7 @@ ElementDarkness <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ThrowingBooster <- rbind(data.frame(option, value), info)
@@ -106,7 +112,7 @@ ShadowServant <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SpiritThrowing <- rbind(data.frame(option, value), info)
@@ -190,14 +196,14 @@ GloryofGardians <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * NightWalkerCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * NightWalkerCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * NightWalkerCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * NightWalkerCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -257,7 +263,7 @@ NightWalkerBuff <- Buff(list(ElementDarkness=ElementDarkness, ThrowingBooster=Th
                              UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ShadowSpear=ShadowSpear, ShadowServantExtend=ShadowServantExtend, ShadowBiteBuff=ShadowBiteBuff, 
                              ShadowBiteBuffDummy=ShadowBiteBuffDummy, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, BlessofCygnus=BlessofCygnus, 
                              Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : ElementDarkness, ThrowingBooster, SpiritThrowing / Shadow Servant Check Needed(if available -> PetBuff Change) / Heist Not Used
+## PetBuff : ElementDarkness(900ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms) / Heist Not Used
 NightWalkerAllTimeBuff <- AllTimeBuff(NightWalkerBuff)
 
 
@@ -447,7 +453,7 @@ NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
   BuffSummonedPrior <- c("ElementDarkness", "ThrowingBooster", "ShadowServant", "SpiritThrowing", "UsefulSharpEyes", "UsefulCombatOrders", "GloryofGardians",
                          "ShadowSpear", "ShadowServantExtend", "BlessofCygnus", "CygnusPhalanx", "ShadowBiteBuffDummy", "DominionBuff", "ShadowIllusion1", "ShadowIllusion2", 
                          "ReadyToDie2Stack", "SoulContractLink", "Restraint4")
-  Times180 <- c(1, 1, 1, 1, 1, 1, 0, 1, 3, 0.5, 6, 9, 1, 1, 1, 2, 2, 1)
+  Times180 <- c(0, 1, 1, 1, 0, 0, 0, 1, 3, 0.5, 6, 9, 1, 1, 1, 2, 2, 1)
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -878,8 +884,8 @@ NightWalkerSpecOpt2 <- WindBreakerOptimization2(NightWalkerDealCycleReduction, A
 NightWalkerFinalDPM <- WindBreakerDealCalc(NightWalkerDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 NightWalkerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(NightWalkerDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 
-DPM12344$NightWalker[1] <- sum(na.omit(NightWalkerFinalDPMwithMax)) / (365670 / 60000)
-DPM12344$NightWalker[2] <- sum(na.omit(NightWalkerFinalDPM)) / (365670 / 60000) - sum(na.omit(NightWalkerFinalDPMwithMax)) / (365670 / 60000)
+DPM12347$NightWalker[1] <- sum(na.omit(NightWalkerFinalDPMwithMax)) / (max(NightWalkerDealCycle$Time) / 60000)
+DPM12347$NightWalker[2] <- sum(na.omit(NightWalkerFinalDPM)) / (max(NightWalkerDealCycle$Time) / 60000) - sum(na.omit(NightWalkerFinalDPMwithMax)) / (max(NightWalkerDealCycle$Time) / 60000)
 
 NightWalkerDealRatio <- DealRatio(NightWalkerDealCycle, NightWalkerFinalDPMwithMax)
 
@@ -889,10 +895,10 @@ colnames(NightWalkerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(NightWalkerDealData, NightWalkerDealData$R4>0)
 
 NightWalkerRR <- NightWalkerDealData[59:826, ]
-DPM12344$NightWalker[3] <- sum((NightWalkerRR$Deal))
+DPM12347$NightWalker[3] <- sum((NightWalkerRR$Deal))
 
-NightWalker40s <- NightWalkerDealData[50:2014, ]
-DPM12344$NightWalker[4] <- sum((NightWalker40s$Deal))
+NightWalker40s <- NightWalkerDealData[59:2029, ]
+DPM12347$NightWalker[4] <- sum((NightWalker40s$Deal))
 
 
 ## Jumpshot Rate (75%)
@@ -919,7 +925,7 @@ NightWalkerDealCycle75Reduction <- DealCycleReduction(NightWalkerDealCycle75, c(
 NightWalkerFinalDPM75 <- WindBreakerDealCalc(NightWalkerDealCycle75, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 NightWalkerFinalDPMwithMax75 <- WindBreakerDealCalcWithMaxDMR(NightWalkerDealCycle75, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 
-NightWalker75 <- sum(na.omit(NightWalkerFinalDPMwithMax75)) / (365430 / 60000)
+NightWalker75 <- sum(na.omit(NightWalkerFinalDPMwithMax75)) / (max(NightWalkerDealCycle75$Time) / 60000)
 NightWalkerDealRatio75 <- DealRatio(NightWalkerDealCycle75, NightWalkerFinalDPMwithMax75)
 
 NightWalkerDealData75 <- data.frame(NightWalkerDealCycle75$Skills, NightWalkerDealCycle75$Time, NightWalkerDealCycle75$Restraint4, NightWalkerFinalDPMwithMax75, NightWalkerFinalDPM75-NightWalkerFinalDPMwithMax75)
@@ -928,7 +934,7 @@ colnames(NightWalkerDealData75) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 NightWalkerRR75 <- NightWalkerDealData75[59:793, ]
 NightWalker75RR <- sum((NightWalkerRR75$Deal))
 
-NightWalker40s75 <- NightWalkerDealData75[59:1911, ]
+NightWalker40s75 <- NightWalkerDealData75[59:1924, ]
 NightWalker7540s <- sum((NightWalker40s75$Deal))
 
 
@@ -956,15 +962,15 @@ NightWalkerDealCycle0Reduction <- DealCycleReduction(NightWalkerDealCycle0, c("B
 NightWalkerFinalDPM0 <- WindBreakerDealCalc(NightWalkerDealCycle0, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 NightWalkerFinalDPMwithMax0 <- WindBreakerDealCalcWithMaxDMR(NightWalkerDealCycle0, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 
-NightWalker0 <- sum(na.omit(NightWalkerFinalDPMwithMax0)) / (365460 / 60000)
+NightWalker0 <- sum(na.omit(NightWalkerFinalDPMwithMax0)) / (max(NightWalkerDealCycle0$Time) / 60000)
 NightWalkerDealRatio0 <- DealRatio(NightWalkerDealCycle0, NightWalkerFinalDPMwithMax0)
 
 NightWalkerDealData0 <- data.frame(NightWalkerDealCycle0$Skills, NightWalkerDealCycle0$Time, NightWalkerDealCycle0$Restraint4, NightWalkerFinalDPMwithMax0, NightWalkerFinalDPM0-NightWalkerFinalDPMwithMax0)
 colnames(NightWalkerDealData0) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(NightWalkerDealData0, NightWalkerDealData0$R4>0)
 
-NightWalkerRR0 <- NightWalkerDealData0[59:727, ]
+NightWalkerRR0 <- NightWalkerDealData0[59:726, ]
 NightWalker0RR <- sum((NightWalkerRR0$Deal))
 
-NightWalker40s0 <- NightWalkerDealData0[59:1699, ]
+NightWalker40s0 <- NightWalkerDealData0[59:1710, ]
 NightWalker040s <- sum((NightWalker40s0$Deal))

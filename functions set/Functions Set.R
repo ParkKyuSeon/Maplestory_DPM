@@ -574,6 +574,10 @@ CRRGet <- function(UnionRemained, BuffDurationNeededP, BuffDuration, CRR, CRROve
   if(CRROver==F) {
     UnionCRR <- min(CRRNeeded, UnionR)
     CRRNeeded <- 100 - CRR - UnionCRR
+    if(CRRNeeded >= 15) {
+      SoulWeaponCRR <- 12
+      CRRNeeded <- max(CRRNeeded - SoulWeaponCRR, 0)
+    }
     if(CRRNeeded>0) {
       p <- 1
       HyperPts <- 0
@@ -583,10 +587,6 @@ CRRGet <- function(UnionRemained, BuffDurationNeededP, BuffDuration, CRR, CRROve
         HyperCRR <- HyperCRR + HyperStats$CRR[p]
         p <- p + 1
       }
-    }
-    if(CRRNeeded>=11) {
-      SoulWeaponCRR <- 12
-      CRRNeeded <- max(CRRNeeded - SoulWeaponCRR, 0)
     }
     if(CRRNeeded>0) {
       while(CRRNeeded>0 & p <= 10) {
@@ -2214,7 +2214,7 @@ MatrixSet <- function(PasSkills,
   if(CoreNumbers > Cores) {warning("Invalid Input : Cores Exceeded") 
     stop()}
   
-  MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP)
+  MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP) + BlinkMP
   if(MPs > MatrixPoints) {warning("Invalid Input : Matrix Points Exceeded") 
     stop()}
   

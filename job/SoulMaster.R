@@ -1,33 +1,35 @@
 ## SoulMaster - Data
 ## SoulMaster - VMatrix
 SoulMasterCore <- MatrixSet(PasSkills=c("DanceofMoon_SpeedingSunset", "CrosstheStyx", "SolarPierce_CrescentDivide"), 
-                      PasLvs=c(50, 50, 50), 
-                      PasMP=c(10, 10, 10), 
-                      ActSkills=c("CelestialDance", "Elysion", "SoulEclipse", "FlareSlash",
-                                  CommonV("Warrior", "CygnusKnights")), 
-                      ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                      ActMP=c(5, 5, 5, 5, 5, 5, 5, 5, 5), 
-                      UsefulSkills=c("SharpEyes", "CombatOrders"), 
-                      UsefulLvs=20, 
-                      UsefulMP=0, 
-                      SpecSet=SpecDefault)
+                            PasLvs=c(50, 50, 50), 
+                            PasMP=c(10, 10, 10), 
+                            ActSkills=c("CelestialDance", "Elysion", "SoulEclipse", "FlareSlash",
+                                        CommonV("Warrior", "CygnusKnights")), 
+                            ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                            ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 5), 
+                            BlinkLv=1, 
+                            BlinkMP=5, 
+                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                            UsefulLvs=20, 
+                            UsefulMP=0, 
+                            SpecSet=SpecDefault, 
+                            SelfBind=T)
 
 
 ## SoulMaster - Basic Info
 SoulMasterBase <- JobBase(ChrInfo=ChrInfo, 
-                    MobInfo=MobDefault,
-                    SpecSet=SpecDefault, 
-                    Job="SoulMaster",
-                    CoreData=SoulMasterCore, 
-                    MikhailLink=F, 
-                    OtherBuffDuration=0, 
-                    AbilList=c("BDR", "DisorderBDR"), 
-                    LinkList=c("CygnusKnights", "Zero", "DemonAvenger", "Phantom"), 
-                    MonsterLife=MLTypeS21, 
-                    Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandSword", SpecDefault$WeaponType)[, 1:16],
-                    WeaponType=SpecDefault$WeaponType, 
-                    SubWeapon=SubWeapon[19, ], 
-                    Emblem=Emblem[3, ])
+                          MobInfo=MobDefault,
+                          SpecSet=SpecDefault, 
+                          Job="SoulMaster",
+                          CoreData=SoulMasterCore, 
+                          BuffDurationNeeded=0, 
+                          AbilList=c("BDR", "DisorderBDR"), 
+                          LinkList=c("CygnusKnights", "Zero", "DemonAvenger", "Xenon"), 
+                          MonsterLife=MLTypeS21, 
+                          Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandSword", SpecDefault$WeaponType)[, 1:16],
+                          WeaponType=SpecDefault$WeaponType, 
+                          SubWeapon=SubWeapon[19, ], 
+                          Emblem=Emblem[3, ])
 
 
 ## SoulMaster - Passive
@@ -73,24 +75,28 @@ Unforeseeable <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(SoulMasterCore[[2]][6, 2])
-BodyofSteelPassive <- data.frame(option, value)}
+BodyofSteelPassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(SoulMasterCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 SoulMasterPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementSoul=ElementSoul, SwordofLight=SwordofLight, 
                                   InnerTrust=InnerTrust, BodyandSoul=BodyandSoul, InnerShout=InnerShout, SoulPledge=SoulPledge, SwordExpert=SwordExpert, 
-                                  Unforeseeable=Unforeseeable, BodyofSteelPassive=BodyofSteelPassive))
+                                  Unforeseeable=Unforeseeable, BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
 
 
 ## SoulMaster - Buff
 {option <- factor(levels=BSkill)
 value <- c()
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ElementSoul <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 NimbleFinger <- rbind(data.frame(option, value), info)
@@ -139,14 +145,14 @@ GloryofGardians <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * SoulMasterCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * SoulMasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * SoulMasterCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * SoulMasterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -190,7 +196,7 @@ SoulMasterBuff <- Buff(list(ElementSoul=ElementSoul, NimbleFinger=NimbleFinger, 
                             SolunarSlashDummy=SolunarSlashDummy, GloryofGardians=GloryofGardians, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, CelestialDance=CelestialDance, 
                             Elysion=Elysion, SoulEclipse=SoulEclipse, AuraWeaponBuff=AuraWeaponBuff, BlessofCygnus=BlessofCygnus, 
                             Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : ElementSoul, NimbleFinger, SoulForge
+## PetBuff : SoulForge(810ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
 SoulMasterAllTimeBuff <- AllTimeBuff(SoulMasterBuff)
 
 
@@ -457,8 +463,8 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   Time0 <- Time0 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   
   BuffIdx <- list()
-  BuffIdx[[1]] <- c(1, 2, 3, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15)
-  BuffIdx[[2]] <- c(1, 2, 3, 4, 5, 6, 7, 9, 14, 15)
+  BuffIdx[[1]] <- c(1, 2, 3, 5, 9, 11, 12, 13, 14, 15)
+  BuffIdx[[2]] <- c(1, 2, 3, 5, 9, 14, 15)
   BuffIdx[[3]] <- c(16)
   
   BuffList <- list()
@@ -543,6 +549,9 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   
   DealCycle <- PreDealCycle
   DealCycle <- DCBuff(DealCycle, "GloryofGardians", BuffFinal)
+  DealCycle <- DCBuff(DealCycle, "SoulForge", BuffFinal)
+  DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
+  DealCycle <- DCBuff(DealCycle, "UsefulSharpEyes", BuffFinal)
   for(i in 1:length(BuffList[[1]])) {
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
@@ -686,6 +695,15 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       if(DealCycle$GloryofGardians[nrow(DealCycle)] - DealCycle$Time[1] < 3000) {
         DealCycle <- DCBuff(DealCycle, "GloryofGardians", BuffFinal)
+      }
+      if(DealCycle$SoulForge[nrow(DealCycle)] - DealCycle$Time[1] < 3000) {
+        DealCycle <- DCBuff(DealCycle, "SoulForge", BuffFinal)
+      }
+      if(DealCycle$UsefulCombatOrders[nrow(DealCycle)] - DealCycle$Time[1] < 3000) {
+        DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
+      }
+      if(DealCycle$UsefulSharpEyes[nrow(DealCycle)] - DealCycle$Time[1] < 3000) {
+        DealCycle <- DCBuff(DealCycle, "UsefulSharpEyes", BuffFinal)
       }
       if(DealCycle$SoulEclipse[nrow(DealCycle)] - DealCycle$Time[1] > 750 & DealCycle$SoulEclipse[nrow(DealCycle)] - DealCycle$Time[1] < 1500 &
          DealCycle$SoulEclipse[nrow(DealCycle)] > 0) {
@@ -923,8 +941,8 @@ SoulMasterSpecOpt2 <- WindBreakerOptimization2(SoulMasterDealCycleReduction, ATK
 SoulMasterFinalDPM <- WindBreakerDealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 SoulMasterFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 
-DPM12344$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (343320 / 60000)
-DPM12344$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (343320 / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (343320 / 60000)
+DPM12347$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
+DPM12347$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (max(SoulMasterDealCycle$Time) / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
 
 SoulMasterDealRatio <- DealRatio(SoulMasterDealCycle, SoulMasterFinalDPMwithMax)
 
@@ -934,7 +952,7 @@ colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(SoulMasterDealData, SoulMasterDealData$R4>0)
 
 SoulMasterRR <- SoulMasterDealData[194:401, ]
-DPM12344$SoulMaster[3] <- sum((SoulMasterRR$Deal))
+DPM12347$SoulMaster[3] <- sum((SoulMasterRR$Deal))
 
 SoulMaster40s <-  SoulMasterDealData[20:482, ]
-DPM12344$SoulMaster[4] <- sum((SoulMaster40s$Deal))
+DPM12347$SoulMaster[4] <- sum((SoulMaster40s$Deal))

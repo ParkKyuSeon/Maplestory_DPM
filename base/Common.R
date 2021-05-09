@@ -266,7 +266,7 @@ MLTypeI21 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedF
 #### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeI21) <- MonsterLifeSpecs
 
-#### INT Type 2-1 : INT, SummonedDuration=T, FinalATKDMR=F, CRR=F
+#### INT Type 2-2 : INT, SummonedDuration=T, FinalATKDMR=F, CRR=F
 MLTypeI22 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedFox,
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
                    Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,

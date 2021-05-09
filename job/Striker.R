@@ -7,10 +7,13 @@ StrikerCore <- MatrixSet(PasSkills=c("Annihilate", "Thunderbolt", "Typhoon", "De
                                      CommonV("Pirate", "CygnusKnights")), 
                          ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
                          ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 5), 
+                         BlinkLv=1, 
+                         BlinkMP=0, 
                          UsefulSkills=c("SharpEyes", "CombatOrders"), 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault)
+                         SpecSet=SpecDefault, 
+                         SelfBind=F)
 
 
 ## Striker - Basic Info
@@ -19,8 +22,7 @@ StrikerBase <- JobBase(ChrInfo=ChrInfo,
                        SpecSet=SpecDefault, 
                        Job="Striker",
                        CoreData=StrikerCore, 
-                       MikhailLink=F, 
-                       OtherBuffDuration=0, 
+                       BuffDurationNeeded=0, 
                        AbilList=c("BDR", "DisorderBDR"), 
                        LinkList=c("CygnusKnights", "Xenon", "DemonAvenger", "Phantom"), 
                        MonsterLife=MLTypeS21, 
@@ -70,23 +72,27 @@ PrimalBolt <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(10 + StrikerCore[[2]][5, 2])
-LoadedDicePassive <- data.frame(option, value)}
+LoadedDicePassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(StrikerCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 StrikerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, PhysicalTraining=PhysicalTraining, Noebaek=Noebaek, 
-                               Geukgap=Geukgap, Noeje=Noeje, KnuckleExpert=KnuckleExpert, Noesin=Noesin, PrimalBolt=PrimalBolt, LoadedDicePassive=LoadedDicePassive))
+                               Geukgap=Geukgap, Noeje=Noeje, KnuckleExpert=KnuckleExpert, Noesin=Noesin, PrimalBolt=PrimalBolt, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive))
 
 
 ## Striker - Buff
 {option <- factor(levels=BSkill)
 value <- c()
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ElementLightning <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 KnuckleBooster <- rbind(data.frame(option, value), info)
@@ -100,14 +106,14 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor("AddATKRate", levels=BSkill)
 value <- c(70 + StrikerBase$SkillLv)
-info <- c(180, NA, 900, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ArcCharger <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 900, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WindBooster <- rbind(data.frame(option, value), info)
@@ -149,14 +155,14 @@ LinkMastery <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * SoulMasterCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * SoulMasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * SoulMasterCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * SoulMasterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -209,7 +215,7 @@ StrikerBuff <- Buff(list(ElementLightning=ElementLightning, KnuckleBooster=Knuck
                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, LightningCascadeBuff=LightningCascadeBuff, 
                          LightningSpearMultistrikeBuff=LightningSpearMultistrikeBuff, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, LuckyDice5=LuckyDice5, 
                          BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : ElementLightning, KnuckleBooster, WindBooster
+## PetBuff : ArcCharger(900ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
 StrikerAllTimeBuff <- AllTimeBuff(StrikerBuff)
 
 
@@ -431,7 +437,7 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
                           Period=c(120), CycleTime=c(240)) {
   BuffSummonedPrior <- c("ElementLightning", "KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5",
                          "GloryofGardians", "CygnusPhalanx", "BlessofCygnus", "LightningCascadeBuff", "PrimalBolt", "OverDrive", "SoulContractLink", "Restraint4")
-  Times120 <- c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0, 0, 4, 0.5, 1, 1, 2, 1, 0.5)
+  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 0, 0, 0, 0, 4, 0.5, 1, 1, 2, 1, 0.5)
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -879,8 +885,8 @@ StrikerSpecOpt2 <- StrikerOptimization2(StrikerDealCycleReduction, ATKFinal, Buf
 StrikerFinalDPM <- StrikerDealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 StrikerFinalDPMwithMax <- StrikerDealCalcWithMaxDMR(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
 
-DPM12344$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (240480 / 60000)
-DPM12344$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (240480 / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (240480 / 60000)
+DPM12347$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (max(StrikerDealCycle$Time) / 60000)
+DPM12347$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (max(StrikerDealCycle$Time) / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (max(StrikerDealCycle$Time) / 60000)
 
 StrikerDealRatio <- DealRatio(StrikerDealCycle, StrikerFinalDPMwithMax)
 
@@ -890,7 +896,7 @@ colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(StrikerDealData, StrikerDealData$R4>0)
 
 StrikerRR <- StrikerDealData[34:230, ]
-DPM12344$Striker[3] <- sum((StrikerRR$Deal))
+DPM12347$Striker[3] <- sum((StrikerRR$Deal))
 
 Striker40s <- StrikerDealData[34:479, ]
-DPM12344$Striker[4] <- sum((Striker40s$Deal))
+DPM12347$Striker[4] <- sum((Striker40s$Deal))

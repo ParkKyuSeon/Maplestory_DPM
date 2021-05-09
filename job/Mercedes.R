@@ -7,10 +7,13 @@ MercedesCore <- MatrixSet(PasSkills=c("RingofIshtar", "AdvancedStrikeDualShot_Ad
                                       CommonV("Bowman", "Heroes")), 
                           ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
                           ActMP=c(5, 5, 5, 5, 5, 0, 5, 5), 
+                          BlinkLv=1, 
+                          BlinkMP=0, 
                           UsefulSkills=c("CombatOrders", "SharpEyes"), 
                           UsefulLvs=c(20, 20), 
                           UsefulMP=c(0, 0), 
-                          SpecSet=SpecDefault)
+                          SpecSet=SpecDefault,
+                          SelfBind=F)
 
 
 ## Mercedes - Basic Info
@@ -19,9 +22,8 @@ MercedesBase <- JobBase(ChrInfo=ChrInfo,
                         SpecSet=SpecDefault, 
                         Job="Mercedes",
                         CoreData=MercedesCore, 
-                        MikhailLink=T, 
-                        OtherBuffDuration=0, 
-                        AbilList=c("BDR", "BuffDuration"), 
+                        BuffDurationNeeded=0, 
+                        AbilList=c("BDR", "DisorderBDR"), 
                         LinkList=c("Mikhail", "Mercedes", "DemonAvenger", "Phantom"), 
                         MonsterLife=MLTypeD23, 
                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "DualBowgun", SpecDefault$WeaponType)[, 1:16],
@@ -65,24 +67,28 @@ DefenceBreak <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(20 + ceiling(MercedesBase$PSkillLv/2))
-AdvancedFinalAttack <- data.frame(option, value)}
+AdvancedFinalAttack <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(MercedesCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 MercedesPassive <- Passive(list(ElfQueen=ElfQueen, PotentialPower=PotentialPower, SharpAiming=SharpAiming, SpiritInfusion=SpiritInfusion, 
                                 PhysicalTraining=PhysicalTraining, IgnisRoar=IgnisRoar, DualBowgunExpert=DualBowgunExpert, DefenceBreak=DefenceBreak, 
-                                AdvancedFinalAttack=AdvancedFinalAttack))
+                                AdvancedFinalAttack=AdvancedFinalAttack, BlinkPassive=BlinkPassive))
 
 
 ## Mercedes - Buff
 {option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DualBowgunBooster <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 990, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WaterShield <- rbind(data.frame(option, value), info)
@@ -138,14 +144,14 @@ ElfishBlessing <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * MercedesCore[[3]][2, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * MercedesCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * MercedesCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * MercedesCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -190,7 +196,7 @@ MercedesBuff <- Buff(list(DualBowgunBooster=DualBowgunBooster, WaterShield=Water
                           HeroesOath=HeroesOath, ElfishBlessing=ElfishBlessing, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                           ElementalGhost=ElementalGhost, RoyalKnights=RoyalKnights, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, SkipDummy=SkipDummy,
                           Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : DualBowgunBooster, WaterShield, AncientSpirit
+## Petbuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), AncientSpirit(1080ms)
 MercedesAllTimeBuff <- AllTimeBuff(MercedesBuff)
 
 
@@ -492,7 +498,7 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
                          "HeroesOath", "ElementalKnightIF", "ElementalKnightD", "GuidedArrow",
                          "ElfishBlessing", "MapleWarriors2", "ElementalGhost", "RoyalKnights", "SoulContractLink", "CriticalReinforce", "Restraint4")
   Times150 <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 2.5, 1, 0.5, 1, 1, 1, 1, 0.5)
-  Times180 <- c(0, 0, 0, 0, 1, 1, 0, 0, 0, 3, 1, 1, 1, 1, 2, 1, 1)
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 1, 1, 2, 1, 1)
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -823,8 +829,8 @@ MercedesSpecOpt2_2 <- Optimization2(MercedesDealCycleReduction2, ATKFinal, BuffF
 MercedesFinalDPM2 <- DealCalc(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 MercedesFinalDPMwithMax2 <- DealCalcWithMaxDMR(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 
-DPM12344$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (338720 / 60000)
-DPM12344$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (338720 / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (338720 / 60000)
+DPM12347$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (max(MercedesDealCycle2$Time) / 60000)
+DPM12347$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (max(MercedesDealCycle2$Time) / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (max(MercedesDealCycle2$Time) / 60000)
 
 MercedesDealRatio <- DealRatio(MercedesDealCycle2, MercedesFinalDPMwithMax2)
 
@@ -834,7 +840,7 @@ colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(MercedesDealData, MercedesDealData$R4>0)
 
 MercedesRR <- MercedesDealData[42:452, ]
-DPM12344$Mercedes[3] <- sum((MercedesRR$Deal))
+DPM12347$Mercedes[3] <- sum((MercedesRR$Deal))
 
 Mercedes40s <-  MercedesDealData[42:1314, ]
-DPM12344$Mercedes[4] <- sum((Mercedes40s$Deal))
+DPM12347$Mercedes[4] <- sum((Mercedes40s$Deal))

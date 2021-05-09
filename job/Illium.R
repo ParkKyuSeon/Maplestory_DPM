@@ -1,16 +1,19 @@
 ## Illium - Data
 ## Illium - VMatrix
 IlliumCore <- MatrixSet(PasSkills=c("Javelin_EnhancedJavelin", "Destruction", "Machina_Domination", "Deus_Liyo", "CurseMark", "MotalSwing_MotalWingBeat"), 
-                          PasLvs=c(50, 50, 50, 50, 50, 50), 
-                          PasMP=c(10, 10, 10, 10, 10, 10), 
-                          ActSkills=c("CrystalIgnition", "Gramholder", "SoulofCrystal", "CrystalGate", 
-                                      CommonV("Wizard", "Lef")), 
-                          ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                          ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                          UsefulSkills=c("CombatOrders", "SharpEyes"), 
-                          UsefulLvs=20, 
-                          UsefulMP=0, 
-                          SpecSet=SpecDefault)
+                        PasLvs=c(50, 50, 50, 50, 50, 50), 
+                        PasMP=c(10, 10, 10, 10, 10, 10), 
+                        ActSkills=c("CrystalIgnition", "Gramholder", "SoulofCrystal", "CrystalGate", 
+                                    CommonV("Wizard", "Lef")), 
+                        ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                        ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
+                        BlinkLv=1, 
+                        BlinkMP=0, 
+                        UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                        UsefulLvs=20, 
+                        UsefulMP=0, 
+                        SpecSet=SpecDefault, 
+                        SelfBind=F)
 
 
 ## Illium - Basic Info
@@ -20,11 +23,10 @@ IlliumBase <- JobBase(ChrInfo=ChrInfo,
                         SpecSet=SpecDefault, 
                         Job="Illium",
                         CoreData=IlliumCore, 
-                        MikhailLink=F, 
-                        OtherBuffDuration=0, 
+                        BuffDurationNeeded=0, 
                         AbilList=c("CoolTimeReset", "BuffDuration"), 
                         LinkList=c("Phantom", "DemonAvenger", "Xenon"), 
-                        MonsterLife=MLTypeI21, 
+                        MonsterLife=MLTypeI22, 
                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "MagicGuntlet", SpecDefault$WeaponType)[, 1:16],
                         WeaponType=SpecDefault$WeaponType, 
                         SubWeapon=SubWeapon[38, ], 
@@ -76,10 +78,13 @@ SoulofCrystal <- data.frame(option, value)
 option <- factor(c("FDR"), levels=PSkill)
 value <- c(8 + floor(IlliumCore[[2]][5, 2]/10))
 OverloadMana <- data.frame(option, value) ## ATK Skills Only
-}
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(IlliumCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 IlliumPassive <- Passive(list(MagicCircuit=MagicCircuit, MagicGuntletMastery=MagicGuntletMastery, BlessMark=BlessMark, LefMastery=LefMastery, Tenacity=Tenacity, EndlessResearch=EndlessResearch, 
-                              BlessMarkCompletion=BlessMarkCompletion, CurseMarkCompletion=CurseMarkCompletion, WisdomoftheCrystal=WisdomoftheCrystal, SoulofCrystal=SoulofCrystal))
+                              BlessMarkCompletion=BlessMarkCompletion, CurseMarkCompletion=CurseMarkCompletion, WisdomoftheCrystal=WisdomoftheCrystal, SoulofCrystal=SoulofCrystal, BlinkPassive=BlinkPassive))
 
 
 ## Illium - Buff
@@ -207,7 +212,7 @@ IlliumBuff <- Buff(list(MagicGuntletBooster=MagicGuntletBooster, JavelinBuffDumm
                         SoulofCrystal1Glory=SoulofCrystal1Glory, SoulofCrystal2Glory=SoulofCrystal2Glory, CrystalGateBuff=CrystalGateBuff, MagicCircuitFullDriveBuff=MagicCircuitFullDriveBuff, 
                         BlessofGrandis=BlessofGrandis, CrystalCharge=CrystalCharge, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 IlliumAllTimeBuff <- AllTimeBuff(IlliumBuff)
-## PetBuff : MagicGuntletBooster, MapleSoldier
+## PetBuff : MagicGuntletBooster, MapleSoldiers
 
 
 ## Illium - Union & HyperStat & SoulWeapon
@@ -861,8 +866,8 @@ IlliumFinalDPM <- ResetDealCalc(DealCycles=list(IlliumDealCycleReduction1, Illiu
 IlliumFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4), 
                                                  ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2, IlliumDealCycleTimes, IlliumDealCycleProbs)
 
-DPM12344$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (723482.8 / 60000)
-DPM12344$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (723482.8 / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (723482.8 / 60000)
+DPM12347$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (723482.8 / 60000)
+DPM12347$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (723482.8 / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (723482.8 / 60000)
 
 IlliumDeal1 <- DealCalcWithMaxDMR(IlliumDealCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
 IlliumDeal2 <- DealCalcWithMaxDMR(IlliumDealCycle2, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
@@ -878,10 +883,10 @@ colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(IlliumDealData, IlliumDealData$R4 > 0)
 
 IlliumRR <- IlliumDealData[220:405, ]
-DPM12344$Illium[3] <- sum((IlliumRR$Deal))
+DPM12347$Illium[3] <- sum((IlliumRR$Deal))
 
 Illium40s <- IlliumDealData[220:676, ]
-DPM12344$Illium[4] <- sum((Illium40s$Deal))
+DPM12347$Illium[4] <- sum((Illium40s$Deal))
 
 
 ## Glorywing Ignition 

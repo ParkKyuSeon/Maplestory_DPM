@@ -7,10 +7,13 @@ PhantomCore <- MatrixSet(PasSkills=c("UltimateDrive", "TempestofCard", "RoseCart
                                      CommonV("Thief", "Heroes")), 
                          ActLvs=c(25, 25, 25, 25, 0, 25, 1, 25, 25), 
                          ActMP=c(5, 5, 5, 5, 0, 5, 0, 5, 5), 
+                         BlinkLv=1, 
+                         BlinkMP=0, 
                          UsefulSkills=c("SharpEyes", "CombatOrders"), 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault)
+                         SpecSet=SpecDefault, 
+                         SelfBind=F)
 
 
 ## Phantom - Basic Info
@@ -19,8 +22,7 @@ PhantomBase <- JobBase(ChrInfo=ChrInfo,
                        SpecSet=SpecDefault, 
                        Job="Phantom",
                        CoreData=PhantomCore, 
-                       MikhailLink=T, 
-                       OtherBuffDuration=0, 
+                       BuffDurationNeeded=57, 
                        AbilList=c("BDR", "BuffDuration"), 
                        LinkList=c("Phantom", "DemonAvenger", "Mikhail", "Xenon"), 
                        MonsterLife=MLTypeL21, 
@@ -58,10 +60,14 @@ CaneExpert <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(PhantomCore[[2]][6, 2])
-ReadytoDiePassive <- data.frame(option, value)}
+ReadytoDiePassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(PhantomCore[[2]][10, 2])
+BlinkPassive <- data.frame(option, value)}
 
 PhantomPassive <- Passive(list(HighDexterity=HighDexterity, LuckMonopoly=LuckMonopoly, LuckofPhantomThief=LuckofPhantomThief, MoonLight=MoonLight, AcuteSense=AcuteSense, 
-                               CaneExpert=CaneExpert, ReadytoDiePassive=ReadytoDiePassive))
+                               CaneExpert=CaneExpert, ReadytoDiePassive=ReadytoDiePassive, BlinkPassive=BlinkPassive))
 
 
 ## Phantom - Buff
@@ -81,14 +87,14 @@ CaneBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(20)
-info <- c(200, NA, 0, T, NA, NA, T)
+info <- c(200, NA, 720, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CrossOverChain <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(240, NA, 0, T, NA, NA, T)
+info <- c(240, NA, 990, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MisfortuneProtection <- rbind(data.frame(option, value), info)
@@ -189,7 +195,7 @@ PhantomBuff <- Buff(list(Fury=Fury, CaneBooster=CaneBooster, CrossOverChain=Cros
                          JokerBuff=JokerBuff, JokerBuffFail=JokerBuffFail, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, 
                          NoirCarteStack=NoirCarteStack, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 PhantomAllTimeBuff <- AllTimeBuff(PhantomBuff)
-## PetBuff : Fury, Misfortune Protection, Cross Over Chain
+## PetBuff : Fury(1080ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
 
 
 ## Phantom - Union & HyperStat & SoulWeapon
@@ -414,7 +420,7 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   BuffSummonedPrior <- c("Fury", "CaneBooster", "CrossOverChain", "MisfortuneProtection", "PrayofAria", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath", 
                          "FinalCutBuff", "MapleWarriors2", "Bullseye", "ReadyToDie2Stack", "SoulContractLink", "Restraint4")
   
-  Times180 <- c(1, 1, 1, 1, 1, 1, 1, 0, 
+  Times180 <- c(0, 1, 1, 1, 1, 0, 0, 0, 
                 2, 1, 1, 2, 2, 1)
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -769,8 +775,8 @@ PhantomFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(PhantomDealCyc
 PhantomDeal1 <- DealCalcWithMaxDMR(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2)
 PhantomDeal2 <- DealCalcWithMaxDMR(PhantomDealCycle2, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2)
 
-DPM12344$Phantom[1] <- sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
-DPM12344$Phantom[2] <- sum(na.omit(PhantomFinalDPM)) / (max(PhantomDealCycle$Time) / 60000) - sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
+DPM12347$Phantom[1] <- sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
+DPM12347$Phantom[2] <- sum(na.omit(PhantomFinalDPM)) / (max(PhantomDealCycle$Time) / 60000) - sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
 
 PhantomDealRatio <- ResetDealRatio(DealCycles=list(PhantomDealCycle, PhantomDealCycle2), DealDatas=list(PhantomDeal1, PhantomDeal2), 
                                    rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
@@ -781,7 +787,7 @@ colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(PhantomDealData, PhantomDealData$R4>0)
 
 PhantomRR <- PhantomDealData[26:443, ]
-DPM12344$Phantom[3] <- sum((PhantomRR$Deal))
+DPM12347$Phantom[3] <- sum((PhantomRR$Deal))
 
 Phantom40s <- PhantomDealData[26:872, ]
-DPM12344$Phantom[4] <- sum((Phantom40s$Deal))
+DPM12347$Phantom[4] <- sum((Phantom40s$Deal))
