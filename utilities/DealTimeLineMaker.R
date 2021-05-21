@@ -62,8 +62,8 @@ DealIrr(HeroDealTL, max(HeroDealData$Time)/1000)
 
 ## Palladin
 PalladinDealTL <- DealTimeLine(PalladinDealData$Time, PalladinDealData$Deal)
-TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Palladin", F)
-TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Palladin", T)
+TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Paladin", F)
+TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Paladin", T)
 DealIrr(PalladinDealTL, max(PalladinDealData$Time)/1000)
 
 ## DarkKnight
@@ -80,8 +80,8 @@ DealIrr(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000)
 
 ## ArchMageTC
 ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle2$Time, ArchMageTCDamage2)
-TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageTC", F)
-TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageTC", T)
+TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageIL", F)
+TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageIL", T)
 DealIrr(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000)
 
 ## Bishop
@@ -197,6 +197,12 @@ BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Dea
 TLGraph(BattleMageDealTL, max(BattleMageDealData$Time)/1000, "BattleMage", F)
 TLGraph(BattleMageDealTL, max(BattleMageDealData$Time)/1000, "BattleMage", T)
 DealIrr(BattleMageDealTL, max(BattleMageDealData$Time)/1000)
+
+## WildHunter
+WildHunterDealTL <- DealTimeLine(WildHunterDealData$Time, WildHunterDealData$Deal)
+TLGraph(WildHunterDealTL, max(WildHunterDealData$Time)/1000, "WildHunter", F)
+TLGraph(WildHunterDealTL, max(WildHunterDealData$Time)/1000, "WildHunter", T)
+DealIrr(WildHunterDealTL, max(WildHunterDealData$Time)/1000)
 
 ## Mechanic
 MechanicDealTL <- DealTimeLine(MechanicDealData$Time, MechanicDealData$Deal)

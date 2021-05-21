@@ -2206,11 +2206,12 @@ MatrixSet <- function(PasSkills,
                       UsefulLvs, 
                       UsefulMP, 
                       SpecSet=SpecDefault, 
+                      SelfWill=T,
                       SelfBind=F) {
   Cores <- floor((SpecSet$Basic$ChrLv - 200) / 5) + 5 + 2
   MatrixPoints <- SpecSet$Basic$ChrLv - 200
   
-  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + 1 + ifelse(SelfBind==F, 1, 0) + length(UsefulSkills)
+  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + 1 + ifelse(SelfWill==F, 1, 0) + ifelse(SelfBind==F, 1, 0) + length(UsefulSkills)
   if(CoreNumbers > Cores) {warning("Invalid Input : Cores Exceeded") 
     stop()}
   
@@ -2228,9 +2229,13 @@ MatrixSet <- function(PasSkills,
   ErdaNova <- data.frame(Active="ErdaNova", Levels=1)
   ErdaWill <- data.frame(Active="ErdaWill", Levels=1)
   if(SelfBind==F) {
-    ActiveCore <- rbind(ActiveCore, Blink, ErdaNova, ErdaWill)
+    ActiveCore <- rbind(ActiveCore, Blink, ErdaNova)
   } else {
-    ActiveCore <- rbind(ActiveCore, Blink, ErdaWill)
+    ActiveCore <- rbind(ActiveCore, Blink)
+  }
+  
+  if(SelfWill==F) {
+    ActiveCore <- rbind(ActiveCore, ErdaWill)
   }
   
   UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
