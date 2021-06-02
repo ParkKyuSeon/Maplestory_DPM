@@ -1,7 +1,6 @@
 ## CannonShooter - VMatrix
-CannonShooterCore <- MatrixSet(PasSkills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious", "MagneticAnchor", "Nautilus", 
-                                           "BarrelRoulette", "MokeyWave"), 
-                               PasLvs=c(50, 50, 50, 50, 50, 50, 50, 25), 
+CannonShooterCore <- MatrixSet(PasSkills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious", "BarrelRoulette", "MokeyWave", "CannonBazuka", "MagneticAnchor"), 
+                               PasLvs=c(50, 50, 50, 50, 50, 25, 50, 50), 
                                PasMP=c(10, 10, 10, 10, 5, 5, 5, 5), 
                                ActSkills=c("Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker",
                                            CommonV("Pirate", "Adventure")), 
@@ -295,14 +294,14 @@ colnames(info) <- c("option", "value")
 MonkeyFurious <- rbind(data.frame(option, value), info) ## ATKSpeed Applied
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(CannonShooterCore[[1]][8, 2]>=40, 20, 0), 3 * CannonShooterCore[[1]][8, 2])
+value <- c(ifelse(CannonShooterCore[[1]][6, 2]>=40, 20, 0), 3 * CannonShooterCore[[1]][6, 2])
 info <- c(860 * 0.45, 1 * 3, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MonkeyWave <- rbind(data.frame(option, value), info) ## ATKSpeed Applied
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(CannonShooterCore[[1]][7, 2]>=40, 20, 0), 3 * CannonShooterCore[[1]][7, 2])
+value <- c(ifelse(CannonShooterCore[[1]][5, 2]>=40, 20, 0), 3 * CannonShooterCore[[1]][5, 2])
 info <- c(150 * 0.45, 0.5 * 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
