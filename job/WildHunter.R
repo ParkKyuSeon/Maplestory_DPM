@@ -18,16 +18,14 @@ WildHunterCore <- MatrixSet(PasSkills=c("WildVulcan", "AnotherBite_SummonJaguar"
 
 
 ## WildHunter - Basic Info
-## Link Check Needed
 WildHunterBase <- JobBase(ChrInfo=ChrInfo, 
                        MobInfo=MobDefault,
                        SpecSet=SpecDefault, 
                        Job="WildHunter",
                        CoreData=WildHunterCore, 
-                       MikhailLink=T, 
-                       OtherBuffDuration=0, 
+                       BuffDurationNeeded=0, 
                        AbilList=c("BDR", "DisorderBDR"), 
-                       LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom"), 
+                       LinkList=c("Xenon", "DemonAvenger", "Mikhail", "Phantom"), 
                        MonsterLife=MLTypeD23, 
                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Crossbow", SpecDefault$WeaponType)[, 1:16],
                        WeaponType=SpecDefault$WeaponType, 
@@ -136,8 +134,8 @@ colnames(info) <- c("option", "value")
 SharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
-value <- c(floor((BlasterBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(BlasterBase$SkillLv/2))))
-info <- c(900 + 30 * BlasterBase$SkillLv, NA, 0, T, NA, NA, T)
+value <- c(floor((CannonShooterBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(CannonShooterBase$SkillLv/2))))
+info <- c(900 + 30 * CannonShooterBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
@@ -302,7 +300,7 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
 ## WildHunter - Attacks
-## Hyper : Wild Vulcan - Reinforce / Wild Vulcan - Boss Killer / Beast Form - Reinforce / Summon Jaguar - Enhance / Summon Jaguar - Reinforce
+## Hyper : Wild Vulcan - Reinforce / Wild Vulcan - Boss Killer / Beast Form - Reinforce / Summon Jaguar - CoolTime Reduce / Summon Jaguar - Reinforce
 {option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(2 * WildHunterCore[[1]][1, 2], 50, ifelse(WildHunterCore[[1]][1, 2]>=40, 20, 0))
 info <- c(370 + 2 * WildHunterSpec$SkillLv, 1, 120, NA, NA, NA, NA, F)
@@ -311,14 +309,14 @@ colnames(info) <- c("option", "value")
 WildVulcan <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * WildHunterCore[[1]][2, 2], 20, ifelse(WildHunterCore[[1]][2, 2]>=40, 20, 0))
+value <- c(2 * WildHunterCore[[1]][2, 2], 10, ifelse(WildHunterCore[[1]][2, 2]>=40, 20, 0))
 info <- c(60 + floor(WildHunterBase$ChrLv/3), 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AnotherBite <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * WildHunterCore[[1]][2, 2], 20, ifelse(WildHunterCore[[1]][2, 2]>=40, 20, 0))
+option <- factor(c("FDR", "IGR"), levels=ASkill)
+value <- c(2 * WildHunterCore[[1]][2, 2], ifelse(WildHunterCore[[1]][2, 2]>=40, 20, 0))
 info <- c(140 + WildHunterBase$ChrLv, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -347,7 +345,7 @@ RampageasOne <- rbind(data.frame(option, value), info) ## 1440ms
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(2 * WildHunterCore[[1]][6, 2], 20, ifelse(WildHunterCore[[1]][6, 2]>=40, 20, 0))
-info <- c(220 + WildHunterBase$ChrLv, 6, 0, NA, 6, T, T, F)
+info <- c(220 + WildHunterBase$ChrLv, 6, 0, NA, 6 * (100 - WildHunterSpec$CoolReduceP - 20) / 100, F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SonicBoom <- rbind(data.frame(option, value), info) ## 960ms
@@ -361,14 +359,14 @@ JaguarSoul <- rbind(data.frame(option, value), info) ## 1320ms
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(2 * WildHunterCore[[1]][7, 2], 20, ifelse(WildHunterCore[[1]][7, 2]>=40, 20, 0))
-info <- c(200 + WildHunterBase$ChrLv, 4, 0, NA, 5, T, T, F)
+info <- c(200 + WildHunterBase$ChrLv, 4, 0, NA, 5 * (100 - WildHunterSpec$CoolReduceP - 20) / 100, F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ClawCut <- rbind(data.frame(option, value), info) ## 1530ms
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(2 * WildHunterCore[[1]][9, 2], 20, ifelse(WildHunterCore[[1]][9, 2]>=40, 20, 0))
-info <- c(225 + WildHunterBase$ChrLv, 2, 0, NA, 7, T, T, F)
+info <- c(225 + WildHunterBase$ChrLv, 2, 0, NA, 7 * (100 - WildHunterSpec$CoolReduceP - 20) / 100, F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CrossRoad <- rbind(data.frame(option, value), info) ## 990ms
@@ -1110,7 +1108,7 @@ subset(WildHunterDealData, WildHunterDealData$R4>0)
 WildHunterRR <- WildHunterDealData[81:687, ]
 DPM12347$WildHunter[3] <- sum((WildHunterRR$Deal))
 
-WildHunter40s <- WildHunterDealData[81:1940, ]
+WildHunter40s <- WildHunterDealData[81:1937, ]
 DPM12347$WildHunter[4] <- sum((WildHunter40s$Deal))
 
 WildHunterDealRatio <- DealRatio(WildHunterDealCycle, WildHunterFinalDPMwithMax)
@@ -1143,4 +1141,4 @@ colnames(Storm2HitDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(Storm2HitDealData, Storm2HitDealData$R4>0)
 
 Storm2HitRR <- sum(Storm2HitDealData[78:672, ]$Deal)
-Storm2Hit40s <- sum(Storm2HitDealData[78:1900, ]$Deal)
+Storm2Hit40s <- sum(Storm2HitDealData[78:1898, ]$Deal)

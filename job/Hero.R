@@ -9,7 +9,7 @@ HeroCore <- MatrixSet(PasSkills=c("RagingBlow", "RageUprising", "AdvancedFinalAt
                       ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
                       BlinkLv=1, 
                       BlinkMP=0, 
-                      UsefulSkills=c("WindBooster", "CombatOrders", "SharpEyes"), 
+                      UsefulSkills=c("CombatOrders", "SharpEyes"), 
                       UsefulLvs=20, 
                       UsefulMP=0, 
                       SpecSet=SpecDefault, 
@@ -35,8 +35,8 @@ HeroBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## Hero - Passive
-{option <- factor(c("FDR", "BDR"), levels=PSkill)
-value <- c(10, 5)
+{option <- factor(c("FDR", "BDR", "ATKSpeed"), levels=PSkill)
+value <- c(10, 5, 1)
 WeaponMastery <- data.frame(option, value)
 
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
@@ -84,7 +84,7 @@ WeaponBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(200, NA, 1080, T, NA, NA, T)
+info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Fury <- rbind(data.frame(option, value), info)
@@ -112,21 +112,14 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * HeroCore[[3]][3, 2], NA, 0, F, NA, NA, T)
+info <- c(180 + 3 * HeroCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * HeroCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)
-
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * HeroCore[[3]][2, 2], NA, 0, F, NA, NA, T)
+info <- c(180 + 3 * HeroCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -174,10 +167,10 @@ colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
 HeroBuff <- Buff(list(WeaponBooster=WeaponBooster, Fury=Fury, PanicBuff=PanicBuff, IncisingBuff=IncisingBuff, MapleSoldier=MapleSoldier,
-                      UsefulSharpEyes=UsefulSharpEyes, UsefulWindBooster=UsefulWindBooster, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, 
+                      UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, 
                       Valhalla=Valhalla, ComboInstinct=ComboInstinct, ComboDeathfaultBuff=ComboDeathfaultBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
                       Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders,Fury(1080ms)
 HeroAllTimeBuff <- AllTimeBuff(HeroBuff)
 
 
@@ -365,10 +358,10 @@ colnames(HeroDealCycle) <- DealCycle
 
 HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=240, CycleTime=240) {
-  BuffSummonedPrior <- c("WeaponBooster", "Fury", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "UsefulWindBooster", "EpicAdventure", 
+  BuffSummonedPrior <- c("WeaponBooster", "Fury", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "EpicAdventure", 
                          "AuraWeaponBuff", "MapleWarriors2", "SwordofBurningSoul", "Valhalla", "SoulContractLink", "ComboInstinct", "Restraint4")
   
-  Times240 <- c(0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1)
+  Times240 <- c(0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1, 1)
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
@@ -600,10 +593,10 @@ HeroDealData <- data.frame(HeroDealCycle$Skills, HeroDealCycle$Time, HeroDealCyc
 colnames(HeroDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(HeroDealData, HeroDealData$R4>0)
 
-HeroRR <- HeroDealData[58:180, ]
+HeroRR <- HeroDealData[57:179, ]
 DPM12347$Hero[3] <- sum((HeroRR$Deal))
 
-Hero40s <- HeroDealData[31:362, ]
+Hero40s <- HeroDealData[30:361, ]
 DPM12347$Hero[4] <- sum((Hero40s$Deal)) 
 
 DealRatio(HeroDealCycle, HeroFinalDPMwithMax)

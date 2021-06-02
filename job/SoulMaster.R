@@ -166,14 +166,14 @@ CelestialDance <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30, 180, 750, F, T, F, T)
+info <- c(40, 180, 750, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Elysion <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30, 180, 360, F, T, F, F)
+info <- c(40, 180, 360, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulEclipse <- rbind(data.frame(option, value), info)
@@ -463,9 +463,9 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   Time0 <- Time0 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   
   BuffIdx <- list()
-  BuffIdx[[1]] <- c(1, 2, 3, 5, 9, 11, 12, 13, 14, 15)
-  BuffIdx[[2]] <- c(1, 2, 3, 5, 9, 14, 15)
-  BuffIdx[[3]] <- c(16)
+  BuffIdx[[1]] <- c(1, 2, 3, 5, 9, 10, 11, 12, 13, 14, 15)
+  BuffIdx[[2]] <- c(1, 2, 3, 5, 9, 10, 11, 12, 14, 15)
+  BuffIdx[[3]] <- c(10, 11, 12, 16)
   
   BuffList <- list()
   for(i in 1:3) {
@@ -489,8 +489,9 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     BuffDelays[[i]] <- DelayData$Delay[t]
   } 
   
-  PhalanxTime <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-2)])/1000 + 13
-  SoulContractTime <- PhalanxTime + 3
+  # PhalanxTime <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-2)])/1000 + 23
+  PhalanxTime <- 30 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  SoulContractTime <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-2)])/1000 + 26
   
   PhalanxSubTime <- 30 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   SoulContractSubTime <- 90 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -504,9 +505,10 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   while(max(Time2) + SoulContractSubTime < TotalTime) {
     Time2 <- c(Time2, Time2[length(Time2)] + SoulContractSubTime)
   }
-  Time3 <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-1)])/1000 + 30 + General$General$Serverlag
+  Time3 <- sum(BuffDelays[[1]][1:(length(BuffDelays[[1]])-1)])/1000 + 40 + General$General$Serverlag
   
   TimeTypes <- c(Time0, Time1, Time2, Time3)
+  TimeTypes <- unique(TimeTypes)
   TimeTypes <- TimeTypes[order(TimeTypes)]
   BuffIdxNew <- list()
   for(i in 1:length(TimeTypes)) {
@@ -515,7 +517,7 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         BuffIdxNew[[i]] <- BuffIdx[[j]]
       }
     }
-    if(sum(TimeTypes[i]==Time1)==1) {
+    if(sum(TimeTypes[i]==Time1)==1 & sum(TimeTypes[i]==Time0)==0) {
       BuffIdxNew[[i]] <- c(10, 11, 12)
     } else if(sum(TimeTypes[i]==Time2[c(1, 3)])==1) {
       BuffIdxNew[[i]] <- c(17, 18)
@@ -899,7 +901,7 @@ SoulMasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   
   
   ## RepATKs and Summoned Skills
-  DealCycle <- RepATKCycle(DealCycle, "SoulEclipseEC", 29, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "SoulEclipseEC", 39, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "SoulEclipseSD", 5, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "CrosstheStyx", 5, 60, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "ElysionCrack", 5, 0, ATKFinal)
@@ -951,8 +953,8 @@ colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(SoulMasterDealData, SoulMasterDealData$R4>0)
 
-SoulMasterRR <- SoulMasterDealData[194:401, ]
+SoulMasterRR <- SoulMasterDealData[360:577, ]
 DPM12347$SoulMaster[3] <- sum((SoulMasterRR$Deal))
 
-SoulMaster40s <-  SoulMasterDealData[20:482, ]
+SoulMaster40s <-  SoulMasterDealData[59:595, ]
 DPM12347$SoulMaster[4] <- sum((SoulMaster40s$Deal))

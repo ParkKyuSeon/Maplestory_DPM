@@ -71,7 +71,7 @@ BattleMageBase <- JobBase(ChrInfo=ChrInfo,
   BattleRage <- data.frame(option, value)
   
   option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
-  value <- c(70, 30 + BattleMageBase$SkillLv, + 20 + ceiling(BattleMageBase$SkillLv/2))
+  value <- c(70 + ceiling(BattleMageBase$SkillLv/2), 30 + BattleMageBase$SkillLv, 20 + ceiling(BattleMageBase$SkillLv/2))
   StaffExpert <- data.frame(option, value)
   
   option <- factor(c("ATKP", "BDR", "IGR"), levels=PSkill)

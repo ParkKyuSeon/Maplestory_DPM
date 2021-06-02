@@ -120,6 +120,12 @@ TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", F)
 TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", T)
 DealIrr(DualBladeDealTL, max(DualBladeDealData$Time)/1000)
 
+## CannonShooter
+CannonShooterDealTL <- DealTimeLine(CannonShooterDealData$Time, CannonShooterDealData$Deal)
+TLGraph(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000, "CannonShooter", F)
+TLGraph(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000, "CannonShooter", T)
+DealIrr(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000)
+
 ## Mikhail
 MikhailDealTL <- DealTimeLine(MikhailDealData$Time, MikhailDealData$Deal)
 TLGraph(MikhailDealTL, max(MikhailDealData$Time)/1000, "Mikhail", F)
@@ -186,6 +192,12 @@ TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", F)
 TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", T)
 DealIrr(EunwolDealTL, max(EunwolDealData$Time)/1000)
 
+## DemonSlayer
+DemonSlayerDealTL <- DealTimeLine(DemonSlayerDealData$Time, DemonSlayerDealData$Deal)
+TLGraph(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000, "DemonSlayer", F)
+TLGraph(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000, "DemonSlayer", T)
+DealIrr(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000)
+
 ## Blaster
 BlasterDealTL <- DealTimeLine(BlasterDealData$Time, BlasterDealData$Deal)
 TLGraph(BlasterDealTL, max(BlasterDealData$Time)/1000, "Blaster", F)
@@ -221,3 +233,39 @@ AdeleDealTL <- DealTimeLine(AdeleDealData$Time, AdeleDealData$Deal)
 TLGraph(AdeleDealTL, max(AdeleDealData$Time)/1000, "Adele", F)
 TLGraph(AdeleDealTL, max(AdeleDealData$Time)/1000, "Adele", T)
 DealIrr(AdeleDealTL, max(AdeleDealData$Time)/1000)
+
+## Ark
+ArkDealTL <- DealTimeLine(ArkDealData$Time, ArkDealData$Deal)
+TLGraph(ArkDealTL, max(ArkDealData$Time)/1000, "Ark", F)
+TLGraph(ArkDealTL, max(ArkDealData$Time)/1000, "Ark", T)
+DealIrr(ArkDealTL, max(ArkDealData$Time)/1000)
+
+## Hoyeong
+HoyeongDealTL <- DealTimeLine(HoyeongDealData$Time, HoyeongDealData$Deal)
+TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", F)
+TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", T)
+DealIrr(HoyeongDealTL, max(HoyeongDealData$Time)/1000)
+
+
+
+
+## Toy Job
+set.seed(1)
+ToyJobDeal <- rnorm(66, 6000, 400)
+ToyJobTL <- data.frame(Time=seq(0, 355, 5), 
+                       Deal=c(16500, 16000, 15500, ToyJobDeal[1:33], 16500, 16000, 15500, ToyJobDeal[34:66]))
+TLGraph(ToyJobTL, 360, "ToyJob", F)
+TLGraph(ToyJobTL, 360, "ToyJob", T)
+sum(ToyJobTL$Deal)/6
+
+## Toy Job
+set.seed(1)
+ToyJobDeal <- rnorm(66, 6000, 400)
+ToyJobTL <- data.frame(Time=seq(0, 355, 5), 
+                       Deal=c(10500, 10000, 9500, ToyJobDeal[1:33], 10500, 10000, 9500, ToyJobDeal[34:66]))
+TLGraph(ToyJobTL, 360, "ToyJob", F)
+TLGraph(ToyJobTL, 360, "ToyJob", T)
+sum(ToyJobTL$Deal)/6
+
+
+

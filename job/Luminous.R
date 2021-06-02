@@ -6,10 +6,10 @@ LuminousCore <- MatrixSet(PasSkills=c("LightReflection", "Apocalypse", "Absolute
                           ActSkills=c("DoorofTruth", "PunishingResonator", "BaptismofLightandDarkness", "LiberationOrb", 
                                       CommonV("Wizard", "Heroes")), 
                           ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
-                          ActMP=c(5, 5, 5, 5, 5, 5, 5, 5, 5), 
+                          ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 5), 
                           BlinkLv=1, 
-                          BlinkMP=0, 
-                          UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
+                          BlinkMP=5, 
+                          UsefulSkills=c("SharpEyes", "CombatOrders"), 
                           UsefulLvs=20, 
                           UsefulMP=0, 
                           SpecSet=SpecDefault, 
@@ -43,8 +43,8 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(30)
 BlessofDarkness <- data.frame(option, value)
 
-option <- factor(c("ATK", "BDR", "CRR"), levels=PSkill)
-value <- c(10, 15, 20)
+option <- factor(c("ATK", "BDR", "CRR", "ATKSpeed"), levels=PSkill)
+value <- c(10, 15, 20, 1)
 SpellMastery <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
@@ -64,7 +64,7 @@ value <- c(40 + LuminousBase$SkillLv, 40 + LuminousBase$SkillLv)
 DarknessSorcery <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CRR", "CDMR"), levels=PSkill)
-value <- c(70, 30 + LuminousBase$PSkillLv, 15, 15)
+value <- c(70 + ceiling(LuminousBase$PSkillLv / 2), 30 + LuminousBase$PSkillLv, 15, 15)
 MagicMastery <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -99,7 +99,7 @@ MagicBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(40)
-info <- c(180, NA, 600, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PhoticMeditation <- rbind(data.frame(option, value), info)
@@ -138,13 +138,6 @@ info <- c(180 + 3 * LuminousCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * LuminousCore[[3]][3, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -189,11 +182,11 @@ colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
 LuminousBuff <- Buff(list(Equilibrium=Equilibrium, EquilibriumMemorize=EquilibriumMemorize, MagicBooster=MagicBooster, PhoticMeditation=PhoticMeditation, DarknessSorcery=DarknessSorcery, 
-                          MapleSoldier=MapleSoldier, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, 
+                          MapleSoldier=MapleSoldier, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                           BaptismStack=BaptismStack, LiberationOrb=LiberationOrb, LiberationLightSTK=LiberationLightSTK, LiberationDarknessSTK=LiberationDarknessSTK, OverloadMana=OverloadMana, 
                           MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
 LuminousAllTimeBuff <- AllTimeBuff(LuminousBuff)
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, PhoticMeditation(600ms)
 
 
 ## Luminous - Union & HyperStat & SoulWeapon
@@ -484,7 +477,7 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
       ABKillRemain <- ABKillCool - DealCycle$Time[1]
       
-      BuffList <- c("MagicBooster", "PhoticMeditation", "DarknessSorcery", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster")
+      BuffList <- c("MagicBooster", "PhoticMeditation", "DarknessSorcery", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders")
       for(j in 1:length(BuffList)) {
         DealCycle <- DCBuff(DealCycle, BuffList[j], BuffFinal)
         LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
@@ -757,7 +750,7 @@ LuminousDealCycle <- LuminousAddATK(DealCycle=LuminousDealCycle,
                                     Spec=LuminousSpec)
 LuminousDealCycleReduction <- DealCycleReduction(LuminousDealCycle, c("DarkCrescendoBDR"))
 
-LuminousDealData <- data.frame(LuminousDealCycle$Skills, LuminousDealCalc(LuminousDealCycle, ATKFinal, BuffFinal, SummonedFinal, LuminousSpec))
+LuminousDealData <- data.frame(LuminousDealCycle$Skills, DealCalc(LuminousDealCycle, ATKFinal, BuffFinal, SummonedFinal, LuminousSpec))
 colnames(LuminousDealData) <- c("Skills", "Deal")
 
 ## Damage Optimization
@@ -781,9 +774,9 @@ colnames(LuminousDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(LuminousDealData, LuminousDealData$R4>0)
 
-LuminousRR <- LuminousDealData[623:756, ]
+LuminousRR <- LuminousDealData[622:755, ]
 DPM12347$Luminous[3] <- sum((LuminousRR$Deal))
 
-Luminous40s <- LuminousDealData[623:910, ]
+Luminous40s <- LuminousDealData[622:909, ]
 DPM12347$Luminous[4] <- sum((Luminous40s$Deal))
 

@@ -24,7 +24,7 @@ IlliumBase <- JobBase(ChrInfo=ChrInfo,
                         Job="Illium",
                         CoreData=IlliumCore, 
                         BuffDurationNeeded=0, 
-                        AbilList=c("BDR", "BuffDuration"), 
+                        AbilList=c("CoolTimeReset", "BuffDuration"), 
                         LinkList=c("Phantom", "DemonAvenger", "Xenon"), 
                         MonsterLife=MLTypeI22, 
                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "MagicGuntlet", SpecDefault$WeaponType)[, 1:16],
@@ -298,14 +298,14 @@ MotalSwing <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(IlliumCore[[1]][2, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][2, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
-info <- c(650 + 2 * IlliumSpec$SkillLv, 8, 0, NA, 4, T, T, F)
+info <- c(650 + 2 * IlliumSpec$SkillLv, 8 * (1 / ((100 - IlliumSpec$CoolTimeReset)/100)), 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Destruction <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(IlliumCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][3, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
-info <- c(650 + 2 * IlliumSpec$SkillLv, 2, 0, NA, 4, T, T, F)
+info <- c(650 + 2 * IlliumSpec$SkillLv, 2 * (1 / ((100 - IlliumSpec$CoolTimeReset)/100)), 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Domination <- rbind(data.frame(option, value), info)
@@ -759,8 +759,8 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
   return(DealCycle)
 }
 
-## DealCycle
-IlliumDealCycle <- IlliumCycle(PreDealCycle=IlliumDealCycle,
+## DealCycle 1 - Fast Charge Reset OFF, Soul Contract Reset OFF
+IlliumDealCycle1 <- IlliumCycle(PreDealCycle=IlliumDealCycle,
                                 ATKFinal=ATKFinal, 
                                 BuffFinal=BuffFinal, 
                                 SummonedFinal=SummonedFinal,
@@ -768,37 +768,119 @@ IlliumDealCycle <- IlliumCycle(PreDealCycle=IlliumDealCycle,
                                 Spec=IlliumSpec,
                                 FastChargeReset=F,
                                 SoulContractReset=F)
-IlliumDealCycle <- DealCycleFinal(IlliumDealCycle)
-IlliumDealCycle <- RepATKCycle(IlliumDealCycle, "CrystalIgnition", 62, 0, ATKFinal)
-IlliumDealCycle <- RepATKCycle(IlliumDealCycle, "ReactionSpectrum", 9, 0, ATKFinal)
-IlliumDealCycle <- MCFCycle(IlliumDealCycle, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
-IlliumDealCycle <- SoulofCrystalBuffLogic(IlliumDealCycle)
-IlliumDealCycle <- AddATKCycleIllium(IlliumDealCycle, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
-IlliumDealCycle <- JavelinBuffLogic(IlliumDealCycle)
-IlliumDealCycle <- DeusExMachinaLogic(IlliumDealCycle, SummonedFinal$Duration[6], SummonedFinal)
-IlliumDealCycle <- DCSummonedATKs(IlliumDealCycle, "Gramholder", SummonedFinal)
-IlliumDealCycle <- DCSpiderInMirror(IlliumDealCycle, SummonedFinal)
-IlliumDealCycleReduction <- DealCycleReduction(IlliumDealCycle)
+IlliumDealCycle1 <- DealCycleFinal(IlliumDealCycle1)
+IlliumDealCycle1 <- RepATKCycle(IlliumDealCycle1, "CrystalIgnition", 62, 0, ATKFinal)
+IlliumDealCycle1 <- RepATKCycle(IlliumDealCycle1, "ReactionSpectrum", 9, 0, ATKFinal)
+IlliumDealCycle1 <- MCFCycle(IlliumDealCycle1, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
+IlliumDealCycle1 <- SoulofCrystalBuffLogic(IlliumDealCycle1)
+IlliumDealCycle1 <- AddATKCycleIllium(IlliumDealCycle1, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
+IlliumDealCycle1 <- JavelinBuffLogic(IlliumDealCycle1)
+IlliumDealCycle1 <- DeusExMachinaLogic(IlliumDealCycle1, SummonedFinal$Duration[6], SummonedFinal)
+IlliumDealCycle1 <- DCSummonedATKs(IlliumDealCycle1, "Gramholder", SummonedFinal)
+IlliumDealCycle1 <- DCSpiderInMirror(IlliumDealCycle1, SummonedFinal)
+IlliumDealCycleReduction1 <- DealCycleReduction(IlliumDealCycle1)
 
-IlliumSpecOpt <- Optimization1(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpec, IlliumUnionRemained)
+## DealCycle 2 - Fast Charge Reset ON, Soul Contract Reset OFF
+IlliumDealCycle2 <- IlliumCycle(PreDealCycle=IlliumDealCycle,
+                                ATKFinal=ATKFinal, 
+                                BuffFinal=BuffFinal, 
+                                SummonedFinal=SummonedFinal,
+                                SkipStructure=IlliumSkipATK, 
+                                Spec=IlliumSpec,
+                                FastChargeReset=T,
+                                SoulContractReset=F)
+IlliumDealCycle2 <- DealCycleFinal(IlliumDealCycle2)
+IlliumDealCycle2 <- RepATKCycle(IlliumDealCycle2, "CrystalIgnition", 62, 0, ATKFinal)
+IlliumDealCycle2 <- RepATKCycle(IlliumDealCycle2, "ReactionSpectrum", 9, 0, ATKFinal)
+IlliumDealCycle2 <- MCFCycle(IlliumDealCycle2, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
+IlliumDealCycle2 <- SoulofCrystalBuffLogic(IlliumDealCycle2)
+IlliumDealCycle2 <- AddATKCycleIllium(IlliumDealCycle2, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
+IlliumDealCycle2 <- JavelinBuffLogic(IlliumDealCycle2)
+IlliumDealCycle2 <- DeusExMachinaLogic(IlliumDealCycle2, SummonedFinal$Duration[6], SummonedFinal)
+IlliumDealCycle2 <- DCSummonedATKs(IlliumDealCycle2, "Gramholder", SummonedFinal)
+IlliumDealCycle2 <- DCSpiderInMirror(IlliumDealCycle2, SummonedFinal)
+IlliumDealCycleReduction2 <- DealCycleReduction(IlliumDealCycle2)
+
+## DealCycle 3 - Fast Charge Reset OFF, Soul Contract Reset ON
+IlliumDealCycle3 <- IlliumCycle(PreDealCycle=IlliumDealCycle,
+                                ATKFinal=ATKFinal, 
+                                BuffFinal=BuffFinal, 
+                                SummonedFinal=SummonedFinal,
+                                SkipStructure=IlliumSkipATK, 
+                                Spec=IlliumSpec,
+                                FastChargeReset=F,
+                                SoulContractReset=T)
+IlliumDealCycle3 <- DealCycleFinal(IlliumDealCycle3)
+IlliumDealCycle3 <- RepATKCycle(IlliumDealCycle3, "CrystalIgnition", 62, 0, ATKFinal)
+IlliumDealCycle3 <- RepATKCycle(IlliumDealCycle3, "ReactionSpectrum", 9, 0, ATKFinal)
+IlliumDealCycle3 <- MCFCycle(IlliumDealCycle3, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
+IlliumDealCycle3 <- SoulofCrystalBuffLogic(IlliumDealCycle3)
+IlliumDealCycle3 <- AddATKCycleIllium(IlliumDealCycle3, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
+IlliumDealCycle3 <- JavelinBuffLogic(IlliumDealCycle3)
+IlliumDealCycle3 <- DeusExMachinaLogic(IlliumDealCycle3, SummonedFinal$Duration[6], SummonedFinal)
+IlliumDealCycle3 <- DCSummonedATKs(IlliumDealCycle3, "Gramholder", SummonedFinal)
+IlliumDealCycle3 <- DCSpiderInMirror(IlliumDealCycle3, SummonedFinal)
+IlliumDealCycleReduction3 <- DealCycleReduction(IlliumDealCycle3)
+
+## DealCycle 4 - Fast Charge Reset ON, Soul Contract Reset ON
+IlliumDealCycle4 <- IlliumCycle(PreDealCycle=IlliumDealCycle,
+                                ATKFinal=ATKFinal, 
+                                BuffFinal=BuffFinal, 
+                                SummonedFinal=SummonedFinal,
+                                SkipStructure=IlliumSkipATK, 
+                                Spec=IlliumSpec,
+                                FastChargeReset=T,
+                                SoulContractReset=T)
+IlliumDealCycle4 <- DealCycleFinal(IlliumDealCycle4)
+IlliumDealCycle4 <- RepATKCycle(IlliumDealCycle4, "CrystalIgnition", 62, 0, ATKFinal)
+IlliumDealCycle4 <- RepATKCycle(IlliumDealCycle4, "ReactionSpectrum", 9, 0, ATKFinal)
+IlliumDealCycle4 <- MCFCycle(IlliumDealCycle4, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
+IlliumDealCycle4 <- SoulofCrystalBuffLogic(IlliumDealCycle4)
+IlliumDealCycle4 <- AddATKCycleIllium(IlliumDealCycle4, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
+IlliumDealCycle4 <- JavelinBuffLogic(IlliumDealCycle4)
+IlliumDealCycle4 <- DeusExMachinaLogic(IlliumDealCycle4, SummonedFinal$Duration[6], SummonedFinal)
+IlliumDealCycle4 <- DCSummonedATKs(IlliumDealCycle4, "Gramholder", SummonedFinal)
+IlliumDealCycle4 <- DCSpiderInMirror(IlliumDealCycle4, SummonedFinal)
+IlliumDealCycleReduction4 <- DealCycleReduction(IlliumDealCycle4)
+
+IlliumDealCycleTimes <- c(max(IlliumDealCycle1$Time), max(IlliumDealCycle2$Time), max(IlliumDealCycle3$Time), max(IlliumDealCycle4$Time))
+IlliumDealCycleProbs <- c(0.8 * 0.8, 0.8 * 0.2, 0.2 * 0.8, 0.2 * 0.2)
+IlliumDealCycleTimeAVG <- sum(IlliumDealCycleTimes * IlliumDealCycleProbs)
+
+ResetDealCalc(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4), ATKFinal, BuffFinal, SummonedFinal, IlliumSpec,
+              IlliumDealCycleTimes, IlliumDealCycleProbs)
+ResetDealCalcWithMaxDMR(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4), ATKFinal, BuffFinal, SummonedFinal, IlliumSpec,
+                        IlliumDealCycleTimes, IlliumDealCycleProbs)
+
+IlliumSpecOpt1 <- ResetOptimization1(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4), 
+                                     ATKFinal, BuffFinal, SummonedFinal, IlliumSpec, IlliumUnionRemained, IlliumDealCycleTimes, IlliumDealCycleProbs)
 IlliumSpecOpt <- IlliumSpec
 IlliumSpecOpt$ATKP <- IlliumSpecOpt$ATKP + IlliumSpecOpt1$ATKP
 IlliumSpecOpt$BDR <- IlliumSpecOpt$BDR + IlliumSpecOpt1$BDR
 IlliumSpecOpt$IGR <- IGRCalc(c(IlliumSpecOpt$IGR, IlliumSpecOpt1$IGR))
 
-IlliumSpecOpt2 <- Optimization2(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt, IlliumHyperStatBase, IlliumBase$ChrLv, IlliumBase$CRROver, 0)
-IlliumFinalDPM <- DealCalc(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
-IlliumFinalDPMwithMax <- DealCalcWithMaxDMR(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+IlliumSpecOpt2 <- ResetOptimization2(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4),
+                                     ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt, IlliumHyperStatBase, IlliumBase$ChrLv, IlliumBase$CRROver, 0, IlliumDealCycleTimes, IlliumDealCycleProbs)
+IlliumFinalDPM <- ResetDealCalc(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4), 
+                                ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2, IlliumDealCycleTimes, IlliumDealCycleProbs)
+IlliumFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(IlliumDealCycleReduction1, IlliumDealCycleReduction2, IlliumDealCycleReduction3, IlliumDealCycleReduction4), 
+                                                 ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2, IlliumDealCycleTimes, IlliumDealCycleProbs)
 
-DPM12347$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
-DPM12347$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (max(IlliumDealCycle$Time) / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
+DPM12347$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (723482.8 / 60000)
+DPM12347$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (723482.8 / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (723482.8 / 60000)
 
-IlliumDealRatio <- DealRatio(IlliumDealCycle, IlliumFinalDPMwithMax)
+IlliumDeal1 <- DealCalcWithMaxDMR(IlliumDealCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+IlliumDeal2 <- DealCalcWithMaxDMR(IlliumDealCycle2, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+IlliumDeal3 <- DealCalcWithMaxDMR(IlliumDealCycle3, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+IlliumDeal4 <- DealCalcWithMaxDMR(IlliumDealCycle4, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+IlliumDealWithoutMax <- DealCalc(IlliumDealCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
 
-IlliumDealData <- data.frame(IlliumDealCycle$Skills, IlliumDealCycle$Time, IlliumDealCycle$Restraint4, IlliumFinalDPMwithMax, IlliumFinalDPM-IlliumFinalDPMwithMax)
+ResetDealRatio(DealCycles=list(IlliumDealCycle1, IlliumDealCycle2, IlliumDealCycle3, IlliumDealCycle4), DealDatas=list(IlliumDeal1, IlliumDeal2, IlliumDeal3, IlliumDeal4), 
+               IlliumDealCycleTimes, IlliumDealCycleProbs)
+
+IlliumDealData <- data.frame(IlliumDealCycle1$Skills, IlliumDealCycle1$Time, IlliumDealCycle1$Restraint4, IlliumDeal1, IlliumDealWithoutMax-IlliumDeal1)
 colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(IlliumDealData, IlliumDealData$R4>0)
+subset(IlliumDealData, IlliumDealData$R4 > 0)
 
 IlliumRR <- IlliumDealData[220:405, ]
 DPM12347$Illium[3] <- sum((IlliumRR$Deal))
@@ -808,12 +890,7 @@ DPM12347$Illium[4] <- sum((Illium40s$Deal))
 
 
 ## Glorywing Ignition 
-DealCycle <- c("Skills", "Time", rownames(IlliumBuff))
-WingnitionDealCycle <- t(rep(0, length(DealCycle)))
-colnames(WingnitionDealCycle) <- DealCycle
-WingnitionDealCycle <- data.frame(WingnitionDealCycle)
-
-Winggnition40s <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, FastChargeReset, SoulContractReset) {
+Winggnition <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, FastChargeReset, SoulContractReset) {
   DealCycle <- PreDealCycle
   IGDummy <- 0
   ## First Cycle
@@ -861,36 +938,17 @@ Winggnition40s <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Ski
   while(DealCycle$GloryWing[nrow(DealCycle)] - subset(ATKFinal, rownames(ATKFinal)=="EnhancedJavelin")$Delay > 0) {
     DealCycle <- DCATKSkip(DealCycle, "EnhancedJavelin", ATKFinal, SkipStructure)
   }
-  
-  DealCycle <- DCBuff(DealCycle, "SoulofCrystal1", BuffFinal)
-  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
-  for(i in 1:3) {
-    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
-    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 4, 2))
-    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 2, 1))
-  }
-  DealCycle <- DCBuff(DealCycle, "SoulofCrystal2", BuffFinal)
-  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
-  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < subset(DealCycle, DealCycle$Skills=="Restraint4")$Time + 41000) {
-    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
-    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 4, 2))
-    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 2, 1))
-  }
   return(DealCycle)
 }
 
-WinggnitionCycle1 <- Winggnition40s(PreDealCycle=WingnitionDealCycle,
-                                    ATKFinal=ATKFinal, 
-                                    BuffFinal=BuffFinal, 
-                                    SummonedFinal=SummonedFinal,
-                                    SkipStructure=IlliumSkipATK, 
-                                    Spec=IlliumSpec,
-                                    FastChargeReset=F,
-                                    SoulContractReset=F)
+WinggnitionCycle1 <- Winggnition(PreDealCycle=IlliumDealCycle,
+                                ATKFinal=ATKFinal, 
+                                BuffFinal=BuffFinal, 
+                                SummonedFinal=SummonedFinal,
+                                SkipStructure=IlliumSkipATK, 
+                                Spec=IlliumSpec,
+                                FastChargeReset=F,
+                                SoulContractReset=F)
 WinggnitionCycle1 <- DealCycleFinal(WinggnitionCycle1)
 WinggnitionCycle1 <- RepATKCycle(WinggnitionCycle1, "CrystalIgnition", 62, 0, ATKFinal)
 WinggnitionCycle1 <- RepATKCycle(WinggnitionCycle1, "ReactionSpectrum", 9, 0, ATKFinal)
@@ -902,9 +960,9 @@ WinggnitionCycle1 <- DeusExMachinaLogic(WinggnitionCycle1, SummonedFinal$Duratio
 WinggnitionCycle1 <- DCSummonedATKs(WinggnitionCycle1, "Gramholder", SummonedFinal)
 WinggnitionCycle1 <- DCSpiderInMirror(WinggnitionCycle1, SummonedFinal)
 
-Winggnition40s <- DealCalcWithMaxDMR(WinggnitionCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
-WinggnitionDealData <- data.frame(WinggnitionCycle1$Skills, WinggnitionCycle1$Time, WinggnitionCycle1$Restraint4, Winggnition40s)
+WinggnitionDPM <- DealCalcWithMaxDMR(WinggnitionCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+WinggnitionDealData <- data.frame(WinggnitionCycle1$Skills, WinggnitionCycle1$Time, WinggnitionCycle1$Restraint4, WinggnitionDPM)
 colnames(WinggnitionDealData) <- c("Skills", "Time", "R4", "Deal")
+subset(WinggnitionDealData, WinggnitionDealData$R4 > 0)
 
-WinggitionRR <- sum(WinggnitionDealData$Deal[220:392])
-Winggition40s <- sum(WinggnitionDealData$Deal[220:704])
+WinggitionR4 <- sum(WinggnitionDealData$Deal[220:423])

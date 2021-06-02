@@ -35,7 +35,7 @@ FlameWizardBase <- JobBase(ChrInfo=ChrInfo,
 
 ## FlameWizard - Passive
 {option <- factor(c("MainStat"), levels=PSkill)
-value <- c(floor(SoulMasterBase$ChrLv/2))
+value <- c(floor(FlameWizardBase$ChrLv/2))
 ElementalHarmony <- data.frame(option, value)
 
 option <- factor(c("ATKP"), levels=PSkill)
@@ -46,8 +46,8 @@ option <- factor(c("CRR"), levels=PSkill)
 value <- c(5)
 InbornTalent <- data.frame(option, value) ## Wand Only
 
-option <- factor(c("ATK"), levels=PSkill)
-value <- c(10)
+option <- factor(c("ATK", "ATKSpeed"), levels=PSkill)
+value <- c(10, 1)
 SpellTraining <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
@@ -63,7 +63,7 @@ value <- c(60)
 BrilliantEnlightenment <- data.frame(option, value)
 
 option <- factor(c("ATK", "FDR", "Mastery"), levels=PSkill)
-value <- c(20 + 2 * FlameWizardBase$PSkillLv, 50 + 3 * FlameWizardBase$PSkillLv, 70)
+value <- c(20 + 2 * FlameWizardBase$PSkillLv, 50 + 3 * FlameWizardBase$PSkillLv, 70 + FlameWizardBase$PSkillLv)
 TruthofMagic <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -97,7 +97,7 @@ colnames(info) <- c("option", "value")
 IgnitionEffect <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATK", "ATKSpeed"), levels=BSkill)
-value <- c(20, 1)
+value <- c(20, 2)
 info <- c(300, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -427,7 +427,7 @@ FlameWizardSummoned <- Summoned(list(CygnusPhalanx=CygnusPhalanx, SpiderInMirror
 
 ## FlameWizard - DealCycle & Deal Calculation
 ATKFinal <- data.frame(FlameWizardATK)
-ATKFinal$Delay[c(-1, -2, -6, -13, -14, -15)] <- Delay(ATKFinal$Delay, FlameWizardSpec$ATKSpeed)[c(-1, -2, -6, -13, -14, -15)]
+ATKFinal$Delay[c(-1, -2, -6, -15, -16, -17)] <- Delay(ATKFinal$Delay, FlameWizardSpec$ATKSpeed)[c(-1, -2, -6, -15, -16, -17)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, FlameWizardSpec$CoolReduceP, FlameWizardSpec$CoolReduce)
 
 BuffFinal <- data.frame(FlameWizardBuff)
@@ -1058,10 +1058,10 @@ colnames(FlameWizardDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(FlameWizardDealData, FlameWizardDealData$R4>0)
 
-FlameWizardRR <- FlameWizardDealData[91:280, ]
+FlameWizardRR <- FlameWizardDealData[89:257, ]
 DPM12347$FlameWizard[3] <- sum((FlameWizardRR$Deal))
 
-FlameWizard40s <- FlameWizardDealData[37:608, ]
+FlameWizard40s <- FlameWizardDealData[37:581, ]
 DPM12347$FlameWizard[4] <- sum((FlameWizard40s$Deal))
 
 
@@ -1096,5 +1096,5 @@ colnames(FlameWizardDealData2) <- c("Skills", "Time", "R4", "Deal")
 
 subset(FlameWizardDealData2, FlameWizardDealData2$R4>0)
 
-FW1250R4 <- sum(FlameWizardDealData2$Deal[91:280])
-FW125040s <- sum(FlameWizardDealData2$Deal[37:596])
+FW1250R4 <- sum(FlameWizardDealData2$Deal[89:257])
+FW125040s <- sum(FlameWizardDealData2$Deal[37:575])

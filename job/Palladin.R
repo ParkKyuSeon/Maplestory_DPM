@@ -9,7 +9,7 @@ PalladinCore <- MatrixSet(PasSkills=c("Blast", "FinalAttack", "Sanctuary", "Ling
                           ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
                           BlinkLv=1, 
                           BlinkMP=5, 
-                          UsefulSkills=c("WindBooster", "SharpEyes"), 
+                          UsefulSkills=c("SharpEyes"), 
                           UsefulLvs=20, 
                           UsefulMP=0, 
                           SpecSet=SpecDefault, 
@@ -35,7 +35,11 @@ PalladinBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## Palladin - Passive
-{option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+{option <- factor(c("ATKSpeed"), levels=PSkill)
+value <- c(1)
+WeaponMastery <- data.frame(option, value)
+  
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
@@ -67,7 +71,7 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(PalladinCore[[2]][10, 2])
 BlinkPassive <- data.frame(option, value)}
 
-PalladinPassive <- Passive(list(PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofStealPassive, BlinkPassive))
+PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofStealPassive, BlinkPassive))
 
 
 ## Palladin - Buff
@@ -80,7 +84,7 @@ WeaponBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(2)
-info <- c(200, NA, 990, T, NA, NA, T)
+info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CombatOrders <- rbind(data.frame(option, value), info)
@@ -108,17 +112,10 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * PalladinCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
 info <- c(180 + 3 * PalladinCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)
+UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -149,10 +146,10 @@ colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
 PalladinBuff <- Buff(list(WeaponBooster=WeaponBooster, CombatOrders=CombatOrders, Threat=Threat, ElementalForce=ElementalForce, MapleSoldier=MapleSoldier, 
-                          UsefulSharpEyes=UsefulSharpEyes, UsefulWindBooster=UsefulWindBooster, EpicAdventure=EpicAdventure, 
+                          UsefulSharpEyes=UsefulSharpEyes, EpicAdventure=EpicAdventure, 
                           AuraWeaponBuff=AuraWeaponBuff, HolyUnity=HolyUnity, MapleWarriors2=MapleWarriors2, 
                           Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : WeaponBooster(990ms), UsefulSharpEyes(900ms), UsefulWindBooster(900ms)
+## PetBuff : WeaponBooster(990ms), UsefulSharpEyes(900ms), CombatOrders(990ms)
 PalladinAllTimeBuff <- AllTimeBuff(PalladinBuff)
 
 
@@ -361,10 +358,10 @@ colnames(PalladinDealCycle) <- DealCycle
 
 PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                           Period=c(150, 180), CycleTime=360) {
-  BuffSummonedPrior <- c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", "UsefulSharpEyes", "UsefulWindBooster", "EpicAdventure", 
+  BuffSummonedPrior <- c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", "UsefulSharpEyes", "EpicAdventure", 
                          "Threat", "AuraWeaponBuff", "MapleWarriors2", "BlessedHammerBig", "SoulContractLink", "HolyUnity", "Restraint4")
   Times150 <- c()
-  Times180 <- c(0, 1, 1, 0, 0, 0, 0, 2.5, 1, 1, 3, 2, 1.5, 1)
+  Times180 <- c(0, 0, 1, 0, 0, 0, 2.5, 1, 1, 3, 2, 1.5, 1)
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -628,10 +625,10 @@ PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time,
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(PalladinDealData, PalladinDealData$R4>0)
 
-PalladinRR <- PalladinDealData[26:209, ]
+PalladinRR <- PalladinDealData[25:208, ]
 DPM12347$Palladin[3] <- sum((PalladinRR$Deal))
 
-Palladin40s <- PalladinDealData[26:373, ]
+Palladin40s <- PalladinDealData[25:372, ]
 DPM12347$Palladin[4] <- sum((Palladin40s$Deal))
 
 PalladinDealRatio <- DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)

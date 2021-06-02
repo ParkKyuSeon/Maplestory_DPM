@@ -33,7 +33,11 @@ BishopBase <- JobBase(ChrInfo=ChrInfo,
                       CoolReduceHat=F)
 
 ## Bishop - Passive
-{option <- factor(c("ATK"), levels=PSkill)
+{option <- factor(c("ATKSpeed"), levels=PSkill)
+value <- c(1)
+MPIncrease <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
 value <- c(10)
 SpellMastery <- data.frame(option, value)
 
@@ -77,7 +81,7 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(BishopCore[[2]][10, 2])
 BlinkPassive <- data.frame(option, value)}
 
-BishopPassive <- Passive(list(SpellMastery=SpellMastery, HighWisdom=HighWisdom, MagicCritical=MagicCritical, HolyFocus=HolyFocus, BigbangDebuff=BigbangDebuff, 
+BishopPassive <- Passive(list(MPIncrease=MPIncrease, SpellMastery=SpellMastery, HighWisdom=HighWisdom, MagicCritical=MagicCritical, HolyFocus=HolyFocus, BigbangDebuff=BigbangDebuff, 
                               BlessingHarmony=BlessingHarmony, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, UnstableMemorizePassive=UnstableMemorizePassive, BlinkPassive=BlinkPassive))
 
 
@@ -260,8 +264,8 @@ Skills <- c("EnergyBolt", "HolyArrow", "Heal", "ShiningRay", "HolyFountain", "Di
             "Bigbang", "Resurrection", "Infinity", "Bahamut", "HeavensDoor", "EpicAdventure")
 Ind <- c(1, 10, 10, 10, 10, 25, 10, 25, 25, 25, 25, 25, 25, 10, 10)
 Prob <- Ind/sum(Ind)
-Delays <- c(Delay(810, 3), Delay(810, 3), Delay(600, 3), Delay(900, 3), 960, 900, 870, Delay(810, 3), Delay(810, 3), 
-            Delay(780, 3), 900, 600, 600, 360, 0)
+Delays <- c(Delay(810, 2), Delay(810, 2), Delay(600, 2), Delay(900, 2), 960, 900, 870, Delay(810, 2), Delay(810, 2), 
+            Delay(780, 2), 900, 600, 600, 360, 0)
 BishopUnstable <- data.frame(Skills, Ind, Prob, Delays)
 BishopUnsHolyATKProb <- sum(BishopUnstable$Prob[c(2, 4, 8, 9, 10)])
 
@@ -838,16 +842,6 @@ BishopDealCycle2 <- DealCycleFinal(BishopDealCycle2)
 
 ## Bishop Unstable
 Unsdata <- UnstableData(BishopDealCycle, BishopDealCycle2, BishopUnstable[12, 3], BuffFinal$Duration[2], BuffFinal$CoolTime[2])
-
-BishopBuff <- Buff(list(MagicBooster=MagicBooster, Infinity=Infinity, AdvancedBless=AdvancedBless, MapleSoldier=MapleSoldier, EpicAdventure=EpicAdventure,
-                        UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, Pray=Pray, PeaceMakerBuff=PeaceMakerBuff, VengenceofAngel=VengenceofAngel,
-                        BahamutDebuff=BahamutDebuff, AngelofLibraDebuff=AngelofLibraDebuff,
-                        MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-
-BuffFinal <- data.frame(BishopBuff)
-BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, BishopSpec$CoolReduceP, BishopSpec$CoolReduce)
-BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, BishopSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
 
 BishopDealCycle <- PeaceMakerCycle(BishopDealCycle, 3, ATKFinal, 8 + General$General$Serverlag)
 BishopDealCycle <- DCSpiderInMirror(BishopDealCycle, SummonedFinal)

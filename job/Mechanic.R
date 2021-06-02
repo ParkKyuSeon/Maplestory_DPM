@@ -718,10 +718,7 @@ MechanicDealCycle <- DCSpiderInMirror(MechanicDealCycle, SummonedFinal)
 MechanicDealCycle <- MechanicAddATKCycle(MechanicDealCycle, ATKFinal)
 MechanicDealCycleReduction <- DealCycleReduction(MechanicDealCycle)
 
-sum(na.omit(LuckyDiceDealCalc(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpec, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))))
-sum(na.omit(LuckyDiceDealCalcWithMaxDMR(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpec, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))))
-
-MechanicSpecOpt1 <- LuckyDiceOptimization1(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpec, UnionRemained, LuckyDiceProb=c(0.721368012, 0.268516988, 0.010115))
+MechanicSpecOpt1 <- LuckyDiceOptimization1(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpec, UnionRemained, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
 MechanicSpecOpt <- MechanicSpec
 MechanicSpecOpt$ATKP <- MechanicSpecOpt$ATKP + MechanicSpecOpt1$ATKP
 MechanicSpecOpt$BDR <- MechanicSpecOpt$BDR + MechanicSpecOpt1$BDR

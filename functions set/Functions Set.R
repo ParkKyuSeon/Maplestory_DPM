@@ -564,16 +564,16 @@ UnionPlace <- function(UnionRemained, UnionBase, UnionBuffDuration, UnionCRR, Un
   
   return(UnionBase)
 }
-CRRGet <- function(UnionRemained, BuffDurationNeededP, BuffDuration, CRR, CRROver) {
+CRRGet <- function(UnionRemained, BuffDurationNeededP, BuffDuration, CRR, CRROver, NotCRR100=F, UnionStance=0) {
   UnionBuffDNeeded <- ifelse(BuffDurationNeededP > BuffDuration, min(max(BuffDurationNeededP - BuffDuration, 0), 40), 0)
-  UnionR <- max(UnionRemained - UnionBuffDNeeded - 80, 0)
+  UnionR <- max(UnionRemained - UnionBuffDNeeded - UnionStance - 80, 0)
   CRRNeeded <- 100 - CRR
   UnionCRR <- 0
   HyperCRR <- 0
   SoulWeaponCRR <- 0
   if(CRROver==F) {
     UnionCRR <- min(CRRNeeded, UnionR)
-    CRRNeeded <- 100 - CRR - UnionCRR
+    CRRNeeded <- ifelse(NotCRR100==T, 0, 100 - CRR - UnionCRR)
     if(CRRNeeded >= 15) {
       SoulWeaponCRR <- 12
       CRRNeeded <- max(CRRNeeded - SoulWeaponCRR, 0)
@@ -2379,7 +2379,8 @@ JobSpec <- function(JobBase,
                     SpecSet=SpecDefault, 
                     WeaponName, 
                     UnionStance, 
-                    JobConstant=1) {
+                    JobConstant=1, 
+                    NotCRR100=F) {
   JobBase$MainStatP <- Passive
   names(JobBase)[length(JobBase)] <- "Passive"
   JobBase$AllTimeBuff <- AllTimeBuff
@@ -2405,7 +2406,7 @@ JobSpec <- function(JobBase,
   UnionFields <- UnionPreSet[[i]]$SSSChrs * 5 + UnionPreSet[[i]]$SSChrs * 4 + UnionPreSet[[i]]$SChrs * 3 + 
                  ifelse(JobBase$ChrLv>=250, 5, ifelse(JobBase$ChrLv>=200, 4, 3)) + 
                  ifelse(UnionPreSet[[i]]$MapleM==F, 0, ifelse(UnionPreSet[[i]]$MapleMGrade=="SS", 4, 3)) - sum(UnionBase)
-  CRRs <- CRRGet(UnionFields, JobBase$BuffDurationNeeded, BuffDuration, CRR, JobBase$CRROver)
+  CRRs <- CRRGet(UnionFields, JobBase$BuffDurationNeeded, BuffDuration, CRR, JobBase$CRROver, NotCRR100, UnionStance)
   UnionBase <- UnionPlace(UnionFields - max(0, JobBase$BuffDurationNeeded - BuffDuration) - CRRs$Union, UnionBase, 
                           max(0, min(40, JobBase$BuffDurationNeeded - BuffDuration)), CRRs$Union, UnionStance)
   UnionBase$CDMR <- UnionBase$CDMR/2
@@ -2492,7 +2493,7 @@ JobSpec <- function(JobBase,
   FDR <- FDRCalc(c(FDR, ArcaneForceFDR(JobBase$ArcaneForce, MobInfo$Basic$Arc), LevelFDR(JobBase$ChrLv, MobInfo$Basic$Lv), 
                    (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[19]*100-100), (JobConstant-1)*100))
   ATKSpeed <- max(ATKSpeed, 2)
-  Mastery <- min(Mastery, 95)
+  Mastery <- min(Mastery, 99)
   if(SubStat2==0) {
     Spec <- data.frame(MainStat=MainStat, SubStat1=SubStat1, ATK=ATK, ATKSub=ATKSub,
                        ATKP=ATKP, IGR=IGR, BDR=BDR, CRR=CRR, CDMR=CDMR, FDR=FDR, 

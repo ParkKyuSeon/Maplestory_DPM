@@ -98,7 +98,7 @@ SylphsAid <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR"), levels=BSkill)
 value <- c(15, 15)
-info <- c(30, NA, 0, F, NA, NA, F)
+info <- c(60, NA, 0, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PinpointPierceBuff <- rbind(data.frame(option, value), info)
@@ -393,7 +393,7 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
                           Period=c(120), CycleTime=240) {
   BuffSummonedPrior <- c("BowBooster", "SharpEyes", "StormBringer", "ElementStorm", "SylphsAid", "AlbatrossMaximum", "MapleSoldier", "UsefulCombatOrders", "GloryofGardians", 
                          "GuidedArrow", "CygnusPhalanx", "PinpointPierceBuff", "BlessofCygnus", "WindWallBuff", "SoulContractLink", "CriticalReinforce", "Restraint4")
-  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, 0, 2, 4, 4, 0.5, 1, 1, 1, 0.5)
+  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, 0, 2, 4, 2, 0.5, 1, 1, 1, 0.5)
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -649,7 +649,7 @@ colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 WindBreakerRR <- WindBreakerDealData[114:1139, ]
 DPM12347$WindBreaker[3] <- sum((WindBreakerRR$Deal))
 
-WindBreaker40s <- WindBreakerDealData[114:2496, ]
+WindBreaker40s <- WindBreakerDealData[114:2515, ]
 DPM12347$WindBreaker[4] <- sum((WindBreaker40s$Deal))
 
 WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)

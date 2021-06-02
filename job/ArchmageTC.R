@@ -9,7 +9,7 @@ ArchMageTCCore <- MatrixSet(PasSkills=c("ChainLightning", "LightningSpear", "Fro
                             ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
                             BlinkLv=1, 
                             BlinkMP=0, 
-                            UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
+                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
                             UsefulLvs=20, 
                             UsefulMP=0, 
                             SpecSet=SpecDefault, 
@@ -35,8 +35,8 @@ ArchMageTCBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## ArchMageTC - Passive
-{option <- factor(c("CRR"), levels=PSkill)
-value <- c(5)
+{option <- factor(c("CRR", "ATKSpeed"), levels=PSkill)
+value <- c(5, 1)
 MPIncrease <- data.frame(option, value) ## Wand Only
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -60,7 +60,7 @@ value <- c(50)
 ElementAmplification <- data.frame(option, value)
 
 option <- factor(c("Mastery"), levels=PSkill)
-value <- c(70)
+value <- c(70 + ceiling(ArchmageTCBase$SkillLv/2))
 ElquinesPassive <- data.frame(option, value)
 
 option <- factor(c("ATK", "BuffDuration"), levels=PSkill)
@@ -95,7 +95,7 @@ Meditation <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(240, NA, 990, T, NA, NA, T)
+info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MagicBooster <- rbind(data.frame(option, value), info)
@@ -170,13 +170,6 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
 
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * ArchMageTCCore[[3]][3, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)
-
 option <- factor("FDR", levels=BSkill)
 value <- c(8 + floor(ArchMageTCCore[[2]][5, 2]/10))
 info <- c(0, 1, 0, F, F, F, F)
@@ -200,9 +193,9 @@ JupiterThunderFDR <- rbind(data.frame(option, value), info)}
 
 ArchMageTCBuff <- Buff(list(MagicBooster=MagicBooster, Meditation=Meditation, ElementalReset=ElementalReset, BlizardBuff=BlizardBuff, Infinity=Infinity, MapleSoldier=MapleSoldier, 
                             FrostEffectStack=FrostEffectStack, FrostEffectStackCalc=FrostEffectStackCalc, ExtremeMagic=ExtremeMagic, 
-                            EpicAdventure=EpicAdventure, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, 
+                            EpicAdventure=EpicAdventure, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                             OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, JupiterThunderFDR=JupiterThunderFDR, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, MagicBooster(990ms)
 ArchMageTCAllTimeBuff <- AllTimeBuff(ArchMageTCBuff)
 
 
@@ -575,7 +568,7 @@ ArchMageTCDealCycle2 <- data.frame(ArchMageTCDealCycle2)
 
 TCInfinityCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DCATK(DealCycle, c("IceAuraDummy"), ATKFinal)
-  DealCycle <- DCBuff(DealCycle, c("MagicBooster", "Meditation", "ElementalReset", "MapleSoldier", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster"), BuffFinal)
+  DealCycle <- DCBuff(DealCycle, c("MagicBooster", "Meditation", "ElementalReset", "MapleSoldier", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
   DealCycle <- DCSummoned(DealCycle, "Elquines", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "ThunderStorm", SummonedFinal)
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
@@ -796,7 +789,7 @@ TCInfinityCycle2 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
 }
 TCInfinityCycle3 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DCATK(DealCycle, c("IceAuraDummy"), ATKFinal)
-  DealCycle <- DCBuff(DealCycle, c("EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster"), BuffFinal)
+  DealCycle <- DCBuff(DealCycle, c("EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
   DealCycle <- DCSummoned(DealCycle, "Elquines", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "ThunderStorm", SummonedFinal)
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
@@ -1029,16 +1022,6 @@ ArchMageTCDealCycle2 <- DealCycleFinal(ArchMageTCDealCycle2)
 
 Unsdata <- UnstableData(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCUnstable[10, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
 
-ArchMageTCBuff <- Buff(list(MagicBooster=MagicBooster, Meditation=Meditation, ElementalReset=ElementalReset, BlizardBuff=BlizardBuff, Infinity=Infinity, MapleSoldier=MapleSoldier, 
-                            FrostEffectStack=FrostEffectStack, FrostEffectStackCalc=FrostEffectStackCalc, ExtremeMagic=ExtremeMagic, 
-                            EpicAdventure=EpicAdventure, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster,
-                            OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, JupiterThunderFDR=JupiterThunderFDR, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-
-BuffFinal <- data.frame(ArchMageTCBuff)
-BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, ArchMageTCSpec$CoolReduceP, ArchMageTCSpec$CoolReduce)
-BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, ArchMageTCSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
-
 ArchMageTCDealCycle <- TCAddATKCycle(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, 8, ArchMageTCUnstable, ArchMageTCSpec)
 ArchMageTCDealCycle <- BishopInfinity(ArchMageTCDealCycle, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
 
@@ -1068,8 +1051,8 @@ ArchMageTC40s <- data.frame(ArchMageTCDealCycle$Skills, ArchMageTCDealCycle$Time
 colnames(ArchMageTC40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 subset(ArchMageTC40s, ArchMageTC40s$RR4>0)
 
-DPM12347$ArchMageTC[3] <- sum(ArchMageTC40s$Damage[732:1011])
-DPM12347$ArchMageTC[4] <- sum(ArchMageTC40s$Damage[591:1011])
+DPM12347$ArchMageTC[3] <- sum(ArchMageTC40s$Damage[730:1009])
+DPM12347$ArchMageTC[4] <- sum(ArchMageTC40s$Damage[589:1009])
 
 ArchMageTCDamage2 <- TCDealCalcGeneral(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 
@@ -1114,5 +1097,5 @@ TCTB2Hit40s <- data.frame(ArchMageTCDealCycleTB$Skills, ArchMageTCDealCycleTB$Ti
 colnames(TCTB2Hit40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 subset(TCTB2Hit40s, TCTB2Hit40s$RR4>0)
 
-TCTB2HitR4 <- sum(TCTB2Hit40s$Damage[708:975])
-TCTB2Hit40s <- sum(TCTB2Hit40s$Damage[567:975])
+TCTB2HitR4 <- sum(TCTB2Hit40s$Damage[706:973])
+TCTB2Hit40s <- sum(TCTB2Hit40s$Damage[565:973])

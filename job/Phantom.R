@@ -42,6 +42,10 @@ option <- factor(c("MainStat"), levels=PSkill)
 value <- c(60)
 LuckMonopoly <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+CaneAcceleration <- data.frame(option, value)
+
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(60)
 LuckofPhantomThief <- data.frame(option, value)
@@ -53,6 +57,10 @@ MoonLight <- data.frame(option, value)
 option <- factor(c("FDR", "CRR"), levels=PSkill)
 value <- c(30, 35)
 AcuteSense <- data.frame(option, value)
+
+option <- factor(c("BDR", "IGR"), levels=PSkill)
+value <- c(30 + PhantomBase$PSkillLv, 30 + PhantomBase$PSkillLv)
+PrayofAria <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CDMR", "FDR"), levels=PSkill)
 value <- c(70 + ceiling(PhantomBase$PSkillLv/2), 40 + PhantomBase$PSkillLv, 15, 25 + floor(PhantomBase$PSkillLv/2))
@@ -66,49 +74,28 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(PhantomCore[[2]][10, 2])
 BlinkPassive <- data.frame(option, value)}
 
-PhantomPassive <- Passive(list(HighDexterity=HighDexterity, LuckMonopoly=LuckMonopoly, LuckofPhantomThief=LuckofPhantomThief, MoonLight=MoonLight, AcuteSense=AcuteSense, 
-                               CaneExpert=CaneExpert, ReadytoDiePassive=ReadytoDiePassive, BlinkPassive=BlinkPassive))
+PhantomPassive <- Passive(list(HighDexterity=HighDexterity, LuckMonopoly=LuckMonopoly, CaneAcceleration=CaneAcceleration, LuckofPhantomThief=LuckofPhantomThief, MoonLight=MoonLight, AcuteSense=AcuteSense, 
+                               PrayofAria=PrayofAria, CaneExpert=CaneExpert, ReadytoDiePassive=ReadytoDiePassive, BlinkPassive=BlinkPassive))
 
 
 ## Phantom - Buff
 {option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180 * (100 + PhantomBase$BuffDurationNeeded + 10) / 100, NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Fury <- rbind(data.frame(option, value), info)
 
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(240, NA, 990, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-CaneBooster <- rbind(data.frame(option, value), info)
-
 option <- factor("FDR", levels=BSkill)
 value <- c(20)
-info <- c(200, NA, 720, T, NA, NA, T)
+info <- c(200 * (100 + PhantomBase$BuffDurationNeeded + 10) / 100, NA, 720, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CrossOverChain <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(240, NA, 990, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-MisfortuneProtection <- rbind(data.frame(option, value), info)
-
-option <- factor(c("BDR", "IGR"), levels=BSkill)
-value <- c(30 + PhantomBase$SkillLv, 30 + PhantomBase$SkillLv)
-info <- c(240, NA, 990, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-PrayofAria <- rbind(data.frame(option, value), info)
-
 option <- factor("FDR", levels=BSkill)
 value <- c(40 + PhantomBase$SkillLv)
-info <- c(60 * (100 + PhantomBase$BuffDurationNeeded) / 100, 90, 0, F, NA, NA, T)
+info <- c(60 * (100 + PhantomBase$BuffDurationNeeded + 10) / 100, 90, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 FinalCutBuff <- rbind(data.frame(option, value), info)
@@ -136,14 +123,14 @@ Bullseye <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(10, 8)
-info <- c(180 + 3 * PhantomCore[[3]][1, 2], NA, 900, F, NA, NA, T)
+info <- c(180 + 3 * PhantomCore[[3]][1, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulSharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("SkillLv", levels=BSkill)
 value <- c(1)
-info <- c(180 + 3 * PhantomCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
+info <- c(180 + 3 * PhantomCore[[3]][2, 2], NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
@@ -190,7 +177,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 NoirCarteStack <- rbind(data.frame(option, value), info)}
 
-PhantomBuff <- Buff(list(Fury=Fury, CaneBooster=CaneBooster, CrossOverChain=CrossOverChain, MisfortuneProtection=MisfortuneProtection, PrayofAria=PrayofAria, FinalCutBuff=FinalCutBuff, 
+PhantomBuff <- Buff(list(Fury=Fury, CrossOverChain=CrossOverChain, FinalCutBuff=FinalCutBuff, 
                          TwilightDebuff=TwilightDebuff, HeroesOath=HeroesOath, Bullseye=Bullseye, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                          JokerBuff=JokerBuff, JokerBuffFail=JokerBuffFail, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, 
                          NoirCarteStack=NoirCarteStack, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
@@ -351,14 +338,14 @@ Joker <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * PhantomCore[[2]][2, 2], 1, 760, 180, 15, T, F, F)
+info <- c(600 + 24 * PhantomCore[[2]][2, 2], 3, 760, 450, 15, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlackJack <- rbind(data.frame(option, value), info) ## FirstATK : 1200
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * PhantomCore[[2]][2, 2], 12, 0, 0, 15, T, F, F)
+info <- c(800 + 32 * PhantomCore[[2]][2, 2], 18, 0, 0, 15, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlackJackLast <- rbind(data.frame(option, value), info)
@@ -417,10 +404,10 @@ colnames(PhantomDealCycle) <- DealCycle
 
 PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
                          Period=180, CycleTime=360) {
-  BuffSummonedPrior <- c("Fury", "CaneBooster", "CrossOverChain", "MisfortuneProtection", "PrayofAria", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath", 
+  BuffSummonedPrior <- c("Fury", "CrossOverChain", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath", 
                          "FinalCutBuff", "MapleWarriors2", "Bullseye", "ReadyToDie2Stack", "SoulContractLink", "Restraint4")
   
-  Times180 <- c(0, 1, 1, 1, 1, 0, 0, 0, 
+  Times180 <- c(0, 1, 0, 0, 0, 
                 2, 1, 1, 2, 2, 1)
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -661,13 +648,13 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   DealCycle <- RepATKCycle(DealCycle, "Joker", 140, 0, ATKFinal)
   
   ## BlackJack
-  DealCycle <- RepATKCycle(DealCycle, "BlackJack", 21, 1200, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "BlackJack", 7, 1200, ATKFinal)
   
   ## BlackJack (Last)
   BJ <- 1
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="BlackJack") {
-      if(BJ==21) {
+      if(BJ==7) {
         DealCycle$Skills[i] <- "BlackJackLast"
         BJ <- 1
       } else {
@@ -717,7 +704,7 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   DealCycle$NoirCarteStack[1] <- 0
   for(i in 2:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("UltimateDrive", "TempestofCard", "Joker", "LiftBreak", "MarkofPhantom", "MarkofPhantomFinal", 
-                                  "BlackJack", "BlackJackLast", "RoseCarteFinale", "Twilight1", "FinalCut", "SpiderInMirror"))==1) {
+                                  "RoseCarteFinale", "Twilight1", "FinalCut", "SpiderInMirror"))==1) {
       DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
@@ -726,6 +713,41 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
         DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
         DealCycle$NoirCarteStack[i] <- 0
       }
+    } else if(DealCycle$Skills[i]=="BlackJack") {
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
+      if(DealCycle$NoirCarteStack[i] == 40) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
+        DealCycle$NoirCarteStack[i] <- 0
+      }
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
+      if(DealCycle$NoirCarteStack[i] == 40) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
+        DealCycle$NoirCarteStack[i] <- 0
+      }
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
+      if(DealCycle$NoirCarteStack[i] == 40) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
+        DealCycle$NoirCarteStack[i] <- 0
+      }
+    } else if(DealCycle$Skills[i]=="BlackJackLast") {
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
     } else {
       DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
     }
@@ -747,7 +769,6 @@ PhantomDealCycle <- PhantomCycle(PreDealCycle=PhantomDealCycle,
 PhantomDealCycle <- DealCycleFinal(PhantomDealCycle)
 PhantomDealCycle <- PhantomAddATK(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpec)
 PhantomDealCycleReduction1 <- DealCycleReduction(PhantomDealCycle)
-nrow(PhantomDealCycle)
 
 PhantomDealData <- data.frame(PhantomDealCycle$Skills, DealCalc(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpec))
 colnames(PhantomDealData) <- c("Skills", "Deal")
@@ -786,8 +807,8 @@ colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(PhantomDealData, PhantomDealData$R4>0)
 
-PhantomRR <- PhantomDealData[26:443, ]
+PhantomRR <- PhantomDealData[23:430, ]
 DPM12347$Phantom[3] <- sum((PhantomRR$Deal))
 
-Phantom40s <- PhantomDealData[26:872, ]
+Phantom40s <- PhantomDealData[23:828, ]
 DPM12347$Phantom[4] <- sum((Phantom40s$Deal))
