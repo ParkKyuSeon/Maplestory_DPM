@@ -77,6 +77,10 @@ SpecDefault$CoolReduceInfo <- data.frame(MainStatP=c(0, -12),
                                          CoolReduce=c(0, 2))
 
 
+## SpecSet - Default (Zero)
+SpecDefaultZero <- SpecDefault
+SpecDefaultZero$ItemSet <- ItemSum(SpecSetZero1, SetOption(SpecSetZero1, "F"), PetSetOption(SpecDefaultZero$Pets))
+
 
 # Union PreSet Structure (WITHOUT CALCULATING CHARACTER)
 # Name : Union + UnionLv

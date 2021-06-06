@@ -1536,10 +1536,17 @@ DealRatio <- function(DealCycle, DealData) {
 ## Damage Optimization Function
 PotentialList <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/potentiallist.csv"
 PotentialList <- read.csv(PotentialList)
+
+PotentialListZero <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/potentiallistzero.csv"
+PotentialListZero <- read.csv(PotentialListZero)
 PotIGR <- c(0, 30, 40, 58, 64, 74.8, 78.4, 84.88, 89.416, 92.5912)
 PotList <- list()
 for(i in 1:length(PotIGR)) {
   PotList[[i]] <- subset(PotentialList, PotentialList$IGR==PotIGR[i])
+}
+ZeroPotList <- list()
+for(i in 1:length(PotIGR)) {
+  ZeroPotList[[i]] <- subset(PotentialListZero, PotentialListZero$IGR==PotIGR[i])
 }
 
 Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, UnionBDRIGR) {

@@ -246,6 +246,13 @@ TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", F)
 TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", T)
 DealIrr(HoyeongDealTL, max(HoyeongDealData$Time)/1000)
 
+## Zero
+ZeroDealTL <- DealTimeLine(ZeroDealData$Time, ZeroDealData$Deal)
+TLGraph(ZeroDealTL, max(ZeroDealData$Time)/1000, "Zero", F)
+TLGraph(ZeroDealTL, max(ZeroDealData$Time)/1000, "Zero", T)
+DealIrr(ZeroDealTL, max(ZeroDealData$Time)/1000)
+
+
 
 
 
