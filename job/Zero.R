@@ -1282,8 +1282,9 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
   time <- EgoWeaponCool + 1
   for(i in 2:nrow(DealCycle)) {
     if(time > EgoWeaponCool & max(DealCycle$Skills[i]==c("MoonStrike", "PierceThrust", "ShadowStrike", "FlashAssaulter", "SpinCutter", 
-                                                         "RollingCurve", "RollingAssaulter", "WindCutter", "WindStrike", "StormBreak", "ShadowRainAlpha", 
-                                                         "ShadowFlashAlphaInstall", "ShadowFlashAlphaExpStart"))==1 & DealCycle$Alpha[i] > 0) {
+                                                         "RollingCurve", "RollingAssaulter", "WindCutter", "WindStrike", "StormBreak", 
+                                                         "ShadowFlashAlphaInstall", "ShadowFlashAlphaExpStart"))==1 & DealCycle$Alpha[i] > 0 | 
+       time > EgoWeaponCool & max(DealCycle$Skills[i]==c("ShadowRainAlpha", "ShadowRainBeta"))==1) {
       DC <- rbind(DC, DealCycle[i, ])
       DC[nrow(DC), 1] <- c("EgoWeaponAlpha")
       time <- DealCycle[i+1, 2] - DealCycle[i, 2]
@@ -1303,8 +1304,9 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
   time <- EgoWeaponCool + 1
   for(i in 2:nrow(DealCycle)) {
     if(time > EgoWeaponCool & max(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "FrontSlash", "ThrowingWeaponStart", "TurningDrive", "WhirlWind", 
-                                                         "GigaCrash", "JumpingCrash", "EarthBreak", "JumpingCrashShockWave", "EarthBreakShockWave", "ShadowRainBeta", 
-                                                         "ShadowFlashBetaInstall", "ShadowFlashBetaExpStart"))==1 & DealCycle$Alpha[i] > 0) {
+                                                         "GigaCrash", "JumpingCrash", "EarthBreak", "JumpingCrashShockWave", "EarthBreakShockWave", 
+                                                         "ShadowFlashBetaInstall", "ShadowFlashBetaExpStart"))==1 & DealCycle$Beta[i] > 0 | 
+       time > EgoWeaponCool & max(DealCycle$Skills[i]==c("ShadowRainAlpha", "ShadowRainBeta"))==1) {
       DC <- rbind(DC, DealCycle[i, ])
       DC[nrow(DC), 1] <- c("EgoWeaponBetaStart")
       time <- DealCycle[i+1, 2] - DealCycle[i, 2]
@@ -1336,7 +1338,6 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
       DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 2740
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
     }
   }
   
@@ -1528,7 +1529,7 @@ subset(ZeroDealData, ZeroDealData$R4>0)
 ZeroRR <- ZeroDealData[11:173, ]
 DPM12347$Zero[3] <- sum((ZeroRR$Deal))
 
-Zero40s <- ZeroDealData[11:596, ]
+Zero40s <- ZeroDealData[11:593, ]
 DPM12347$Zero[4] <- sum((Zero40s$Deal))
 
 ZeroDealRatio <- DealRatio(ZeroDealCycle, ZeroFinalDPMwithMax)
