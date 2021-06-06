@@ -182,7 +182,7 @@ ZeroSpec <- JobSpec(JobBase=ZeroBase,
                     Passive=ZeroPassive, 
                     AllTimeBuff=ZeroAllTimeBuff, 
                     MobInfo=MobDefault, 
-                    SpecSet=SpecDefault, 
+                    SpecSet=SpecDefaultZero, 
                     WeaponName="LongSword", 
                     UnionStance=0)
 
@@ -1163,7 +1163,7 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "WindCutterVortex"
       DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 90
-    } else if(DealCycle$Skills[i]=="StromBreak") {
+    } else if(DealCycle$Skills[i]=="StormBreak") {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "StormBreakVortex"
       DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 270
@@ -1247,7 +1247,6 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "JointAttack3"
       DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 2160
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
     }
   }
   
@@ -1272,30 +1271,222 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
   
   
   ## Limit Break(Last), Shadow Flash(Explosion)
-  DealCycle <- RepATKCycle(DealCycle, "LimitBreak", 6, 240, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "LimitBreakLast", 6, 240, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "ShadowFlashAlphaExp", 3, 510, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "ShadowFlashBetaExp", 2, 510, ATKFinal)
   
   
-  ## Ego Weapon
+  ## Ego Weapon (Alpha)
+  EgoWeaponCool <- subset(ATKFinal, rownames(ATKFinal)=="EgoWeaponAlpha")$CoolTime * 1000
+  DC <- DealCycle[1, ]
+  time <- EgoWeaponCool + 1
+  for(i in 2:nrow(DealCycle)) {
+    if(time > EgoWeaponCool & max(DealCycle$Skills[i]==c("MoonStrike", "PierceThrust", "ShadowStrike", "FlashAssaulter", "SpinCutter", 
+                                                         "RollingCurve", "RollingAssaulter", "WindCutter", "WindStrike", "StormBreak", "ShadowRainAlpha", 
+                                                         "ShadowFlashAlphaInstall", "ShadowFlashAlphaExpStart"))==1 & DealCycle$Alpha[i] > 0) {
+      DC <- rbind(DC, DealCycle[i, ])
+      DC[nrow(DC), 1] <- c("EgoWeaponAlpha")
+      time <- DealCycle[i+1, 2] - DealCycle[i, 2]
+    } else {
+      time <- time + DealCycle[i+1, 2] - DealCycle[i, 2]
+    }
+  }
+  DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  DealCycle <- RepATKCycle(DealCycle, "EgoWeaponAlpha", 9, 690, ATKFinal)
+  
+  
+  ## Ego Weapon(Beta)
+  DC <- DealCycle[1, ]
+  time <- EgoWeaponCool + 1
+  for(i in 2:nrow(DealCycle)) {
+    if(time > EgoWeaponCool & max(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "FrontSlash", "ThrowingWeaponStart", "TurningDrive", "WhirlWind", 
+                                                         "GigaCrash", "JumpingCrash", "EarthBreak", "JumpingCrashShockWave", "EarthBreakShockWave", "ShadowRainBeta", 
+                                                         "ShadowFlashBetaInstall", "ShadowFlashBetaExpStart"))==1 & DealCycle$Alpha[i] > 0) {
+      DC <- rbind(DC, DealCycle[i, ])
+      DC[nrow(DC), 1] <- c("EgoWeaponBetaStart")
+      time <- DealCycle[i+1, 2] - DealCycle[i, 2]
+    } else {
+      time <- time + DealCycle[i+1, 2] - DealCycle[i, 2]
+    }
+  }
+  DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="EgoWeaponBetaStart") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 1260
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 1440
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 1800
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 1980
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 2580
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "EgoWeaponBeta"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + 2740
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+    }
+  }
+  
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  EndTime <- subset(DealCycle, DealCycle$Skills=="End")$Time
+  DealCycle <- subset(DealCycle, DealCycle$Time <= EndTime)
+  
+  for(i in 2:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("EgoWeaponBeta"))==1) {
+      DealCycle[i, 3:ncol(DealCycle)] <- DealCycle[i-1, 3:ncol(DealCycle)] - (DealCycle$Time[i] - DealCycle$Time[i-1])
+      for(j in 3:ncol(DealCycle)) {
+        DealCycle[i, j] <- max(0, DealCycle[i, j])
+      }
+    }
+  }
   
   
   ## Aura Weapon
+  AW <- subset(DealCycle, DealCycle$Skills=="AuraWeaponBuff")
+  Ind <- rownames(AW)
+  Ind[length(Ind)+1] <- nrow(DealCycle)-1
+  Ind <- as.numeric(Ind)
   
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    
+    time <- DealCycle[p, 2] - DealCycle[p-1, 2]
+    while(p < Ind[i+1] & DealCycle$AuraWeaponBuff[p] > 0) {
+      if(time > 5000 & max(DealCycle$Skills[p]==c("MoonStrike", "PierceThrust", "ShadowStrike", "FlashAssaulter", "SpinCutter", "RollingCurve", "RollingAssaulter", 
+                                                  "WindCutter", "WindStrike", "StromBreak", 
+                                                  "LimitBreak", "JointAttack1", "JointAttack2", "JointAttack3", "JointAttackLast", "ShadowFlashAlphaExp"))==1 & DealCycle$Alpha[p] > 0 | 
+         time > 5000 & max(DealCycle$Skills[p]==c("UpperSlash", "PowerStump", "FrontSlash", "ThrowingWeaponStart", "TurningDrive", "WhirlWind", "GigaCrash", "JumpingCrash", "EarthBreak", 
+                                                  "LimitBreak", "JointAttack1", "JointAttack2", "JointAttack3", "JointAttackLast", "ShadowFlashBetaExp"))==1 & DealCycle$Beta[p] > 0) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("AuraWeapon")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+
   
   ## Bless of Rhinne
+  BuffStack <- 0
+  for(i in 2:nrow(DealCycle)) {
+    if(DealCycle$BlessofRhinneBuff[i] > 0 & sum(DealCycle$Skills[i]==c("MoonStrike", "PierceThrust", "ShadowStrike", "FlashAssaulter", "SpinCutter", "RollingCurve", "RollingAssaulter", 
+                                                                       "WindCutter", "WindStrike", "StormBreak"))==1 & DealCycle$Alpha[i] > 0 & BuffStack==0) {
+      BuffStack <- 1
+    } else if(DealCycle$BlessofRhinneBuff[i] > 0 & sum(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "FrontSlash", "ThrowingWeaponStart", "TurningDrive", "WhirlWind", 
+                                                                              "GigaCrash", "JumpingCrash", "EarthBreak"))==1 & DealCycle$Beta[i] > 0 & BuffStack==0) {
+      BuffStack <- 1
+    } else if(DealCycle$BlessofRhinneBuff[i] > 0 & sum(DealCycle$Skills[i]==c("MoonStrike", "PierceThrust", "ShadowStrike", "ShadowStrikeAura", 
+                                                                              "FlashAssaulter", "SpinCutter", "SpinCutterAura",
+                                                                              "RollingCurve", "RollingCurveAura", "RollingAssaulter", "RollingAssaulterAura", 
+                                                                              "WindCutter", "WindCutterVortex", "WindStrike", "StorkBreak", "StormBreakVortex", "StormBreakFloor", 
+                                                                              "PowerStump", "PowerStumpShockwave", "FrontSlash", "ThrowingWeapon", "TurningDrive", "WhirlWind", 
+                                                                              "GigaCrash", "JumpingCrash", "JumpingCrashShockwave", "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor", 
+                                                                              "ShadowRainAlpha", "ShadowRainBeta", "JointAttack1", "JoingAttack2", "JointAttack3", "JointAttackLast", 
+                                                                              "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp", "ShadowFlashBetaInstall", "ShadowFlashBetaExp", 
+                                                                              "EgoWeaponAlpha", "EgoWeaponBeta", "AuraWeapon", "SpiderInMirror"))==1 & BuffStack==1) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "BlessofRhinne"
+      BuffStack <- 0
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
   
+  ## Critical Bind
+  CriticalBindStack <- 0
+  CriticalBindCool <- 0
+  for(i in 2:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("ShadowStrikeAura", "WindCutterVortex", "StormBreakVortex", "StormBreakFloor", 
+                                  "UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "TurningDrive", "WhirlWind", "GigaCrash", "JumpingCrash", "JumpingCrashShockwave",
+                                  "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor", 
+                                  "LimitBreakLast", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp", "ShadowFlashBetaInstall", "ShadowFlashBetaExp", 
+                                  "EgoWeaponAlpha", "EgoWeaponBeta"))==1 & DealCycle$Beta[i] > 0 & CriticalBindStack < 10 & CriticalBindCool == 0) {
+      CriticalBindStack <- CriticalBindStack + 1
+    } else if(sum(DealCycle$Skills[i]==c("ShadowStrikeAura", "WindCutterVortex", "StormBreakVortex", "StormBreakFloor", 
+                                         "UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "TurningDrive", "WhirlWind", "GigaCrash", "JumpingCrash", "JumpingCrashShockwave",
+                                         "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor", 
+                                         "LimitBreakLast", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp", "ShadowFlashBetaInstall", "ShadowFlashBetaExp", 
+                                         "EgoWeaponAlpha", "EgoWeaponBeta"))==1 & DealCycle$Beta[i] > 0 & CriticalBindStack == 10 & CriticalBindCool == 0) {
+      CriticalBindStack <- 0
+      CriticalBindCool <- 39000
+      DealCycle$CriticalBindDebuff[i] <- 4000
+    } else {
+      DealCycle$CriticalBindDebuff[i] <- max(0, DealCycle$CriticalBindDebuff[i-1] - (DealCycle[i, 2] - DealCycle[i-1, 2]))
+      CriticalBindCool <- max(0, CriticalBindCool - (DealCycle[i, 2] - DealCycle[i-1, 2]))
+    }
+  }
   
   ## Spider In Mirror
+  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   
   
   ## Alpha / Beta Change, Beta Target BDR
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("MoonStrike", "PierceThrust", "ShadowStrike", "FlashAssaulter", "SpinCutter", "SpinCutterAura", 
+                                                          "RollingCurve", "RollingCurveAura", "RollingAssaulter", "RollingAssaulterAura", "WindCutter", "WindStrike", "StormBreak"))==1) {
+      DealCycle$Beta[i] <- 0
+      DealCycle$Alpha[i] <- 1
+    } else if(DealCycle$Alpha[i] > 0 & sum(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "TurningDrive", "WhirlWind", "GigaCrash", 
+                                                                  "JumpingCrash", "JumpingCrashShockwave", "EarthBreak", "EarthBreakShockwave"))==1) {
+      DealCycle$Beta[i] <- 1
+      DealCycle$Alpha[i] <- 0
+    }
+  }
   
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "ThrowingWeapon", "TurningDrive", "WhirlWind", "GigaCrash", 
+                                                          "JumpingCrash", "JumpingCrashShockwave", "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor"))==1) {
+      DealCycle$BetaTargetBDR[i] <- 5 * 8
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("ShadowRainBeta", "LimitBreak", "LimitBreakLast", "ShadowFlashAlphaExp", "ShadowFlashBetaExp", "SpiderInMirror"))==1) {
+      DealCycle$BetaTargetBDR[i] <- 14 * 8
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("JointAttack1", "JointAttack2", "JointAttack3", "JointAttackLast"))==1) {
+      DealCycle$BetaTargetBDR[i] <- 11 * 8
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("ShadowFlashAlphaInstall", "ShadowFlashBetaInstall", "ShadowStrikeAura", "WindCutterVortex", 
+                                                                 "StormBreakVortex", "StormBreakFloor"))==1) {
+      DealCycle$BetaTargetBDR[i] <- 7 * 8
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("AuraWeapon"))==1) {
+      DealCycle$BetaTargetBDR[i] <- 9 * 8
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("EgoWeaponBeta"))==1) {
+      DealCycle$BetaTargetBDR[i] <- 3 * 8
+    }
+  }
   
-  ## Critical Bind
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Beta[i] > 0) {
+      DealCycle$CriticalBindDebuff[i] <- 0
+    }
+  }
   
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="LimitBreakLast") {
+      DealCycle$LimitBreakBuff[i] <- 1
+    }
+  }
   
   ## Dummy Reduction
+  DealCycle$Tag <- 0
+  return(DealCycle)
 }
 
 
@@ -1309,13 +1500,35 @@ ZeroDealCycle <- ZeroCycle(DealCycle=ZeroDealCycle,
                            CycleTime=240, 
                            DealCycleType="WMM-WTWTA", 
                            TagCancelDelay=60)
-ZeroDealCycleTest <- ZeroAddATK(DealCycle=ZeroDealCycle, 
-                                ATKFinal, 
-                                BuffFinal, 
-                                SummonedFinal, 
-                                Spec=ZeroSpec, 
-                                DealCycleType="WMM-WTWTA")
+ZeroDealCycle <- ZeroAddATK(DealCycle=ZeroDealCycle, 
+                            ATKFinal, 
+                            BuffFinal, 
+                            SummonedFinal, 
+                            Spec=ZeroSpec, 
+                            DealCycleType="WMM-WTWTA")
+ZeroDealCycleReduction <- DealCycleReduction(ZeroDealCycle, c("BetaTargetBDR"))
 
-ZeroDealCycleTest[1:400, ]
-nrow(subset(ZeroDealCycleTest, ZeroDealCycleTest$Skills=="PowerStump"))
-nrow(subset(ZeroDealCycleTest, ZeroDealCycleTest$Skills=="PowerStumpShockwave"))
+ZeroSpecOpt1 <- ZeroOptimization1(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpec, ZeroUnionRemained)
+ZeroSpecOpt <- ZeroSpec
+ZeroSpecOpt$ATKP <- ZeroSpecOpt$ATKP + ZeroSpecOpt1$ATKP
+ZeroSpecOpt$BDR <- ZeroSpecOpt$BDR + ZeroSpecOpt1$BDR
+ZeroSpecOpt$IGR <- IGRCalc(c(ZeroSpecOpt$IGR, ZeroSpecOpt1$IGR))
+
+ZeroSpecOpt2 <- ZeroOptimization2(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, ZeroHyperStatBase, ZeroBase$ChrLv, ZeroBase$CRROver, HyperStanceLv=5)
+ZeroFinalDPM <- ZeroDealCalc(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt2)
+ZeroFinalDPMwithMax <- ZeroDealCalcWithMaxDMR(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt2)
+
+DPM12347$Zero[1] <- sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time)/ 60000)
+DPM12347$Zero[2] <- sum(na.omit(ZeroFinalDPM)) / (max(ZeroDealCycle$Time) / 60000) - sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time) / 60000)
+
+ZeroDealData <- data.frame(ZeroDealCycle$Skills, ZeroDealCycle$Time, ZeroDealCycle$Restraint4, ZeroFinalDPMwithMax)
+colnames(ZeroDealData) <- c("Skills", "Time", "R4", "Deal")
+subset(ZeroDealData, ZeroDealData$R4>0)
+
+ZeroRR <- ZeroDealData[11:173, ]
+DPM12347$Zero[3] <- sum((ZeroRR$Deal))
+
+Zero40s <- ZeroDealData[11:596, ]
+DPM12347$Zero[4] <- sum((Zero40s$Deal))
+
+ZeroDealRatio <- DealRatio(ZeroDealCycle, ZeroFinalDPMwithMax)
