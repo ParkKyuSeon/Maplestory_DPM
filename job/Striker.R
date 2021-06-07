@@ -622,10 +622,18 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
       }
       ## Lightning Spear Multistrike (Changnoeyeongyeok)
       else if(Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0) {
-        DealCycle <- DCBuff(DealCycle, "LightningSpearMultistrikeBuff", BuffFinal)
-        DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
+        DealCycle <- DCATKSkip(DealCycle, "LightningSpearMultistrike", ATKFinal, SkipStructure)
+        DealCycle$LightningStack[nrow(DealCycle)] <- min(DealCycle$LightningStack[(nrow(DealCycle)-1)] + 1, 5)
+        DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
+        Link <- 1
+        DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+        DealCycle$Skills[nrow(DealCycle)] <- "LightningSpearMultistrikeBuff"
         Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
-        for(i in 1:11) {
+        
+        DealCycle$Skills[nrow(DealCycle)-1] <- "LightningSpearMultistrikeBuff"
+        DealCycle$Skills[nrow(DealCycle)] <- "LightningSpearMultistrike"
+        Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+        for(i in 1:10) {
           DealCycle <- DCATKSkip(DealCycle, "LightningSpearMultistrike", ATKFinal, SkipStructure)
           DealCycle$LightningStack[nrow(DealCycle)] <- min(DealCycle$LightningStack[(nrow(DealCycle)-1)] + 1, 5)
           DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
@@ -895,8 +903,8 @@ colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(StrikerDealData, StrikerDealData$R4>0)
 
-StrikerRR <- StrikerDealData[34:230, ]
+StrikerRR <- StrikerDealData[34:236, ]
 DPM12347$Striker[3] <- sum((StrikerRR$Deal))
 
-Striker40s <- StrikerDealData[34:479, ]
+Striker40s <- StrikerDealData[34:485, ]
 DPM12347$Striker[4] <- sum((Striker40s$Deal))

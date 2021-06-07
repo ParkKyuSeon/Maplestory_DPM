@@ -1866,7 +1866,7 @@ ArkAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Infin
   ## Impending Death (without Magic Circuit FullDrive, Endlessly Starving Beast)
   InfSpellDeath <- ifelse(InfinitySpellLv>=25, 4, 3)
   for(i in 1:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("EndlessOminousDream", "GrievousWound", "InsatiableHunger", "UnbridledChaos", "TenaciousInstinct", 
+    if(sum(DealCycle$Skills[i]==c("EndlessOminousDream", "GrievousWound", "InsatiableHunger", "UnbridledChaos", "TenaciousInstinct", "CreepingTerror", 
                                   "EndlessAgony", "EndlessAgonyLast", "DeviousOminousDream"))>=1) {
       if(DealCycle$InfinitySpell[i] > 0) {
         for(j in 1:InfSpellDeath) {
@@ -2180,10 +2180,10 @@ ArkDealData <- data.frame(ArkDealCycle$Skills, ArkDealCycle$Time, ArkDealCycle$R
 colnames(ArkDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ArkDealData, ArkDealData$R4>0)
 
-ArkRR <- ArkDealData[58:391, ]
+ArkRR <- ArkDealData[58:395, ]
 DPM12347$Ark[3] <- sum((ArkRR$Deal))
 
-Ark40s <- ArkDealData[58:756, ]
+Ark40s <- ArkDealData[58:760, ]
 DPM12347$Ark[4] <- sum((Ark40s$Deal))
 
 ArkDealRatio <- DealRatio(ArkDealCycle, ArkFinalDPMwithMax)
@@ -2222,9 +2222,8 @@ ArkDealData2 <- data.frame(ArkDealCycle2$Skills, ArkDealCycle2$Time, ArkDealCycl
 colnames(ArkDealData2) <- c("Skills", "Time", "R4", "Deal")
 subset(ArkDealData2, ArkDealData2$R4>0)
 
-Ark60msRR <- ArkDealData2[58:391, ]
+Ark60msRR <- ArkDealData2[58:395, ]
 Ark60msRR <- sum((Ark60msRR$Deal))
 
-Ark60ms40s <- ArkDealData2[58:751, ]
+Ark60ms40s <- ArkDealData2[58:755, ]
 Ark60ms40s <- sum((Ark60ms40s$Deal))
-
