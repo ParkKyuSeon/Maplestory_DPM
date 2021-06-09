@@ -189,7 +189,7 @@ Gun <- c(150, 40, 40, 0, 0, 125, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 2, 1.5)
 Knuckle <- c(150, 40, 40, 0, 0, 128, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 2, 1.7)
 HandCannon <- c(150, 40, 40, 0, 0, 175, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 8, 2, 1.5)
 EnergySword <- c(150, 40, 40, 0, 0, 128, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 1, 1.5)
-SoulShooter <- c(150, 40, 40, 0, 0, 128, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 1, 1.5)}
+SoulShooter <- c(150, 40, 40, 0, 0, 128, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 1, 1.7)}
 Fafnir <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                 Tuner, LongSword, HeavySword, 
                 Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
@@ -230,7 +230,7 @@ Gun <- c(160, 60, 60, 0, 0, 150, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 2, 1.5)
 Knuckle <- c(160, 60, 60, 0, 0, 154, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 2, 1.7)
 HandCannon <- c(160, 60, 60, 0, 0, 210, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 8, 2, 1.5)
 EnergySword <- c(160, 60, 60, 0, 0, 154, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 1, 1.5)
-SoulShooter <- c(160, 60, 60, 0, 0, 154, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 1, 1.5)}
+SoulShooter <- c(160, 60, 60, 0, 0, 154, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 1, 1.7)}
 Absolabs <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                   Tuner, LongSword, HeavySword, 
                   Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
@@ -271,7 +271,7 @@ Gun <- c(200, 100, 100, 0, 0, 216, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 2, 1.5)
 Knuckle <- c(200, 100, 100, 0, 0, 221, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 2, 1.7)
 HandCannon <- c(200, 100, 100, 0, 0, 302, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 8, 2, 1.5)
 EnergySword <- c(200, 100, 100, 0, 0, 221, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 1, 1.5)
-SoulShooter <- c(200, 100, 100, 0, 0, 221, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 1, 1.5)}
+SoulShooter <- c(200, 100, 100, 0, 0, 221, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 1, 1.7)}
 ArcaneShade <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                      Tuner, LongSword, HeavySword, 
                      Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 

@@ -152,9 +152,10 @@ RRGraph(EunwolDealData[72:1825, ], "Eunwol(Moving Boss)", col=colorset[4], add=T
 RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[5], add=T)
 RRGraph(MechanicDealData[46:339, ], "Mechanic", col=colorset[6], add=T)
 RRGraph(ArkDealData[58:395, ], "Ark", col=colorset[8], add=T)
+RRGraph(ABDealData[517:1180, ], "AngelicBuster", col=colorset[9], add=T)
 
 legend(x=0, y=80000, legend=c("CannonShooter", "Striker", "Eunwol(Moving)", 
-                              "Eunwol(Fixed)", "Mechanic", "Ark"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
+                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 
 ## 1~5
@@ -346,6 +347,12 @@ MechanicDealTL <- DealTimeLine(MechanicDealData$Time, MechanicDealData$Deal)
 TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", F)
 TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", T)
 DealIrr(MechanicDealTL, max(MechanicDealData$Time)/1000)
+
+## AngelicBuster
+AngelicBusterDealTL <- DealTimeLine(ABDealData$Time, ABDealData$Deal)
+TLGraph(AngelicBusterDealTL, max(AngelicBusterDealData$Time)/1000, "AngelicBuster", F)
+TLGraph(AngelicBusterDealTL, max(AngelicBusterDealData$Time)/1000, "AngelicBuster", T)
+DealIrr(AngelicBusterDealTL, max(AngelicBusterDealData$Time)/1000)
 
 ## Illium
 IlliumDealTL <- DealTimeLine(IlliumDealData$Time, IlliumDealData$Deal)

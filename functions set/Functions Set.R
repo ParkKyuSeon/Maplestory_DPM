@@ -552,6 +552,7 @@ UnionPlace <- function(UnionRemained, UnionBase, UnionBuffDuration, UnionCRR, Un
   UnionBase$BuffDuration <- UnionBuffDuration
   UnionBase$CRR <- UnionCRR
   UnionBase$Stance <- UnionStance
+  UnionRemained <- UnionRemained - UnionStance
   
   if(UnionRemained > 80) {
     UnionBase$MainStat <- UnionBase$MainStat + min(10, UnionRemained - 80)
@@ -2426,6 +2427,7 @@ JobSpec <- function(JobBase,
                    UnionBase$CDMR * 2 - UnionBase$CRR - UnionBase$BuffDuration - UnionBase$MainStat / 5 - UnionBase$SubStat1 / 5 - 
                    UnionBase$SubStat2 / 5 - UnionBase$ATK - UnionBase$Stance
   JobBase$UnionBase <- UnionBase
+  print(UnionBase)
   
   HyperStatBase <- data.frame(t(c(0, 0, 0, 10, 10, 10, ifelse(CRRs$Hyper<=5, CRRs$Hyper, 5+(CRRs$Hyper-5)/2), 10, 0)))
   colnames(HyperStatBase) <- colnames(HyperStats)[2:10]
