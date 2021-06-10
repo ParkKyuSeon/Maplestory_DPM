@@ -362,7 +362,7 @@ colnames(info) <- c("option", "value")
 FinituraFettuccia <- rbind(data.frame(option, value), info) ## Delay on Buff
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AngelicBusterCore[[1]][5, 2]>=40, 20, 0), 2 * AngelicBusterCore[[1]][5, 2]) 
+value <- c(ifelse(AngelicBusterCore[[1]][3, 2]>=40, 20, 0), 2 * AngelicBusterCore[[1]][3, 2]) 
 info <- c(600, 3, 600, 840, 60, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
