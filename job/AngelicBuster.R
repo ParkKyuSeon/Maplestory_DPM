@@ -23,7 +23,7 @@ AngelicBusterBase <- JobBase(ChrInfo=ChrInfo,
                              Job="AngelicBuster",
                              CoreData=AngelicBusterCore, 
                              BuffDurationNeeded=0, 
-                             AbilList=c("PassiveLv", "DisorderBDR"), 
+                             AbilList=c("BDR", "DisorderBDR"), 
                              LinkList=c("Xenon", "Phantom", "DemonAvenger", "CygnusKnights"), 
                              MonsterLife=MLTypeD21, 
                              Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "SoulShooter", SpecDefault$WeaponType)[, 1:16],
@@ -328,21 +328,21 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 ## Hyper : Trinity - Reinforce / Split Attack, Soul Seeker - Reinforce / Make Up,  Finitura Fettuccia - CoolTime Reduce
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
-info <- c(720 + 12 * AngelicBusterSpec$PSkillLv - 70, 3, 660, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 3, 660, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity1 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
-info <- c(720 + 12 * AngelicBusterSpec$PSkillLv - 70, 4, 720, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 4, 720, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity2 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
-info <- c(720 + 12 * AngelicBusterSpec$PSkillLv - 70, 5, 480, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 5, 480, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity3 <- rbind(data.frame(option, value), info) 

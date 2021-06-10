@@ -349,10 +349,10 @@ TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", T)
 DealIrr(MechanicDealTL, max(MechanicDealData$Time)/1000)
 
 ## AngelicBuster
-AngelicBusterDealTL <- DealTimeLine(ABDealData$Time, ABDealData$Deal)
-TLGraph(AngelicBusterDealTL, max(AngelicBusterDealData$Time)/1000, "AngelicBuster", F)
-TLGraph(AngelicBusterDealTL, max(AngelicBusterDealData$Time)/1000, "AngelicBuster", T)
-DealIrr(AngelicBusterDealTL, max(AngelicBusterDealData$Time)/1000)
+AngelicBusterDealTL <- DealTimeLine(ABDealData2$Time, ABDealData2$Deal)
+TLGraph(AngelicBusterDealTL, max(ABDealData2$Time)/1000, "AngelicBuster", F)
+TLGraph(AngelicBusterDealTL, max(ABDealData2$Time)/1000, "AngelicBuster", T)
+DealIrr(AngelicBusterDealTL, max(ABDealData2$Time)/1000)
 
 ## Illium
 IlliumDealTL <- DealTimeLine(IlliumDealData$Time, IlliumDealData$Deal)
