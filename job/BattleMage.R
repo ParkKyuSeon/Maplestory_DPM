@@ -874,7 +874,7 @@ BattleMageAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
     }
     if(sum(DealCycle$Skills[i]==c("FinishBlow", "FinishBlowUA", "FinishBlowUAMOD", "DarkGenesis", "BattleKingBar1", "BattleKingBar2", 
                                   "FinishBlowDL", "FinishBlowUADL", "FinishBlowUAMODDL", "DarkGenesisDL", "BattleKingBar2DL"))==1 & 
-       DeathRemain == 0 & DeathStack == 0) {
+       DeathRemain == 0 & DeathStack == 0 & DealCycle$Time[i] - DC2$Time[nrow(DC2)] >= 1830) {
       DC2 <- rbind(DC2, DealCycle[i, ])
       DeathRemain <- DeathCool
       DeathStack <- ifelse(DealCycle$MasterofDeath[i] > 0, 2, 12)
@@ -966,8 +966,8 @@ colnames(BattleMageDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(BattleMageDealData, BattleMageDealData$R4>0)
 
-BattleMageRR <- BattleMageDealData[18:187, ]
+BattleMageRR <- BattleMageDealData[18:183, ]
 DPM12347$BattleMage[3] <- sum((BattleMageRR$Deal))
 
-BattleMage40s <- BattleMageDealData[18:445, ]
+BattleMage40s <- BattleMageDealData[18:438, ]
 DPM12347$BattleMage[4] <- sum((BattleMage40s$Deal))
