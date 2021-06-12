@@ -153,9 +153,10 @@ RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[5], a
 RRGraph(MechanicDealData[46:339, ], "Mechanic", col=colorset[6], add=T)
 RRGraph(ArkDealData[58:395, ], "Ark", col=colorset[8], add=T)
 RRGraph(ABDealData[517:1180, ], "AngelicBuster", col=colorset[9], add=T)
+RRGraph(ViperDealData[45:207, ], "Viper", col=colorset[10], add=T)
 
 legend(x=0, y=80000, legend=c("CannonShooter", "Striker", "Eunwol(Moving)", 
-                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
+                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster", "Viper"), col=colorset[c(2:6, 8, 9, 10)], lty=1, lwd=4)
 
 
 ## 1~5
@@ -251,6 +252,12 @@ CannonShooterDealTL <- DealTimeLine(CannonShooterDealData$Time, CannonShooterDea
 TLGraph(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000, "CannonShooter", F)
 TLGraph(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000, "CannonShooter", T)
 DealIrr(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000)
+
+## Viper
+ViperDealTL <- DealTimeLine(ViperDealData$Time, ViperDealData$Deal)
+TLGraph(ViperDealTL, max(ViperDealData$Time)/1000, "Viper", F)
+TLGraph(ViperDealTL, max(ViperDealData$Time)/1000, "Viper", T)
+DealIrr(ViperDealTL, max(ViperDealData$Time)/1000)
 
 ## Mikhail
 MikhailDealTL <- DealTimeLine(MikhailDealData$Time, MikhailDealData$Deal)

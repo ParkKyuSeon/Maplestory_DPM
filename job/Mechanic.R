@@ -718,16 +718,16 @@ MechanicDealCycle <- DCSpiderInMirror(MechanicDealCycle, SummonedFinal)
 MechanicDealCycle <- MechanicAddATKCycle(MechanicDealCycle, ATKFinal)
 MechanicDealCycleReduction <- DealCycleReduction(MechanicDealCycle)
 
-MechanicSpecOpt1 <- LuckyDiceOptimization1(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpec, UnionRemained, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
+MechanicSpecOpt1 <- LuckyDiceOptimization1(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpec, UnionRemained, LuckyDiceProb=c(0.745340, 0.245185, 0.009475))
 MechanicSpecOpt <- MechanicSpec
 MechanicSpecOpt$ATKP <- MechanicSpecOpt$ATKP + MechanicSpecOpt1$ATKP
 MechanicSpecOpt$BDR <- MechanicSpecOpt$BDR + MechanicSpecOpt1$BDR
 MechanicSpecOpt$IGR <- IGRCalc(c(MechanicSpecOpt$IGR, MechanicSpecOpt1$IGR))
 
 MechanicSpecOpt2 <- LuckyDiceOptimization2(MechanicDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, HyperStatBase, MechanicChrLv, MechanicCRROver, 
-                                           LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
-MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
-MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.7369, 0.2544, 0.0087))
+                                           LuckyDiceProb=c(0.745340, 0.245185, 0.009475))
+MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.745340, 0.245185, 0.009475))
+MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.745340, 0.245185, 0.009475))
 
 DPM12347$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
 DPM12347$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (max(MechanicDealCycle$Time) / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)

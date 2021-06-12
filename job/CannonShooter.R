@@ -127,21 +127,21 @@ BarrelRouletteOthers <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(20)
-info <- c(180, 1800, 1500, T, T, T, T)
+info <- c(180, 1800, 990, T, T, T, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(30)
-info <- c(180, 1800, 1500, T, T, T, T)
+info <- c(180, 1800, 990, T, T, T, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice55 <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(40)
-info <- c(180, 1800, 1500, T, T, T, T)
+info <- c(180, 1800, 990, T, T, T, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice555 <- rbind(data.frame(option, value), info)
@@ -283,6 +283,64 @@ CannonShooterUnionRemained <- CannonShooterSpec$UnionRemained
 CannonShooterHyperStatBase <- CannonShooterSpec$HyperStatBase
 CannonShooterCoolReduceType <- CannonShooterSpec$CoolReduceType
 CannonShooterSpec <- CannonShooterSpec$Spec
+
+
+## CannonShooter - Spider In Mirror
+{option <- factor(levels=ASkill)
+value <- c()
+info <- c(450 + 18 * CannonShooterCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirror <- rbind(data.frame(option, value), info) 
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirrorStart <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(175 + 7 * CannonShooterCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirror1 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(175 + 7 * CannonShooterCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirror2 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(175 + 7 * CannonShooterCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirror3 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(175 + 7 * CannonShooterCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirror4 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(175 + 7 * CannonShooterCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirror5 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
 ## CannonShooter - ATK
@@ -938,7 +996,7 @@ CannonShooter_555Others <- DealCycleReduction(CannonShooter_555Ohters)
 CannonShooter_555Lightning <- DealCycleReduction(CannonShooter_555Lightning)
 CannonShooter_555Ice <- DealCycleReduction(CannonShooter_555Ice)
 
-CannonShooterCycleProbs <- c(0.7369 * 0.5, 0.7369 * 0.25, 0.7369 * 0.25, 0.2544 * 0.5, 0.2544 * 0.25, 0.2544 * 0.25, 0.0087 * 0.5, 0.0087 * 0.25, 0.0087 * 0.25)
+CannonShooterCycleProbs <- c(0.745340 * 0.5, 0.745340 * 0.25, 0.745340 * 0.25, 0.245185 * 0.5, 0.245185 * 0.25, 0.245185 * 0.25, 0.009475 * 0.5, 0.009475 * 0.25, 0.009475 * 0.25)
 CannonShooterDealCycles <- list(CannonShooter_5Others, CannonShooter_5Lightning, CannonShooter_5Ice, 
                                 CannonShooter_55Others, CannonShooter_55Lightning, CannonShooter_55Ice, 
                                 CannonShooter_555Others, CannonShooter_555Lightning, CannonShooter_555Ice)
