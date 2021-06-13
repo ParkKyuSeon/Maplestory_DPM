@@ -17,7 +17,6 @@ ViperCore <- MatrixSet(PasSkills=c("FistEnrage", "Nautilus", "DragonStrike", "Un
 
 
 ## Viper - Basic Info
-## Link Check Needed - Zero vs Phantom
 ViperBase <- JobBase(ChrInfo=ChrInfo, 
                      MobInfo=MobDefault,
                      SpecSet=SpecDefault, 

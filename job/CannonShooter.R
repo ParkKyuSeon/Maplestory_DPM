@@ -984,15 +984,15 @@ CannonShooter_555Others <- OverDriveExhaustBuff(CannonShooter_555Others, BuffFin
 CannonShooter_555Lightning <- OverDriveExhaustBuff(CannonShooter_555Lightning, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 CannonShooter_555Ice <- OverDriveExhaustBuff(CannonShooter_555Ice, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 
-CannonShooter_5Others <- DealCycleReduction(CannonShooter_5Ohters)
+CannonShooter_5Others <- DealCycleReduction(CannonShooter_5Others)
 CannonShooter_5Lightning <- DealCycleReduction(CannonShooter_5Lightning)
 CannonShooter_5Ice <- DealCycleReduction(CannonShooter_5Ice)
 
-CannonShooter_55Others <- DealCycleReduction(CannonShooter_55Ohters)
+CannonShooter_55Others <- DealCycleReduction(CannonShooter_55Others)
 CannonShooter_55Lightning <- DealCycleReduction(CannonShooter_55Lightning)
 CannonShooter_55Ice <- DealCycleReduction(CannonShooter_55Ice)
 
-CannonShooter_555Others <- DealCycleReduction(CannonShooter_555Ohters)
+CannonShooter_555Others <- DealCycleReduction(CannonShooter_555Others)
 CannonShooter_555Lightning <- DealCycleReduction(CannonShooter_555Lightning)
 CannonShooter_555Ice <- DealCycleReduction(CannonShooter_555Ice)
 
@@ -1025,6 +1025,7 @@ CannonShooterFinalCycle <- CannonShooterAddATK(CannonShooterDealCycle,
                                                LuckyDice=5,
                                                BarrelRoulette="Others", 
                                                CocoballHits=27)
+CannonShooterFinalCycle <- OverDriveExhaustBuff(CannonShooterFinalCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 
 DPM12347$CannonMaster[1] <- sum(na.omit(CannonShooterFinalDPMwithMax)) / (max(CannonShooterFinalCycle$Time)/ 60000)
 DPM12347$CannonMaster[2] <- sum(na.omit(CannonShooterFinalDPM)) / (max(CannonShooterFinalCycle$Time) / 60000) - sum(na.omit(CannonShooterFinalDPMwithMax)) / (max(CannonShooterFinalCycle$Time) / 60000)
@@ -1166,10 +1167,10 @@ colnames(Cocoball5HitsDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(Cocoball5HitsDealData, Cocoball5HitsDealData$R4>0)
 
-Cocoball5HitsRR <- Cocoball5HitsDealData[38:208, ]
+Cocoball5HitsRR <- Cocoball5HitsDealData[39:208, ]
 Cocoball5HitsRR <- sum((Cocoball5HitsRR$Deal))
 
-Cocoball5Hits40s <- Cocoball5HitsDealData[38:392, ]
+Cocoball5Hits40s <- Cocoball5HitsDealData[39:392, ]
 Cocoball5Hits40s <- sum((Cocoball5Hits40s$Deal))
 
 
@@ -1274,8 +1275,8 @@ colnames(Cocoball40HitsDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(Cocoball40HitsDealData, Cocoball40HitsDealData$R4>0)
 
-Cocoball40HitsRR <- Cocoball40HitsDealData[38:312, ]
+Cocoball40HitsRR <- Cocoball40HitsDealData[39:312, ]
 Cocoball40HitsRR <- sum((Cocoball40HitsRR$Deal))
 
-Cocoball40Hits40s <- Cocoball40HitsDealData[38:532, ]
+Cocoball40Hits40s <- Cocoball40HitsDealData[39:532, ]
 Cocoball40Hits40s <- sum((Cocoball40Hits40s$Deal))

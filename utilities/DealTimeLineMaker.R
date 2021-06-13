@@ -82,10 +82,208 @@ RRGraph <- function(RestraintTL, JobName, VertLineTime=c(10, 13, 14), col="Skybl
     abline(h=31709, col="Gray80", lwd=3)
   }
 }
+CumulativeDealGraph <- function(RawDealTL, JobName, MaxTime=720, col="Skyblue", ylim=c(0, 800000), add=F) {
+  RawDealTL <- RawDealTL[-1 * is.na(RawDealTL$Deal), ]
+  RawDealTL$CumulativeDeal <- RawDealTL$Deal
+  for(i in 1:nrow(RawDealTL)) {
+    RawDealTL$CumulativeDeal[i] <- sum(RawDealTL$Deal[1:i])
+  }
+  
+  DealTL <- RawDealTL
+  while(max(DealTL$Time) <= MaxTime * 1000) {
+    k <- nrow(DealTL)
+    DealTL <- rbind(DealTL, RawDealTL)
+    for(i in (k + 1) : (k + nrow(RawDealTL))) {
+      DealTL$Time[i] <- DealTL$Time[k] + DealTL$Time[i]
+      DealTL$CumulativeDeal[i] <- DealTL$CumulativeDeal[k] + DealTL$CumulativeDeal[i]
+    }
+  }
+  DealTL <- DealTL[DealTL$Time <= MaxTime * 1000, ]
+  DealTL$Time <- DealTL$Time / 1000
+  DealTL$CumulativeDeal <- DealTL$CumulativeDeal / 100000000
+  
+  if(add==F) {
+    plot(DealTL$Time, DealTL$CumulativeDeal, type="l", col=col, lwd=3, ylim=ylim, xlim=c(0, MaxTime), 
+         ylab="Damage(100mil)", xlab="Time(sec)", main=paste(JobName, "Damage(Cumulative)"))
+  } else {
+    points(DealTL$Time, DealTL$CumulativeDeal, type="l", col=col, lwd=3, ylim=ylim, xlim=c(0, MaxTime))
+  }
+  
+  if(add==F) {
+    for(i in 0:(floor(MaxTime)/100)) {
+      abline(v=i*100, col="Gray80")
+    }
+    for(i in 0:8) {
+      abline(h=i*100000, col="Gray80")
+    }
+  }
+  abline(v=120, col="Gray80", lwd=2)
+  abline(v=180, col="Gray80", lwd=2)
+  abline(v=240, col="Gray80", lwd=2)
+}
 
 colorset <- c("#EF847D", "#DE8344", "#F5C242", "#7EAC55", "#6A99CF", 
               "#4E70BD", "#CB86F9", "#475468", "#A4A5A5", "#515252")
 
+## Cumulative Deal Graph(720s)
+## Warrior
+CumulativeDealGraph(HeroDealData, "Warrior(1)", col=colorset[2])
+CumulativeDealGraph(PalladinDealData, "Palladin", col=colorset[3], add=T)
+CumulativeDealGraph(DarkKnightDealData, "DarkKnight", col=colorset[4], add=T)
+CumulativeDealGraph(MikhailDealData, "Mikhail", col=colorset[5], add=T)
+CumulativeDealGraph(SoulMasterDealData, "SoulMaster", col=colorset[6], add=T)
+
+legend(x=0, y=800000, legend=c("Hero", "Palladin", "DarkKnight", "Mikhail", 
+                               "SoulMaster"), col=colorset[2:6], lty=1, lwd=3)
+
+CumulativeDealGraph(AranDealData, "Warrior(2)", col=colorset[2])
+CumulativeDealGraph(BlasterDealData, "Blaster", col=colorset[3], add=T)
+CumulativeDealGraph(DemonSlayerDealData, "DemonSlayer", col=colorset[4], add=T)
+CumulativeDealGraph(AdeleDealData, "Adele", col=colorset[5], add=T)
+CumulativeDealGraph(ZeroDealData, "Zero", col=colorset[6], add=T)
+
+legend(x=0, y=800000, legend=c("Aran", "Blaster", "DemonSlayer", "Adele", 
+                               "Zero"), col=colorset[2:6], lty=1, lwd=3)
+
+## Wizard
+CumulativeDealGraph(data.frame(Time=ArchMageFPDealCycle2$Time, Deal=ArchMageFPDamage2), "Wizard", col=colorset[2])
+CumulativeDealGraph(data.frame(Time=ArchMageTCDealCycle2$Time, Deal=ArchMageTCDamage2), "ArchMageTC", col=colorset[3], add=T)
+CumulativeDealGraph(data.frame(Time=BishopDealCycle2$Time, Deal=BishopDamage2), "Bishop", col=colorset[4], add=T)
+CumulativeDealGraph(FlameWizardDealData, "FlameWizard", col=colorset[5], add=T)
+CumulativeDealGraph(LuminousDealData, "Luminous", col=colorset[6], add=T)
+CumulativeDealGraph(BattleMageDealData, "BattleMage", col=colorset[8], add=T)
+CumulativeDealGraph(IlliumDealData, "Illium", col=colorset[9], add=T)
+
+legend(x=0, y=800000, legend=c("ArchMageFP", "ArchMageTC", "Bishop", 
+                              "FlameWizard", "Luminous", "BattleMage", "Illium"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
+
+## Archer
+CumulativeDealGraph(BowmasterDealData, "Archer", col=colorset[2])
+CumulativeDealGraph(data.frame(Time=MarksmanDealCycle$Time, Deal=MarksmanFinalDPMwithMax), "Marksman", col=colorset[3], add=T)
+CumulativeDealGraph(PathFinderDealData, "PathFinder", col=colorset[4], add=T)
+CumulativeDealGraph(WindBreakerDealData, "WindBreaker", col=colorset[5], add=T)
+CumulativeDealGraph(MercedesDealData, "Mercedes", col=colorset[6], add=T)
+CumulativeDealGraph(WildHunterDealData, "WildHunter", col=colorset[9], add=T)
+
+legend(x=0, y=800000, legend=c("Bowmaster", "Marksman", "PathFinder", 
+                               "WindBreaker", "Mercedes", "WildHunter"), col=colorset[c(2:6, 9)], lty=1, lwd=3)
+
+## Thief
+CumulativeDealGraph(NightLordDealData, "Thief", col=colorset[2])
+CumulativeDealGraph(DualBladeDealData, "DualBlader", col=colorset[3], add=T)
+CumulativeDealGraph(NightWalkerDealData, "NightWalker", col=colorset[4], add=T)
+CumulativeDealGraph(PhantomDealData, "Phantom", col=colorset[5], add=T)
+CumulativeDealGraph(HoyeongDealData, "Hoyeong", col=colorset[6], add=T)
+
+legend(x=0, y=800000, legend=c("NightLord", "DualBlader", "NightWlaker", 
+                              "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=3)
+
+## Pirates
+CumulativeDealGraph(CannonShooterDealData, "Pirates", col=colorset[2])
+CumulativeDealGraph(ViperDealData, "Viper", col=colorset[3], add=T)
+CumulativeDealGraph(StrikerDealData, "Striker", col=colorset[4], add=T)
+CumulativeDealGraph(EunwolDealDataFixed, "Eunwol(Fixed Boss)", col=colorset[5], add=T)
+CumulativeDealGraph(MechanicDealData, "Mechanic", col=colorset[6], add=T)
+CumulativeDealGraph(ArkDealData, "Ark", col=colorset[8], add=T)
+CumulativeDealGraph(ABDealData, "AngelicBuster", col=colorset[9], add=T)
+
+legend(x=0, y=800000, legend=c("CannonShooter", "Viper", "Striker", "Eunwol(Fixed)", "Mechanic", 
+                               "Ark", "AngelicBuster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
+
+
+
+
+
+
+## Cumulative Deal Graph (360s)
+## Warrior
+CumulativeDealGraph(HeroDealData, "Warrior(1)", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(PalladinDealData, "Palladin", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(DarkKnightDealData, "DarkKnight", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(MikhailDealData, "Mikhail", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(SoulMasterDealData, "SoulMaster", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("Hero", "Palladin", "DarkKnight", "Mikhail", 
+                               "SoulMaster"), col=colorset[2:6], lty=1, lwd=3)
+
+CumulativeDealGraph(AranDealData, "Warrior(2)", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(BlasterDealData, "Blaster", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(DemonSlayerDealData, "DemonSlayer", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(AdeleDealData, "Adele", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(ZeroDealData, "Zero", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("Aran", "Blaster", "DemonSlayer", "Adele", 
+                               "Zero"), col=colorset[2:6], lty=1, lwd=3)
+
+## Wizard
+CumulativeDealGraph(data.frame(Time=ArchMageFPDealCycle2$Time, Deal=ArchMageFPDamage2), "Wizard", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(data.frame(Time=ArchMageTCDealCycle2$Time, Deal=ArchMageTCDamage2), "ArchMageTC", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(data.frame(Time=BishopDealCycle2$Time, Deal=BishopDamage2), "Bishop", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(FlameWizardDealData, "FlameWizard", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(LuminousDealData, "Luminous", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(BattleMageDealData, "BattleMage", col=colorset[8], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(IlliumDealData, "Illium", col=colorset[9], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("ArchMageFP", "ArchMageTC", "Bishop", 
+                               "FlameWizard", "Luminous", "BattleMage", "Illium"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
+
+## Archer
+CumulativeDealGraph(BowmasterDealData, "Archer", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(data.frame(Time=MarksmanDealCycle$Time, Deal=MarksmanFinalDPMwithMax), "Marksman", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(PathFinderDealData, "PathFinder", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(WindBreakerDealData, "WindBreaker", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(MercedesDealData, "Mercedes", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(WildHunterDealData, "WildHunter", col=colorset[9], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("Bowmaster", "Marksman", "PathFinder", 
+                               "WindBreaker", "Mercedes", "WildHunter"), col=colorset[c(2:6, 9)], lty=1, lwd=3)
+
+## Thief
+CumulativeDealGraph(NightLordDealData, "Thief", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(DualBladeDealData, "DualBlader", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(NightWalkerDealData, "NightWalker", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(PhantomDealData, "Phantom", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(HoyeongDealData, "Hoyeong", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("NightLord", "DualBlader", "NightWlaker", 
+                               "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=3)
+
+## Pirates
+CumulativeDealGraph(CannonShooterDealData, "Pirates", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(ViperDealData, "Viper", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(StrikerDealData, "Striker", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(EunwolDealDataFixed, "Eunwol(Fixed Boss)", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(MechanicDealData, "Mechanic", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(ArkDealData, "Ark", col=colorset[8], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(ABDealData, "AngelicBuster", col=colorset[9], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("CannonShooter", "Viper", "Striker", "Eunwol(Fixed)", "Mechanic", 
+                               "Ark", "AngelicBuster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
+
+## 1~5
+CumulativeDealGraph(AdeleDealData, "", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(BlasterDealData, "Blaster", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(HoyeongDealData, "Hoyeong", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(IlliumDealData, "Illium", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(ArkDealData, "Ark", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("Adele", "Blaster", "Hoyeong", "Illium", "Ark"), col=colorset[c(2:6)], lty=1, lwd=3)
+
+## 31_35
+CumulativeDealGraph(data.frame(Time=BishopDealCycle2$Time, Deal=BishopDamage2), "", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
+CumulativeDealGraph(WindBreakerDealData, "WindBreaker", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(PalladinDealData, "Palladin", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(MercedesDealData, "Mercedes", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
+CumulativeDealGraph(BattleMageDealData, "BattleMage", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
+
+legend(x=0, y=400000, legend=c("Bishop", "WindBreaker", "Palladin", "Mercedes", "BattleMage"), col=colorset[c(2:6)], lty=1, lwd=3)
+
+
+
+
+
+
+## Cummulative RR Deal Graph
 ## Warrior
 RRGraph(HeroDealData[57:179, ], "Warrior(1)", col=colorset[2])
 RRGraph(PalladinDealData[25:208, ], "Palladin", col=colorset[3], add=T)
@@ -105,7 +303,6 @@ RRGraph(ZeroDealData[11:173, ], "Zero", col=colorset[6], add=T)
 legend(x=0, y=80000, legend=c("Aran", "Blaster", "DemonSlayer", 
                               "Adele", "Zero"), col=colorset[2:6], lty=1, lwd=4)
 
-
 ## Wizard
 RRGraph(data.frame(Time=ArchMageFP40s$Time, Deal=ArchMageFP40s$Damage)[1495:1829, ], "Wizard(1)", col=colorset[2], reverse=T)
 RRGraph(data.frame(Time=ArchMageTC40s$Time, Deal=ArchMageTC40s$Damage)[730:1009, ], "ArchMageTC", col=colorset[3], add=T, reverse=T)
@@ -114,14 +311,12 @@ RRGraph(FlameWizardDealData[89:257, ], "FlameWizard", col=colorset[5], add=T)
 
 legend(x=0, y=80000, legend=c("ArchMageFP(R)", "ArchMageTC(R)", "Bishop(R)", "FlameWizard"), col=colorset[c(2:5)], lty=1, lwd=4)
 
-
 RRGraph(LuminousDealData[622:755, ], "Wizard(2)", col=colorset[2])
 RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[3], add=T)
 RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[4], add=T)
 RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[5], add=T)
 
 legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)"), col=colorset[c(2:5)], lty=1, lwd=4)
-
 
 ## Archer
 RRGraph(BowmasterDealData[70:766, ], "Archer", col=colorset[2])
@@ -144,7 +339,6 @@ RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[6], add=T)
 legend(x=0, y=80000, legend=c("NightLord", "DualBlader", "NightWlaker", 
                               "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=4)
 
-
 ## Pirates
 RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[2])
 RRGraph(StrikerDealData[34:236, ], "Striker", col=colorset[3], add=T)
@@ -157,7 +351,6 @@ RRGraph(ViperDealData[45:207, ], "Viper", col=colorset[10], add=T)
 
 legend(x=0, y=80000, legend=c("CannonShooter", "Striker", "Eunwol(Moving)", 
                               "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster", "Viper"), col=colorset[c(2:6, 8, 9, 10)], lty=1, lwd=4)
-
 
 ## 1~5
 RRGraph(NightLordDealData[31:434, ], "", col=colorset[2])
@@ -181,6 +374,8 @@ legend(x=0, y=80000, legend=c("Striker", "WindBreaker", "Bishop(R)", "Luminous",
 
 
 
+
+## Deal Graph
 ## Hero
 HeroDealTL <- DealTimeLine(HeroDealData$Time, HeroDealData$Deal)
 TLGraph(HeroDealTL, max(HeroDealData$Time)/1000, "Hero", F)
