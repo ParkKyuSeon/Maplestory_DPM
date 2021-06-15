@@ -493,7 +493,7 @@ WildHunterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
                 2, 5, 1, 1, 0.5, 1, 1, 0.5)
   
   SubTime <- rep(120, length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
   }

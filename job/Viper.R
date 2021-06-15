@@ -605,7 +605,7 @@ ViperCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     SerpentTimeList <- seq(0, 270000, 270)[order(seq(0, 270000, 270), decreasing=T)][c(-1, -2)]
     ## Serpent Screw (Tick)
     if(DealCycle$SerpentScrewOn[nrow(DealCycle)] > 0) {
-      Serpent <- SerpentTimeList[SerpentTimeList < DealCycle$SerpentScrewOn[nrow(DealCycle)]]
+      Serpent <- SerpentTimeList[SerpentTimeList <= DealCycle$SerpentScrewOn[nrow(DealCycle)]]
       Serpent <- Serpent[Serpent > DealCycle$SerpentScrewOn[nrow(DealCycle)] - DealCycle$Time[1]]
       
       if(length(Serpent) > 0) {
@@ -1093,8 +1093,8 @@ ViperDealData <- data.frame(ViperDealCycle5$Skills, ViperDealCycle5$Time, ViperD
 colnames(ViperDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ViperDealData, ViperDealData$R4>0)
 
-ViperRR <- ViperDealData[45:207, ]
+ViperRR <- ViperDealData[45:210, ]
 DPM12347$Viper[3] <- sum((ViperRR$Deal))
 
-Viper40s <- ViperDealData[45:395, ]
+Viper40s <- ViperDealData[45:400, ]
 DPM12347$Viper[4] <- sum((Viper40s$Deal))

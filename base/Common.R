@@ -257,6 +257,15 @@ MLTypeD23 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox,
 #### Shinsoo, Leica, YetiPharaoh
 colnames(MLTypeD23) <- MonsterLifeSpecs
 
+#### DEX Type 2-4 : DEX, SummonedDuration=T, FinalATKDMR=T, CRR=F
+MLTypeD24 <- rbind(Lilinoch, Taeryun, AkairumPriest, CoupleYeti, NineTailedFox, 
+                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
+                   Oberon, GoldYeti, Puso, Phantom, Eunwol, Rang,
+                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli,  
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, Leica, YetiPharaoh
+colnames(MLTypeD24) <- MonsterLifeSpecs
+
 #### INT Type 2-1 : INT, SummonedDuration=F, FinalATKDMR=F, CRR=F
 MLTypeI21 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedFox,
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,

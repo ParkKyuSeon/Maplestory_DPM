@@ -185,7 +185,7 @@ CumulativeDealGraph(StrikerDealData, "Striker", col=colorset[4], add=T)
 CumulativeDealGraph(EunwolDealDataFixed, "Eunwol(Fixed Boss)", col=colorset[5], add=T)
 CumulativeDealGraph(MechanicDealData, "Mechanic", col=colorset[6], add=T)
 CumulativeDealGraph(ArkDealData, "Ark", col=colorset[8], add=T)
-CumulativeDealGraph(ABDealData, "AngelicBuster", col=colorset[9], add=T)
+CumulativeDealGraph(ABDealData2, "AngelicBuster", col=colorset[9], add=T)
 
 legend(x=0, y=800000, legend=c("CannonShooter", "Viper", "Striker", "Eunwol(Fixed)", "Mechanic", 
                                "Ark", "AngelicBuster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
@@ -297,11 +297,12 @@ legend(x=0, y=80000, legend=c("Hero", "Palladin", "DarkKnight", "Mikhail",
 RRGraph(AranDealData[151:664, ], "Warrior(2)", col=colorset[2])
 RRGraph(BlasterDealData[19:275, ], "Blaster", col=colorset[3], add=T)
 RRGraph(DemonSlayerDealData[56:295, ], "DemonSlayer", col=colorset[4], add=T)
-RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[5], add=T)
-RRGraph(ZeroDealData[11:173, ], "Zero", col=colorset[6], add=T)
+RRGraph(KaiserDealData[39:278, ], "Kaiser", col=colorset[5], add=T)
+RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[6], add=T)
+RRGraph(ZeroDealData[11:173, ], "Zero", col=colorset[9], add=T)
 
-legend(x=0, y=80000, legend=c("Aran", "Blaster", "DemonSlayer", 
-                              "Adele", "Zero"), col=colorset[2:6], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Aran", "Blaster", "DemonSlayer", "Kaiser",
+                              "Adele", "Zero"), col=colorset[c(2:6, 9)], lty=1, lwd=4)
 
 ## Wizard
 RRGraph(data.frame(Time=ArchMageFP40s$Time, Deal=ArchMageFP40s$Damage)[1495:1829, ], "Wizard(1)", col=colorset[2], reverse=T)
@@ -549,6 +550,12 @@ MechanicDealTL <- DealTimeLine(MechanicDealData$Time, MechanicDealData$Deal)
 TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", F)
 TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", T)
 DealIrr(MechanicDealTL, max(MechanicDealData$Time)/1000)
+
+## Kaiser
+KaiserDealTL <- DealTimeLine(KaiserDealData$Time, KaiserDealData$Deal)
+TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", F)
+TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", T)
+DealIrr(KaiserDealTL, max(KaiserDealData$Time)/1000)
 
 ## AngelicBuster
 AngelicBusterDealTL <- DealTimeLine(ABDealData2$Time, ABDealData2$Deal)

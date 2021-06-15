@@ -780,9 +780,13 @@ Cooldown <- function(CoolTime, CoolReduceAvailable, CoolReduceP, CoolReduce) {
         Cool[i] <- Cool[i] - CoolReduce
         a[i] <- ifelse(Cool[i] <= 10, min(CoolTime[i], 10) - Cool[i], 0) * 5
         Cool[i] <- max(10, Cool[i])
-      } else {a[i] <- CoolReduce * 5}
+      } else if(Cool[i]>5) {
+        a[i] <- CoolReduce * 5
+      } else {
+        a[i] <- 0
+      }
       if(Cool[i]<=10) {
-        Cool[i] <- ifelse(CoolTime[i]<=5, Cool[i] * ((100 - a[i]) / 100), max(Cool[i] * ((100 - a[i]) / 100), 5))
+        Cool[i] <- ifelse(CoolTime[i]<=5, Cool[i], max(Cool[i] * ((100 - a[i]) / 100), 5))
       }
     }
   }
