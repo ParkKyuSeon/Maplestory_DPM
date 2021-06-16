@@ -48,6 +48,10 @@ option <- factor(c("ATKP", "CRR", "FDR"), levels=PSkill)
 value <- c(30, 20, 20)
 Catalize <- data.frame(option, value)
 
+option <- factor(c("MainStat"), levels=PSkill)
+value <- c(30)
+AdvancedInnerBlaze <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(20 + 2 * ceiling(KaiserBase$SkillLv/3))
 AdvancedWillofSwordPassive <- data.frame(option, value)
@@ -68,7 +72,7 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(KaiserCore[[2]][9, 2])
 BlinkPassive <- data.frame(option, value)}
 
-KaiserPassive <- Passive(list(ReshuffleSwitch, InnerBlaze, Catalize, AdvancedWillofSwordPassive, UnpleasingCourage, AdvancedSwordMastery, 
+KaiserPassive <- Passive(list(ReshuffleSwitch, InnerBlaze, Catalize, AdvancedInnerBlaze, AdvancedWillofSwordPassive, UnpleasingCourage, AdvancedSwordMastery, 
                               BodyofStealPassive, BlinkPassive))
 
 
@@ -966,6 +970,7 @@ KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         if(DSRemain==0 | DSStack > 0) {
           DealCycle <- DCATK(DealCycle, "DracoSlasher", ATKFinal)
+          DealCycle[1, 2:ncol(DealCycle)] <- 30
           DSRemain <- max(0, DSCool - DealCycle$Time[1])
           WSRemain <- max(0, WSRemain - DealCycle$Time[1])
           WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
@@ -978,6 +983,7 @@ KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DealCycle$DealCycle
         } else {
           DealCycle <- DCATK(DealCycle, "GigaSlasher", ATKFinal)
+          DealCycle[1, 2:ncol(DealCycle)] <- 30
           DSRemain <- max(0, DSRemain - DealCycle$Time[1])
           WSRemain <- max(0, WSRemain - DealCycle$Time[1])
           WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
@@ -1017,7 +1023,7 @@ KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- DealCycle$DealCycle
       }
       ## WingBeat
-      else if(WBRemain == 0) {
+      else if(WBRemain == 0 & DealCycle$FinalFiguration[nrow(DealCycle)]==0) {
         DealCycle <- DCATK(DealCycle, "DragonSlash1", ATKFinal)
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
         WSRemain <- max(0, WSRemain - DealCycle$Time[1])
@@ -1053,9 +1059,88 @@ KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DSRemain <- DealCycle$DSRemain
         DSStack <- DealCycle$DSStack
         DealCycle <- DealCycle$DealCycle
+      } 
+      else if(WBRemain == 0 & DealCycle$FinalFiguration[nrow(DealCycle)] - DealCycle$Time[1] >= 480 + 540*2 + 480) {
+        DealCycle <- DCATK(DealCycle, "WingBeat1", ATKFinal)
+        DealCycle[1, 2:ncol(DealCycle)] <- 480
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        WSRemain <- max(0, WSRemain - DealCycle$Time[1])
+        WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
+        WBRemain <- max(0, WBRemain - DealCycle$Time[1])
+        IBRemain <- max(0, IBRemain - DealCycle$Time[1])
+        PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        DealCycle <- MorphGaugeLogic(DealCycle, DSRemain, DSStack)
+        DSRemain <- DealCycle$DSRemain
+        DSStack <- DealCycle$DSStack
+        DealCycle <- DealCycle$DealCycle
+        
+        if(DSRemain==0 | DSStack > 0) {
+          DealCycle <- DCATK(DealCycle, "DracoSlasher", ATKFinal)
+          DSRemain <- max(0, DSCool - DealCycle$Time[1])
+          WSRemain <- max(0, WSRemain - DealCycle$Time[1])
+          WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
+          WBRemain <- max(0, WBRemain - DealCycle$Time[1])
+          IBRemain <- max(0, IBRemain - DealCycle$Time[1])
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          DealCycle <- MorphGaugeLogic(DealCycle, DSRemain, DSStack)
+          DSRemain <- DealCycle$DSRemain
+          DSStack <- max(0, DealCycle$DSStack - 1)
+          DealCycle <- DealCycle$DealCycle
+        } else {
+          DealCycle <- DCATK(DealCycle, "GigaSlasher", ATKFinal)
+          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          WSRemain <- max(0, WSRemain - DealCycle$Time[1])
+          WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
+          WBRemain <- max(0, WBRemain - DealCycle$Time[1])
+          IBRemain <- max(0, IBRemain - DealCycle$Time[1])
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          DealCycle <- MorphGaugeLogic(DealCycle, DSRemain, DSStack)
+          DSRemain <- DealCycle$DSRemain
+          DSStack <- DealCycle$DSStack
+          DealCycle <- DealCycle$DealCycle
+        }
+        
+        if(DSRemain==0 | DSStack > 0) {
+          DealCycle <- DCATK(DealCycle, "DracoSlasher", ATKFinal)
+          DSRemain <- max(0, DSCool - DealCycle$Time[1])
+          WSRemain <- max(0, WSRemain - DealCycle$Time[1])
+          WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
+          WBRemain <- max(0, WBRemain - DealCycle$Time[1])
+          IBRemain <- max(0, IBRemain - DealCycle$Time[1])
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          DealCycle <- MorphGaugeLogic(DealCycle, DSRemain, DSStack)
+          DSRemain <- DealCycle$DSRemain
+          DSStack <- max(0, DealCycle$DSStack - 1)
+          DealCycle <- DealCycle$DealCycle
+        } else {
+          DealCycle <- DCATK(DealCycle, "GigaSlasher", ATKFinal)
+          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          WSRemain <- max(0, WSRemain - DealCycle$Time[1])
+          WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
+          WBRemain <- max(0, WBRemain - DealCycle$Time[1])
+          IBRemain <- max(0, IBRemain - DealCycle$Time[1])
+          PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+          DealCycle <- MorphGaugeLogic(DealCycle, DSRemain, DSStack)
+          DSRemain <- DealCycle$DSRemain
+          DSStack <- DealCycle$DSStack
+          DealCycle <- DealCycle$DealCycle
+        }
+        
+        DealCycle <- DCATK(DealCycle, "WingBeat2", ATKFinal)
+        DealCycle[1, 2:ncol(DealCycle)] <- 480
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        WSRemain <- max(0, WSRemain - DealCycle$Time[1])
+        WSSRemain <- max(0, WSSRemain - DealCycle$Time[1])
+        WBRemain <- max(0, WBCool - DealCycle$Time[1])
+        IBRemain <- max(0, IBRemain - DealCycle$Time[1])
+        PMRemain <- max(0, PMRemain - DealCycle$Time[1])
+        DealCycle <- MorphGaugeLogic(DealCycle, DSRemain, DSStack)
+        DSRemain <- DealCycle$DSRemain
+        DSStack <- DealCycle$DSStack
+        DealCycle <- DealCycle$DealCycle
       }
       ## Will of Sword
-      else if(WSRemain == 0 & WSSRemain > 6000) {
+      else if(WSRemain == 0 & WSSRemain >= 6000) {
         DealCycle <- DCATK(DealCycle, "WillofSwordSummon", ATKFinal)
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
         if(WOSStack > 0) {
@@ -1433,7 +1518,7 @@ KaiserDealCycle0 <- KaiserAddATK(DealCycle=KaiserDealCycle0,
 KaiserDealCycleReduction0 <- DealCycleReduction(KaiserDealCycle0)
 
 for(i in 1:6) {
-  rm(KADealCycle)
+   rm(KADealCycle)
   KADealCycle <- KaiserCycle(DealCycle=KaiserDealCycle, 
                              ATKFinal=ATKFinal, 
                              BuffFinal=BuffFinal, 
@@ -1465,7 +1550,7 @@ KaiserSpecOpt$IGR <- IGRCalc(c(KaiserSpecOpt$IGR, KaiserSpecOpt1$IGR))
 KaiserSpecOpt2 <- Optimization2(KaiserDealCycleReduction0, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt, KaiserHyperStatBase, KaiserBase$ChrLv, KaiserBase$CRROver)
 
 KaiserDealCycles <- list(KaiserDealCycle0, KaiserDealCycle1, KaiserDealCycle2, KaiserDealCycle3, KaiserDealCycle4, KaiserDealCycle5, KaiserDealCycle6)
-KaiserDealCycleProbs <- c(0.45, 0.55*0.45, 0.55^2*0.45, 0.55^3*0.45, 0.55^4*0.45, 0.55^5*0.45, 0.55^6)
+KaiserDealCycleProbs <- c(0.45, 0.55*0.45, 0.55^2*0.45, 0.55^3*0.45, 0.55^4*0.45, 0.55^6 + 0.55^5*0.45^2, 0.55^6*0.45)
 KaiserDealCycleTimes <- c(max(KaiserDealCycle0$Time), max(KaiserDealCycle1$Time), max(KaiserDealCycle2$Time), 
                           max(KaiserDealCycle3$Time), max(KaiserDealCycle4$Time), max(KaiserDealCycle5$Time), 
                           max(KaiserDealCycle6$Time))
@@ -1474,7 +1559,7 @@ KaiserDealCycleTime <- sum(KaiserDealCycleTimes * KaiserDealCycleProbs)
 KaiserFinalDPM <- ResetDealCalc(DealCycles=KaiserDealCycles, 
                                 ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2, KaiserDealCycleTimes, KaiserDealCycleProbs)
 KaiserFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=KaiserDealCycles, 
-                                                 ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2, KaiserDealCycleTimes, KaiserDealCycleProbs)
+                                                ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2, KaiserDealCycleTimes, KaiserDealCycleProbs)
 
 KaiserDealDatas <- list(DealCalcWithMaxDMR(KaiserDealCycle0, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
                         DealCalcWithMaxDMR(KaiserDealCycle1, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
@@ -1490,13 +1575,13 @@ KaiserDealRatio <- ResetDealRatio(DealCycles=KaiserDealCycles,
 
 DPM12347$Kaiser[1] <- sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
 DPM12347$Kaiser[2] <- sum(na.omit(KaiserFinalDPM)) / (KaiserDealCycleTime / 60000) - sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
-
 KaiserDealData <- data.frame(KaiserDealCycle0$Skills, KaiserDealCycle0$Time, KaiserDealCycle0$Restraint4, KaiserDealDatas[[1]])
+
 colnames(KaiserDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(KaiserDealData, KaiserDealData$R4>0)
 
-KaiserRR <- KaiserDealData[39:278, ]
+KaiserRR <- KaiserDealData[39:274, ]
 DPM12347$Kaiser[3] <- sum((KaiserRR$Deal))
 
-Kaiser40s <- KaiserDealData[39:616, ]
+Kaiser40s <- KaiserDealData[39:597, ]
 DPM12347$Kaiser[4] <- sum((Kaiser40s$Deal))
