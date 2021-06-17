@@ -857,7 +857,7 @@ NightWalkerDealCycle <- NightWalkerAddATK(DealCycle=NightWalkerDealCycle,
                                           ATKFinal=ATKFinal, 
                                           BuffFinal=BuffFinal, 
                                           SummonedFinal=SummonedFinal)
-NightWalkerDealCycle <- BlessofCygnusCycle(NightWalkerDealCycle, 6000, General$General$Serverlag, NightWalkerCore[[2]][8, 2])
+NightWalkerDealCycle <- BlessofCygnusCycle(NightWalkerDealCycle, 4000, General$General$Serverlag, NightWalkerCore[[2]][8, 2])
 NightWalkerDealCycleReduction <- DealCycleReduction(NightWalkerDealCycle, c("BlessofCygnusBDR"))
 
 
@@ -912,7 +912,7 @@ NightWalkerDealCycle75 <- NightWalkerAddATK(DealCycle=NightWalkerDealCycle75,
                                             ATKFinal=ATKFinal, 
                                             BuffFinal=BuffFinal, 
                                             SummonedFinal=SummonedFinal)
-NightWalkerDealCycle75 <- BlessofCygnusCycle(NightWalkerDealCycle75, 6000, General$General$Serverlag, NightWalkerCore[[2]][8, 2])
+NightWalkerDealCycle75 <- BlessofCygnusCycle(NightWalkerDealCycle75, 4000, General$General$Serverlag, NightWalkerCore[[2]][8, 2])
 NightWalkerDealCycle75Reduction <- DealCycleReduction(NightWalkerDealCycle75, c("BlessofCygnusBDR"))
 
 NightWalkerFinalDPM75 <- WindBreakerDealCalc(NightWalkerDealCycle75, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
@@ -949,7 +949,7 @@ NightWalkerDealCycle0 <- NightWalkerAddATK(DealCycle=NightWalkerDealCycle0,
                                            ATKFinal=ATKFinal, 
                                            BuffFinal=BuffFinal, 
                                            SummonedFinal=SummonedFinal)
-NightWalkerDealCycle0 <- BlessofCygnusCycle(NightWalkerDealCycle0, 6000, General$General$Serverlag, NightWalkerCore[[2]][8, 2])
+NightWalkerDealCycle0 <- BlessofCygnusCycle(NightWalkerDealCycle0, 4000, General$General$Serverlag, NightWalkerCore[[2]][8, 2])
 NightWalkerDealCycle0Reduction <- DealCycleReduction(NightWalkerDealCycle0, c("BlessofCygnusBDR"))
 
 NightWalkerFinalDPM0 <- WindBreakerDealCalc(NightWalkerDealCycle0, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)

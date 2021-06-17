@@ -1028,7 +1028,7 @@ FlameWizardDealCycle <- FlameWizardAddATK(DealCycle=FlameWizardDealCycle,
                                           ATKFinal=ATKFinal,
                                           SummonedFinal=SummonedFinal, 
                                           FlameWizardCore=FlameWizardCore)
-FlameWizardDealCycle <- BlessofCygnusCycle(FlameWizardDealCycle, 6000, General$General$Serverlag, FlameWizardCore[[2]][8, 2])
+FlameWizardDealCycle <- BlessofCygnusCycle(FlameWizardDealCycle, 4000, General$General$Serverlag, FlameWizardCore[[2]][8, 2])
 FlameWizardDealCycleReduction <- DealCycleReduction(FlameWizardDealCycle, c("BlessofCygnusBDR", "SalamanderMischiefStack"))
 
 
@@ -1083,7 +1083,7 @@ FlameWizardDealCycle2 <- FlameWizardAddATK(DealCycle=FlameWizardDealCycle2,
                                           ATKFinal=ATKFinal270,
                                           SummonedFinal=SummonedFinal, 
                                           FlameWizardCore=FlameWizardCore)
-FlameWizardDealCycle2 <- BlessofCygnusCycle(FlameWizardDealCycle2, 6000, General$General$Serverlag, FlameWizardCore[[2]][8, 2])
+FlameWizardDealCycle2 <- BlessofCygnusCycle(FlameWizardDealCycle2, 4000, General$General$Serverlag, FlameWizardCore[[2]][8, 2])
 FlameWizardDealCycleReduction2 <- DealCycleReduction(FlameWizardDealCycle2, c("BlessofCygnusBDR", "SalamanderMischiefStack"))
 
 FlameWizardFinalDPM1350 <- FlameWizardDealCalc(FlameWizardDealCycle2, ATKFinal270, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)

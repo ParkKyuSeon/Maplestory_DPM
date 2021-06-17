@@ -679,7 +679,7 @@ MikhailDealCycle <- DCSummonedATKs(MikhailDealCycle, Skill=c("ShiningCrossInstal
 MikhailDealCycle <- AWCSCycleMikhail(MikhailDealCycle)
 MikhailDealCycle <- AddATKCycleMikhail(MikhailDealCycle)
 MikhailDealCycle <- DCSpiderInMirror(MikhailDealCycle, SummonedFinal)
-MikhailDealCycle <- BlessofCygnusCycle(MikhailDealCycle, 6000, ServerLag, MikhailCore[[2]][8, 2])
+MikhailDealCycle <- BlessofCygnusCycle(MikhailDealCycle, 4000, ServerLag, MikhailCore[[2]][8, 2])
 MikhailDealCycleReduction <- DealCycleReduction(MikhailDealCycle, "BlessofCygnusBDR")
 
 

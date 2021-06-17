@@ -401,6 +401,7 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 DealCycle <- c("Skills", "Time", rownames(PhantomBuff))
 PhantomDealCycle <- t(rep(0, length(DealCycle)))
 colnames(PhantomDealCycle) <- DealCycle
+PhantomDealCycle <- data.frame(PhantomDealCycle)
 
 PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
                          Period=180, CycleTime=360) {
@@ -498,6 +499,7 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
   TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   BJCool <- subset(ATKFinal, rownames(ATKFinal)=="MarkofPhantom")$CoolTime * 1000 / 2
+  MPCool <- subset(ATKFinal, rownames(ATKFinal)=="MarkofPhantom")$CoolTime * 1000
   RCCool <- subset(ATKFinal, rownames(ATKFinal)=="RoseCarteFinale")$CoolTime * 1000
   BJRemain <- 0 ; RCRemain <- 0 ; MOPDummy <- 0 ; TOCDummy <- 0
   
@@ -530,7 +532,8 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         }
       }
       ## BlackJack, Mark of Phantom, Lift Break
-      if(BJRemain == 0 & MOPDummy == 0) {
+      if(BJRemain == 0 & MOPDummy == 0 & k==length(BuffList) & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + MPCool <= BuffStartTime + 8000 | 
+         BJRemain == 0 & MOPDummy == 0 & k!=length(BuffList)) {
         DealCycle <- DCATK(DealCycle, "BlackJack", ATKFinal)
         BJRemain <- BJCool - DealCycle$Time[1]
         RCRemain <- max(0, RCRemain - DealCycle$Time[1])
@@ -552,7 +555,7 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- DCATK(DealCycle, "LiftBreak", ATKFinal)
         BJRemain <- max(0, BJRemain - DealCycle$Time[1])
         RCRemain <- max(0, RCRemain - DealCycle$Time[1])
-        if(DealCycle$Restraint4[nrow(DealCycle)] >= 10000) {
+        if(DealCycle$Restraint4[nrow(DealCycle)] >= 7000) {
           DealCycle <- DCATK(DealCycle, "Joker", ATKFinal)
           BJRemain <- max(0, BJRemain - DealCycle$Time[1])
           RCRemain <- max(0, RCRemain - DealCycle$Time[1])
@@ -560,7 +563,7 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           BJRemain <- max(0, BJRemain - DealCycle$Time[1])
           RCRemain <- max(0, RCRemain - DealCycle$Time[1])
           TOCDummy <- 0
-        } else if(TOCDummy == 0) {
+        } else if(TOCDummy == 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= BuffStartTime - 10000) {
           DealCycle <- DCATK(DealCycle, "TempestofCard", ATKFinal)
           BJRemain <- max(0, BJRemain - DealCycle$Time[1])
           RCRemain <- max(0, RCRemain - DealCycle$Time[1])
@@ -569,7 +572,8 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           TOCDummy <- 0
         }
         MOPDummy <- 1
-      } else if(BJRemain == 0 & MOPDummy == 1) {
+      } else if(BJRemain == 0 & MOPDummy == 1 & k==length(BuffList) & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + BJCool <= BuffStartTime + 8000 | 
+                BJRemain == 0 & MOPDummy == 1 & k!=length(BuffList)) {
         DealCycle <- DCATK(DealCycle, "BlackJack", ATKFinal)
         BJRemain <- BJCool - DealCycle$Time[1]
         RCRemain <- max(0, RCRemain - DealCycle$Time[1])
@@ -582,7 +586,7 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- DCATK(DealCycle, "Twilight2", ATKFinal)
         BJRemain <- max(0, BJRemain - DealCycle$Time[1])
         RCRemain <- max(0, RCRemain - DealCycle$Time[1])
-        if(DealCycle$Restraint4[nrow(DealCycle)] >= 10000) {
+        if(DealCycle$Restraint4[nrow(DealCycle)] >= 7000) {
           DealCycle <- DCATK(DealCycle, "Joker", ATKFinal)
           BJRemain <- max(0, BJRemain - DealCycle$Time[1])
           RCRemain <- max(0, RCRemain - DealCycle$Time[1])
@@ -590,7 +594,7 @@ PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           BJRemain <- max(0, BJRemain - DealCycle$Time[1])
           RCRemain <- max(0, RCRemain - DealCycle$Time[1])
           TOCDummy <- 0
-        } else if(TOCDummy == 0) {
+        } else if(TOCDummy == 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= BuffStartTime - 10000) {
           DealCycle <- DCATK(DealCycle, "TempestofCard", ATKFinal)
           BJRemain <- max(0, BJRemain - DealCycle$Time[1])
           RCRemain <- max(0, RCRemain - DealCycle$Time[1])
@@ -714,40 +718,31 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
         DealCycle$NoirCarteStack[i] <- 0
       }
     } else if(DealCycle$Skills[i]=="BlackJack") {
-      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 3
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
-      if(DealCycle$NoirCarteStack[i] == 40) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
-        DealCycle$NoirCarteStack[i] <- 0
-      }
-      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
-      if(DealCycle$NoirCarteStack[i] == 40) {
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
-        DealCycle$NoirCarteStack[i] <- 0
-      }
-      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 1
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
-      if(DealCycle$NoirCarteStack[i] == 40) {
+      if(DealCycle$NoirCarteStack[i] >= 40) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
-        DealCycle$NoirCarteStack[i] <- 0
+        DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i] - 40
       }
     } else if(DealCycle$Skills[i]=="BlackJackLast") {
-      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
+      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1] + 3
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
-      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
-      DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NoirCarte"
+      if(DealCycle$NoirCarteStack[i] >= 40) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- "NoirCarteJudgement"
+        DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i] - 40
+      }
     } else {
       DealCycle$NoirCarteStack[i] <- DealCycle$NoirCarteStack[i-1]
     }
@@ -807,8 +802,8 @@ colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(PhantomDealData, PhantomDealData$R4>0)
 
-PhantomRR <- PhantomDealData[23:430, ]
+PhantomRR <- PhantomDealData[23:429, ]
 DPM12347$Phantom[3] <- sum((PhantomRR$Deal))
 
-Phantom40s <- PhantomDealData[23:828, ]
+Phantom40s <- PhantomDealData[23:827, ]
 DPM12347$Phantom[4] <- sum((Phantom40s$Deal))
