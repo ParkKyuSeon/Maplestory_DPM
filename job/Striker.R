@@ -867,7 +867,7 @@ StrikerDealCycle <- StrikerAddATK(DealCycle=StrikerDealCycle,
                                   ATKFinal=ATKFinal, 
                                   SummonedFinal=SummonedFinal)
 StrikerDealCycle <- OverDriveExhaustBuff(StrikerDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-StrikerDealCycle <- BlessofCygnusCycle(StrikerDealCycle, 6000, General$General$Serverlag, StrikerCore[[2]][8, 2])
+StrikerDealCycle <- BlessofCygnusCycle(StrikerDealCycle, 4000, General$General$Serverlag, StrikerCore[[2]][8, 2])
 StrikerDealCycleReduction <- DealCycleReduction(StrikerDealCycle, c("BlessofCygnusBDR", "LightningStack"))
 
 
