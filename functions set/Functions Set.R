@@ -246,7 +246,7 @@ AddPotential <- function(ReqLv, ChrLv, grade=c("RL", "R", "E", "U", "L"),
     MpL <- MpL + floor(ifelse(option[i]==as.character("MpL"), ifelse(grade[i]==as.character("R"), p[8, 2], 
                                                                      ifelse(grade[i]==as.character("E"), p[8, 3], ifelse(grade[i]==as.character("U"), p[8, 4], 
                                                                                                                          ifelse(grade[i]==as.character("L"), p[8, 5], ifelse(grade[i]==as.character("RL"), p[8, 1], NA))))), 0) *
-                         ChrLv/10)
+                         floor(ChrLv/10))
   }
   Result <- as.data.frame(t(c(MP, AP, M + MpL, ATK, HPP, C, CDR)))
   colnames(Result) <- c("MainStatP", "AllStatP", "MainStat", "ATK", "MaxHPP", "CoolReduce", "CDR")

@@ -2238,7 +2238,9 @@ AWCSCycleMikhail <- function(DealCycle) {
       }
       p <- p + 1
     }
-    DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+    if(nrow(DC) >= 2) {
+      DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+    }
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)

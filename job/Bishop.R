@@ -847,12 +847,12 @@ BishopDealCycle <- PeaceMakerCycle(BishopDealCycle, 3, ATKFinal, 8 + General$Gen
 BishopDealCycle <- DCSpiderInMirror(BishopDealCycle, SummonedFinal)
 BishopDealCycle <- LibraCycle(BishopDealCycle)
 BishopDealCycle <- BishopUnstableCycle(BishopDealCycle, ATKFinal)
-BishopDealCycle <- BishopInfinity(BishopDealCycle, 6000, 70 + BishopSpec$SkillLv, ServerLag)
+BishopDealCycle <- BishopInfinity(BishopDealCycle, 6000, 70 + BishopSpec$SkillLv, General$General$Serverlag)
 
 BishopDealCycle2 <- PeaceMakerCycle(BishopDealCycle2, 3, ATKFinal, 8 + General$General$Serverlag)
 BishopDealCycle2 <- LibraCycle(BishopDealCycle2)
 BishopDealCycle2 <- BishopUnstableCycle(BishopDealCycle2, ATKFinal)
-BishopDealCycle2 <- BishopInfinity(BishopDealCycle2, 6000, 70 + BishopSpec$SkillLv, ServerLag)
+BishopDealCycle2 <- BishopInfinity(BishopDealCycle2, 6000, 70 + BishopSpec$SkillLv, General$General$Serverlag)
 
 
 ## Bishop Deal Calc

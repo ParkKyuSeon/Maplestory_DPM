@@ -401,7 +401,7 @@ WildVulcanTypeXPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(20)
-info <- c(475 + 19 * WildHunterCore[[2]][4, 2], 5, 6660, 100, 120, T, F, F)
+info <- c(525 + 21 * WildHunterCore[[2]][4, 2], 5, 6660, 100, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WildVulcanTypeXLoop <- rbind(data.frame(option, value), info)

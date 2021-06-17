@@ -1032,7 +1032,7 @@ ArchMageFPDealCycle <- FPUnstableCycle(ArchMageFPDealCycle, ATKFinal)
 ArchMageFPDealCycle <- FPAddATKCycle(ArchMageFPDealCycle, ATKFinal)
 ArchMageFPDealCycle <- DCSpiderInMirror(ArchMageFPDealCycle, SummonedFinal)
 ArchMageFPDealCycle <- RepATKCycle(ArchMageFPDealCycle, "FireAura", 100, 0, ATKFinal)
-ArchMageFPDealCycle <- BishopInfinity(ArchMageFPDealCycle, 6000, 70 + ArchMageFPSpec$SkillLv, ServerLag)
+ArchMageFPDealCycle <- BishopInfinity(ArchMageFPDealCycle, 6000, 70 + ArchMageFPSpec$SkillLv, General$General$Serverlag)
 
 ArchMageFPDealCycle2 <- DCSummonedATKs(ArchMageFPDealCycle2, "Ifrit", SummonedFinal)
 ArchMageFPDealCycle2 <- FuryofIfritCycle(ArchMageFPDealCycle2, ATKFinal)
@@ -1040,7 +1040,7 @@ ArchMageFPDealCycle2 <- PoisonChainCycle(ArchMageFPDealCycle2, ATKFinal)
 ArchMageFPDealCycle2 <- FPUnstableCycle(ArchMageFPDealCycle2, ATKFinal)
 ArchMageFPDealCycle2 <- FPAddATKCycle(ArchMageFPDealCycle2, ATKFinal)
 ArchMageFPDealCycle2 <- RepATKCycle(ArchMageFPDealCycle2, "FireAura", 70, 0, ATKFinal)
-ArchMageFPDealCycle2 <- BishopInfinity(ArchMageFPDealCycle2, 6000, 70 + ArchMageFPSpec$SkillLv, ServerLag)
+ArchMageFPDealCycle2 <- BishopInfinity(ArchMageFPDealCycle2, 6000, 70 + ArchMageFPSpec$SkillLv, General$General$Serverlag)
 
 
 ## ArchMageFP Deal Calc

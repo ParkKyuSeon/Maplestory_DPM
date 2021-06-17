@@ -1,9 +1,9 @@
 ## PathFinder - Data
 ## PathFinder - VMatrix
 PathFinderCore <- MatrixSet(PasSkills=c("CardinalDischarge", "CardinalBlast", "CradinalTransition", "TripleImpact", "EdgeofResonance", 
-                                        "ComboAssault", "Raven"), 
-                            PasLvs=c(50, 50, 50, 50, 50, 50, 50), 
-                            PasMP=c(10, 10, 5, 10, 10, 10, 5), 
+                                        "ComboAssault", "Raven", "SplitMistel"), 
+                            PasLvs=c(50, 50, 50, 50, 50, 50, 50, 25), 
+                            PasMP=c(10, 10, 10, 10, 10, 5, 5, 0), 
                             ActSkills=c("UltimateBlast", "RavenTempest", "ObisdianBarrier", "RelicUnbound", 
                                         CommonV("Bowman", "Adventure")), 
                             ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
@@ -597,7 +597,7 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     ## Relic Unbound
     else if(DealCycle$Skills[nrow(DealCycle)]=="RelicUnboundDischarge") {
       DealCycle$GuidanceGauge[nrow(DealCycle)] <- DealCycle$GuidanceGauge[nrow(DealCycle)-1]
-      DealCycle$RelicGauge[nrow(DealCycle)] <- max(0, DealCycle$RelicGauge[nrow(DealCycle)-1] - 350)
+      DealCycle$RelicGauge[nrow(DealCycle)] <- max(0, DealCycle$RelicGauge[nrow(DealCycle)-1] - 250)
     }
     ## Raven Tempest
     else if(DealCycle$Skills[nrow(DealCycle)]=="RavenTempest") {
@@ -738,7 +738,7 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]  
   TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   EvolveCount <- 0
-  CACool <- subset(ATKFinal, rownames(ATKFinal)=="ComboAssaultBlast1")$CoolTime * 1000
+  # CACool <- subset(ATKFinal, rownames(ATKFinal)=="ComboAssaultBlast1")$CoolTime * 1000
   ERCool <- subset(ATKFinal, rownames(ATKFinal)=="EdgeofResonance")$CoolTime * 1000
   CAStack <- 3
   
@@ -771,7 +771,7 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
           DealCycle <- RelicShape(DealCycle, Shape)
         }
       }
-      LastComboAssault <- ifelse(nrow(subset(DealCycle, DealCycle$Skills=="ComboAssaultBlast1"))==0, 0, max(subset(DealCycle, DealCycle$Skills=="ComboAssaultBlast1")$Time))
+      # LastComboAssault <- ifelse(nrow(subset(DealCycle, DealCycle$Skills=="ComboAssaultBlast1"))==0, 0, max(subset(DealCycle, DealCycle$Skills=="ComboAssaultBlast1")$Time))
       LastTripleImpact <- ifelse(nrow(subset(DealCycle, DealCycle$Skills=="TripleImpact"))==0, 0, max(subset(DealCycle, DealCycle$Skills=="TripleImpact")$Time))
       NotUseGauge <- ifelse(k==length(BuffList) & DealCycle$Time[nrow(DealCycle)] + 4000 >= BuffStartTime, 1, 0)
       ## Evolve
@@ -793,20 +793,11 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         DealCycle <- RelicGauge(DealCycle, BuffFinal)
         DealCycle <- RelicShape(DealCycle, Shape)
         
-        DealCycle <- BDATK(DealCycle, "CardinalBlast", ATKFinal, SkipStructure)
-        DealCycle <- RelicGauge(DealCycle, BuffFinal)
-        DealCycle <- RelicShape(DealCycle, Shape)
-        Shape <- "Blast"
-        
-        DealCycle <- DCATKSkip(DealCycle, "ComboAssaultBlast1", ATKFinal, SkipStructure)
+        DealCycle <- DCATKSkip(DealCycle, "CardinalTransition", ATKFinal, SkipStructure)
         DealCycle <- RelicGauge(DealCycle, BuffFinal)
         DealCycle <- RelicShape(DealCycle, Shape)
         DealCycle$CurseTransitionDebuff[nrow(DealCycle)] <- 15000
-        
-        DealCycle <- DCATKSkip(DealCycle, "ComboAssaultBlast2", ATKFinal, SkipStructure)
-        DealCycle <- RelicGauge(DealCycle, BuffFinal)
-        DealCycle <- RelicShape(DealCycle, Shape)
-        Shape <- "None"
+        Shape <- "Transition"
         
         CAStack <- 1
       }
@@ -899,7 +890,7 @@ PathFinderAddATK <- function(DealCycle, ATKFinal, SummonedFinal, BarrierDuration
   
   ## Relic Unbound, Ultimate Blast, Obsidian Barrier
   DealCycle <- RepATKCycle(DealCycle, "RelicUnboundDischarge", 61, 360, ATKFinal)
-  DealCycle <- RepATKCycle(DealCycle, "UltimateBlast", 5, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "UltimateBlast", 6, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "ObsidianBarrier", ceiling((BarrierDuration * 1000 - 510)/510), 510, ATKFinal)
   
   ## Guided Arrow, Evolve
@@ -976,10 +967,10 @@ colnames(PathFinderDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(PathFinderDealData, PathFinderDealData$R4>0)
 
-PathFinderRR <- PathFinderDealData[58:444, ]
+PathFinderRR <- PathFinderDealData[58:462, ]
 DPM12347$PathFinder[3] <- sum((PathFinderRR$Deal))
 
-PathFinder40s <- PathFinderDealData[26:911, ]
+PathFinder40s <- PathFinderDealData[26:951, ]
 DPM12347$PathFinder[4] <- sum((PathFinder40s$Deal))
 
 
@@ -1013,8 +1004,8 @@ colnames(PathFinderDealData60ms) <- c("Skills", "Time", "R4", "Deal")
 
 subset(PathFinderDealData60ms, PathFinderDealData60ms$R4>0)
 
-PathFinder60msRR <- PathFinderDealData60ms[58:439, ]
+PathFinder60msRR <- PathFinderDealData60ms[58:457, ]
 PathFinder60msRR <- sum((PathFinder60msRR$Deal))
 
-PathFinder60ms40s <- PathFinderDealData60ms[26:902, ]
+PathFinder60ms40s <- PathFinderDealData60ms[26:942, ]
 PathFinder60ms40s <- sum((PathFinder60ms40s$Deal))

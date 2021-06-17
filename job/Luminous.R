@@ -335,7 +335,7 @@ LiberationOrbLight <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(425 + 17 * LuminousCore[[2]][4, 2] + 7 * (25 + LuminousCore[[2]][4, 2]), 10, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * LuminousCore[[2]][4, 2] + 7 * (25 + LuminousCore[[2]][4, 2]), 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LiberationOrbBalance <- rbind(data.frame(option, value), info)}

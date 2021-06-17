@@ -83,14 +83,7 @@ StrikerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExper
 
 
 ## Striker - Buff
-{option <- factor(levels=BSkill)
-value <- c()
-info <- c(180, NA, 600, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-ElementLightning <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
+{option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
 info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -210,7 +203,7 @@ colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
 
-StrikerBuff <- Buff(list(ElementLightning=ElementLightning, KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, ArcCharger=ArcCharger, WindBooster=WindBooster, TyphoonBuff=TyphoonBuff, 
+StrikerBuff <- Buff(list(KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, ArcCharger=ArcCharger, WindBooster=WindBooster, TyphoonBuff=TyphoonBuff, 
                          GloryofGardians=GloryofGardians, PrimalBolt=PrimalBolt, LightningStack=LightningStack, LinkMastery=LinkMastery, 
                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, LightningCascadeBuff=LightningCascadeBuff, 
                          LightningSpearMultistrikeBuff=LightningSpearMultistrikeBuff, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, LuckyDice5=LuckyDice5, 
@@ -352,28 +345,28 @@ LightningGodSpearStrikeShock <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(375 + 15 * StrikerCore[[2]][4, 2], 5, 660, NA, NA, NA, NA, F)
+info <- c(500 + 20 * StrikerCore[[2]][4, 2], 5, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrike <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(600 + 24 * StrikerCore[[2]][4, 2], 7, 660, NA, NA, NA, NA, F)
+info <- c(700 + 28 * StrikerCore[[2]][4, 2], 7, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLast <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(500 + 20 * StrikerCore[[2]][4, 2], 4, 0, NA, NA, NA, NA, F)
+info <- c(550 + 22 * StrikerCore[[2]][4, 2], 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLightning <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(725 + 29 * StrikerCore[[2]][4, 2], 6, 0, 180, NA, NA, NA, F)
+info <- c(750 + 30 * StrikerCore[[2]][4, 2], 6, 0, 180, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLastLightning <- rbind(data.frame(option, value), info)}
@@ -435,9 +428,9 @@ StrikerDealCycle <- data.frame(StrikerDealCycle)
 
 StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, 
                           Period=c(120), CycleTime=c(240)) {
-  BuffSummonedPrior <- c("ElementLightning", "KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5",
+  BuffSummonedPrior <- c("KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5",
                          "GloryofGardians", "CygnusPhalanx", "BlessofCygnus", "LightningCascadeBuff", "PrimalBolt", "OverDrive", "SoulContractLink", "Restraint4")
-  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 0, 0, 0, 0, 4, 0.5, 1, 1, 2, 1, 0.5)
+  Times120 <- c(0.5, 0, 0.5, 0.5, 0, 0, 0, 0, 4, 0.5, 1, 1, 2, 1, 0.5)
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -621,7 +614,8 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
         }
       }
       ## Lightning Spear Multistrike (Changnoeyeongyeok)
-      else if(Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0) {
+      else if(Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0 & k!=2 | 
+              Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0 & k==2 & DealCycle$Restraint4[nrow(DealCycle)] < 5000) {
         DealCycle <- DCATKSkip(DealCycle, "LightningSpearMultistrike", ATKFinal, SkipStructure)
         DealCycle$LightningStack[nrow(DealCycle)] <- min(DealCycle$LightningStack[(nrow(DealCycle)-1)] + 1, 5)
         DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
@@ -872,7 +866,7 @@ StrikerDealCycle <- StrikerCycle(PreDealCycle=StrikerDealCycle,
 StrikerDealCycle <- StrikerAddATK(DealCycle=StrikerDealCycle, 
                                   ATKFinal=ATKFinal, 
                                   SummonedFinal=SummonedFinal)
-StrikerDealCycle <- OverDriveExhaustBuff(StrikerDealCycle, BuffFinal$Duration[15], BuffFinal$CoolTime[15])
+StrikerDealCycle <- OverDriveExhaustBuff(StrikerDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 StrikerDealCycle <- BlessofCygnusCycle(StrikerDealCycle, 6000, General$General$Serverlag, StrikerCore[[2]][8, 2])
 StrikerDealCycleReduction <- DealCycleReduction(StrikerDealCycle, c("BlessofCygnusBDR", "LightningStack"))
 
@@ -903,8 +897,8 @@ colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(StrikerDealData, StrikerDealData$R4>0)
 
-StrikerRR <- StrikerDealData[34:236, ]
+StrikerRR <- StrikerDealData[33:235, ]
 DPM12347$Striker[3] <- sum((StrikerRR$Deal))
 
-Striker40s <- StrikerDealData[34:485, ]
+Striker40s <- StrikerDealData[33:482, ]
 DPM12347$Striker[4] <- sum((Striker40s$Deal))

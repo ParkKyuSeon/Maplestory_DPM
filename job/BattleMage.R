@@ -166,7 +166,7 @@ BattleMagePassive <- Passive(list(YellowAura=YellowAura, ArtofStaff=ArtofStaff, 
   
   option <- factor(levels=BSkill)
   value <- c()
-  info <- c(35, 200, 720, F, T, F, T)
+  info <- c(40, 200, 720, F, T, F, T)
   info <- data.frame(BInfo, info)
   colnames(info) <- c("option", "value")
   AbyssalLightningBuff <- rbind(data.frame(option, value), info)
@@ -969,5 +969,5 @@ subset(BattleMageDealData, BattleMageDealData$R4>0)
 BattleMageRR <- BattleMageDealData[18:183, ]
 DPM12347$BattleMage[3] <- sum((BattleMageRR$Deal))
 
-BattleMage40s <- BattleMageDealData[18:438, ]
+BattleMage40s <- BattleMageDealData[18:443, ]
 DPM12347$BattleMage[4] <- sum((BattleMage40s$Deal))

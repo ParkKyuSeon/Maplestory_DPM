@@ -1,4 +1,3 @@
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Base.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Common.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Item%20Data.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/PreSets.R")
@@ -50,6 +49,10 @@ option <- factor(c("ATKP"), levels=PSkill)
 value <- c(10)
 ElementalExpert <- data.frame(option, value)
 
+option <- factor(c("BDR"), levels=PSkill)
+value <- c(10)
+ElementStorm <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(20)
 WhisperoftheWind <- data.frame(option, value)
@@ -57,6 +60,10 @@ WhisperoftheWind <- data.frame(option, value)
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+BowAcceleration <- data.frame(option, value)
 
 option <- factor(c("ATKP", "MainStatP"), levels=PSkill)
 value <- c(10 + ceiling(WindBreakerBase$PSkillLv/3), 15 + floor(WindBreakerBase$PSkillLv/3))
@@ -66,32 +73,23 @@ option <- factor(c("Mastery", "ATK", "FDR", "CDMR", "BDR"), levels=PSkill)
 value <- c(70 + ceiling(WindBreakerBase$PSkillLv/2), 30 + WindBreakerBase$PSkillLv, 25 + ceiling(WindBreakerBase$PSkillLv/3), 20 + floor(WindBreakerBase$PSkillLv/2), 40 + WindBreakerBase$PSkillLv)
 BowExpert <- data.frame(option, value)
 
+option <- factor(c("ATK", "DMR", "IGR", "CRR", "ATKSpeed"), levels=PSkill)
+value <- c(50 + WindBreakerBase$SkillLv, 25 + 2 * floor(WindBreakerBase$SkillLv/3), 15 + floor(WindBreakerBase$SkillLv/3), 25 + floor(WindBreakerBase$SkillLv/3), 2)
+AlbatrossMaximum <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(WindBreakerCore[[2]][10, 2])
 BlinkPassive <- data.frame(option, value)}
 
-WindBreakerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, WhisperoftheWind=WhisperoftheWind, PhysicalTraining=PhysicalTraining, 
-                                   WindBlessing=WindBlessing, BowExpert=BowExpert, BlinkPassive=BlinkPassive))
+WindBreakerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementStorm=ElementStorm, WhisperoftheWind=WhisperoftheWind, 
+                                   PhysicalTraining=PhysicalTraining, BowAcceleration=BowAcceleration, WindBlessing=WindBlessing, BowExpert=BowExpert, AlbatrossMaximum=AlbatrossMaximum, 
+                                   BlinkPassive=BlinkPassive))
 
 
 ## WindBreaker - Buff
-{option <- factor("BDR", levels=BSkill)
-value <- c(10)
-info <- c(200, NA, 270, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-ElementStorm <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-BowBooster <- rbind(data.frame(option, value), info)
-
-option <- factor(c("ATK", "CRR"), levels=BSkill)
+{option <- factor(c("ATK", "CRR"), levels=BSkill)
 value <- c(20, 10)
-info <- c(200, NA, 270, T, NA, NA, T)
+info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SylphsAid <- rbind(data.frame(option, value), info)
@@ -103,12 +101,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PinpointPierceBuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("ATK", "DMR", "IGR", "CRR", "ATKSpeed"), levels=BSkill)
-value <- c(50 + WindBreakerBase$SkillLv, 25 + 2 * floor(WindBreakerBase$SkillLv/2), 15 + floor(WindBreakerBase$SkillLv/3), 25 + floor(WindBreakerBase$SkillLv/2), 1)
-info <- c(200, NA, 180, T, NA, NA, T)
+option <- factor(c("IGR"), levels=BSkill)
+value <- c(10 + floor(WindBreakerBase$PSkillLv/2))
+info <- c(60 * (100 + WindBreakerBase$UnionChrs$SummonedDuration + WindBreakerBase$MonsterLife$SummonedDuration) / 100, NA, 900, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-AlbatrossMaximum <- rbind(data.frame(option, value), info)
+EmeraldDust <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(20 + ceiling(WindBreakerBase$SkillLv/2), 15 + ceiling(WindBreakerBase$SkillLv/2))
@@ -166,8 +164,8 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-## PetBuff : SharpEyes, BowBooster, UsefulCombatOrders
-WindBreakerBuff <- Buff(list(ElementStorm=ElementStorm, BowBooster=BowBooster, SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, AlbatrossMaximum=AlbatrossMaximum, 
+## PetBuff : SharpEyes(900ms), SylphsAid(270ms), UsefulCombatOrders(1500ms)
+WindBreakerBuff <- Buff(list(SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, 
                              SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, GloryofGardians=GloryofGardians, StormBringer=StormBringer, UsefulCombatOrders=UsefulCombatOrders, 
                              WindWallBuff=WindWallBuff, CriticalReinforce=CriticalReinforce, BlessofCygnus=BlessofCygnus,
                              Restraint4=Restraint4, SoulContractLink=SoulContractLink))
@@ -197,7 +195,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
 
-WindBreakerBuff <- Buff(list(ElementStorm=ElementStorm, BowBooster=BowBooster, SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, AlbatrossMaximum=AlbatrossMaximum, 
+WindBreakerBuff <- Buff(list(SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, 
                              SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, GloryofGardians=GloryofGardians, StormBringer=StormBringer, UsefulCombatOrders=UsefulCombatOrders, 
                              WindWallBuff=WindWallBuff, CriticalReinforce=CriticalReinforce, BlessofCygnus=BlessofCygnus,
                              Restraint4=Restraint4, SoulContractLink=SoulContractLink))
@@ -391,9 +389,9 @@ colnames(WindBreakerDealCycle) <- DealCycle
 
 WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                           Period=c(120), CycleTime=240) {
-  BuffSummonedPrior <- c("BowBooster", "SharpEyes", "StormBringer", "ElementStorm", "SylphsAid", "AlbatrossMaximum", "MapleSoldier", "UsefulCombatOrders", "GloryofGardians", 
+  BuffSummonedPrior <- c("SharpEyes", "StormBringer", "SylphsAid", "MapleSoldier", "UsefulCombatOrders", "GloryofGardians", 
                          "GuidedArrow", "CygnusPhalanx", "PinpointPierceBuff", "BlessofCygnus", "WindWallBuff", "SoulContractLink", "CriticalReinforce", "Restraint4")
-  Times120 <- c(0.5, 0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, 0, 2, 4, 2, 0.5, 1, 1, 1, 0.5)
+  Times120 <- c(0.5, 0, 0.5, 0.5, 0, 0, 2, 4, 2, 0.5, 1, 1, 1, 0.5)
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
@@ -646,10 +644,10 @@ DPM12347$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (max(WindBreakerD
 WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCycle$Time, WindBreakerDealCycle$Restraint4, WindBreakerFinalDPMwithMax)
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 
-WindBreakerRR <- WindBreakerDealData[114:1139, ]
+WindBreakerRR <- WindBreakerDealData[111:1136, ]
 DPM12347$WindBreaker[3] <- sum((WindBreakerRR$Deal))
 
-WindBreaker40s <- WindBreakerDealData[114:2515, ]
+WindBreaker40s <- WindBreakerDealData[112:2512, ]
 DPM12347$WindBreaker[4] <- sum((WindBreaker40s$Deal))
 
 WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)

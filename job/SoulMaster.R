@@ -1,8 +1,8 @@
 ## SoulMaster - Data
 ## SoulMaster - VMatrix
-SoulMasterCore <- MatrixSet(PasSkills=c("DanceofMoon_SpeedingSunset", "CrosstheStyx", "SolarPierce_CrescentDivide"), 
-                            PasLvs=c(50, 50, 50), 
-                            PasMP=c(10, 10, 10), 
+SoulMasterCore <- MatrixSet(PasSkills=c("DanceofMoon_SpeedingSunset", "CrosstheStyx", "SolarPierce_CrescentDivide", "SolunarSlash", "SunCross_MoonCross", "MoonShadow_LightFlux"), 
+                            PasLvs=c(50, 50, 50, 50, 50, 50), 
+                            PasMP=c(10, 10, 10, 0, 0, 0), 
                             ActSkills=c("CelestialDance", "Elysion", "SoulEclipse", "FlareSlash",
                                         CommonV("Warrior", "CygnusKnights")), 
                             ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
@@ -87,14 +87,7 @@ SoulMasterPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalEx
 
 
 ## SoulMaster - Buff
-{option <- factor(levels=BSkill)
-value <- c()
-info <- c(180, NA, 600, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-ElementSoul <- rbind(data.frame(option, value), info)
-
-option <- factor(c("ATKSpeed"), levels=BSkill)
+{option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
 info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -192,7 +185,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-SoulMasterBuff <- Buff(list(ElementSoul=ElementSoul, NimbleFinger=NimbleFinger, TrueSight=TrueSight, SolunarTime=SolunarTime, SoulForge=SoulForge, MapleSoldier=MapleSoldier, 
+SoulMasterBuff <- Buff(list(NimbleFinger=NimbleFinger, TrueSight=TrueSight, SolunarTime=SolunarTime, SoulForge=SoulForge, MapleSoldier=MapleSoldier, 
                             SolunarSlashDummy=SolunarSlashDummy, GloryofGardians=GloryofGardians, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, CelestialDance=CelestialDance, 
                             Elysion=Elysion, SoulEclipse=SoulEclipse, AuraWeaponBuff=AuraWeaponBuff, BlessofCygnus=BlessofCygnus, 
                             Restraint4=Restraint4, SoulContractLink=SoulContractLink))
@@ -302,15 +295,15 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpeedingSunsetAir <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill) 
-value <- c()
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(SoulMasterCore[[1]][4, 2]>=40, 20, 0), 2 * SoulMasterCore[[1]][4, 2])
 info <- c((240 + 3 * SoulMasterSpec$SkillLv) * 0.9, 12, 450, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SolunarSlashATK <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 2 * SoulMasterCore[[1]][1, 2])
+value <- c(ifelse(SoulMasterCore[[1]][2, 2]>=40, 20, 0), 2 * SoulMasterCore[[1]][2, 2])
 info <- c(580 * 0.9 * 0.5, 10, 990, 30, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -455,7 +448,7 @@ colnames(SoulMasterDealCycle) <- DealCycle
 SoulMasterDealCycle <- data.frame(SoulMasterDealCycle)
 
 SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, CycleTime=360) {
-  BuffSummonedPrior <- c("ElementSoul", "NimbleFinger", "SolunarTime", "SoulForge", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", 
+  BuffSummonedPrior <- c("NimbleFinger", "SolunarTime", "SoulForge", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", 
                          "GloryofGardians", "AuraWeaponBuff", "CygnusPhalanx", "TrueSight", "SolunarSlashDummy", "BlessofCygnus", "SoulEclipse", "Elysion", "CelestialDance",
                          "SoulContractLink", "Restraint4")
 
@@ -463,9 +456,9 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   Time0 <- Time0 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   
   BuffIdx <- list()
-  BuffIdx[[1]] <- c(1, 2, 3, 5, 9, 10, 11, 12, 13, 14, 15)
-  BuffIdx[[2]] <- c(1, 2, 3, 5, 9, 10, 11, 12, 14, 15)
-  BuffIdx[[3]] <- c(10, 11, 12, 16)
+  BuffIdx[[1]] <- c(1, 2, 4, 8, 9, 10, 11, 12, 13, 14)
+  BuffIdx[[2]] <- c(1, 2, 4, 8, 9, 10, 11, 13, 14)
+  BuffIdx[[3]] <- c(9, 10, 11, 15)
   
   BuffList <- list()
   for(i in 1:3) {
@@ -518,13 +511,13 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
       }
     }
     if(sum(TimeTypes[i]==Time1)==1 & sum(TimeTypes[i]==Time0)==0) {
-      BuffIdxNew[[i]] <- c(10, 11, 12)
+      BuffIdxNew[[i]] <- c(9, 10, 11)
     } else if(sum(TimeTypes[i]==Time2[c(1, 3)])==1) {
-      BuffIdxNew[[i]] <- c(17, 18)
+      BuffIdxNew[[i]] <- c(16, 17)
     } else if(sum(TimeTypes[i]==Time2[c(2, 4)])==1) {
-      BuffIdxNew[[i]] <- c(17)
-    } else if(TimeTypes[i]==Time3) {
       BuffIdxNew[[i]] <- c(16)
+    } else if(TimeTypes[i]==Time3) {
+      BuffIdxNew[[i]] <- c(15)
     }
   }
   
@@ -953,8 +946,8 @@ colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(SoulMasterDealData, SoulMasterDealData$R4>0)
 
-SoulMasterRR <- SoulMasterDealData[360:577, ]
+SoulMasterRR <- SoulMasterDealData[365:588, ]
 DPM12347$SoulMaster[3] <- sum((SoulMasterRR$Deal))
 
-SoulMaster40s <-  SoulMasterDealData[59:595, ]
+SoulMaster40s <-  SoulMasterDealData[58:594, ]
 DPM12347$SoulMaster[4] <- sum((SoulMaster40s$Deal))

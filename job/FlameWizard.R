@@ -278,7 +278,7 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
 ## FlameWizard - Attacks
-OrbitalSubTime <- 270
+OrbitalSubTime <- 240
 
 {option <- factor(c("IGR", "FDR"), levels=ASkill) 
 value <- c(IGRCalc(c(ifelse(FlameWizardCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * FlameWizardCore[[1]][1, 2])
@@ -1058,16 +1058,16 @@ colnames(FlameWizardDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 
 subset(FlameWizardDealData, FlameWizardDealData$R4>0)
 
-FlameWizardRR <- FlameWizardDealData[89:257, ]
+FlameWizardRR <- FlameWizardDealData[89:256, ]
 DPM12347$FlameWizard[3] <- sum((FlameWizardRR$Deal))
 
-FlameWizard40s <- FlameWizardDealData[37:581, ]
+FlameWizard40s <- FlameWizardDealData[37:605, ]
 DPM12347$FlameWizard[4] <- sum((FlameWizard40s$Deal))
 
 
-## DealCycle - Orbital 1250hits
-ATKFinal285 <- ATKFinal
-ATKFinal285$Delay[1] <- 285
+## DealCycle - Orbital 1350hits
+ATKFinal270 <- ATKFinal
+ATKFinal270$Delay[1] <- 270
 
 DealCycle <- c("Skills", "Time", rownames(FlameWizardBuff))
 FlameWizardDealCycle2 <- t(rep(0, length(DealCycle)))
@@ -1075,26 +1075,26 @@ colnames(FlameWizardDealCycle2) <- DealCycle
 FlameWizardDealCycle2 <- data.frame(FlameWizardDealCycle2)
 
 FlameWizardDealCycle2 <- FlameWizardCycle(PreDealCycle=FlameWizardDealCycle2, 
-                                         ATKFinal=ATKFinal285,
+                                         ATKFinal=ATKFinal270,
                                          BuffFinal=BuffFinal,
                                          SummonedFinal=SummonedFinal, 
                                          Spec=FlameWizardSpec)
 FlameWizardDealCycle2 <- FlameWizardAddATK(DealCycle=FlameWizardDealCycle2, 
-                                          ATKFinal=ATKFinal285,
+                                          ATKFinal=ATKFinal270,
                                           SummonedFinal=SummonedFinal, 
                                           FlameWizardCore=FlameWizardCore)
 FlameWizardDealCycle2 <- BlessofCygnusCycle(FlameWizardDealCycle2, 6000, General$General$Serverlag, FlameWizardCore[[2]][8, 2])
 FlameWizardDealCycleReduction2 <- DealCycleReduction(FlameWizardDealCycle2, c("BlessofCygnusBDR", "SalamanderMischiefStack"))
 
-FlameWizardFinalDPM1250 <- FlameWizardDealCalc(FlameWizardDealCycle2, ATKFinal285, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
-FlameWizardFinalDPMwithMax1250 <- FlameWizardDealCalcWithMaxDMR(FlameWizardDealCycle2, ATKFinal285, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
+FlameWizardFinalDPM1350 <- FlameWizardDealCalc(FlameWizardDealCycle2, ATKFinal270, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
+FlameWizardFinalDPMwithMax1350 <- FlameWizardDealCalcWithMaxDMR(FlameWizardDealCycle2, ATKFinal270, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 
-FW1250DPM <- sum(na.omit(FlameWizardFinalDPM1250)) / (max(FlameWizardDealCycle2$Time) / 60000)
+FW1350DPM <- sum(na.omit(FlameWizardFinalDPM1350)) / (max(FlameWizardDealCycle2$Time) / 60000)
 
-FlameWizardDealData2 <- data.frame(FlameWizardDealCycle2$Skills, FlameWizardDealCycle2$Time, FlameWizardDealCycle2$Restraint4, FlameWizardFinalDPMwithMax1250)
+FlameWizardDealData2 <- data.frame(FlameWizardDealCycle2$Skills, FlameWizardDealCycle2$Time, FlameWizardDealCycle2$Restraint4, FlameWizardFinalDPMwithMax1350)
 colnames(FlameWizardDealData2) <- c("Skills", "Time", "R4", "Deal")
 
 subset(FlameWizardDealData2, FlameWizardDealData2$R4>0)
 
-FW1250R4 <- sum(FlameWizardDealData2$Deal[89:257])
-FW125040s <- sum(FlameWizardDealData2$Deal[37:575])
+FW1350R4 <- sum(FlameWizardDealData2$Deal[89:257])
+FW135040s <- sum(FlameWizardDealData2$Deal[37:575])
