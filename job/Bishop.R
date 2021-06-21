@@ -841,7 +841,7 @@ BishopDealCycle2 <- BishopUnsCycle(BishopDealCycle2, ATKFinal, BuffFinal, Summon
 BishopDealCycle2 <- DealCycleFinal(BishopDealCycle2)
 
 ## Bishop Unstable
-Unsdata <- UnstableData(BishopDealCycle, BishopDealCycle2, BishopUnstable[12, 3], BuffFinal$Duration[2], BuffFinal$CoolTime[2])
+BIUnsdata <- UnstableData(BishopDealCycle, BishopDealCycle2, BishopUnstable[12, 3], BuffFinal$Duration[2], BuffFinal$CoolTime[2])
 
 BishopDealCycle <- PeaceMakerCycle(BishopDealCycle, 3, ATKFinal, 8 + General$General$Serverlag)
 BishopDealCycle <- DCSpiderInMirror(BishopDealCycle, SummonedFinal)
@@ -856,21 +856,21 @@ BishopDealCycle2 <- BishopInfinity(BishopDealCycle2, 6000, 70 + BishopSpec$Skill
 
 
 ## Bishop Deal Calc
-BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, Unsdata)
-BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, Unsdata)
+BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BIUnsdata)
+BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BIUnsdata)
 
-BishopSpecOpt1 <- BishopOptimization1(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BishopUnionRemained, Unsdata)
+BishopSpecOpt1 <- BishopOptimization1(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BishopUnionRemained, BIUnsdata)
 BishopSpecOpt <- BishopSpec
 BishopSpecOpt$ATKP <- BishopSpecOpt$ATKP + BishopSpecOpt1$ATKP
 BishopSpecOpt$BDR <- BishopSpecOpt$BDR + BishopSpecOpt1$BDR
 BishopSpecOpt$IGR <- IGRCalc(c(BishopSpecOpt$IGR, BishopSpecOpt1$IGR))
 
-BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BishopHyperStatBase, BishopBase$ChrLv, BishopBase$CRROver, Unsdata)
-BishopFinalDPM <- BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, Unsdata)
-BishopFinalDPMwithMax <- BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, Unsdata)
+BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BishopHyperStatBase, BishopBase$ChrLv, BishopBase$CRROver, BIUnsdata)
+BishopFinalDPM <- BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, BIUnsdata)
+BishopFinalDPMwithMax <- BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, BIUnsdata)
 
-DPM12347$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (Unsdata$DealCycleTime * 1000 / 60000)
-DPM12347$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (Unsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (Unsdata$DealCycleTime * 1000 / 60000)
+DPM12347$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
+DPM12347$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (BIUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
 
 ## PrayFDR Logic Needed
 ## Divine Puninshment Stack Logic Needed
@@ -886,4 +886,4 @@ DPM12347$Bishop[4] <- sum(Bishop40s$Damage[257:424])
 
 BishopDamage2 <- BishopDealCalcGeneral(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
 
-BSDealRatio <- BishopDealRatio(BishopDealCycle, BishopDealCycle2, BishopDamage, BishopDamage2, UnsData)
+BSDealRatio <- BishopDealRatio(BishopDealCycle, BishopDealCycle2, BishopDamage, BishopDamage2, BIUnsdata)

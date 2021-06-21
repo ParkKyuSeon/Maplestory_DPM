@@ -675,7 +675,7 @@ colnames(ZeroDealCycle) <- DealCycle
 ZeroDealCycle <- data.frame(ZeroDealCycle)
 
 ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
-                      Period=240, CycleTime=240, DealCycleType=c("WMM-WTWT", "WMM-WTWTA", "WMPMP-WTWT", "MMMW-WAWTA"), TagCancelDelay=60) {
+                      Period=240, CycleTime=240, DealCycleType=c("WMM-WTWT", "WMM-WTWTA", "WMPMP-WTWT", "MMMW-WAWTA"), TagCancelDelay=60, SIM=T) {
   BuffSummonedPrior <- c("UsefulSharpEyes", "UsefulWindBooster", 
                          "AuraWeaponBuff", "TimeDistortion", "SoulContractLink", "LimitBreakBuff", "Restraint4")
   
@@ -726,7 +726,7 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
   } 
   
   WMM <- function(DealCycle, AfterSkill=c("NA", "BlessofRhinneBuff_ShadowFlashExp_ShadowRain", "ShadowFlashInstall_ShadowFlashExp_ShadowRain", 
-                                          "SoulContractLink", "TimeDistortion", "ShadowFlashInstall", "ShadowFlashExp")) {
+                                          "SoulContractLink", "TimeDistortion", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp")) {
     DealCycle <- DCATKSkip(DealCycle, "BetatoAlpha", ATKFinal, SkipStructure)
     DealCycle$Tag[nrow(DealCycle)] <- 3100
     DealCycle$Alpha[nrow(DealCycle)] <- 13100
@@ -743,6 +743,8 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       DealCycle <- DCATKSkip(DealCycle, "MoonStrike", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "PierceThrust", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "ShadowStrike", ATKFinal, SkipStructure)
+      
+      DealCycle <- DCATKSkip(DealCycle, "MoonStrike", ATKFinal, SkipStructure)
       DealCycle[1, 2:ncol(DealCycle)] <- TagCancelDelay
     } else if(AfterSkill=="BlessofRhinneBuff_ShadowFlashExp_ShadowRain") {
       DealCycle <- DCBuff(DealCycle, "BlessofRhinneBuff", BuffFinal)
@@ -760,23 +762,21 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       DealCycle <- DCATKSkip(DealCycle, "ShadowStrike", ATKFinal, SkipStructure)
       
       DealCycle <- DCATKSkip(DealCycle, "MoonStrike", ATKFinal, SkipStructure)
-      DealCycle <- DCATKSkip(DealCycle, "PierceThrust", ATKFinal, SkipStructure)
       DealCycle <- DCBuff(DealCycle, AfterSkill, BuffFinal)
-      DealCycle[1, 2:ncol(DealCycle)] <- TagCancelDelay
+      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Tag[nrow(DealCycle)] + 230
     } else {
       DealCycle <- DCATKSkip(DealCycle, "MoonStrike", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "PierceThrust", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "ShadowStrike", ATKFinal, SkipStructure)
       
       DealCycle <- DCATKSkip(DealCycle, "MoonStrike", ATKFinal, SkipStructure)
-      DealCycle <- DCATKSkip(DealCycle, "PierceThrust", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, AfterSkill, ATKFinal, SkipStructure)
-      DealCycle[1, 2:ncol(DealCycle)] <- TagCancelDelay
+      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Tag[nrow(DealCycle)] + 230
     }
     return(DealCycle)
   }
   WMMAssist <- function(AssistCycle, DealCycle, AfterSkill=c("NA", "BlessofRhinneBuff_ShadowFlashExp_ShadowRain", "ShadowFlashInstall_ShadowFlashExp_ShadowRain", 
-                                                             "SoulContractLink", "TimeDistortion", "ShadowFlashInstall", "ShadowFlashExp")) {
+                                                             "SoulContractLink", "TimeDistortion", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp")) {
     AssistNew <- subset(DealCycle, DealCycle$Skills=="BetatoAlpha")
     AssistNew <- AssistNew[nrow(AssistNew), ]
     
@@ -789,7 +789,7 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       AssistNew$Time[1] <- AssistNew$Time[1] + 60
       AssistNew$Time[2] <- AssistNew$Time[1] + 630
       AssistNew$Time[3] <- AssistNew$Time[2] + 510
-    } else {
+    } else if(sum(AfterSkill==c("SoulContractLink", "TimeDistortion", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp"))==1) {
       AssistNew <- rbind(AssistNew, AssistNew, AssistNew, AssistNew, AssistNew, AssistNew)
       AssistNew$Skills[1] <- "GigaCrash Assist"
       AssistNew$Skills[2] <- "JumpingCrash Assist"
@@ -803,7 +803,24 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       AssistNew$Time[3] <- AssistNew$Time[2] + 510
       AssistNew$Time[4] <- AssistNew$Time[3] + 720
       AssistNew$Time[5] <- AssistNew$Time[4] + 270
-      AssistNew$Time[6] <- AssistNew$Time[5] + 720
+      AssistNew$Time[6] <- AssistNew$Time[5] + 420
+    } else {
+      AssistNew <- rbind(AssistNew, AssistNew, AssistNew, AssistNew, AssistNew, AssistNew, AssistNew)
+      AssistNew$Skills[1] <- "GigaCrash Assist"
+      AssistNew$Skills[2] <- "JumpingCrash Assist"
+      AssistNew$Skills[3] <- "EarthBreak Assist"
+      AssistNew$Skills[4] <- "UpperSlash Assist"
+      AssistNew$Skills[5] <- "PowerStump Assist"
+      AssistNew$Skills[6] <- "UpperSlash Assist"
+      AssistNew$Skills[7] <- "UpperSlash Assist"
+      
+      AssistNew$Time[1] <- AssistNew$Time[1] + 60
+      AssistNew$Time[2] <- AssistNew$Time[1] + 630
+      AssistNew$Time[3] <- AssistNew$Time[2] + 510
+      AssistNew$Time[4] <- AssistNew$Time[3] + 720
+      AssistNew$Time[5] <- AssistNew$Time[4] + 270
+      AssistNew$Time[6] <- AssistNew$Time[5] + 420
+      AssistNew$Time[7] <- AssistNew$Time[6] + 330
     }
     
     AssistCycle <- rbind(AssistCycle, AssistNew)
@@ -960,7 +977,9 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
       if(BuffList[[1]][i]=="LimitBreakBuff") {
         DealCycle <- DCATKSkip(DealCycle, "LimitBreak", ATKFinal, SkipStructure)
-        DealCycle <- DCATKSkip(DealCycle, "SpiderInMirror", ATKFinal, SkipStructure)
+        if(SIM==T) {
+          DealCycle <- DCATKSkip(DealCycle, "SpiderInMirror", ATKFinal, SkipStructure)
+        }
       } 
     } else {
       DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
@@ -1028,9 +1047,10 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
           }
         }
         ## Joint Attack
-        else if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$Delay - max(subset(DealCycle, DealCycle$Skills=="JointAttack1")$Time) >=
-                subset(ATKFinal, rownames(ATKFinal)=="JointAttack1")$CoolTime * 1000 & DealCycle$Alpha[nrow(DealCycle)] > 0) {
-          DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        else if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + 3330 - max(subset(DealCycle, DealCycle$Skills=="JointAttack1")$Time) >=
+                subset(ATKFinal, rownames(ATKFinal)=="JointAttack1")$CoolTime * 1000 & DealCycle$Beta[nrow(DealCycle)] > 0) {
+          DealCycle <- WMM(DealCycle, "SoulContractLink")
+          AssistCycle <- WMMAssist(AssistCycle, DealCycle, "SoulContractLink")
           DealCycle <- WTWTA(DealCycle, "JointAttack")
           AssistCycle <- WTWTAAssist(AssistCycle, DealCycle, "JointAttack")
         }
@@ -1053,7 +1073,7 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
           AssistCycle <- WTWTAAssist(AssistCycle, DealCycle, "ShadowFlashBetaExp")
         }
         ## Shadow Flash - Alpha
-        else if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + 3300 - max(subset(DealCycle, DealCycle$Skills=="ShadowFlashAlphaInstall")$Time) >=
+        else if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + 2940 - max(subset(DealCycle, DealCycle$Skills=="ShadowFlashAlphaInstall")$Time) >=
                 subset(ATKFinal, rownames(ATKFinal)=="ShadowFlashAlphaInstall")$CoolTime * 1000 & nrow(subset(DealCycle, DealCycle$Skills=="ShadowFlashAlphaInstall")) < 4 &
                 DealCycle$Beta[nrow(DealCycle)] > 0) {
           DealCycle <- WMM(DealCycle, "ShadowFlashAlphaInstall")
@@ -1103,6 +1123,20 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
     AssistCycle <- rbind(AssistCycle, DealCycle[nrow(DealCycle), ])
     AssistCycle$Time[nrow(AssistCycle)] <- AssistCycle$Time[nrow(AssistCycle)] + 60
     AssistCycle$Skills[nrow(AssistCycle)] <- "UpperSlash Assist"
+    if(SIM==T) {
+      DealCycle <- DCATKSkip(DealCycle, "PierceThrust", ATKFinal, SkipStructure)
+      
+      AssistCycle <- rbind(AssistCycle, DealCycle[nrow(DealCycle), ])
+      AssistCycle$Time[nrow(AssistCycle)] <- AssistCycle$Time[nrow(AssistCycle)] + 330
+      AssistCycle$Skills[nrow(AssistCycle)] <- "PowerStump Assist"
+    }
+  } else {
+    DealCycle[1, 2:ncol(DealCycle)] <- ATKFinal[rownames(ATKFinal)==DealCycle$Skills[nrow(DealCycle)], ]$Delay
+    if(DealCycle$Skills[nrow(DealCycle)]=="MoonStrike") {
+      DealCycle <- DCATKSkip(DealCycle, "PierceThrust", ATKFinal, SkipStructure)
+    } else {
+      DealCycle <- DCATKSkip(DealCycle, "MoonStrike", ATKFinal, SkipStructure)
+    }
   }
   rownames(DealCycle) <- 1:nrow(DealCycle)
   DealCycle <- DealCycleFinal(DealCycle)
@@ -1489,9 +1523,20 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
   DealCycle$Tag <- 0
   return(DealCycle)
 }
+ZeroCycleAttach <- function(DealCycle1, DealCycle2) {
+  DealCycle2StartTime <- max(DealCycle1$Time)
+  DealCycle2 <- DealCycle2[-1, ]
+  DealCycle2$Time <- DealCycle2$Time + DealCycle2StartTime
+  DealCycle1 <- DealCycle1[DealCycle1$Skills!="End", ]
+  
+  DealCycleNew <- rbind(DealCycle1, DealCycle2)
+  rownames(DealCycleNew) <- 1:nrow(DealCycleNew)
+  
+  return(DealCycleNew)
+}
 
 
-ZeroDealCycle <- ZeroCycle(DealCycle=ZeroDealCycle, 
+ZeroDealCycle1 <- ZeroCycle(DealCycle=ZeroDealCycle, 
                            ATKFinal, 
                            BuffFinal, 
                            SummonedFinal, 
@@ -1500,7 +1545,20 @@ ZeroDealCycle <- ZeroCycle(DealCycle=ZeroDealCycle,
                            Period=240, 
                            CycleTime=240, 
                            DealCycleType="WMM-WTWTA", 
-                           TagCancelDelay=60)
+                           TagCancelDelay=60, 
+                           SIM=T)
+ZeroDealCycle2 <- ZeroCycle(DealCycle=ZeroDealCycle, 
+                           ATKFinal, 
+                           BuffFinal, 
+                           SummonedFinal, 
+                           Spec=ZeroSpec, 
+                           SkipStructure=ZeroSkipATK,
+                           Period=240, 
+                           CycleTime=240, 
+                           DealCycleType="WMM-WTWTA", 
+                           TagCancelDelay=60, 
+                           SIM=F)
+ZeroDealCycle <- ZeroCycleAttach(ZeroDealCycle1, ZeroDealCycle2)
 ZeroDealCycle <- ZeroAddATK(DealCycle=ZeroDealCycle, 
                             ATKFinal, 
                             BuffFinal, 
@@ -1529,7 +1587,7 @@ subset(ZeroDealData, ZeroDealData$R4>0)
 ZeroRR <- ZeroDealData[11:173, ]
 DPM12347$Zero[3] <- sum((ZeroRR$Deal))
 
-Zero40s <- ZeroDealData[11:593, ]
+Zero40s <- ZeroDealData[11:590, ]
 DPM12347$Zero[4] <- sum((Zero40s$Deal))
 
 ZeroDealRatio <- DealRatio(ZeroDealCycle, ZeroFinalDPMwithMax)

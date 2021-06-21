@@ -24,7 +24,7 @@ CannonShooterBase <- JobBase(ChrInfo=ChrInfo,
                              BuffDurationNeeded=0, 
                              AbilList=c("BDR", "DisorderBDR"), 
                              LinkList=c("Xenon", "DemonAvenger", "AdventurePirates", "Phantom"), 
-                             MonsterLife=MLTypeS21, 
+                             MonsterLife=MLTypeS23, 
                              Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "HandCannon", SpecDefault$WeaponType)[, 1:16],
                              WeaponType=SpecDefault$WeaponType, 
                              SubWeapon=SubWeapon[17, ], 
@@ -246,7 +246,9 @@ colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "IGR"), levels=BSkill)
-value <- c(floor((CannonShooterBase$ChrLv * 5 + 18) * (0.1 + 0.01 * floor(CannonShooterCore[[2]][7, 2]/2)) * CannonShooterBase$MainStatP), 10 + floor(CannonShooterCore[[2]][7, 2]/2))
+value <- c(floor((CannonShooterBase$ChrLv * 5 + 18) * (0.1 + 0.01 * floor(CannonShooterCore[[2]][7, 2]/2)) * CannonShooterBase$MainStatP), 
+           # 10 + floor(CannonShooterCore[[2]][7, 2]/2)
+           0)
 info <- c(30, 31, 990, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -749,7 +751,7 @@ CannonShooterCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   return(DealCycle)
 }
 CannonShooterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                                LuckyDice=c(5, 55, 555), BarrelRoulette=c("Ice", "Lightning", "Others"), CocoballHits=27) {
+                                LuckyDice=c(5, 55, 555), BarrelRoulette=c("Ice", "Lightning", "Others"), CocoballHits=22) {
   ## Lucky Dice and Barrel Roulette
   if(LuckyDice==55) {
     for(i in 1:nrow(DealCycle)) {
@@ -1058,18 +1060,20 @@ colnames(CannonShooterDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(CannonShooterDealData, CannonShooterDealData$R4>0)
 
-CannonShooterRR <- CannonShooterDealData[39:274, ]
+CannonShooterRR <- CannonShooterDealData[39:277, ]
 DPM12347$CannonMaster[3] <- sum((CannonShooterRR$Deal))
 
-CannonShooter40s <- CannonShooterDealData[39:479, ]
+CannonShooter40s <- CannonShooterDealData[39:483, ]
 DPM12347$CannonMaster[4] <- sum((CannonShooter40s$Deal))
 
 
 
 ## Cocoball 5 Hits
+BuffFinalFlag <- BuffFinal
+BuffFinalFlag[rownames(BuffFinalFlag)=="PirateFlag", ]$IGR <- 10 + floor(CannonShooterCore[[2]][7, 2]/2)
 {Cocoball5Hits_5Others <- CannonShooterAddATK(CannonShooterDealCycle, 
                                              ATKFinal, 
-                                             BuffFinal, 
+                                             BuffFinalFlag, 
                                              SummonedFinal, 
                                              CannonShooterSpec,
                                              LuckyDice=5,
@@ -1077,7 +1081,7 @@ DPM12347$CannonMaster[4] <- sum((CannonShooter40s$Deal))
                                              CocoballHits=5)
 Cocoball5Hits_5Lightning <- CannonShooterAddATK(CannonShooterDealCycle, 
                                                 ATKFinal, 
-                                                BuffFinal, 
+                                                BuffFinalFlag, 
                                                 SummonedFinal, 
                                                 CannonShooterSpec,
                                                 LuckyDice=5,
@@ -1085,7 +1089,7 @@ Cocoball5Hits_5Lightning <- CannonShooterAddATK(CannonShooterDealCycle,
                                                 CocoballHits=5)
 Cocoball5Hits_5Ice <- CannonShooterAddATK(CannonShooterDealCycle, 
                                           ATKFinal, 
-                                          BuffFinal, 
+                                          BuffFinalFlag, 
                                           SummonedFinal, 
                                           CannonShooterSpec,
                                           LuckyDice=5,
@@ -1094,7 +1098,7 @@ Cocoball5Hits_5Ice <- CannonShooterAddATK(CannonShooterDealCycle,
 
 Cocoball5Hits_55Others <- CannonShooterAddATK(CannonShooterDealCycle, 
                                               ATKFinal, 
-                                              BuffFinal, 
+                                              BuffFinalFlag, 
                                               SummonedFinal, 
                                               CannonShooterSpec,
                                               LuckyDice=55,
@@ -1102,7 +1106,7 @@ Cocoball5Hits_55Others <- CannonShooterAddATK(CannonShooterDealCycle,
                                               CocoballHits=5)
 Cocoball5Hits_55Lightning <- CannonShooterAddATK(CannonShooterDealCycle, 
                                                  ATKFinal, 
-                                                 BuffFinal, 
+                                                 BuffFinalFlag, 
                                                  SummonedFinal, 
                                                  CannonShooterSpec,
                                                  LuckyDice=55,
@@ -1110,7 +1114,7 @@ Cocoball5Hits_55Lightning <- CannonShooterAddATK(CannonShooterDealCycle,
                                                  CocoballHits=5)
 Cocoball5Hits_55Ice <- CannonShooterAddATK(CannonShooterDealCycle, 
                                            ATKFinal, 
-                                           BuffFinal, 
+                                           BuffFinalFlag, 
                                            SummonedFinal, 
                                            CannonShooterSpec,
                                            LuckyDice=55,
@@ -1119,7 +1123,7 @@ Cocoball5Hits_55Ice <- CannonShooterAddATK(CannonShooterDealCycle,
 
 Cocoball5Hits_555Others <- CannonShooterAddATK(CannonShooterDealCycle, 
                                                ATKFinal, 
-                                               BuffFinal, 
+                                               BuffFinalFlag, 
                                                SummonedFinal, 
                                                CannonShooterSpec,
                                                LuckyDice=555,
@@ -1127,7 +1131,7 @@ Cocoball5Hits_555Others <- CannonShooterAddATK(CannonShooterDealCycle,
                                                CocoballHits=5)
 Cocoball5Hits_555Lightning <- CannonShooterAddATK(CannonShooterDealCycle, 
                                                   ATKFinal, 
-                                                  BuffFinal, 
+                                                  BuffFinalFlag, 
                                                   SummonedFinal, 
                                                   CannonShooterSpec,
                                                   LuckyDice=555,
@@ -1135,42 +1139,42 @@ Cocoball5Hits_555Lightning <- CannonShooterAddATK(CannonShooterDealCycle,
                                                   CocoballHits=5)
 Cocoball5Hits_555Ice <- CannonShooterAddATK(CannonShooterDealCycle, 
                                             ATKFinal, 
-                                            BuffFinal, 
+                                            BuffFinalFlag, 
                                             SummonedFinal, 
                                             CannonShooterSpec,
                                             LuckyDice=555,
                                             BarrelRoulette="Ice", 
                                             CocoballHits=5)
 
-Cocoball5Hits_5Others <- OverDriveExhaustBuff(Cocoball5Hits_5Others, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-Cocoball5Hits_5Lightning <- OverDriveExhaustBuff(Cocoball5Hits_5Lightning, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-Cocoball5Hits_5Ice <- OverDriveExhaustBuff(Cocoball5Hits_5Ice, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_5Others <- OverDriveExhaustBuff(Cocoball5Hits_5Others, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_5Lightning <- OverDriveExhaustBuff(Cocoball5Hits_5Lightning, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_5Ice <- OverDriveExhaustBuff(Cocoball5Hits_5Ice, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
 
-Cocoball5Hits_55Others <- OverDriveExhaustBuff(Cocoball5Hits_55Others, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-Cocoball5Hits_55Lightning <- OverDriveExhaustBuff(Cocoball5Hits_55Lightning, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-Cocoball5Hits_55Ice <- OverDriveExhaustBuff(Cocoball5Hits_55Ice, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_55Others <- OverDriveExhaustBuff(Cocoball5Hits_55Others, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_55Lightning <- OverDriveExhaustBuff(Cocoball5Hits_55Lightning, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_55Ice <- OverDriveExhaustBuff(Cocoball5Hits_55Ice, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
 
-Cocoball5Hits_555Others <- OverDriveExhaustBuff(Cocoball5Hits_555Others, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-Cocoball5Hits_555Lightning <- OverDriveExhaustBuff(Cocoball5Hits_555Lightning, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-Cocoball5Hits_555Ice <- OverDriveExhaustBuff(Cocoball5Hits_555Ice, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)}
+Cocoball5Hits_555Others <- OverDriveExhaustBuff(Cocoball5Hits_555Others, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_555Lightning <- OverDriveExhaustBuff(Cocoball5Hits_555Lightning, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)
+Cocoball5Hits_555Ice <- OverDriveExhaustBuff(Cocoball5Hits_555Ice, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$Duration, BuffFinalFlag[rownames(BuffFinalFlag)=="OverDrive", ]$CoolTime)}
 
 Cocoball5HitsDealCycles <- list(Cocoball5Hits_5Others, Cocoball5Hits_5Lightning, Cocoball5Hits_5Ice, 
                                 Cocoball5Hits_55Others, Cocoball5Hits_55Lightning, Cocoball5Hits_55Ice, 
                                 Cocoball5Hits_555Others, Cocoball5Hits_555Lightning, Cocoball5Hits_555Ice)
 Cocoball5HitsDPM <- ResetDealCalcWithMaxDMR(DealCycles=Cocoball5HitsDealCycles, 
-                                           ATKFinal, BuffFinal, SummonedFinal, CannonShooterSpecOpt2, rep(max(CannonShooterDealCycle$Time), 9), CannonShooterCycleProbs)
+                                           ATKFinal, BuffFinalFlag, SummonedFinal, CannonShooterSpecOpt2, rep(max(CannonShooterDealCycle$Time), 9), CannonShooterCycleProbs)
 Cocoball5HitsDPM <- sum(na.omit(Cocoball5HitsDPM)) / (max(CannonShooterFinalCycle$Time)/ 60000)
 
 Cocoball5HitsDealData <- data.frame(Cocoball5Hits_5Others$Skills, Cocoball5Hits_5Others$Time, Cocoball5Hits_5Others$Restraint4, 
-                                    DealCalcWithMaxDMR(Cocoball5Hits_5Others, ATKFinal, BuffFinal, SummonedFinal, CannonShooterSpecOpt2))
+                                    DealCalcWithMaxDMR(Cocoball5Hits_5Others, ATKFinal, BuffFinalFlag, SummonedFinal, CannonShooterSpecOpt2))
 colnames(Cocoball5HitsDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(Cocoball5HitsDealData, Cocoball5HitsDealData$R4>0)
 
-Cocoball5HitsRR <- Cocoball5HitsDealData[39:208, ]
+Cocoball5HitsRR <- Cocoball5HitsDealData[39:211, ]
 Cocoball5HitsRR <- sum((Cocoball5HitsRR$Deal))
 
-Cocoball5Hits40s <- Cocoball5HitsDealData[39:392, ]
+Cocoball5Hits40s <- Cocoball5HitsDealData[39:395, ]
 Cocoball5Hits40s <- sum((Cocoball5Hits40s$Deal))
 
 
@@ -1275,8 +1279,8 @@ colnames(Cocoball40HitsDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(Cocoball40HitsDealData, Cocoball40HitsDealData$R4>0)
 
-Cocoball40HitsRR <- Cocoball40HitsDealData[39:312, ]
+Cocoball40HitsRR <- Cocoball40HitsDealData[39:315, ]
 Cocoball40HitsRR <- sum((Cocoball40HitsRR$Deal))
 
-Cocoball40Hits40s <- Cocoball40HitsDealData[39:532, ]
+Cocoball40Hits40s <- Cocoball40HitsDealData[39:535, ]
 Cocoball40Hits40s <- sum((Cocoball40Hits40s$Deal))

@@ -34,7 +34,7 @@ DarkKnightBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## DarkKnight - Passive
-## Hyper : Beholder - Reinforce, Beholder - Buff Reinforce, Gungnir Descent - Ignore Guard, Gugnir Descent - Reinforce, Reincarnation - Damage
+## Hyper : Beholder - Reinforce, Beholder - Buff Reinforce, Gugnir Descent - Reinforce, Reincarnation - Damage, Reincarnation - Critical Rate
 {option <- factor(c("ATKSpeed", "BDR"), levels=PSkill)
 value <- c(1, 5)
 WeaponMastery <- data.frame(option, value) ## Spear Only
@@ -60,7 +60,7 @@ value <- c(30 + DarkKnightBase$SkillLv)
 SacrificePassive <- data.frame(option, value)
 
 option <- factor(c("FDR", "CRR", "CDMR"), levels=PSkill)
-value <- c(30 + DarkKnightBase$SkillLv, 10 + ceiling(DarkKnightBase$SkillLv/3), 15)
+value <- c(30 + DarkKnightBase$SkillLv, 30 + ceiling(DarkKnightBase$SkillLv/3), 15)
 ReincarnationPassive <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CMDR"), levels=PSkill)
@@ -173,7 +173,7 @@ colnames(info) <- c("option", "value")
 DarknessAuraBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(DarkKnightCore[[2]][5, 2]/5), ceiling(DarkKnightCore[[2]][5, 2]/5))
+value <- c((10 + floor(DarkKnightCore[[2]][5, 2]/5)) / ((100 - 10 - ceiling(DarkKnightBase$SkillLv/3)) / 100), ceiling(DarkKnightCore[[2]][5, 2]/5))
 info <- c(80 + 2 * DarkKnightCore[[2]][5, 2], 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -269,7 +269,7 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 ## DarkKnight - Attacks
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(50 + DarkKnightSpec$SkillLv, ifelse(DarkKnightCore[[1]][1, 2]>=40, 20, 0))), 20, 2 * DarkKnightCore[[1]][1, 2])
+value <- c(IGRCalc(c(30 + DarkKnightSpec$SkillLv, ifelse(DarkKnightCore[[1]][1, 2]>=40, 20, 0))), 20, 2 * DarkKnightCore[[1]][1, 2])
 info <- c(225 + DarkKnightSpec$SkillLv, 12, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")

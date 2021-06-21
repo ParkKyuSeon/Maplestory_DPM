@@ -312,7 +312,7 @@ colnames(info) <- c("option", "value")
 ParalyzeUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][3, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchMageFPCore[[1]][3, 2]>=40, 20, 0), 60 + ArchMageFPSpec$SkillLv)))
+value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][3, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchMageFPCore[[1]][3, 2]>=40, 20, 0), 20, 40 + ArchMageFPSpec$SkillLv)))
 info <- c((125 + ArchMageFPSpec$SkillLv) * 2.25, 20 * ArchMageFPUnstable[8, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -347,7 +347,7 @@ colnames(info) <- c("option", "value")
 Paralyze <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][6, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchMageFPCore[[1]][3, 2]>=40, 20, 0), 60 + ArchMageFPSpec$SkillLv)))
+value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][6, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchMageFPCore[[1]][3, 2]>=40, 20, 0), 20, 40 + ArchMageFPSpec$SkillLv)))
 info <- c((125 + ArchMageFPSpec$SkillLv) * 2.25, 20, 930, NA, 8 * (1 - 0.5 - ArchMageFPSpec$CoolReduceP/100), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -1023,7 +1023,7 @@ ArchMageFPDealCycle2 <- FPInfinityCycle3(ArchMageFPDealCycle2, ATKFinal, BuffFin
 ArchMageFPDealCycle2 <- FPUnsCycle(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageFPDealCycle2 <- DealCycleFinal(ArchMageFPDealCycle2)
 
-Unsdata <- UnstableData(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPUnstable[11, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
+FPUnsdata <- UnstableData(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPUnstable[11, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
 
 ArchMageFPDealCycle <- DCSummonedATKs(ArchMageFPDealCycle, "Ifrit", SummonedFinal)
 ArchMageFPDealCycle <- FuryofIfritCycle(ArchMageFPDealCycle, ATKFinal)
@@ -1044,21 +1044,21 @@ ArchMageFPDealCycle2 <- BishopInfinity(ArchMageFPDealCycle2, 6000, 70 + ArchMage
 
 
 ## ArchMageFP Deal Calc
-BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, Unsdata)
-BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, Unsdata)
+BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, FPUnsdata)
+BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, FPUnsdata)
 
-ArchMageFPSpecOpt1 <- BishopOptimization1(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, ArchMageFPUnionRemained, Unsdata)
+ArchMageFPSpecOpt1 <- BishopOptimization1(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, ArchMageFPUnionRemained, FPUnsdata)
 ArchMageFPSpecOpt <- ArchMageFPSpec
 ArchMageFPSpecOpt$ATKP <- ArchMageFPSpecOpt$ATKP + ArchMageFPSpecOpt1$ATKP
 ArchMageFPSpecOpt$BDR <- ArchMageFPSpecOpt$BDR + ArchMageFPSpecOpt1$BDR
 ArchMageFPSpecOpt$IGR <- IGRCalc(c(ArchMageFPSpecOpt$IGR, ArchMageFPSpecOpt1$IGR))
 
-ArchMageFPSpecOpt2 <- BishopOptimization2(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, ArchMageFPHyperStatBase, ArchMageFPBase$ChrLv, ArchMageFPBase$CRROver, Unsdata)
-ArchMageFPFinalDPM <- BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, Unsdata)
-ArchMageFPFinalDPMwithMax <- BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, Unsdata)
+ArchMageFPSpecOpt2 <- BishopOptimization2(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, ArchMageFPHyperStatBase, ArchMageFPBase$ChrLv, ArchMageFPBase$CRROver, FPUnsdata)
+ArchMageFPFinalDPM <- BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, FPUnsdata)
+ArchMageFPFinalDPMwithMax <- BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, FPUnsdata)
 
-DPM12347$ArchMageFP[1] <- sum(na.omit(ArchMageFPFinalDPMwithMax)) / (Unsdata$DealCycleTime * 1000 / 60000)
-DPM12347$ArchMageFP[2] <- sum(na.omit(ArchMageFPFinalDPM)) / (Unsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageFPFinalDPMwithMax)) / (Unsdata$DealCycleTime * 1000 / 60000)
+DPM12347$ArchMageFP[1] <- sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
+DPM12347$ArchMageFP[2] <- sum(na.omit(ArchMageFPFinalDPM)) / (FPUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
 
 ArchMageFPDamage <- BishopDealCalcGeneral(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2)
 ArchMageFP40s <- data.frame(ArchMageFPDealCycle$Skills, ArchMageFPDealCycle$Time, ArchMageFPDealCycle$Restraint4, ArchMageFPDealCycle$Infinity, ArchMageFPDealCycle$InfinityFDR, ArchMageFPDamage)
@@ -1070,4 +1070,4 @@ DPM12347$ArchMageFP[4] <- sum(ArchMageFP40s$Damage[1149:1838])
 
 ArchMageFPDamage2 <- BishopDealCalcGeneral(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2)
 
-FPDealRatio <- BishopDealRatio(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPDamage, ArchMageFPDamage2, UnsData)
+FPDealRatio <- BishopDealRatio(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPDamage, ArchMageFPDamage2, FPUnsdata)

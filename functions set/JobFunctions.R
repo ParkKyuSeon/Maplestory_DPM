@@ -1735,8 +1735,8 @@ BishopDealRatio <- function(DealCycle1, DealCycle2, DealData1, DealData2, UnsDat
   DealRatios[[length(Ind)-1]] <- DealRatio(DealCycle2, DealData2)
   
   Weight <- c()
-  Weight[1:(length(DealRatios)-2)] <- Unsdata$UnsRatio$weight[1:(length(DealRatios)-2)]
-  Weight[(length(DealRatios)-1):(length(DealRatios))] <- Unsdata$UnsRatio$weight[(length(DealRatios)-1)] / 2
+  Weight[1:(length(DealRatios)-2)] <- UnsData$UnsRatio$weight[1:(length(DealRatios)-2)]
+  Weight[(length(DealRatios)-1):(length(DealRatios))] <- UnsData$UnsRatio$weight[(length(DealRatios)-1)] / 2
   
   DealRatioFinal <- data.frame(t(rep(0, length(SkillList))))
   DealRatioFinal <- rbind(DealRatioFinal, DealRatioFinal)
@@ -1935,7 +1935,7 @@ MarksmanDistance <- function(MarksmanDealCycle) {
       MarksmanDealCycle$MotalBlow[i] <- 1
     }
     ## DistancingSense
-    if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "FullBustShot", "GuidedArrow", "SpiderInMirror", "FinalAttack"))==1) {
+    if(max(MarksmanDealCycle$Skills[i]==c("Snipe", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "FullbustShot", "GuidedArrow", "SpiderInMirror", "FinalAttack"))==1) {
       MarksmanDealCycle$DistancingSense[i] <- 1
     }
     ## Distance 0
@@ -5776,8 +5776,8 @@ TCDealRatio <- function(DealCycle1, DealCycle2, DealData1, DealData2, UnsData) {
   DealRatios[[length(Ind)-1]] <- DealRatio(DealCycle2, DealData2)
   
   Weight <- c()
-  Weight[1:(length(DealRatios)-2)] <- Unsdata$UnsRatio$weight[1:(length(DealRatios)-2)]
-  Weight[(length(DealRatios)-1):(length(DealRatios))] <- Unsdata$UnsRatio$weight[(length(DealRatios)-1)] / 2
+  Weight[1:(length(DealRatios)-2)] <- UnsData$UnsRatio$weight[1:(length(DealRatios)-2)]
+  Weight[(length(DealRatios)-1):(length(DealRatios))] <- UnsData$UnsRatio$weight[(length(DealRatios)-1)] / 2
   
   DealRatioFinal <- data.frame(t(rep(0, length(SkillList))))
   DealRatioFinal <- rbind(DealRatioFinal, DealRatioFinal)

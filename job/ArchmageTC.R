@@ -1020,7 +1020,7 @@ ArchMageTCDealCycle2 <- TCInfinityCycle3(ArchMageTCDealCycle2, ATKFinal, BuffFin
 ArchMageTCDealCycle2 <- TCUnsCycle(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageTCDealCycle2 <- DealCycleFinal(ArchMageTCDealCycle2)
 
-Unsdata <- UnstableData(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCUnstable[10, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
+TCUnsdata <- UnstableData(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCUnstable[10, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
 
 ArchMageTCDealCycle <- TCAddATKCycle(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, 8, ArchMageTCUnstable, ArchMageTCSpec)
 ArchMageTCDealCycle <- BishopInfinity(ArchMageTCDealCycle, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
@@ -1030,21 +1030,21 @@ ArchMageTCDealCycle2 <- BishopInfinity(ArchMageTCDealCycle2, 6000, 70 + ArchMage
 
 
 ## ArchMageTC Deal Calc
-TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, Unsdata)
-TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, Unsdata)
+TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, TCUnsdata)
+TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, TCUnsdata)
 
-ArchMageTCSpecOpt1 <- TCOptimization1(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, ArchMageTCUnionRemained, Unsdata)
+ArchMageTCSpecOpt1 <- TCOptimization1(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, ArchMageTCUnionRemained, TCUnsdata)
 ArchMageTCSpecOpt <- ArchMageTCSpec
 ArchMageTCSpecOpt$ATKP <- ArchMageTCSpecOpt$ATKP + ArchMageTCSpecOpt1$ATKP
 ArchMageTCSpecOpt$BDR <- ArchMageTCSpecOpt$BDR + ArchMageTCSpecOpt1$BDR
 ArchMageTCSpecOpt$IGR <- IGRCalc(c(ArchMageTCSpecOpt$IGR, ArchMageTCSpecOpt1$IGR))
 
-ArchMageTCSpecOpt2 <- TCOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, ArchMageTCHyperStatBase, ArchMageTCBase$ChrLv, ArchMageTCBase$CRROver, Unsdata)
-ArchMageTCFinalDPM <- TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, Unsdata)
-ArchMageTCFinalDPMwithMax <- TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, Unsdata)
+ArchMageTCSpecOpt2 <- TCOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, ArchMageTCHyperStatBase, ArchMageTCBase$ChrLv, ArchMageTCBase$CRROver, TCUnsdata)
+ArchMageTCFinalDPM <- TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
+ArchMageTCFinalDPMwithMax <- TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
 
-DPM12347$ArchMageTC[1] <- sum(na.omit(ArchMageTCFinalDPMwithMax)) / (Unsdata$DealCycleTime * 1000 / 60000)
-DPM12347$ArchMageTC[2] <- sum(na.omit(ArchMageTCFinalDPM)) / (Unsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageTCFinalDPMwithMax)) / (Unsdata$DealCycleTime * 1000 / 60000)
+DPM12347$ArchMageTC[1] <- sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
+DPM12347$ArchMageTC[2] <- sum(na.omit(ArchMageTCFinalDPM)) / (TCUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
 
 ArchMageTCDamage <- TCDealCalcGeneral(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 ArchMageTC40s <- data.frame(ArchMageTCDealCycle$Skills, ArchMageTCDealCycle$Time, ArchMageTCDealCycle$Restraint4, ArchMageTCDealCycle$Infinity, ArchMageTCDealCycle$InfinityFDR, ArchMageTCDamage)
@@ -1056,7 +1056,7 @@ DPM12347$ArchMageTC[4] <- sum(ArchMageTC40s$Damage[589:1009])
 
 ArchMageTCDamage2 <- TCDealCalcGeneral(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 
-ArchMageTCDealRatio <- TCDealRatio(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCDamage, ArchMageTCDamage2, UnsData)
+ArchMageTCDealRatio <- TCDealRatio(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCDamage, ArchMageTCDamage2, TCUnsdata)
 
 
 

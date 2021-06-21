@@ -536,7 +536,7 @@ KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   
   Times120 <- c(1/3, 1/3, 0, 0, 0, 
                 0.5, 2, 1, 0.5, 1, 1, 1/3, 1, 1/6)
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce + 1, length(BuffSummonedPrior))
   TotalTime <- SubTime[1] * 6
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
@@ -1568,6 +1568,10 @@ KaiserDealDatas <- list(DealCalcWithMaxDMR(KaiserDealCycle0, ATKFinal, BuffFinal
                         DealCalcWithMaxDMR(KaiserDealCycle4, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
                         DealCalcWithMaxDMR(KaiserDealCycle5, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
                         DealCalcWithMaxDMR(KaiserDealCycle6, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2))
+
+for(i in 1:length(KaiserDealDatas)) {
+  print(sum(na.omit(KaiserDealDatas[[i]])) / (KaiserDealCycleTimes[1] / 60000))
+}
 
 KaiserDealRatio <- ResetDealRatio(DealCycles=KaiserDealCycles, 
                                   DealDatas=KaiserDealDatas, 

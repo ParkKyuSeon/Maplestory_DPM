@@ -247,7 +247,7 @@ colnames(info) <- c("option", "value")
 FlashBang <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * DualBladeCore[[1]][1, 2], 20, IGRCalc(c(ifelse(DualBladeCore[[1]][1, 2]>=40, 20, 0), 50 + DualBladeSpec$SkillLv)))
+value <- c(2 * DualBladeCore[[1]][1, 2], 20, IGRCalc(c(ifelse(DualBladeCore[[1]][1, 2]>=40, 20, 0), 20, 30 + DualBladeSpec$SkillLv)))
 info <- c(315 + 3 * DualBladeSpec$SkillLv, 7, 720, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")

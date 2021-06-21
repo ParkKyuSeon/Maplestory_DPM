@@ -385,7 +385,7 @@ Evolve <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=SSkill)
 value <- c(3 * MarksmanCore[[1]][3, 2], ifelse(MarksmanCore[[1]][3, 2]>=40, 20, 0))
-info <- c(390, 1, 0, 1710, 220, 105, T, T, F, F)
+info <- c(ifelse(Distance >= 400, 0, 390), 1, 0, 1710, 220, 105, T, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Freezer <- rbind(data.frame(option, value), info) 
@@ -632,16 +632,30 @@ info <- c(0, 120, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Synergy <- rbind(data.frame(option, value), info)}
+
+{option <- factor(c("FDR", "IGR"), levels=SSkill)
+value <- c(3 * MarksmanCore[[1]][3, 2], ifelse(MarksmanCore[[1]][3, 2]>=40, 20, 0))
+info <- c(ifelse(Distance >= 400, 0, 390), 1, 0, 1710, 220, 105, T, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+Freezer <- rbind(data.frame(option, value), info)}
 MarksmanBuff2 <- Buff(list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
                            UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, Bullseye=Bullseye, 
                            SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, DistanceSenseTrueSnipe=DistanceSenseTrueSnipe, 
                            DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
                            Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+MarksmanSummoned2 <- Summoned(list(Evolve=Evolve, Freezer=Freezer, GuidedArrow=GuidedArrow, SpiderInMirrorStart=SpiderInMirrorStart, 
+                                   SpiderInMirror1=SpiderInMirror1, SpiderInMirror2=SpiderInMirror2, SpiderInMirror3=SpiderInMirror3, 
+                                   SpiderInMirror4=SpiderInMirror4, SpiderInMirror5=SpiderInMirror5, SpiderInMirrorWait=SpiderInMirrorWait))
 
 BuffFinal <- data.frame(MarksmanBuff2)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, MarksmanSpec$CoolReduceP, MarksmanSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, MarksmanSpec$BuffDuration / 100, 0) +
   ifelse(BuffFinal$ServerLag==T, 3, 0)
+
+SummonedFinal <- data.frame(MarksmanSummoned2)
+SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, MarksmanSpec$CoolReduceP, MarksmanSpec$CoolReduce)
+SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$SummonedDurationAvailable==T, SummonedFinal$Duration * MarksmanSpec$SummonedDuration / 100, 0)
 
 DealCycle <- c("Skills", "Time", rownames(MarksmanBuff))
 MarksmanDealCycle0 <- t(rep(0, length(DealCycle)))

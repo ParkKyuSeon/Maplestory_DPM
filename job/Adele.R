@@ -160,7 +160,7 @@ colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(AdeleCore[[2]][5, 2]/5), ceiling(AdeleCore[[2]][5, 2]/5))
+value <- c((10 + floor(AdeleCore[[2]][5, 2]/5)) / 0.9, ceiling(AdeleCore[[2]][5, 2]/5))
 info <- c(80 + 2 * AdeleCore[[2]][5, 2], 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
