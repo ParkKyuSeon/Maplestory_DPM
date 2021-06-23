@@ -341,17 +341,18 @@ legend(x=0, y=80000, legend=c("NightLord", "DualBlader", "NightWalker",
                               "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=4)
 
 ## Pirates
-RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[2])
-RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[3], add=T, reverse=T)
-RRGraph(EunwolDealData[72:1825, ], "Eunwol(Moving Boss)", col=colorset[4], add=T)
-RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[5], add=T)
-RRGraph(MechanicDealData[46:339, ], "Mechanic", col=colorset[6], add=T)
-RRGraph(ArkDealData[58:395, ], "Ark", col=colorset[8], add=T)
-RRGraph(ABDealData[517:1180, ], "AngelicBuster", col=colorset[9], add=T)
-RRGraph(ViperDealData[45:210, ], "Viper", col=colorset[10], add=T)
+RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[1])
+RRGraph(ViperDealData[45:210, ], "Viper", col=colorset[2], add=T)
+RRGraph(CaptainDealData[125:562, ], "Captain", col=colorset[3], add=T)
+RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[4], add=T, reverse=T)
+RRGraph(EunwolDealData[72:1825, ], "Eunwol(Moving Boss)", col=colorset[5], add=T)
+RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[6], add=T)
+RRGraph(MechanicDealData[46:339, ], "Mechanic", col=colorset[7], add=T)
+RRGraph(ArkDealData[58:395, ], "Ark", col=colorset[9], add=T)
+RRGraph(ABDealData[517:1180, ], "AngelicBuster", col=colorset[10], add=T)
 
-legend(x=0, y=80000, legend=c("CannonShooter", "Striker(R)", "Eunwol(Moving)", 
-                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster", "Viper"), col=colorset[c(2:6, 8, 9, 10)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)", "Eunwol(Moving)", 
+                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(1:7, 9:10)], lty=1, lwd=4)
 
 ## 1~5
 RRGraph(NightLordDealData[31:434, ], "", col=colorset[2])
@@ -442,6 +443,12 @@ DualBladeDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
 TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", F)
 TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", T)
 DealIrr(DualBladeDealTL, max(DualBladeDealData$Time)/1000)
+
+## Captain
+CaptainDealTL <- DealTimeLine(CaptainDealData$Time, CaptainDealData$Deal)
+TLGraph(CaptainDealTL, max(CaptainDealData$Time)/1000, "Captain", F)
+TLGraph(CaptainDealTL, max(CaptainDealData$Time)/1000, "Captain", T)
+DealIrr(CaptainDealTL, max(CaptainDealData$Time)/1000)
 
 ## CannonShooter
 CannonShooterDealTL <- DealTimeLine(CannonShooterDealData$Time, CannonShooterDealData$Deal)
@@ -601,7 +608,7 @@ DealIrr(ZeroDealTL, max(ZeroDealData$Time)/1000)
 set.seed(1)
 ToyJobDeal <- rnorm(66, 6000, 400)
 ToyJobTL <- data.frame(Time=seq(0, 355, 5), 
-                       Deal=c(16500, 16000, 15500, ToyJobDeal[1:33], 16500, 16000, 15500, ToyJobDeal[34:66]))
+                       Deal=c(12500, 12000, 11500, ToyJobDeal[1:33], 12500, 12000, 11500, ToyJobDeal[34:66]))
 TLGraph(ToyJobTL, 360, "ToyJob", F)
 TLGraph(ToyJobTL, 360, "ToyJob", T)
 sum(ToyJobTL$Deal)/6
