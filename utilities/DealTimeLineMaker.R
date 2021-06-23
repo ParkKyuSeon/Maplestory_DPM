@@ -343,7 +343,7 @@ legend(x=0, y=80000, legend=c("NightLord", "DualBlader", "NightWalker",
 ## Pirates
 RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[1])
 RRGraph(ViperDealData[45:210, ], "Viper", col=colorset[2], add=T)
-RRGraph(CaptainDealData[125:592, ], "Captain", col=colorset[3], add=T)
+RRGraph(CaptainDealData[125:594, ], "Captain", col=colorset[3], add=T)
 RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[4], add=T, reverse=T)
 RRGraph(EunwolDealData[72:1825, ], "Eunwol(Moving Boss)", col=colorset[5], add=T)
 RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[6], add=T)
@@ -353,6 +353,7 @@ RRGraph(ABDealData[517:1180, ], "AngelicBuster", col=colorset[10], add=T)
 
 legend(x=0, y=80000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)", "Eunwol(Moving)", 
                               "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(1:7, 9:10)], lty=1, lwd=4)
+
 
 ## 1~5
 RRGraph(NightLordDealData[31:434, ], "", col=colorset[2])
@@ -364,13 +365,13 @@ RRGraph(data.frame(Time=ArchMageTC40s$Time, Deal=ArchMageTC40s$Damage)[730:1009,
 legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Adele", "ArchMageTC(R)"), col=colorset[c(2:6)], lty=1, lwd=4)
 
 ## 29~33
-RRGraph(StrikerDealData[33:235, ], "", col=colorset[2])
+RRGraph(StrikerDealData[33:235, ], "", col=colorset[2], reverse=T)
 RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[3], add=T)
 RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[4], add=T, reverse=T)
 RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[5], add=T)
 RRGraph(SoulMasterDealData[360:577, ], "SoulMaster", col=colorset[6], add=T, reverse=T)
 
-legend(x=0, y=80000, legend=c("Striker", "WindBreaker", "Bishop(R)", "Luminous", "SoulMaster(R)"), col=colorset[c(2:6)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Striker(R)", "WindBreaker", "Bishop(R)", "Luminous", "SoulMaster(R)"), col=colorset[c(2:6)], lty=1, lwd=4)
 
 
 
