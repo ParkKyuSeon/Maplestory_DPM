@@ -343,7 +343,7 @@ legend(x=0, y=80000, legend=c("NightLord", "DualBlader", "NightWalker",
 ## Pirates
 RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[1])
 RRGraph(ViperDealData[45:210, ], "Viper", col=colorset[2], add=T)
-RRGraph(CaptainDealData[125:562, ], "Captain", col=colorset[3], add=T)
+RRGraph(CaptainDealData[125:592, ], "Captain", col=colorset[3], add=T)
 RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[4], add=T, reverse=T)
 RRGraph(EunwolDealData[72:1825, ], "Eunwol(Moving Boss)", col=colorset[5], add=T)
 RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[6], add=T)
