@@ -477,7 +477,6 @@ BuffFinal <- data.frame(CaptainBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, CaptainSpec$BuffDuration / 100, 0) +
   ifelse(BuffFinal$ServerLag==T, 3, 0)
-## QuickDraw FDR Simulation Needed
 
 SummonedFinal <- data.frame(CaptainSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce)
