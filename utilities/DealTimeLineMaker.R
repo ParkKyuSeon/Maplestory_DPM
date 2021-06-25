@@ -565,6 +565,12 @@ TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", F)
 TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", T)
 DealIrr(KaiserDealTL, max(KaiserDealData$Time)/1000)
 
+## Cadena
+CadenaDealTL <- DealTimeLine(CadenaDealData$Time, CadenaDealData$Deal)
+TLGraph(CadenaDealTL, max(CadenaDealData$Time)/1000, "Cadena", F)
+TLGraph(CadenaDealTL, max(CadenaDealData$Time)/1000, "Cadena", T)
+DealIrr(CadenaDealTL, max(CadenaDealData$Time)/1000)
+
 ## AngelicBuster
 AngelicBusterDealTL <- DealTimeLine(ABDealData2$Time, ABDealData2$Deal)
 TLGraph(AngelicBusterDealTL, max(ABDealData2$Time)/1000, "AngelicBuster", F)
