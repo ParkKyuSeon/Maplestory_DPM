@@ -2179,7 +2179,7 @@ CommonV <- function(class1, class2) {
   cls2 <- c("AdventureWarrior", "AdventureWizard", "AdventureBowman", "AdventureThief", "AdventurePirate", 
             "CygnusKnights", "Heroes", "Resistance", "Demon", "Nova", "Lef", "Anima", "Transcedent", "Supernatural")
   cmm2 <- c("BlitzShield", "UnstableMemorize", "Evolve", "UltimateDarkSight", "PirateFlag", 
-            "CygnusPhalanx", "FreudBlessing", "ResistanceLineInfantry", "CallMastema", "Pantheon", "MagicCircuitFullDrive", NA, NA, NA)
+            "CygnusPhalanx", "FreudBlessing", "ResistanceLineInfantry", "CallMastema", "Pantheon", "MagicCircuitFullDrive", "Hwajunggunja", NA, NA)
   cmm4 <- c("MapleWarriors2", "MapleWarriors2", "MapleWarriors2", "MapleWarriors2", "MapleWarriors2", 
             "BlessofCygnus", "MapleWarriors2", "MapleWarriors2", "BlessofIsekaiGoddess", "BlessofGrandisGoddess", "BlessofGrandisGoddess", "BlessofGrandisGoddess", 
             "BlessofRhinne", "BlessofMasteriaGoddess")
