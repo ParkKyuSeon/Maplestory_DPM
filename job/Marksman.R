@@ -484,20 +484,20 @@ MarksmanFinalDPM <- DealCalc(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFin
 MarksmanFinalDPMwithMax <- DealCalcWithMaxDMR(MarksmanDealCycle, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt2)
 sum(na.omit(MarksmanFinalDPM - MarksmanFinalDPMwithMax))
 
-DPM12347$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(max(MarksmanDealCycle$Time)/60000)
-DPM12347$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(max(MarksmanDealCycle$Time)/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(max(MarksmanDealCycle$Time)/60000)
+DPM12349$Marksman[1] <- sum(na.omit(MarksmanFinalDPMwithMax))/(max(MarksmanDealCycle$Time)/60000)
+DPM12349$Marksman[2] <- sum(na.omit(MarksmanFinalDPM))/(max(MarksmanDealCycle$Time)/60000) - sum(na.omit(MarksmanFinalDPMwithMax))/(max(MarksmanDealCycle$Time)/60000)
 
 
 ## Restraint Deal and 40s Damage
 MRestraint <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(MRestraint) <- c("Skills", "Damage", "Time", "R4")
 MRestraint <- subset(MRestraint, MRestraint$R4>0)
-DPM12347$Marksman[3] <- sum(MRestraint$Damage)
+DPM12349$Marksman[3] <- sum(MRestraint$Damage)
 
 Marksman40s <- data.frame(MarksmanDealCycle$Skills, MarksmanFinalDPMwithMax, MarksmanDealCycle$Time, MarksmanDealCycle$Restraint4)
 colnames(Marksman40s) <- c("Skills", "Damage", "Time", "R4")
 Marksman40s <- Marksman40s[35:356, ]
-DPM12347$Marksman[4] <- sum((Marksman40s$Damage))
+DPM12349$Marksman[4] <- sum((Marksman40s$Damage))
 
 
 ## Marksman Deal Ratio

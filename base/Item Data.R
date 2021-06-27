@@ -180,6 +180,7 @@ Bow <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
 Crossbow <- c(150, 40, 40, 0, 0, 164, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.35)
 AncientBow <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
 DualBowgun <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
+BreathShooter <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
 Wristband <- c(150, 40, 40, 0, 0, 86, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 4, 2, 1.75)
 Dagger <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 4, 1, 1.3)
 Cane <- c(150, 40, 40, 0, 0, 164, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 1, 1.3)
@@ -193,7 +194,7 @@ SoulShooter <- c(150, 40, 40, 0, 0, 128, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 1, 1
 Fafnir <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                 Tuner, LongSword, HeavySword, 
                 Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                Bow, Crossbow, AncientBow, DualBowgun, 
+                Bow, Crossbow, AncientBow, DualBowgun, BreathShooter, 
                 Wristband, Dagger, Cane, Chain, Fan,
                 Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(Fafnir) <- weaponoption
@@ -221,6 +222,7 @@ Bow <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
 Crossbow <- c(160, 60, 60, 0, 0, 197, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.35)
 AncientBow <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
 DualBowgun <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
+BreathShooter <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
 Wristband <- c(160, 60, 60, 0, 0, 103, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 4, 2, 1.75)
 Dagger <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 4, 1, 1.3)
 Cane <- c(160, 60, 60, 0, 0, 197, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 1, 1.3)
@@ -234,7 +236,7 @@ SoulShooter <- c(160, 60, 60, 0, 0, 154, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 1, 1
 Absolabs <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                   Tuner, LongSword, HeavySword, 
                   Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                  Bow, Crossbow, AncientBow, DualBowgun, 
+                  Bow, Crossbow, AncientBow, DualBowgun, BreathShooter, 
                   Wristband, Dagger, Cane, Chain, Fan,
                   Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(Absolabs) <- weaponoption
@@ -262,6 +264,7 @@ Bow <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
 Crossbow <- c(200, 100, 100, 0, 0, 283, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.35)
 AncientBow <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
 DualBowgun <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
+BreathShooter <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
 Wristband <-c(200, 100, 100, 0, 0, 149, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 4, 2, 1.75)
 Dagger <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 4, 1, 1.3)
 Cane <- c(200, 100, 100, 0, 0, 283, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 1, 1.3)
@@ -275,7 +278,7 @@ SoulShooter <- c(200, 100, 100, 0, 0, 221, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 1,
 ArcaneShade <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                      Tuner, LongSword, HeavySword, 
                      Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                     Bow, Crossbow, AncientBow, DualBowgun, 
+                     Bow, Crossbow, AncientBow, DualBowgun, BreathShooter, 
                      Wristband, Dagger, Cane, Chain, Fan,
                      Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(ArcaneShade) <- weaponoption
@@ -286,7 +289,7 @@ colnames(ArcaneShade) <- weaponoption
 {rm(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
    Tuner, LongSword, HeavySword, 
    Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-   Bow, Crossbow, AincientBow, DualBowgun, 
+   Bow, Crossbow, AincientBow, DualBowgun, BreathShooter, 
    Wristband, Dagger, Cane, Chain, Fan,
    Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 Sword <- c(53, 79, 136)
@@ -310,6 +313,7 @@ Bow <- c(52, 77, 133)
 Crossbow <- c(53, 79, 136)
 AincientBow <- c(52, 77, 133)
 DualBowgun <- c(52, 77, 133)
+BreathShooter <- c(52, 77, 133)
 Wristband <- c(28, 42, 72)
 Dagger <- c(52, 77, 133)
 Cane <- c(53, 79, 136)
@@ -323,7 +327,7 @@ SoulShooter <- c(41, 62, 106)}
 AddoptionTier4 <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                         Tuner, LongSword, HeavySword, 
                         Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                        Bow, Crossbow, AincientBow, DualBowgun, 
+                        Bow, Crossbow, AincientBow, DualBowgun, BreathShooter,
                         Wristband, Dagger, Cane, Chain, Fan,
                         Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(AddoptionTier4) <- c("Fafnir", "Absolabs", "ArcaneShade")
@@ -351,6 +355,7 @@ Bow <- c(66, 99, 170)
 Crossbow <- c(68, 101, 175)
 AincientBow <- c(66, 99, 170)
 DualBowgun <- c(66, 99, 170)
+BreathShooter <- c(66, 99, 170)
 Wristband <- c(36, 53, 92)
 Dagger <- c(66, 99, 170)
 Cane <- c(68, 101, 175)
@@ -364,7 +369,7 @@ SoulShooter <- c(53, 79, 136)}
 AddoptionTier5 <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                         Tuner, LongSword, HeavySword, 
                         Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                        Bow, Crossbow, AincientBow, DualBowgun, 
+                        Bow, Crossbow, AincientBow, DualBowgun, BreathShooter, 
                         Wristband, Dagger, Cane, Chain, Fan,
                         Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(AddoptionTier5) <- c("Fafnir", "Absolabs", "ArcaneShade")
@@ -407,11 +412,13 @@ DemonSlayerForceShield <- c(100, 21, 21, 0, 800, 0, 0, 0, 0, F, F, 0, 0, 0, 0, 0
 DemonAvengerForceShield <- c(100, 21, 0, 0, 900, 0, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 RuinForceShield <- c(100, 10, 10, 0, 560, 0, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 DragonEssence <- c(100, 10, 10, 10, 0, 0, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
+WeaponBelt <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 Transmitter <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 SoulRing <- c(100, 10, 10, 10, 0, 0, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 Bracelet <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 MagicWing <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 PathofAbyss <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
+Norigae <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 Seonchu <- c(100, 10, 10, 0, 0, 3, 0, 0, 0, F, F, 0, 0, 0, 0, 0)
 FafnirZeroSubWeapon <- c(170, 0, 0, 0, 0, 0, 0, 0, 0, F, F, 0, 10, 30, 0, 0)
 AbsolabsZeroSubWeapon <- c(180, 0, 0, 0, 0, 0, 0, 0, 0, F, F, 0, 10, 30, 0, 0)
@@ -422,7 +429,7 @@ SubWeapon <- rbind(HeroMedal, Rosario, DarkKnightChain, FPGrimoire, TCGrimoire, 
                    SoulShield, CygnusKnightsJewel, AranWeight, EvanDocument, Orb, MagicArrow, Card, FoxBead, 
                    BlasterGunpowder, MagicBead, Arrowhead, Magnum, Controller, DemonSlayerForceShield, DemonAvengerForceShield, 
                    RuinForceShield, DragonEssence, Transmitter, SoulRing, Bracelet, MagicWing, PathofAbyss, Seonchu, 
-                   FafnirZeroSubWeapon, AbsolabsZeroSubWeapon, ArcaneShadeZeroSubWeapon, ChessPiece)
+                   FafnirZeroSubWeapon, AbsolabsZeroSubWeapon, ArcaneShadeZeroSubWeapon, ChessPiece, Norigae, WeaponBelt)
 colnames(SubWeapon) <- SubWeaponOption
 SubWeapon <- data.frame(SubWeapon)
 
@@ -436,15 +443,17 @@ Cygnus <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Resistance <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Demon <- c(100, 10, 10, 10, 500, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Dragon <- c(100, 10, 10, 0, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
+Hitman <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Angel <- c(100, 10, 10, 0, 400, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Agent <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Knight <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Crystal <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Abyss <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
+Pungsusa <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Cheonjiin <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Time <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)
 Kinesis <- c(100, 10, 10, 10, 0, 2, 2, 0, 0, F, F, 0, 0, 0, 0, 0)}
-Emblem <- rbind(MapleLeaf, Heroes, Cygnus, Resistance, Demon, Dragon, Angel, Agent, Knight, Crystal, Abyss, Cheonjiin, Time, Kinesis)
+Emblem <- rbind(MapleLeaf, Heroes, Cygnus, Resistance, Demon, Dragon, Angel, Agent, Knight, Crystal, Abyss, Cheonjiin, Time, Kinesis, Hitman, Pungsusa)
 colnames(Emblem) <- SubWeaponOption
 Emblem <- data.frame(Emblem)
 

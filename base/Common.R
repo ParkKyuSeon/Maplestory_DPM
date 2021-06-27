@@ -37,12 +37,14 @@ Xenon <- c(5, 10, 20, 40, 50) # STRDEXLUK
 DemonSlayer <- c(0, 0, 0, 0, 0) # DisorderImmune
 DemonAvenger <- c(1, 2, 3, 5, 6) # BDR
 Kaiser <- c(10, 20, 40, 80, 100) # STR
+Kain <- c(10, 20, 40, 80, 100) # DEX
 Cadena <- c(10, 20, 40, 80, 100) # LUK
 AngelicBuster <- c(10, 20, 40, 80, 100) # DEX
 Adele <- c(10, 20, 40, 80, 100) # STR
 Illium <- c(10, 20, 40, 80, 100) # LUK
 Ark <- c(10, 20, 40, 80, 100) # STR
 Hoyeong <- c(10, 20, 40, 80, 100) # LUK
+Lara <- c(10, 20, 40, 80, 100) # INT
 Zero <- c(0, 0, 0, 0, 0) # EXP
 Kinesis <- c(10, 20, 40, 80, 100) # INT
 MapleM <- c(5, 10, 15, 20, NA) # ATK
@@ -50,13 +52,13 @@ Options <- c("STR", "STR", "HPP", "Others", "INT", "INT", "DEX", "CRR", "DEX", "
              "HP", "HP", "INT", "DEX", "LUK", "STR",
              "Others", "Others", "INT", "CoolReduceP", "Others", "CDMR", 
              "IGR", "INT", "BDR", "BuffDuration", "STRDEXLUK", "Others", "BDR", 
-             "STR", "LUK", "DEX", "STR", "LUK", "STR", "LUK", "Others", "INT", "ATK")
+             "STR", "DEX", "LUK", "DEX", "STR", "LUK", "STR", "LUK", "INT", "Others", "INT", "ATK")
 Union <- rbind(Hero, Palladin, DarkKnight, ArchMageFP, ArchMageTC, Bishop, BowMaster, Marksman, PathFinder, 
                NightLord, Shadower, DualBlader, Viper, Captain, CannonMaster, 
                Mikhail, SoulMaster, FlameWizard, WindBreaker, NightWalker, Striker, 
                Aran, Evan, Luminous, Mercedes, Phantom, Eunwol, 
                Blaster, BattleMage, WildHunter, Mechanic, Xenon, DemonSlayer, DemonAvenger, 
-               Kaiser, Cadena, AngelicBuster, Adele, Illium, Ark, Hoyeong, Zero, Kinesis, MapleM)}
+               Kaiser, Kain, Cadena, AngelicBuster, Adele, Illium, Ark, Hoyeong, Lara, Zero, Kinesis, MapleM)}
 UnionCharacters <- data.frame(Union, Options, stringsAsFactors=F)
 colnames(UnionCharacters) <- c("B", "A", "S", "SS", "SSS", "Options")
 
@@ -331,6 +333,7 @@ Mercedes <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Exp
 Phantom <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0)
 Eunwol <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Survive
 Kaiser <- c(0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Kaiser : DMR 3% per Morph Gauge
+Kain <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # Only for Kain
 Cadena <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Disorder==T, 6, 0)+ifelse(SpecDefault$Basic$ChrLv > MobDefault$Basic$Lv, 6, 0), 0, 0, 0)
 AngelicBuster <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) # DMR Buff
 Adele <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4 + min(General$General$PartyMembers * 2, 8), 0, 0, 0)
@@ -338,11 +341,12 @@ Illium <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ifelse(Movable==T, 12, 0), 0, 0, 0)
 Ark <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0)
 Zero <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0)
 Kinesis <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0)
-Hoyeong <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0)}
+Hoyeong <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0)
+Lara <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0)}
 LinkSkill <- rbind(AdventureWarrior, AdventureWizard, AdventureBowman, AdventureThief, AdventurePirates, 
                    Mikhail, CygnusKnights, Resistance, Xenon, DemonSlayer, DemonAvenger, 
-                   Aran, Evan, Luminous, Mercedes, Phantom, Eunwol, Kaiser, Cadena, AngelicBuster, 
-                   Adele, Illium, Ark, Hoyeong, Zero, Kinesis)
+                   Aran, Evan, Luminous, Mercedes, Phantom, Eunwol, Kaiser, Kain, Cadena, AngelicBuster, 
+                   Adele, Illium, Ark, Hoyeong, Lara, Zero, Kinesis)
 colnames(LinkSkill) <- LinkOption
 
 LinkBase <- rbind(Resistance, AngelicBuster, DemonSlayer, AdventureWizard, 
