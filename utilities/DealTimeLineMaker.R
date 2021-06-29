@@ -316,8 +316,9 @@ RRGraph(LuminousDealData[622:755, ], "Wizard(2)", col=colorset[2])
 RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[3], add=T)
 RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[4], add=T)
 RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[5], add=T)
+RRGraph(LaraDealData[40:236, ], "Lara", col=colorset[6], add=T)
 
-legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)"), col=colorset[c(2:5)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara"), col=colorset[c(2:6)], lty=1, lwd=4)
 
 ## Archer
 RRGraph(BowmasterDealData[70:766, ], "Archer", col=colorset[2])
