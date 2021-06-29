@@ -595,6 +595,12 @@ TLGraph(ArkDealTL, max(ArkDealData$Time)/1000, "Ark", F)
 TLGraph(ArkDealTL, max(ArkDealData$Time)/1000, "Ark", T)
 DealIrr(ArkDealTL, max(ArkDealData$Time)/1000)
 
+## Lara
+LaraDealTL <- DealTimeLine(LaraDealData$Time, LaraDealData$Deal)
+TLGraph(LaraDealTL, max(LaraDealData$Time)/1000, "Lara", F)
+TLGraph(LaraDealTL, max(LaraDealData$Time)/1000, "Lara", T)
+DealIrr(LaraDealTL, max(LaraDealData$Time)/1000)
+
 ## Hoyeong
 HoyeongDealTL <- DealTimeLine(HoyeongDealData$Time, HoyeongDealData$Deal)
 TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", F)
