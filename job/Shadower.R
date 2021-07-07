@@ -1,6 +1,6 @@
 ## Shadower - Data
 ## Shadower - Core
-ShadowerCore <- MatrixSet(PasSkills=c("Assassination", "MesoExplosion", "BomerangStab", "VeilofShadow", "DarkFlare", "SuddenRaid"), 
+ShadowerCore <- MatrixSet(PasSkills=c("Assassination", "MesoExplosion", "BoomerangStab", "VeilofShadow", "DarkFlare", "SuddenRaid"), 
                           PasLvs=c(50, 50, 50, 50, 50, 50), 
                           PasMP=c(10, 10, 5, 10, 5, 5), 
                           ActSkills=c("ShadowAssault", "Eviscerate", "SonicBlow", "Myeolgwichamyeongjin",
@@ -324,7 +324,7 @@ colnames(info) <- c("option", "value")
 Assassination1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, IGRCalc(c(10, ifelse(ShadowerCore[[1]][1, 2]>=40, 20, 0))), 2 * ShadowerCore[[1]][1, 2])
+value <- c(40, ifelse(ShadowerCore[[1]][1, 2]>=40, 20, 0), 2 * ShadowerCore[[1]][1, 2])
 info <- c(350 + 5 * ShadowerSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -560,6 +560,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
   MYCool <- subset(ATKFinal, rownames(ATKFinal)=="Myeolgwichamyeongjin")$CoolTime * 1000
   
   VSRemain <- 0 ; EVRemain <- 0 ; SBRemain <- 0 ; SSRemain <- 0 ; MYRemain <- 0
+  WoundStack <- 3
   
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
@@ -606,7 +607,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
       }
       ## Eviscerate
-      else if(EVRemain <= 630 + 360) {
+      else if(EVRemain <= 630 + 360 & WoundStack >= 2) {
         if(nrow(subset(DealCycle, DealCycle$Skills=="Myeolgwichamyeongjin")) < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) & MYRemain == 0) {
           DealCycle <- DCATKSkip(DealCycle, "Myeolgwichamyeongjin", ATKFinal, SkipStructure)
           DealCycle <- DCATKSkip(DealCycle, "MyeolgwichamyeongjinLast", ATKFinal, SkipStructure)
@@ -640,6 +641,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         SBRemain <- max(0, SBRemain - DealCycle$Time[1])
         SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
+        WoundStack <- 0
       }
       ## Sonic Blow
       else if(SBRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SonicBlow")) < 10) {
@@ -731,6 +733,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         SBRemain <- max(0, max(0, SBRemain - DealCycle$Time[1]) - 1500)
         SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
+        WoundStack <- min(3, WoundStack + 1)
       }
     }
     
@@ -764,6 +767,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
             SBRemain <- max(0, SBRemain - DealCycle$Time[1])
             SSRemain <- max(0, SSRemain - DealCycle$Time[1])
             MYRemain <- max(0, MYRemain - DealCycle$Time[1])
+            WoundStack <- min(3, WoundStack + 1)
           }
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
@@ -778,7 +782,8 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
   }
   
   while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="VeilofShadowBuff")$Time) + min(subset(DealCycle, DealCycle$Skills=="VeilofShadowBuff")$Time) < VSCool | 
-        SBRemain - 1500 - min(subset(DealCycle, DealCycle$Skills=="SonicBlow")$Time) > 0) {
+        SBRemain - 1500 - min(subset(DealCycle, DealCycle$Skills=="SonicBlow")$Time) > 0 | 
+        WoundStack < 1) {
     DealCycle <- DCATKSkip(DealCycle, "Assassination1", ATKFinal, SkipStructure)
     VSRemain <- max(0, VSRemain - DealCycle$Time[1])
     EVRemain <- max(0, EVRemain - DealCycle$Time[1])
@@ -799,6 +804,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
     SBRemain <- max(0, max(0, SBRemain - DealCycle$Time[1]) - 1500)
     SSRemain <- max(0, SSRemain - DealCycle$Time[1])
     MYRemain <- max(0, MYRemain - DealCycle$Time[1])
+    WoundStack <- min(3, WoundStack + 1)
   }
   
   rownames(DealCycle) <- 1:nrow(DealCycle)
@@ -815,7 +821,7 @@ ShadowerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) 
   
   ## Veil of Shadow
   DealCycle[DealCycle$Skills=="VeilofShadowBuff", ]$Skills <- "VeilofShadow"
-  DealCycle <- RepATKCycle(DealCycle, "VeilofShadow", 12, 1200, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "VeilofShadow", 14, 1200, ATKFinal)
   
   
   ## Myeolgwichamyeongjin
@@ -979,8 +985,6 @@ ShadowerFinalDPMwithMax <- DealCalcWithMaxDMR(ShadowerDealCycle, ATKFinal, BuffF
 DPM12349$Shadower[1] <- sum(na.omit(ShadowerFinalDPMwithMax)) / (max(ShadowerDealCycle$Time)/ 60000)
 DPM12349$Shadower[2] <- sum(na.omit(ShadowerFinalDPM)) / (max(ShadowerDealCycle$Time) / 60000) - sum(na.omit(ShadowerFinalDPMwithMax)) / (max(ShadowerDealCycle$Time) / 60000)
 
-ShadowerDealRatio <- DealRatio(ShadowerDealCycle, ShadowerFinalDPMwithMax)
-
 ShadowerDealData <- data.frame(ShadowerDealCycle$Skills, ShadowerDealCycle$Time, ShadowerDealCycle$Restraint4, ShadowerFinalDPMwithMax)
 colnames(ShadowerDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ShadowerDealData, ShadowerDealData$R4>0)
@@ -988,7 +992,7 @@ subset(ShadowerDealData, ShadowerDealData$R4>0)
 ShadowerRR <- ShadowerDealData[42:462, ]
 DPM12349$Shadower[3] <- sum((ShadowerRR$Deal))
 
-Shadower40s <- ShadowerDealData[42:1127, ]
+Shadower40s <- ShadowerDealData[42:1184, ]
 DPM12349$Shadower[4] <- sum((Shadower40s$Deal))
 
 ShadowerDealRatio <- DealRatio(ShadowerDealCycle, ShadowerFinalDPMwithMax)
