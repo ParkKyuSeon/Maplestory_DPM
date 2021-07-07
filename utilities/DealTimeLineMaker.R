@@ -333,13 +333,14 @@ legend(x=0, y=80000, legend=c("Bowmaster", "Marksman", "PathFinder",
 
 ## Thief
 RRGraph(NightLordDealData[31:434, ], "Thief", col=colorset[2])
-RRGraph(DualBladeDealData[30:279, ], "DualBlader", col=colorset[3], add=T)
-RRGraph(NightWalkerDealData[58:825, ], "NightWalker", col=colorset[4], add=T)
-RRGraph(PhantomDealData[23:429, ], "Phantom", col=colorset[5], add=T)
-RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[6], add=T)
+RRGraph(ShadowerDealData[42:462, ], "Shadower", col=colorset[3], add=T)
+RRGraph(DualBladeDealData[30:279, ], "DualBlader", col=colorset[4], add=T)
+RRGraph(NightWalkerDealData[58:825, ], "NightWalker", col=colorset[5], add=T)
+RRGraph(PhantomDealData[23:429, ], "Phantom", col=colorset[6], add=T)
+RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[8], add=T)
 
-legend(x=0, y=80000, legend=c("NightLord", "DualBlader", "NightWalker", 
-                              "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("NightLord", "Shadower", "DualBlader", "NightWalker", 
+                              "Phantom", "Hoyeong"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
 
 ## Pirates
 RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[1])
@@ -439,6 +440,12 @@ NightLordDealTL <- DealTimeLine(NightLordDealData$Time, NightLordDealData$Deal)
 TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", F)
 TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", T)
 DealIrr(NightLordDealTL, max(NightLordDealData$Time)/1000)
+
+## Shadower
+ShadowerDealTL <- DealTimeLine(ShadowerDealData$Time, ShadowerDealData$Deal)
+TLGraph(ShadowerDealTL, max(ShadowerDealData$Time)/1000, "Shadower", F)
+TLGraph(ShadowerDealTL, max(ShadowerDealData$Time)/1000, "Shadower", T)
+DealIrr(ShadowerDealTL, max(ShadowerDealData$Time)/1000)
 
 ## DualBlade
 DualBladeDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
