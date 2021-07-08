@@ -39,7 +39,7 @@ value <- c(20)
 NimbleBody <- data.frame(option, value)
 
 option <- factor(c("CDMR"), levels=PSkill)
-value <- c(25/3)
+value <- c(4)
 CriticalGrowing <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
