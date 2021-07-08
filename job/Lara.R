@@ -26,7 +26,7 @@ LaraBase <- JobBase(ChrInfo=ChrInfo,
                     BuffDurationNeeded=0, 
                     AbilList=c("PassiveLv", "DisorderBDR"), 
                     LinkList=c("Lara", "Mikhail", "DemonAvenger", "Xenon"), 
-                    MonsterLife=MLTypeI21, 
+                    MonsterLife=MLTypeI22, 
                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Wand", SpecDefault$WeaponType)[, 1:16],
                     WeaponType=SpecDefault$WeaponType, 
                     SubWeapon=SubWeapon[rownames(SubWeapon)=="Norigae", ], 
@@ -48,7 +48,7 @@ value <- c(40)
 PhysicalTraining <- data.frame(option, value)
 
 option <- factor(c("BDR", "CRR"), levels=PSkill)
-value <- c(20, 20)
+value <- c(30, 20)
 Mugu <- data.frame(option, value)
 
 option <- factor(c("Mastery", "FDR", "ATK"), levels=PSkill)
@@ -56,7 +56,7 @@ value <- c(70 + ceiling(LaraBase$PSkillLv/2), 30 + floor(LaraBase$PSkillLv/2), 5
 WandExpert <- data.frame(option, value)
 
 option <- factor(c("CRR", "CDMR", "FDR", "IGR"), levels=PSkill)
-value <- c(20 + LaraBase$PSkillLv, 20 + LaraBase$PSkillLv, 30 + LaraBase$PSkillLv, 40 + LaraBase$PSkillLv)
+value <- c(20 + LaraBase$PSkillLv, 20 + LaraBase$PSkillLv, 45 + LaraBase$PSkillLv, 40 + LaraBase$PSkillLv)
 Hyean <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -122,28 +122,28 @@ SeedofMountainDummy <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(20, 0, Delay(510, 2), F, F, F, F)
+info <- c(20 * (100 + LaraBase$UnionChrs$SummonedDuration + LaraBase$MonsterLife$SummonedDuration + LaraPassive$SummonDuration) / 100, 0, Delay(510, 2), F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SeedofMountain1 <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(20, 0, Delay(510, 2), F, F, F, F)
+info <- c(20 * (100 + LaraBase$UnionChrs$SummonedDuration + LaraBase$MonsterLife$SummonedDuration + LaraPassive$SummonDuration) / 100, 0, Delay(510, 2), F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SeedofMountain2 <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(20, 0, Delay(510, 2), F, F, F, F)
+info <- c(20 * (100 + LaraBase$UnionChrs$SummonedDuration + LaraBase$MonsterLife$SummonedDuration + + LaraPassive$SummonDuration) / 100, 0, Delay(510, 2), F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SeedofMountain3 <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(20, 0, Delay(510, 2), F, F, F, F)
+info <- c(20 * (100 + LaraBase$UnionChrs$SummonedDuration + LaraBase$MonsterLife$SummonedDuration + + LaraPassive$SummonDuration) / 100, 0, Delay(510, 2), F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SeedofMountain4 <- rbind(data.frame(option, value), info) 
@@ -185,35 +185,35 @@ SunriseWellBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(1)
-info <- c(60 + 20, 600, Delay(720, 2), F, F, F, T)
+info <- c(60, 600, Delay(720, 2), T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WindSwingBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor("BDR", levels=BSkill)
-value <- c(15)
-info <- c(60 + 20, 600, Delay(720, 2), F, F, F, T)
+value <- c(25)
+info <- c(60, 600, Delay(720, 2), T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SunlightSiteBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(45 + LaraBase$PSkillLv, 0, Delay(690, 2), F, NA, NA, T)
+info <- c(60 + 3 * ceiling(LaraBase$PSkillLv/2), 0, Delay(690, 2), F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RiverPuddleBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(45 + LaraBase$PSkillLv, 0, Delay(690, 2), F, NA, NA, T)
+info <- c(60 + 3 * ceiling(LaraBase$PSkillLv/2), 0, Delay(690, 2), F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ChillyBleakWindBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(45 + LaraBase$PSkillLv, 0, Delay(690, 2), F, NA, NA, T)
+info <- c(60 + 3 * ceiling(LaraBase$PSkillLv/2), 0, Delay(690, 2), F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SunlightSphereBuff <- rbind(data.frame(option, value), info) 
@@ -226,7 +226,7 @@ colnames(info) <- c("option", "value")
 EchoofEarthVein <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "CDMR"), levels=BSkill)
-value <- c(15, 50, 10)
+value <- c(15, 30, 10)
 info <- c(30, 180, Delay(660, 2), F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -296,7 +296,8 @@ LaraSpec <- JobSpec(JobBase=LaraBase,
                     MobInfo=MobDefault, 
                     SpecSet=SpecDefault, 
                     WeaponName="Wand", 
-                    UnionStance=0)
+                    UnionStance=0,
+                    JobConstant=1.2)
 
 LaraUnionRemained <- LaraSpec$UnionRemained
 LaraHyperStatBase <- LaraSpec$HyperStatBase
@@ -363,11 +364,11 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
 ## Lara - Attacks
-## Hyper : Eruption/Absorb - Reinforce, Eruption/Absorb - Boss Killer, Eruption/Absorb - Ignore Guard, Spirit Seeding - Boss Killer, Awakening - CoolTime Reduce
+## Hyper : Eruption/Absorb - Reinforce, Eruption/Absorb - Boss Killer, Eruption/Absorb - Ignore Guard, Spirit Seeding - Boss Killer, Seed of Mountain - Reinforce
 ## Hyper Check Needed
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(15, ifelse(LaraCore[[1]][1, 2]>=40, 20, 0), 2 * LaraCore[[1]][1, 2])
-info <- c(250, 4, 660, NA, NA, NA, NA, F)
+info <- c(80 + 50 + 160, 4, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpiritSeeding <- rbind(data.frame(option, value), info)
@@ -380,71 +381,71 @@ colnames(info) <- c("option", "value")
 MountainKid <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(450, 4, 0, NA, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c(215 + 120 + 128, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeavingRiver <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(530, 8, 0, NA, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c(580, 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeavingRiverHuge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(265, 5, 0, NA, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c(63 + 35 + 152, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WhirlWind <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(320, 6, 0, NA, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c(120 + 48 + 247, 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunriseWellGiant <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(220, 1, 0, 1000, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c(85 + 48 + 117, 1, 0, 1000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunriseWellFloor <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(300, 3, 0, NA, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c(75 + 48 + 157, 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunriseWellVolcanicBomb1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(300 * 0.9, 3 * 4, 0, NA, NA, NA, NA, F)
+value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
+info <- c((75 + 48 + 157) * 0.9, 3 * 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunriseWellVolcanicBomb2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(0, ifelse(LaraCore[[1]][4, 2]>=40, 20, 0), 2 * LaraCore[[1]][4, 2])
-info <- c(55 + 75 + 170 + 5 * LaraSpec$PSkillLv, 1, 510, 2400, NA, NA, NA, F)
+value <- c(60, ifelse(LaraCore[[1]][4, 2]>=40, 20, 0), 2 * LaraCore[[1]][4, 2])
+info <- c(55 + 75 + 170 + 5 * LaraSpec$PSkillLv, 1, 510, 2000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-SeedofMountain <- rbind(data.frame(option, value), info) ## StartATK : 3120ms
+SeedofMountain <- rbind(data.frame(option, value), info) ## StartATK : 2720ms
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(LaraCore[[1]][2, 2]>=40, 20, 0), 2 * LaraCore[[1]][2, 2])
-info <- c(105 + 160 + 5 * LaraSpec$PSkillLv, 4, 720, 90, Cooldown(11, T, 20 + LaraSpec$CoolReduceP, LaraSpec$CoolReduce), F, T, F)
+info <- c(105 + 45 + LaraSpec$PSkillLv, 4, 720, 90, Cooldown(11, T, LaraSpec$CoolReduceP, LaraSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Awakening1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(LaraCore[[1]][2, 2]>=40, 20, 0), 2 * LaraCore[[1]][2, 2])
-info <- c((105 + 160 + 5 * LaraSpec$PSkillLv) * 0.6, 4, 0, 90, Cooldown(11, T, 20 + LaraSpec$CoolReduceP, LaraSpec$CoolReduce), F, T, F)
+info <- c((105 + 45 + LaraSpec$PSkillLv) * 0.6, 4, 0, 90, Cooldown(11, T, LaraSpec$CoolReduceP, LaraSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Awakening2 <- rbind(data.frame(option, value), info)
@@ -493,28 +494,28 @@ FreeEarthVein <- rbind(data.frame(option, value), info) ## + EarthVeinSwitch Del
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * LaraCore[[2]][1, 2], 5 * 5, 870, 90, 60, T, F, F)
+info <- c(500 + 20 * LaraCore[[2]][1, 2], 5 * 5, 870, 90, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HugeStretch1 <- rbind(data.frame(option, value), info) ## StartATK : 1980ms
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c((400 + 16 * LaraCore[[2]][1, 2]) * 0.7, 5 * 5, 0, 90, 60, T, F, F)
+info <- c((500 + 20 * LaraCore[[2]][1, 2]) * 0.7, 5 * 5, 0, 90, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HugeStretch2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(675 + 27 * LaraCore[[2]][2, 2], 10, 840, NA, 180, T, F, F)
+info <- c(800 + 32 * LaraCore[[2]][2, 2], 10, 840, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunRiverMountWind1 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(750 + 30 * LaraCore[[2]][2, 2], 15, 0, NA, 180, T, F, F)
+info <- c(1000 + 40 * LaraCore[[2]][2, 2], 15, 0, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunRiverMountWind2 <- rbind(data.frame(option, value), info)
@@ -528,7 +529,7 @@ SurgingSpirit <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(325 + 13 * LaraCore[[2]][4, 2], 3, 960, 390, 60, T, F, F)
+info <- c(325 + 13 * LaraCore[[2]][4, 2], 4 * 3, 960, 390, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RidgeZigzag <- rbind(data.frame(option, value), info) ## Minimum Delay 240ms, StartATK 1440ms
@@ -558,6 +559,8 @@ BuffFinal <- data.frame(LaraBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, LaraSpec$CoolReduceP, LaraSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, LaraSpec$BuffDuration / 100, 0) +
   ifelse(BuffFinal$ServerLag==T, 3, 0)
+BuffFinal[rownames(BuffFinal)=="WindSwingBuff", ]$Duration <- BuffFinal[rownames(BuffFinal)=="WindSwingBuff", ]$Duration + 20
+BuffFinal[rownames(BuffFinal)=="SunlightSiteBuff", ]$Duration <- BuffFinal[rownames(BuffFinal)=="SunlightSiteBuff", ]$Duration + 20
 
 SummonedFinal <- data.frame(LaraSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, LaraSpec$CoolReduceP, LaraSpec$CoolReduce)
@@ -568,7 +571,7 @@ LaraDealCycle <- t(rep(0, length(DealCycle)))
 colnames(LaraDealCycle) <- DealCycle
 LaraDealCycle <- data.frame(LaraDealCycle)
 
-## Seed of Mountain Manual
+## Seed of Mountain Auto
 LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=c(180), CycleTime=c(720)) {
   BuffSummonedPrior <- c("WandBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster", 
@@ -650,10 +653,10 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       DealCycle$SeedofMountainStack[nrow(DealCycle)] <- DealCycle$SeedofMountainStack[(nrow(DealCycle)-1)]
     }
     
-    if(DealCycle$SeedofMountainDummy[nrow(DealCycle)-1] >= 0 & DealCycle$SeedofMountainDummy[nrow(DealCycle)]==0 & DealCycle$SeedofMountainStack[nrow(DealCycle)] < 5) {
+    if(DealCycle$SeedofMountainDummy[nrow(DealCycle)-1] >= 0 & DealCycle$SeedofMountainDummy[nrow(DealCycle)]==0 & DealCycle$SeedofMountainStack[nrow(DealCycle)] < 4) {
       DealCycle$SeedofMountainStack[nrow(DealCycle)] <- DealCycle$SeedofMountainStack[nrow(DealCycle)] + 1
       DealCycle$SeedofMountainDummy[nrow(DealCycle)] <- ifelse(nrow(DealCycle)==2, 7000, 7000 - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] - DealCycle$SeedofMountainDummy[nrow(DealCycle)-1]))
-    } else if(DealCycle$SeedofMountainStack[nrow(DealCycle)] == 5) {
+    } else if(DealCycle$SeedofMountainStack[nrow(DealCycle)] == 4) {
       DealCycle$SeedofMountainDummy[nrow(DealCycle)] <- 7000
     }
     
@@ -801,9 +804,9 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         }
       }
       ## Revelation : Sunlight Site Buff
-      if(DealCycle$SunlightSiteBuff[nrow(DealCycle)] < 5000 & DealCycle$EarthVeinStatus[nrow(DealCycle)] == 4 & ESRemain == 0 & 
+      if(DealCycle$SunlightSiteBuff[nrow(DealCycle)] < 2000 & DealCycle$EarthVeinStatus[nrow(DealCycle)] == 4 & ESRemain == 0 & 
          DealCycle$Time[nrow(DealCycle)] + DealCycle$SunlightSiteBuff[nrow(DealCycle)] < TotalTime | 
-         DealCycle$SunlightSiteBuff[nrow(DealCycle)] < 5000 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0 & 
+         DealCycle$SunlightSiteBuff[nrow(DealCycle)] < 2000 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0 & 
          DealCycle$Time[nrow(DealCycle)] + DealCycle$SunlightSiteBuff[nrow(DealCycle)] < TotalTime) {
         if(DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0) {
           DealCycle <- DCATK(DealCycle, "FreeEarthVein", ATKFinal)
@@ -903,9 +906,9 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         DealCycle <- LaraEarthVein(DealCycle)
         
-        if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
-           sum(BuffList[[k]]=="ArmfulTree") > 0 & 
-           DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
+        ## if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
+        ##   sum(BuffList[[k]]=="ArmfulTree") > 0 & 
+        ##   DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
           DealCycle <- SeedofMountain(DealCycle, Cancel=T)
           if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
             AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -916,7 +919,40 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             SCRemain <- max(0, SCRemain - DealCycle$Time[1])
             DealCycle <- LaraEarthVein(DealCycle)
           }
-        }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+        ## }
         
         DealCycle <- DCBuff(DealCycle, "WhirlwindBuff", BuffFinal)
         AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -948,9 +984,9 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         DealCycle <- LaraEarthVein(DealCycle)
         
-        if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
-           sum(BuffList[[k]]=="ArmfulTree") > 0 & 
-           DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
+        ## if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
+        ##   sum(BuffList[[k]]=="ArmfulTree") > 0 & 
+        ##   DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
           DealCycle <- SeedofMountain(DealCycle, Cancel=T)
           if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
             AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -961,7 +997,40 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             SCRemain <- max(0, SCRemain - DealCycle$Time[1])
             DealCycle <- LaraEarthVein(DealCycle)
           }
-        }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+        ## }
         
         DealCycle <- DCBuff(DealCycle, "WhirlwindBuff", BuffFinal)
         AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -985,9 +1054,9 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         DealCycle <- LaraEarthVein(DealCycle)
         
-        if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
-           sum(BuffList[[k]]=="ArmfulTree") > 0 & 
-           DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
+        ## if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
+        ##   sum(BuffList[[k]]=="ArmfulTree") > 0 & 
+        ##   DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
           DealCycle <- SeedofMountain(DealCycle, Cancel=T)
           if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
             AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -998,7 +1067,40 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             SCRemain <- max(0, SCRemain - DealCycle$Time[1])
             DealCycle <- LaraEarthVein(DealCycle)
           }
-        }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+        ## }
         
         DealCycle <- DCBuff(DealCycle, "HeavingRiverBuff", BuffFinal)
         AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -1030,9 +1132,9 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         DealCycle <- LaraEarthVein(DealCycle)
         
-        if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
-           sum(BuffList[[k]]=="ArmfulTree") > 0 & 
-           DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
+        ## if(sum(BuffList[[k]]=="ArmfulTree") == 0 | 
+        ##   sum(BuffList[[k]]=="ArmfulTree") > 0 & 
+        ##   DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
           DealCycle <- SeedofMountain(DealCycle, Cancel=T)
           if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
             AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -1043,7 +1145,40 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             SCRemain <- max(0, SCRemain - DealCycle$Time[1])
             DealCycle <- LaraEarthVein(DealCycle)
           }
-        }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+          
+          DealCycle <- SeedofMountain(DealCycle, Cancel=T)
+          if(sum(DealCycle$Skills[nrow(DealCycle)]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))==1) {
+            AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+            FERemain <- max(0, FERemain - DealCycle$Time[1])
+            ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            DealCycle <- LaraEarthVein(DealCycle)
+          }
+        ## }
         
         DealCycle <- DCBuff(DealCycle, "HeavingRiverBuff", BuffFinal)
         AWRemain <- max(0, AWRemain - DealCycle$Time[1])
@@ -1055,24 +1190,24 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- LaraEarthVein(DealCycle)
       }
       ## Seed of Mountain Buff
-      else if(sum(c(DealCycle$SeedofMountain1[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
-                    DealCycle$SeedofMountain2[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
-                    DealCycle$SeedofMountain3[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
-                    DealCycle$SeedofMountain4[nrow(DealCycle)] - DealCycle$Time[1] <= 0)) >= 1 & DealCycle$SeedofMountainStack[nrow(DealCycle)] > 0 & sum(BuffList[[k]]=="ArmfulTree") == 0 | 
-              sum(c(DealCycle$SeedofMountain1[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
-                    DealCycle$SeedofMountain2[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
-                    DealCycle$SeedofMountain3[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
-                    DealCycle$SeedofMountain4[nrow(DealCycle)] - DealCycle$Time[1] <= 0)) >= 1 & DealCycle$SeedofMountainStack[nrow(DealCycle)] > 0 & sum(BuffList[[k]]=="ArmfulTree") > 0 & 
-              DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
-        DealCycle <- SeedofMountain(DealCycle)
-        AWRemain <- max(0, AWRemain - DealCycle$Time[1])
-        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
-        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-        FERemain <- max(0, FERemain - DealCycle$Time[1])
-        ESRemain <- max(0, ESRemain - DealCycle$Time[1])
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        DealCycle <- LaraEarthVein(DealCycle)
-      }
+      ## else if(sum(c(DealCycle$SeedofMountain1[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
+      ##              DealCycle$SeedofMountain2[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
+      ##              DealCycle$SeedofMountain3[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
+      ##              DealCycle$SeedofMountain4[nrow(DealCycle)] - DealCycle$Time[1] <= 0)) >= 1 & DealCycle$SeedofMountainStack[nrow(DealCycle)] > 0 & sum(BuffList[[k]]=="ArmfulTree") == 0 | 
+      ##        sum(c(DealCycle$SeedofMountain1[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
+      ##              DealCycle$SeedofMountain2[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
+      ##              DealCycle$SeedofMountain3[nrow(DealCycle)] - DealCycle$Time[1] <= 0, 
+      ##              DealCycle$SeedofMountain4[nrow(DealCycle)] - DealCycle$Time[1] <= 0)) >= 1 & DealCycle$SeedofMountainStack[nrow(DealCycle)] > 0 & sum(BuffList[[k]]=="ArmfulTree") > 0 & 
+      ##        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)]) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) < BuffStartTime) {
+      ##  DealCycle <- SeedofMountain(DealCycle)
+      ##  AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+      ##  RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+      ##  SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+      ##  FERemain <- max(0, FERemain - DealCycle$Time[1])
+      ##  ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+      ##  SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+      ##  DealCycle <- LaraEarthVein(DealCycle)
+      ## }
       ## Soul Contract
       else if(SCRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="ArmfulTree")) * 2 > nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink"))) {
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
@@ -1155,36 +1290,36 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- LaraEarthVein(DealCycle)
       }
       ## Awakening
-      else if(AWRemain == 0 & DealCycle$EarthVeinStatus[nrow(DealCycle)] == 4 & k != length(BuffList) & 
-              DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 | 
-              AWRemain == 0 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0 & k != length(BuffList) & 
-              DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 | 
-              AWRemain == 0 & DealCycle$EarthVeinStatus[nrow(DealCycle)] == 4 & k == length(BuffList) & 
-              DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + DealCycle$EarthVeinRegenDummy[nrow(DealCycle)] < BuffStartTime & 
-              DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000  & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 | 
-              AWRemain == 0 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0 & k==length(BuffList) & 
-              DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((3 - DealCycle$FreeEarthVeinStack[nrow(DealCycle)]) * 10000 + DealCycle$FreeEarthVeinDummy[nrow(DealCycle)]) < BuffStartTime &
-              DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000) {
-        if(DealCycle$EarthVeinStatus[nrow(DealCycle)] == 0 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0) {
-          DealCycle <- DCATK(DealCycle, "FreeEarthVein", ATKFinal)
-          AWRemain <- max(0, AWRemain - DealCycle$Time[1])
-          RGRemain <- max(0, RGRemain - DealCycle$Time[1])
-          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-          FERemain <- max(0, FECool - DealCycle$Time[1])
-          ESRemain <- max(0, ESRemain - DealCycle$Time[1])
-          SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-          DealCycle <- LaraEarthVein(DealCycle)
-        }
-        
-        DealCycle <- DCATK(DealCycle, "Awakening1", ATKFinal)
-        AWRemain <- max(0, AWCool - DealCycle$Time[1])
-        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
-        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-        FERemain <- max(0, FERemain - DealCycle$Time[1])
-        ESRemain <- max(0, ESRemain - DealCycle$Time[1])
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        DealCycle <- LaraEarthVein(DealCycle)
-      }
+      ##  else if(AWRemain == 0 & DealCycle$EarthVeinStatus[nrow(DealCycle)] == 4 & k != length(BuffList) & 
+      ##          DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 | 
+      ##          AWRemain == 0 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0 & k != length(BuffList) & 
+      ##          DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 | 
+      ##          AWRemain == 0 & DealCycle$EarthVeinStatus[nrow(DealCycle)] == 4 & k == length(BuffList) & 
+      ##          DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + DealCycle$EarthVeinRegenDummy[nrow(DealCycle)] < BuffStartTime & 
+      ##          DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000  & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 | 
+      ##          AWRemain == 0 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0 & k==length(BuffList) & 
+      ##          DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + ((3 - DealCycle$FreeEarthVeinStack[nrow(DealCycle)]) * 10000 + DealCycle$FreeEarthVeinDummy[nrow(DealCycle)]) < BuffStartTime &
+      ##          DealCycle$WhirlwindBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000 & DealCycle$HeavingRiverBuff[nrow(DealCycle)] - DealCycle$Time[1] > 4000) {
+      ##    if(DealCycle$EarthVeinStatus[nrow(DealCycle)] == 0 & DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0) {
+      ##      DealCycle <- DCATK(DealCycle, "FreeEarthVein", ATKFinal)
+      ##      AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+      ##      RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+      ##      SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+      ##      FERemain <- max(0, FECool - DealCycle$Time[1])
+      ##      ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+      ##      SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+      ##      DealCycle <- LaraEarthVein(DealCycle)
+      ##    }
+      ##    
+      ##    DealCycle <- DCATK(DealCycle, "Awakening1", ATKFinal)
+      ##    AWRemain <- max(0, AWCool - DealCycle$Time[1])
+      ##    RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+      ##    SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+      ##    FERemain <- max(0, FERemain - DealCycle$Time[1])
+      ##    ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+      ##    SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+      ##    DealCycle <- LaraEarthVein(DealCycle)
+      ##  }
       ## Spirit Seeding
       else {
         DealCycle <- DCATK(DealCycle, "SpiritSeeding", ATKFinal)
@@ -1233,6 +1368,17 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       }
     }
   }
+  while(((4 - DealCycle$SeedofMountainStack[nrow(DealCycle)] - 1) * 7000 + DealCycle$SeedofMountainDummy[nrow(DealCycle)]) - DealCycle$Time[1] >= min(subset(DealCycle, DealCycle$Skills=="SeedofMountain1")$Time)) {
+    DealCycle <- DCATK(DealCycle, "SpiritSeeding", ATKFinal)
+    AWRemain <- max(0, AWRemain - DealCycle$Time[1])
+    RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+    SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+    FERemain <- max(0, FERemain - DealCycle$Time[1])
+    ESRemain <- max(0, ESRemain - DealCycle$Time[1])
+    SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+    DealCycle <- LaraEarthVein(DealCycle)
+  }
+  
   rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
@@ -1250,12 +1396,13 @@ LaraAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   
   ## Seed of Mountain
+  SeedoMountainATKTimes <- ceiling((BuffFinal[rownames(BuffFinal)=="SeedofMountain1", ]$Duration - 2.72) * 1000 / 2000)
   for(i in 1:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("SeedofMountain1", "SeedofMountain2", "SeedofMountain3", "SeedofMountain4"))>=1) {
       DealCycle$Skills[i] <- "SeedofMountain"
     }
   }
-  DealCycle <- RepATKCycle(DealCycle, "SeedofMountain", 8, 3120, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "SeedofMountain", SeedoMountainATKTimes, 2720, ATKFinal)
   print("Seed of Mountain Done")
   
   
@@ -1449,7 +1596,7 @@ LaraAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   
   ## Ridge Zigzag
-  DealCycle <- RepATKCycle(DealCycle, "RidgeZigzag", 60, 1440, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "RidgeZigzag", 20, 1440, ATKFinal)
   print("Ridge Zigzag Done")
   
   
@@ -1498,7 +1645,7 @@ LaraAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   ## Overload Mana
   for(i in 1:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("SpiderInMirror", "SpiderInMirrorStart", "SpiderInMirror1", "SpiderInMirror2", "SpiderInMirror3", "SpiderInMirror4", "SpiderInMirror5", "SpiderInMirrorWait")) == 0) {
+    if(sum(DealCycle$Skills[i]==c("SpiderInMirror", "SpiderInMirrorStart", "SpiderInMirror1", "SpiderInMirror2", "SpiderInMirror3", "SpiderInMirror4", "SpiderInMirror5", "SpiderInMirrorWait", "MountainKid")) == 0) {
       DealCycle$OverloadMana[i] <- 1
     }
   }
@@ -1553,10 +1700,10 @@ LaraDealData <- data.frame(LaraDealCycle$Skills, LaraDealCycle$Time, LaraDealCyc
 colnames(LaraDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(LaraDealData, LaraDealData$R4>0)
 
-LaraRR <- LaraDealData[40:236, ]
+LaraRR <- LaraDealData[30:203, ]
 DPM12349$Lara[3] <- sum((LaraRR$Deal))
 
-Lara40s <- LaraDealData[40:466, ]
+Lara40s <- LaraDealData[30:391, ]
 DPM12349$Lara[4] <- sum((Lara40s$Deal))
 
 LaraDealRatio <- DealRatio(LaraDealCycle, LaraFinalDPMwithMax)
