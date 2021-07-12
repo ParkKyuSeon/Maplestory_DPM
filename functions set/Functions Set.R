@@ -354,7 +354,7 @@ ItemSum <- function(ItemSet, SetOption, PetSetOption) {
 ItemTypes <- c("Sword", "Hammer", "TwohandSword", "TwohandAxe", "TwohandHammer", "Polarm", "Spear", "GuntletRevolver", "Desperado", 
                "Tuner", "LongSword", "HeavySword", 
                "Staff", "Wand", "ShiningLord", "MagicGuntlet", "ESPLimiter", 
-               "Bow", "Crossbow", "AincientBow", "DualBowgun", 
+               "Bow", "Crossbow", "AincientBow", "DualBowgun", "BreathShooter", 
                "Wristband", "Dagger", "Cane", "Chain", "Fan",
                "Gun", "Knuckle", "HandCannon", "EnergySword", "SoulShooter")
 wsfstat <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/starforcestat.csv"

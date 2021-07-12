@@ -180,7 +180,7 @@ Bow <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
 Crossbow <- c(150, 40, 40, 0, 0, 164, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.35)
 AncientBow <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
 DualBowgun <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
-BreathShooter <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 6, 2, 1.3)
+BreathShooter <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 4, 2, 1.3)
 Wristband <- c(150, 40, 40, 0, 0, 86, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 4, 2, 1.75)
 Dagger <- c(150, 40, 40, 0, 0, 160, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 4, 1, 1.3)
 Cane <- c(150, 40, 40, 0, 0, 164, 0, 0, 8, T, T, 3, 10, 30, 0, 0, 5, 1, 1.3)
@@ -222,7 +222,7 @@ Bow <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
 Crossbow <- c(160, 60, 60, 0, 0, 197, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.35)
 AncientBow <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
 DualBowgun <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
-BreathShooter <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 6, 2, 1.3)
+BreathShooter <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 4, 2, 1.3)
 Wristband <- c(160, 60, 60, 0, 0, 103, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 4, 2, 1.75)
 Dagger <- c(160, 60, 60, 0, 0, 192, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 4, 1, 1.3)
 Cane <- c(160, 60, 60, 0, 0, 197, 0, 0, 8, T, T, 4, 10, 30, 0, 0, 5, 1, 1.3)
@@ -264,7 +264,7 @@ Bow <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
 Crossbow <- c(200, 100, 100, 0, 0, 283, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.35)
 AncientBow <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
 DualBowgun <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
-BreathShooter <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 6, 2, 1.3)
+BreathShooter <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 4, 2, 1.3)
 Wristband <-c(200, 100, 100, 0, 0, 149, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 4, 2, 1.75)
 Dagger <- c(200, 100, 100, 0, 0, 276, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 4, 1, 1.3)
 Cane <- c(200, 100, 100, 0, 0, 283, 0, 0, 8, T, T, 5, 20, 30, 0, 0, 5, 1, 1.3)
@@ -289,7 +289,7 @@ colnames(ArcaneShade) <- weaponoption
 {rm(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
    Tuner, LongSword, HeavySword, 
    Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-   Bow, Crossbow, AincientBow, DualBowgun, BreathShooter, 
+   Bow, Crossbow, AncientBow, DualBowgun, BreathShooter, 
    Wristband, Dagger, Cane, Chain, Fan,
    Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 Sword <- c(53, 79, 136)
@@ -311,7 +311,7 @@ MagicGuntlet <- c(65, 97, 167)
 ESPLimiter <- c(65, 97, 167)
 Bow <- c(52, 77, 133)
 Crossbow <- c(53, 79, 136)
-AincientBow <- c(52, 77, 133)
+AncientBow <- c(52, 77, 133)
 DualBowgun <- c(52, 77, 133)
 BreathShooter <- c(52, 77, 133)
 Wristband <- c(28, 42, 72)
@@ -327,7 +327,7 @@ SoulShooter <- c(41, 62, 106)}
 AddoptionTier4 <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                         Tuner, LongSword, HeavySword, 
                         Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                        Bow, Crossbow, AincientBow, DualBowgun, BreathShooter,
+                        Bow, Crossbow, AncientBow, DualBowgun, BreathShooter,
                         Wristband, Dagger, Cane, Chain, Fan,
                         Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(AddoptionTier4) <- c("Fafnir", "Absolabs", "ArcaneShade")
@@ -353,7 +353,7 @@ MagicGuntlet <- c(83, 124, 214)
 ESPLimiter <- c(83, 124, 214)
 Bow <- c(66, 99, 170)
 Crossbow <- c(68, 101, 175)
-AincientBow <- c(66, 99, 170)
+AncientBow <- c(66, 99, 170)
 DualBowgun <- c(66, 99, 170)
 BreathShooter <- c(66, 99, 170)
 Wristband <- c(36, 53, 92)
@@ -369,7 +369,7 @@ SoulShooter <- c(53, 79, 136)}
 AddoptionTier5 <- rbind(Sword, Hammer, TwohandSword, TwohandAxe, TwohandHammer, Polarm, Spear, GuntletRevolver, Desperado, 
                         Tuner, LongSword, HeavySword, 
                         Staff, Wand, ShiningLord, MagicGuntlet, ESPLimiter, 
-                        Bow, Crossbow, AincientBow, DualBowgun, BreathShooter, 
+                        Bow, Crossbow, AncientBow, DualBowgun, BreathShooter, 
                         Wristband, Dagger, Cane, Chain, Fan,
                         Gun, Knuckle, HandCannon, EnergySword, SoulShooter)
 colnames(AddoptionTier5) <- c("Fafnir", "Absolabs", "ArcaneShade")
