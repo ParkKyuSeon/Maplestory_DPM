@@ -1,6 +1,6 @@
 ## Kain - Data
 ## Kain - Core
-KainCore <- MatrixSet(PasSkills=c("StrikeArrow_ChasingShot", "ScatteringShot", "DragonPang_RemainIncense", 
+KainCore <- MatrixSet(PasSkills=c("StrikeArrow_ChasingShot", "ScatteringShot", "DragonFang_RemainIncense", 
                                   "ShaftBreak", "DeathBlessing_SneakySniping", "FallingDust", 
                                   "ChainSickle_PoisonNeedle", "PhantomBlade_TearingKnife"), 
                       PasLvs=c(50, 50, 50, 50, 50, 50, 50, 50), 
