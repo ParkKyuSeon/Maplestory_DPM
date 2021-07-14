@@ -326,10 +326,11 @@ RRGraph(data.frame(Time=MRestraint$Time, Deal=MRestraint$Damage), "Marksman", co
 RRGraph(PathFinderDealData[58:462, ], "PathFinder", col=colorset[4], add=T)
 RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[5], add=T)
 RRGraph(MercedesDealData[42:452, ], "Mercedes", col=colorset[6], add=T)
-RRGraph(WildHunterDealData[81:687, ], "WildHunter", col=colorset[9], add=T)
+RRGraph(WildHunterDealData[81:687, ], "WildHunter", col=colorset[8], add=T)
+RRGraph(KainDealData[185:404, ], "Kain", col=colorset[9], add=T)
 
 legend(x=0, y=80000, legend=c("Bowmaster", "Marksman", "PathFinder", 
-                              "WindBreaker", "Mercedes", "WildHunter"), col=colorset[c(2:6, 9)], lty=1, lwd=4)
+                              "WindBreaker", "Mercedes", "WildHunter", "Kain"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 ## Thief
 RRGraph(NightLordDealData[31:434, ], "Thief", col=colorset[2])
@@ -572,6 +573,12 @@ KaiserDealTL <- DealTimeLine(KaiserDealData$Time, KaiserDealData$Deal)
 TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", F)
 TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", T)
 DealIrr(KaiserDealTL, max(KaiserDealData$Time)/1000)
+
+## Kain
+KainDealTL <- DealTimeLine(KainDealData$Time, KainDealData$Deal)
+TLGraph(KainDealTL, max(KainDealData$Time)/1000, "Kain", F)
+TLGraph(KainDealTL, max(KainDealData$Time)/1000, "Kain", T)
+DealIrr(KainDealTL, max(KainDealData$Time)/1000)
 
 ## Cadena
 CadenaDealTL <- DealTimeLine(CadenaDealData$Time, CadenaDealData$Deal)
