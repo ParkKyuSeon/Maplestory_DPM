@@ -332,14 +332,14 @@ WindWall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * WindBreakerCore[[2]][4, 2], 8, 960, 180, 35, T, F, F)
+info <- c(400 + 16 * WindBreakerCore[[2]][4, 2], 8, 960, 180, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 VortexSphere <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(1, 1, 0, 2400, 35, T, F, F)
+info <- c(1, 1, 0, 2400, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 VortexSphereGust <- rbind(data.frame(option, value), info)}
@@ -517,7 +517,7 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
         }
       }
       ## Vortex Sphere
-      if(VSRemain==0) {
+      if(VSRemain==0 & nrow(subset(DealCycle, DealCycle$Skills=="VortexSphere")) < 8) {
         DealCycle <- DCATK(DealCycle, "VortexSphereGust", ATKFinal)
         DealCycle <- DCATK(DealCycle, "VortexSphere", ATKFinal)
         GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])
@@ -525,20 +525,31 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
         VSRemain <- VSCool - DealCycle$Time[1]
       } 
       ## Howling Gale(Big)
-      else if(GaleRemain==0 & GaleDummy!=1 & GaleDummy < 6) {
+      else if(GaleRemain==0 & GaleDummy==0) {
         DealCycle <- DCATK(DealCycle, "HowlingGaleBig", ATKFinal)
-        GaleRemain <- ifelse(nrow(subset(DealCycle, DealCycle$Skills=="HowlingGaleBig")) != 1, GaleBigCool, GaleSmallCool) - DealCycle$Time[1]
+        GaleRemain <- GaleSmallCool - DealCycle$Time[1]
+        IWRemain <- max(0, IWRemain - DealCycle$Time[1])
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+        GaleDummy <- GaleDummy + 1
+      }
+      else if(GaleRemain==0 & GaleDummy==5) {
+        DealCycle <- DCATK(DealCycle, "HowlingGaleBig", ATKFinal)
+        GaleRemain <- GaleSmallCool - DealCycle$Time[1]
         IWRemain <- max(0, IWRemain - DealCycle$Time[1])
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
         GaleDummy <- GaleDummy + 1
       }
       ## Howling Gale(Small) 
-      else if(GaleRemain==0 & GaleDummy==1 & GaleDummy < 6) {
+      else if(GaleRemain==0 & GaleDummy<=8) {
         DealCycle <- DCATK(DealCycle, "HowlingGaleSmall", ATKFinal)
         IWRemain <- max(0, IWRemain - DealCycle$Time[1])
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
         GaleDummy <- GaleDummy + 1
-        GaleRemain <- GaleBigCool - DealCycle$Time[1]
+        if(GaleDummy==5) {
+          GaleRemain <- GaleBigCool - DealCycle$Time[1]
+        } else {
+          GaleRemain <- GaleSmallCool - DealCycle$Time[1]
+        }
       }
       ## Idle Whim
       else if(IWRemain==0) {
@@ -602,9 +613,9 @@ WindBreakerDealCycle <- WindBreakerCycle(PreDealCycle=WindBreakerDealCycle,
                                          Period=120, 
                                          CycleTime=240)
 WindBreakerDealCycle <- DealCycleFinal(WindBreakerDealCycle)
-WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphere", 17, 540, ATKFinal)
+WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphere", 20, 540, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "VortexSphereGust", 1, 2400, ATKFinal)
-WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "HowlingGaleSmall", 57, 840, ATKFinal)
+WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "HowlingGaleSmall", 61, 840, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "HowlingGaleBig", 66, 0, ATKFinal)
 WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "WindWall", 25, 0, ATKFinal)
 WindBreakerDealCycle <- DCSummonedATKs(WindBreakerDealCycle, Skill=c("GuidedArrow", "CygnusPhalanx"), SummonedFinal)
@@ -626,16 +637,16 @@ WindBreakerSpecOpt2 <- WindBreakerOptimization2(WindBreakerDealCycleReduction, A
 WindBreakerFinalDPM <- WindBreakerDealCalc(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 WindBreakerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
 
-DPM12347$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000)
-DPM12347$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (max(WindBreakerDealCycle$Time) / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000)
+DPM12349$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000)
+DPM12349$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (max(WindBreakerDealCycle$Time) / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000)
 
 WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCycle$Time, WindBreakerDealCycle$Restraint4, WindBreakerFinalDPMwithMax)
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 
-WindBreakerRR <- WindBreakerDealData[112:1136, ]
-DPM12347$WindBreaker[3] <- sum((WindBreakerRR$Deal))
+WindBreakerRR <- WindBreakerDealData[111:1148, ]
+DPM12349$WindBreaker[3] <- sum((WindBreakerRR$Deal))
 
-WindBreaker40s <- WindBreakerDealData[112:2546, ]
-DPM12347$WindBreaker[4] <- sum((WindBreaker40s$Deal))
+WindBreaker40s <- WindBreakerDealData[111:2552, ]
+DPM12349$WindBreaker[4] <- sum((WindBreaker40s$Deal))
 
 WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)

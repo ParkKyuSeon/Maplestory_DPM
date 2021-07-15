@@ -164,35 +164,35 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(18, NA, Delay(600, 2), F, NA, NA, F)
+info <- c(18, NA, Delay(450, 2), F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HeavingRiverBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(18, NA, Delay(600, 2), F, NA, NA, F)
+info <- c(18, NA, Delay(450, 2), F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WhirlwindBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(18, NA, Delay(600, 2), F, NA, NA, F)
+info <- c(18, NA, Delay(450, 2), F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SunriseWellBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(1)
-info <- c(60, 600, Delay(720, 2), T, F, F, T)
+info <- c(120, 600, Delay(420, 2), T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WindSwingBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor("BDR", levels=BSkill)
 value <- c(25)
-info <- c(60, 600, Delay(720, 2), T, F, F, T)
+info <- c(120, 600, Delay(480, 2), T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SunlightSiteBuff <- rbind(data.frame(option, value), info) 
@@ -364,11 +364,10 @@ SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
 
 
 ## Lara - Attacks
-## Hyper : Eruption/Absorb - Reinforce, Eruption/Absorb - Boss Killer, Eruption/Absorb - Ignore Guard, Spirit Seeding - Boss Killer, Seed of Mountain - Reinforce
-## Hyper Check Needed
+## Hyper : Eruption/Absorb - Reinforce, Eruption/Absorb - Boss Killer, Eruption/Absorb - Ignore Guard, Spirit Seeding - Boss Killer, Earth Vein - Enhance
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(15, ifelse(LaraCore[[1]][1, 2]>=40, 20, 0), 2 * LaraCore[[1]][1, 2])
-info <- c(80 + 50 + 160, 4, 660, NA, NA, NA, NA, F)
+info <- c(80 + 50 + 175, 4, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpiritSeeding <- rbind(data.frame(option, value), info)
@@ -396,7 +395,7 @@ HeavingRiverHuge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(25 + floor(LaraSpec$SummonedDuration / 2), IGRCalc(c(15, ifelse(LaraCore[[1]][5, 2]>=40, 20, 0))), 2 * LaraCore[[1]][5, 2])
-info <- c(63 + 35 + 152, 5, 0, NA, NA, NA, NA, F)
+info <- c(63 + 35 + 157, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WhirlWind <- rbind(data.frame(option, value), info)
@@ -430,7 +429,7 @@ colnames(info) <- c("option", "value")
 SunriseWellVolcanicBomb2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(60, ifelse(LaraCore[[1]][4, 2]>=40, 20, 0), 2 * LaraCore[[1]][4, 2])
+value <- c(0, ifelse(LaraCore[[1]][4, 2]>=40, 20, 0), 2 * LaraCore[[1]][4, 2])
 info <- c(55 + 75 + 170 + 5 * LaraSpec$PSkillLv, 1, 510, 2000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -459,21 +458,21 @@ EarthVeinTrace <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][6, 2]>=40, 20, 0))), 2 * LaraCore[[1]][6, 2])
-info <- c(450 + LaraSpec$PSkillLv, 6, 0, 0, 2.5, F, F, F)
+info <- c(500 + LaraSpec$PSkillLv, 6, 0, 0, 2.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RiverPuddle <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][6, 2]>=40, 20, 0))), 2 * LaraCore[[1]][6, 2])
-info <- c(195 + 2 * LaraSpec$PSkillLv, 2, 0, 0, 2.5, F, F, F)
+info <- c(215 + 2 * LaraSpec$PSkillLv, 2, 0, 0, 2.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChillyBleakWind <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(25, IGRCalc(c(15, ifelse(LaraCore[[1]][6, 2]>=40, 20, 0))), 2 * LaraCore[[1]][6, 2])
-info <- c(180 + 5 * LaraSpec$PSkillLv, 5 * 6, 0, 0, 2.5, F, F, F)
+info <- c(200 + 5 * LaraSpec$PSkillLv, 5 * 6, 0, 0, 2.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunlightSphere <- rbind(data.frame(option, value), info)
@@ -508,14 +507,14 @@ HugeStretch2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(800 + 32 * LaraCore[[2]][2, 2], 10, 840, NA, 180, T, F, F)
+info <- c(700 + 28 * LaraCore[[2]][2, 2], 10, 840, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunRiverMountWind1 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(1000 + 40 * LaraCore[[2]][2, 2], 15, 0, NA, 180, T, F, F)
+info <- c(850 + 34 * LaraCore[[2]][2, 2], 15, 0, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SunRiverMountWind2 <- rbind(data.frame(option, value), info)
@@ -529,7 +528,7 @@ SurgingSpirit <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(325 + 13 * LaraCore[[2]][4, 2], 4 * 3, 960, 390, 60, T, F, F)
+info <- c(250 + 10 * LaraCore[[2]][4, 2], 4 * 3, 960, 390, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RidgeZigzag <- rbind(data.frame(option, value), info) ## Minimum Delay 240ms, StartATK 1440ms
@@ -1700,10 +1699,10 @@ LaraDealData <- data.frame(LaraDealCycle$Skills, LaraDealCycle$Time, LaraDealCyc
 colnames(LaraDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(LaraDealData, LaraDealData$R4>0)
 
-LaraRR <- LaraDealData[30:203, ]
+LaraRR <- LaraDealData[30:205, ]
 DPM12349$Lara[3] <- sum((LaraRR$Deal))
 
-Lara40s <- LaraDealData[30:391, ]
+Lara40s <- LaraDealData[30:392, ]
 DPM12349$Lara[4] <- sum((Lara40s$Deal))
 
 LaraDealRatio <- DealRatio(LaraDealCycle, LaraFinalDPMwithMax)

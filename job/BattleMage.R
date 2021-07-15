@@ -192,7 +192,8 @@ BattleMageSpec <- JobSpec(JobBase=BattleMageBase,
                           MobInfo=MobDefault, 
                           SpecSet=SpecDefault, 
                           WeaponName="Staff", 
-                          UnionStance=0)
+                          UnionStance=0,
+                          JobConstant=1.2)
 
 BattleMageUnionRemained <- BattleMageSpec$UnionRemained
 BattleMageHyperStatBase <- BattleMageSpec$HyperStatBase
@@ -956,8 +957,8 @@ BattleMageSpecOpt2 <- Optimization2(BattleMageDealCycleReduction, ATKFinal, Buff
 BattleMageFinalDPM <- DealCalc(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 BattleMageFinalDPMwithMax <- DealCalcWithMaxDMR(BattleMageDealCycle, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt2)
 
-DPM12347$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (max(BattleMageDealCycle$Time) / 60000)
-DPM12347$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (max(BattleMageDealCycle$Time) / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (max(BattleMageDealCycle$Time) / 60000)
+DPM12349$BattleMage[1] <- sum(na.omit(BattleMageFinalDPMwithMax)) / (max(BattleMageDealCycle$Time) / 60000)
+DPM12349$BattleMage[2] <- sum(na.omit(BattleMageFinalDPM)) / (max(BattleMageDealCycle$Time) / 60000) - sum(na.omit(BattleMageFinalDPMwithMax)) / (max(BattleMageDealCycle$Time) / 60000)
 
 BattleMageDealRatio <- DealRatio(BattleMageDealCycle, BattleMageFinalDPMwithMax)
 
@@ -967,7 +968,7 @@ colnames(BattleMageDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(BattleMageDealData, BattleMageDealData$R4>0)
 
 BattleMageRR <- BattleMageDealData[18:183, ]
-DPM12347$BattleMage[3] <- sum((BattleMageRR$Deal))
+DPM12349$BattleMage[3] <- sum((BattleMageRR$Deal))
 
 BattleMage40s <- BattleMageDealData[18:443, ]
-DPM12347$BattleMage[4] <- sum((BattleMage40s$Deal))
+DPM12349$BattleMage[4] <- sum((BattleMage40s$Deal))
