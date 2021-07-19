@@ -315,27 +315,27 @@ MLTypeI22 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedF
 colnames(MLTypeI22) <- MonsterLifeSpecs
 
 #### LUK Type 2-1 : LUK, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeL21 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, NineTailedFox, 
+MLTypeL21 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, AkairumPriest, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
+                   Oberon, Beril, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
 #### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeL21) <- MonsterLifeSpecs
 
 #### LUK Type 2-2 : LUK, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeL22 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, NineTailedFox, 
+MLTypeL22 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, AkairumPriest, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   CoupleYeti, GoldYeti, Oberon, Phantom, Eunwol, Rang,
+                   CoupleYeti, GoldYeti, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
 #### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeL22) <- MonsterLifeSpecs
 
 #### Allstat Type 2-1 : ALLSTAT(Xenon), SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeA21 <- rbind(Hogeol, Leica, Papulatus, Taeryun, NineTailedFox, 
+MLTypeA21 <- rbind(Hogeol, Leica, Papulatus, Taeryun, AkairumPriest, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
+                   Oberon, Beril, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
 #### Shinsoo, EliteBloodTooth, YetiPharaoh
