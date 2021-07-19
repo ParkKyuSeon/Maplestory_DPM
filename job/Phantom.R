@@ -791,8 +791,8 @@ PhantomFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(PhantomDealCyc
 PhantomDeal1 <- DealCalcWithMaxDMR(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2)
 PhantomDeal2 <- DealCalcWithMaxDMR(PhantomDealCycle2, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2)
 
-DPM12347$Phantom[1] <- sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
-DPM12347$Phantom[2] <- sum(na.omit(PhantomFinalDPM)) / (max(PhantomDealCycle$Time) / 60000) - sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
+DPM12349$Phantom[1] <- sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
+DPM12349$Phantom[2] <- sum(na.omit(PhantomFinalDPM)) / (max(PhantomDealCycle$Time) / 60000) - sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
 
 PhantomDealRatio <- ResetDealRatio(DealCycles=list(PhantomDealCycle, PhantomDealCycle2), DealDatas=list(PhantomDeal1, PhantomDeal2), 
                                    rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
@@ -803,7 +803,7 @@ colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(PhantomDealData, PhantomDealData$R4>0)
 
 PhantomRR <- PhantomDealData[23:429, ]
-DPM12347$Phantom[3] <- sum((PhantomRR$Deal))
+DPM12349$Phantom[3] <- sum((PhantomRR$Deal))
 
 Phantom40s <- PhantomDealData[23:827, ]
-DPM12347$Phantom[4] <- sum((Phantom40s$Deal))
+DPM12349$Phantom[4] <- sum((Phantom40s$Deal))

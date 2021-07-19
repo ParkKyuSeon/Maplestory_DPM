@@ -174,7 +174,7 @@ colnames(info) <- c("option", "value")
 MagicCircuitFullDriveBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(10 + 3 * AdeleCore[[2]][8, 2] + (min((0.4 + 0.02 * AdeleCore[[2]][8, 2]) * AdeleBase$ItemSet$ATKSub, floor(ArcaneShade[16, 6] * 1.5))))
+value <- c(10 + 3 * AdeleCore[[2]][8, 2] + (min((0.4 + 0.02 * AdeleCore[[2]][8, 2]) * AdeleBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="Tuner", 6] * 1.5))))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -754,8 +754,8 @@ AdeleSpecOpt2 <- Optimization2(AdeleDealCycleTriggerReduction, ATKFinalTrigger, 
 AdeleFinalDPM <- DealCalc(AdeleDealCycleTrigger, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 AdeleFinalDPMwithMax <- DealCalcWithMaxDMR(AdeleDealCycleTrigger, ATKFinalTrigger, BuffFinal, SummonedFinal, AdeleSpecOpt2)
 
-DPM12347$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (max(AdeleDealCycleTrigger$Time) / 60000)
-DPM12347$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (max(AdeleDealCycleTrigger$Time) / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (max(AdeleDealCycleTrigger$Time) / 60000)
+DPM12349$Adele[1] <- sum(na.omit(AdeleFinalDPMwithMax)) / (max(AdeleDealCycleTrigger$Time) / 60000)
+DPM12349$Adele[2] <- sum(na.omit(AdeleFinalDPM)) / (max(AdeleDealCycleTrigger$Time) / 60000) - sum(na.omit(AdeleFinalDPMwithMax)) / (max(AdeleDealCycleTrigger$Time) / 60000)
 
 AdeleDealRatio <- DealRatio(AdeleDealCycleTrigger, AdeleFinalDPMwithMax)
 
@@ -764,10 +764,10 @@ colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AdeleDealData, AdeleDealData$R4 > 0)
 
 AdeleRR <- AdeleDealData[165:577, ]
-DPM12347$Adele[3] <- sum((AdeleRR$Deal))
+DPM12349$Adele[3] <- sum((AdeleRR$Deal))
 
 Adele40s <-  AdeleDealData[17:668, ]
-DPM12347$Adele[4] <- sum((Adele40s$Deal))
+DPM12349$Adele[4] <- sum((Adele40s$Deal))
 
 
 ## Other Hypers - Nobility

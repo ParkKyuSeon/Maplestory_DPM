@@ -739,18 +739,18 @@ CadenaSpecOpt2 <- Optimization2(CadenaDealCycleReduction, ATKFinal, BuffFinal, S
 CadenaFinalDPM <- DealCalc(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt2)
 CadenaFinalDPMwithMax <- DealCalcWithMaxDMR(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt2)
 
-DPM12347$Cadena[1] <- sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time)/ 60000)
-DPM12347$Cadena[2] <- sum(na.omit(CadenaFinalDPM)) / (max(CadenaDealCycle$Time) / 60000) - sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time) / 60000)
+DPM12349$Cadena[1] <- sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time)/ 60000)
+DPM12349$Cadena[2] <- sum(na.omit(CadenaFinalDPM)) / (max(CadenaDealCycle$Time) / 60000) - sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time) / 60000)
 
 CadenaDealData <- data.frame(CadenaDealCycle$Skills, CadenaDealCycle$Time, CadenaDealCycle$Restraint4, CadenaFinalDPMwithMax)
 colnames(CadenaDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(CadenaDealData, CadenaDealData$R4>0)
 
 CadenaRR <- CadenaDealData[20:144, ]
-DPM12347$Cadena[3] <- sum((CadenaRR$Deal))
+DPM12349$Cadena[3] <- sum((CadenaRR$Deal))
 
 Cadena40s <- CadenaDealData[20:362, ]
-DPM12347$Cadena[4] <- sum((Cadena40s$Deal))
+DPM12349$Cadena[4] <- sum((Cadena40s$Deal))
 
 CadenaDealRatio <- DealRatio(CadenaDealCycle, CadenaFinalDPMwithMax)
 

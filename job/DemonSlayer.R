@@ -1267,18 +1267,18 @@ DemonSlayerSpecOpt2 <- Optimization2(DemonSlayerDealCycleReduction, ATKFinal, Bu
 DemonSlayerFinalDPM <- DealCalc(DemonSlayerDealCycle, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt2)
 DemonSlayerFinalDPMwithMax <- DealCalcWithMaxDMR(DemonSlayerDealCycle, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt2)
 
-DPM12347$DemonSlayer[1] <- sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time)/ 60000)
-DPM12347$DemonSlayer[2] <- sum(na.omit(DemonSlayerFinalDPM)) / (max(DemonSlayerDealCycle$Time) / 60000) - sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time) / 60000)
+DPM12349$DemonSlayer[1] <- sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time)/ 60000)
+DPM12349$DemonSlayer[2] <- sum(na.omit(DemonSlayerFinalDPM)) / (max(DemonSlayerDealCycle$Time) / 60000) - sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time) / 60000)
 
 DemonSlayerDealData <- data.frame(DemonSlayerDealCycle$Skills, DemonSlayerDealCycle$Time, DemonSlayerDealCycle$Restraint4, DemonSlayerFinalDPMwithMax)
 colnames(DemonSlayerDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(DemonSlayerDealData, DemonSlayerDealData$R4>0)
 
 DemonSlayerRR <- DemonSlayerDealData[56:295, ]
-DPM12347$DemonSlayer[3] <- sum((DemonSlayerRR$Deal))
+DPM12349$DemonSlayer[3] <- sum((DemonSlayerRR$Deal))
 
 DemonSlayer40s <- DemonSlayerDealData[56:613, ]
-DPM12347$DemonSlayer[4] <- sum((DemonSlayer40s$Deal))
+DPM12349$DemonSlayer[4] <- sum((DemonSlayer40s$Deal))
 
 DemonSlayerDealRatio <- DealRatio(DemonSlayerDealCycle, DemonSlayerFinalDPMwithMax)
 

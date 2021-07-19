@@ -733,8 +733,8 @@ DarkKnightSpecOpt2 <- Optimization2(DarkKnightDealCycleReduction, ATKFinal, Buff
 DarkKnightFinalDPM <- DealCalc(DarkKnightDealCycle, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt2)
 DarkKnightFinalDPMwithMax <- DealCalcWithMaxDMR(DarkKnightDealCycle, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt2)
 
-DPM12347$DarkKnight[1] <- sum(na.omit(DarkKnightFinalDPMwithMax)) / (max(DarkKnightDealCycle$Time) / 60000)
-DPM12347$DarkKnight[2] <- sum(na.omit(DarkKnightFinalDPM)) / (max(DarkKnightDealCycle$Time) / 60000) - sum(na.omit(DarkKnightFinalDPMwithMax)) / (max(DarkKnightDealCycle$Time) / 60000)
+DPM12349$DarkKnight[1] <- sum(na.omit(DarkKnightFinalDPMwithMax)) / (max(DarkKnightDealCycle$Time) / 60000)
+DPM12349$DarkKnight[2] <- sum(na.omit(DarkKnightFinalDPM)) / (max(DarkKnightDealCycle$Time) / 60000) - sum(na.omit(DarkKnightFinalDPMwithMax)) / (max(DarkKnightDealCycle$Time) / 60000)
 
 DarkKnightDealRatio <- DealRatio(DarkKnightDealCycle, DarkKnightFinalDPMwithMax)
 
@@ -744,10 +744,10 @@ colnames(DarkKnightDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(DarkKnightDealData, DarkKnightDealData$R4>0)
 
 DarkKnightRR <- DarkKnightDealData[260:390, ]
-DPM12347$DarkKnight[3] <- sum((DarkKnightRR$Deal))
+DPM12349$DarkKnight[3] <- sum((DarkKnightRR$Deal))
 
 DarkKnight40s <- DarkKnightDealData[90:387, ]
-DPM12347$DarkKnight[4] <- sum((DarkKnight40s$Deal))
+DPM12349$DarkKnight[4] <- sum((DarkKnight40s$Deal))
 
 
 ## Reincarnation OFF

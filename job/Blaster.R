@@ -829,8 +829,8 @@ BlasterSpecOpt2 <- BlasterOptimization2(BlasterDealCycleReduction, ATKFinal, Buf
 BlasterFinalDPM <- BlasterDealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 BlasterFinalDPMwithMax <- BlasterDealCalcWithMaxDMR(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
 
-DPM12347$Blaster[1] <- sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
-DPM12347$Blaster[2] <- sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
+DPM12349$Blaster[1] <- sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
+DPM12349$Blaster[2] <- sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
 
 BlasterDealRatio <- DealRatio(BlasterDealCycle, BlasterFinalDPMwithMax)
 
@@ -840,10 +840,10 @@ colnames(BlasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(BlasterDealData, BlasterDealData$R4>0)
 
 BlasterRR <- BlasterDealData[19:275, ]
-DPM12347$Blaster[3] <- sum((BlasterRR$Deal))
+DPM12349$Blaster[3] <- sum((BlasterRR$Deal))
 
 Blaster40s <- BlasterDealData[19:798, ]
-DPM12347$Blaster[4] <- sum((Blaster40s$Deal))
+DPM12349$Blaster[4] <- sum((Blaster40s$Deal))
 
 
 ## Mag - Fang 540ms

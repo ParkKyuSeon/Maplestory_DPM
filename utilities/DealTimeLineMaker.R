@@ -316,7 +316,7 @@ RRGraph(LuminousDealData[622:755, ], "Wizard(2)", col=colorset[2])
 RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[3], add=T)
 RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[4], add=T)
 RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[5], add=T)
-RRGraph(LaraDealData[30:203, ], "Lara", col=colorset[6], add=T)
+RRGraph(LaraDealData[30:205, ], "Lara", col=colorset[6], add=T)
 
 legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara"), col=colorset[c(2:6)], lty=1, lwd=4)
 
@@ -324,7 +324,7 @@ legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illiu
 RRGraph(BowmasterDealData[70:766, ], "Archer", col=colorset[2])
 RRGraph(data.frame(Time=MRestraint$Time, Deal=MRestraint$Damage), "Marksman", col=colorset[3], add=T)
 RRGraph(PathFinderDealData[58:462, ], "PathFinder", col=colorset[4], add=T)
-RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[5], add=T)
+RRGraph(WindBreakerDealData[111:1148, ], "WindBreaker", col=colorset[5], add=T)
 RRGraph(MercedesDealData[42:452, ], "Mercedes", col=colorset[6], add=T)
 RRGraph(WildHunterDealData[81:687, ], "WildHunter", col=colorset[8], add=T)
 RRGraph(KainDealData[185:404, ], "Kain", col=colorset[9], add=T)

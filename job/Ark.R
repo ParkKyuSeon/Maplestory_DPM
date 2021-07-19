@@ -207,14 +207,14 @@ colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * ArkCore[[2]][6, 2]) * ArcaneShade[28, 6]))
+value <- c(floor((0.2 + 0.02 * ArkCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
 info <- c(30, 70 - floor(ArkCore[[2]][6, 2]/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATK", levels=BSkill)
-value <- c(-1 * floor(0.15 * ArcaneShade[28, 6]))
+value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
 info <- c(Cooldown(70 - floor(ArkCore[[2]][6, 2]/5), T, ArkBase$UnionChrs$CoolReduceP, ArkBase$CoolReduce) - 30 - General$General$Serverlag, 70 - floor(ArkCore[[2]][6, 2]/5), 540, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -228,7 +228,7 @@ colnames(info) <- c("option", "value")
 MagicCircuitFullDriveBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATK", levels=BSkill)
-value <- c(10 + 3 * ArkCore[[2]][8, 2] + (min((0.4 + 0.02 * ArkCore[[2]][8, 2]) * ArkBase$ItemSet$ATKSub, floor(ArcaneShade[28, 6] * 1.5))))
+value <- c(10 + 3 * ArkCore[[2]][8, 2] + (min((0.4 + 0.02 * ArkCore[[2]][8, 2]) * ArkBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6] * 1.5))))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -2173,18 +2173,18 @@ ArkSpecOpt2 <- Optimization2(ArkDealCycleReduction, ATKFinal, BuffFinal, Summone
 ArkFinalDPM <- DealCalc(ArkDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt2)
 ArkFinalDPMwithMax <- DealCalcWithMaxDMR(ArkDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt2)
 
-DPM12347$Ark[1] <- sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time)/ 60000)
-DPM12347$Ark[2] <- sum(na.omit(ArkFinalDPM)) / (max(ArkDealCycle$Time) / 60000) - sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time) / 60000)
+DPM12349$Ark[1] <- sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time)/ 60000)
+DPM12349$Ark[2] <- sum(na.omit(ArkFinalDPM)) / (max(ArkDealCycle$Time) / 60000) - sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time) / 60000)
 
 ArkDealData <- data.frame(ArkDealCycle$Skills, ArkDealCycle$Time, ArkDealCycle$Restraint4, ArkFinalDPMwithMax)
 colnames(ArkDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ArkDealData, ArkDealData$R4>0)
 
 ArkRR <- ArkDealData[58:395, ]
-DPM12347$Ark[3] <- sum((ArkRR$Deal))
+DPM12349$Ark[3] <- sum((ArkRR$Deal))
 
 Ark40s <- ArkDealData[58:760, ]
-DPM12347$Ark[4] <- sum((Ark40s$Deal))
+DPM12349$Ark[4] <- sum((Ark40s$Deal))
 
 ArkDealRatio <- DealRatio(ArkDealCycle, ArkFinalDPMwithMax)
 

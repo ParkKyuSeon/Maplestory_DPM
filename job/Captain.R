@@ -186,14 +186,14 @@ colnames(info) <- c("option", "value")
 UsefulCombatOrders <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * CaptainCore[[2]][6, 2]) * ArcaneShade[27, 6]))
+value <- c(floor((0.2 + 0.02 * CaptainCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
 info <- c(30, 70 - floor(CaptainCore[[2]][6, 2]/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(-1 * floor(0.15 * ArcaneShade[27, 6]))
+value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
 info <- c(Cooldown(70 - floor(CaptainCore[[2]][6, 2]/5), T, CaptainBase$UnionChrs$CoolReduceP, CaptainBase$CoolReduce) - 30 - General$General$Serverlag, 
           70 - floor(CaptainCore[[2]][6, 2]/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
@@ -978,8 +978,8 @@ CaptainFinalDPM <- ResetDealCalc(list(CaptainDealCycle5, CaptainDealCycle55, Cap
 CaptainFinalDPMwithMax <- ResetDealCalcWithMaxDMR(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
                                                   ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
 
-DPM12347$Captain[1] <- sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time)/ 60000)
-DPM12347$Captain[2] <- sum(na.omit(CaptainFinalDPM)) / (max(CaptainDealCycle$Time) / 60000) - sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000)
+DPM12349$Captain[1] <- sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time)/ 60000)
+DPM12349$Captain[2] <- sum(na.omit(CaptainFinalDPM)) / (max(CaptainDealCycle$Time) / 60000) - sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000)
 
 
 CaptainDeal1 <- DealCalcWithMaxDMR(CaptainDealCycle5, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2)
@@ -996,7 +996,7 @@ colnames(CaptainDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(CaptainDealData, CaptainDealData$R4>0)
 
 CaptainRR <- CaptainDealData[125:594, ]
-DPM12347$Captain[3] <- sum((CaptainRR$Deal))
+DPM12349$Captain[3] <- sum((CaptainRR$Deal))
 
 Captain40s <- CaptainDealData[125:1330, ]
-DPM12347$Captain[4] <- sum((Captain40s$Deal))
+DPM12349$Captain[4] <- sum((Captain40s$Deal))

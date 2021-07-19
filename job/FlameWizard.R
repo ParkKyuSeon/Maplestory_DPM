@@ -1048,8 +1048,8 @@ FlameWizardSpecOpt2 <- FlameWizardOptimization2(FlameWizardDealCycleReduction, A
 FlameWizardFinalDPM <- FlameWizardDealCalc(FlameWizardDealCycle, ATKFinal, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 FlameWizardFinalDPMwithMax <- FlameWizardDealCalcWithMaxDMR(FlameWizardDealCycle, ATKFinal, BuffFinal, SummonedFinal, FlameWizardSpecOpt2)
 
-DPM12347$FlameWizard[1] <- sum(na.omit(FlameWizardFinalDPMwithMax)) / (max(FlameWizardDealCycle$Time) / 60000)
-DPM12347$FlameWizard[2] <- sum(na.omit(FlameWizardFinalDPM)) / (max(FlameWizardDealCycle$Time) / 60000) - sum(na.omit(FlameWizardFinalDPMwithMax)) / (max(FlameWizardDealCycle$Time) / 60000)
+DPM12349$FlameWizard[1] <- sum(na.omit(FlameWizardFinalDPMwithMax)) / (max(FlameWizardDealCycle$Time) / 60000)
+DPM12349$FlameWizard[2] <- sum(na.omit(FlameWizardFinalDPM)) / (max(FlameWizardDealCycle$Time) / 60000) - sum(na.omit(FlameWizardFinalDPMwithMax)) / (max(FlameWizardDealCycle$Time) / 60000)
 
 FlameWizardDealRatio <- DealRatio(FlameWizardDealCycle, FlameWizardFinalDPMwithMax)
 
@@ -1059,10 +1059,10 @@ colnames(FlameWizardDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(FlameWizardDealData, FlameWizardDealData$R4>0)
 
 FlameWizardRR <- FlameWizardDealData[89:256, ]
-DPM12347$FlameWizard[3] <- sum((FlameWizardRR$Deal))
+DPM12349$FlameWizard[3] <- sum((FlameWizardRR$Deal))
 
 FlameWizard40s <- FlameWizardDealData[37:605, ]
-DPM12347$FlameWizard[4] <- sum((FlameWizard40s$Deal))
+DPM12349$FlameWizard[4] <- sum((FlameWizard40s$Deal))
 
 
 ## DealCycle - Orbital 1350hits

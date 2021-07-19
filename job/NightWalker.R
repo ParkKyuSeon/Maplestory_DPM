@@ -877,8 +877,8 @@ NightWalkerSpecOpt2 <- WindBreakerOptimization2(NightWalkerDealCycleReduction, A
 NightWalkerFinalDPM <- WindBreakerDealCalc(NightWalkerDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 NightWalkerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(NightWalkerDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt2)
 
-DPM12347$NightWalker[1] <- sum(na.omit(NightWalkerFinalDPMwithMax)) / (max(NightWalkerDealCycle$Time) / 60000)
-DPM12347$NightWalker[2] <- sum(na.omit(NightWalkerFinalDPM)) / (max(NightWalkerDealCycle$Time) / 60000) - sum(na.omit(NightWalkerFinalDPMwithMax)) / (max(NightWalkerDealCycle$Time) / 60000)
+DPM12349$NightWalker[1] <- sum(na.omit(NightWalkerFinalDPMwithMax)) / (max(NightWalkerDealCycle$Time) / 60000)
+DPM12349$NightWalker[2] <- sum(na.omit(NightWalkerFinalDPM)) / (max(NightWalkerDealCycle$Time) / 60000) - sum(na.omit(NightWalkerFinalDPMwithMax)) / (max(NightWalkerDealCycle$Time) / 60000)
 
 NightWalkerDealRatio <- DealRatio(NightWalkerDealCycle, NightWalkerFinalDPMwithMax)
 
@@ -888,10 +888,10 @@ colnames(NightWalkerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(NightWalkerDealData, NightWalkerDealData$R4>0)
 
 NightWalkerRR <- NightWalkerDealData[58:825, ]
-DPM12347$NightWalker[3] <- sum((NightWalkerRR$Deal))
+DPM12349$NightWalker[3] <- sum((NightWalkerRR$Deal))
 
 NightWalker40s <- NightWalkerDealData[58:2028, ]
-DPM12347$NightWalker[4] <- sum((NightWalker40s$Deal))
+DPM12349$NightWalker[4] <- sum((NightWalker40s$Deal))
 
 
 ## Jumpshot Rate (75%)

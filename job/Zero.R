@@ -1577,17 +1577,17 @@ ZeroSpecOpt2 <- ZeroOptimization2(ZeroDealCycleReduction, ATKFinal, BuffFinal, S
 ZeroFinalDPM <- ZeroDealCalc(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt2)
 ZeroFinalDPMwithMax <- ZeroDealCalcWithMaxDMR(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt2)
 
-DPM12347$Zero[1] <- sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time)/ 60000)
-DPM12347$Zero[2] <- sum(na.omit(ZeroFinalDPM)) / (max(ZeroDealCycle$Time) / 60000) - sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time) / 60000)
+DPM12349$Zero[1] <- sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time)/ 60000)
+DPM12349$Zero[2] <- sum(na.omit(ZeroFinalDPM)) / (max(ZeroDealCycle$Time) / 60000) - sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time) / 60000)
 
 ZeroDealData <- data.frame(ZeroDealCycle$Skills, ZeroDealCycle$Time, ZeroDealCycle$Restraint4, ZeroFinalDPMwithMax)
 colnames(ZeroDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ZeroDealData, ZeroDealData$R4>0)
 
 ZeroRR <- ZeroDealData[11:173, ]
-DPM12347$Zero[3] <- sum((ZeroRR$Deal))
+DPM12349$Zero[3] <- sum((ZeroRR$Deal))
 
 Zero40s <- ZeroDealData[11:590, ]
-DPM12347$Zero[4] <- sum((Zero40s$Deal))
+DPM12349$Zero[4] <- sum((Zero40s$Deal))
 
 ZeroDealRatio <- DealRatio(ZeroDealCycle, ZeroFinalDPMwithMax)

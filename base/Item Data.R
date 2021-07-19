@@ -23,7 +23,8 @@ Dominator <- c(140, 20, 20, 20, 0, 10, 3, 3, 0, 0, 5, T, T, 1, F, 0, 0, 0, 0)
 Macanator <- c(120, 10, 10, 10, 250, 0, 1, 1, 0, 0, 2, T, T, 1, F, 0, 0, 0, 0)
 Pain <- c(160, 10, 10, 10, 0, 5, 3, 3, 0, 0, 5, T, T, 2, F, 0, 0, 0, 0)
 Purple <- c(130, 16, 0, 0, 180, 0, 0, 0, 0, 0, 3, T, F, 0, F, 0, 0, 0, 0)
-Pendant <- rbind(Dominator, Macanator, Pain, Purple)
+ChaosHorntail <- c(120, 10, 10, 10, 0, 10, 2, 2, 0, 0, 3, T, F, 1, F, 0, 0, 0, 0)
+Pendant <- rbind(Dominator, Macanator, Pain, Purple, ChaosHorntail)
 colnames(Pendant) <- itemoption
 
 Zakum <- c(150, 18, 18, 18, 150, 0, 1, 1, 0, 0, 3, T, T, 1, F, 0, 0, 0, 0)
@@ -142,6 +143,14 @@ StandardSpecZero <- rbind(item[[1]][1, ], item[[1]][3, ], item[[1]][5, ], item[[
                           item[[17]][1, ], item[[18]][2, ], item[[18]][2, ], item[[18]][2, ],
                           item[[19]][3, ], item[[20]][1, ], item[[20]][2, ], item[[20]][3, ],
                           item[[20]][4, ], item[[20]][5, ])
+StandardSpecDemonAvenger <- rbind(item[[1]][1, ], item[[1]][3, ], item[[1]][5, ], item[[1]][7, ],
+                                  item[[2]][1, ], item[[3]][1, ], item[[3]][5, ], item[[4]][1, ], 
+                                  item[[5]][3, ], item[[6]][1, ], item[[7]][1, ], item[[8]][1, ], 
+                                  item[[9]][1, ], item[[10]][1, ], item[[11]][1, ], item[[12]][1, ],
+                                  item[[13]][1, ], item[[14]][1, ], item[[15]][1, ], item[[16]][1, ],
+                                  item[[17]][1, ], item[[18]][2, ], item[[18]][2, ], item[[18]][2, ],
+                                  item[[19]][3, ], item[[20]][1, ], item[[20]][2, ], item[[20]][3, ],
+                                  item[[20]][4, ], item[[20]][5, ])
 EndSpecs <- rbind(item[[1]][3, ], item[[1]][6, ], item[[1]][8, ], item[[1]][7, ],
                   item[[2]][2, ], item[[3]][1, ], item[[3]][3, ], item[[4]][3, ],
                   item[[5]][4, ], item[[6]][2, ], item[[7]][2, ], item[[8]][1, ], 
@@ -152,6 +161,7 @@ EndSpecs <- rbind(item[[1]][3, ], item[[1]][6, ], item[[1]][8, ], item[[1]][7, ]
                   item[[20]][4, ], item[[20]][5, ])}
 rownames(StandardSpecs) <- Items
 rownames(StandardSpecZero) <- Items
+rownames(StandardSpecDemonAvenger) <- Items
 rownames(EndSpecs) <- Items
 
 
@@ -622,7 +632,7 @@ for(i in 1:30) {
 
 Addop <- data.frame()
 for(i in 1:30) {
-  Addop <- rbind(Addop, Addoption(SpecSet1[i, 1], SpecSet1[i, 12], SpecSet1[i, 13], 3, 3, 3, 0, 0, 0))
+  Addop <- rbind(Addop, Addoption(SpecSet1[i, 1], SpecSet1[i, 12], SpecSet1[i, 13], 3, 3, 0, 0, 3, 0, 0, 0))
   SpecSet1[i, 2] <- SpecSet1[i, 2] + Addop[i, 1]
   SpecSet1[i, 3] <- SpecSet1[i, 3] + Addop[i, 2]
   SpecSet1[i, 4] <- SpecSet1[i, 4] + Addop[i, 3]
@@ -730,9 +740,9 @@ for(i in 1:30) {
 Addop <- data.frame()
 for(i in 1:30) {
   if(i==9) {
-    Addop <- rbind(Addop, Addoption(SpecSetZero1[i, 1], SpecSetZero1[i, 12], SpecSetZero1[i, 13], 4, 3, 0, 0, 0, 0))
+    Addop <- rbind(Addop, Addoption(SpecSetZero1[i, 1], SpecSetZero1[i, 12], SpecSetZero1[i, 13], 4, 3, 0, 0, 0, 0, 0, 0))
   } else {
-    Addop <- rbind(Addop, Addoption(SpecSetZero1[i, 1], SpecSetZero1[i, 12], SpecSetZero1[i, 13], 3, 3, 3, 0, 0, 0))
+    Addop <- rbind(Addop, Addoption(SpecSetZero1[i, 1], SpecSetZero1[i, 12], SpecSetZero1[i, 13], 3, 3, 0, 0, 3, 0, 0, 0))
   }
   SpecSetZero1[i, 2] <- SpecSetZero1[i, 2] + Addop[i, 1]
   SpecSetZero1[i, 3] <- SpecSetZero1[i, 3] + Addop[i, 2]
@@ -756,4 +766,135 @@ for(i in PoYes) {
   SpecSetZero1[i, 2] <- SpecSetZero1[i, 2] + APo[1, 3]
   SpecSetZero1[i, 7] <- SpecSetZero1[i, 7] + APo[1, 4]
 }
+}
+
+## Final Item Specs (Standard / Xenon)
+{SpecSetXenon1 <- StandardSpecs
+  Up <- data.frame()
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[1, 1], "Acc", SpecSetXenon1[1, 11], T, c(3, 3, 3), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[2, 1], "Acc", SpecSetXenon1[2, 11], T, c(3, 3), 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, DominatorUpgrade(rep(1, 6)))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[7, 1], "Acc", SpecSetXenon1[7, 11], T, c(3, 3, 3), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[8, 1], "Acc", SpecSetXenon1[8, 11], T, c(3, 3, 3, 3), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[9, 1], "Armor", SpecSetXenon1[9, 11], T, c(rep(2, 3), 1, rep(2, 8)), 0, XenonSubStat2=T))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[10, 1], "Acc", SpecSetXenon1[10, 11], T, c(rep(3, 6)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[11, 1], "Acc", SpecSetXenon1[11, 11], T, c(rep(3, 6)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[12, 1], "Armor", SpecSetXenon1[12, 11], T, c(rep(2, 3), 1, rep(2, 4)), 0, XenonSubStat2=T))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[13, 1], "Armor", SpecSetXenon1[13, 11], T, c(rep(2, 3), 1, rep(2, 4)), 0, XenonSubStat2=T))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[14, 1], "Armor", SpecSetXenon1[14, 11], T, c(rep(2, 3), 1, rep(2, 4)), 0, XenonSubStat2=T))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[15, 1], "Acc", SpecSetXenon1[15, 11], T, c(rep(3, 7)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[16, 1], "Armor", SpecSetXenon1[16, 11], T, c(rep(1, 2)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[17, 1], "Gloves", SpecSetXenon1[17, 11], T, c(rep(1, 8)), 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, Upgrade(SpecSetXenon1[20, 1], "Armor", SpecSetXenon1[20, 11], T, c(rep(2, 3), 1, rep(2, 4)), 0, XenonSubStat2=T))
+  Up <- rbind(Up, HeartUpgrade(SpecSetXenon1[21, 11], rep(1, 10)))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetXenon1[22, 11], rep(1, 9)))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetXenon1[23, 11], rep(1, 9)))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetXenon1[24, 11], rep(1, 9)))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  for(i in 1:30) {
+    SpecSetXenon1[i, 2] <- SpecSetXenon1[i, 2] + Up[i, 3]
+    SpecSetXenon1[i, 3] <- SpecSetXenon1[i, 3] + Up[i, 4]
+    SpecSetXenon1[i, 4] <- SpecSetXenon1[i, 4] + Up[i, 5]
+    SpecSetXenon1[i, 7] <- SpecSetXenon1[i, 7] + Up[i, 1]
+    SpecSetXenon1[i, 8] <- SpecSetXenon1[i, 8] + Up[i, 2]
+  }
+  
+  Sf <- data.frame()
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[1, 1], F, 10, F, F, SpecSetXenon1[1, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[2, 1], F, 17, F, F, SpecSetXenon1[2, 4]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[6, 1], F, 17, F, F, SpecSetXenon1[6, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[7, 1], F, 15, F, F, SpecSetXenon1[7, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[8, 1], F, 17, F, F, SpecSetXenon1[8, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[9, 1], F, 17, T, F, SpecSetXenon1[9, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[10, 1], F, 10, F, F, SpecSetXenon1[10, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[11, 1], F, 17, F, F, SpecSetXenon1[11, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[12, 1], F, 17, T, F, SpecSetXenon1[12, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[13, 1], F, 17, T, F, SpecSetXenon1[13, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[14, 1], F, 17, T, F, SpecSetXenon1[14, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[15, 1], F, 17, F, F, SpecSetXenon1[15, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[16, 1], F, 17, T, F, SpecSetXenon1[16, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[17, 1], F, 17, T, T, SpecSetXenon1[17, 4]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[20, 1], F, 17, T, F, SpecSetXenon1[20, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetXenon1[21, 1], F, 8, F, F, SpecSetXenon1[21, 4]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  for(i in 1:30) {
+    SpecSetXenon1[i, 2] <- SpecSetXenon1[i, 2] + Sf[i, 3]
+    SpecSetXenon1[i, 3] <- SpecSetXenon1[i, 3] + Sf[i, 4]
+    SpecSetXenon1[i, 4] <- SpecSetXenon1[i, 4] + Sf[i, 5]
+    SpecSetXenon1[i, 7] <- SpecSetXenon1[i, 7] + Sf[i, 1]
+    SpecSetXenon1[i, 8] <- SpecSetXenon1[i, 8] + Sf[i, 2]
+  }
+  
+  Addop <- data.frame()
+  for(i in 1:30) {
+    Addop <- rbind(Addop, Addoption(SpecSetXenon1[i, 1], SpecSetXenon1[i, 12], SpecSetXenon1[i, 13], 3, 3, 3, 3, 0, 0, 0, 0))
+    SpecSetXenon1[i, 2] <- SpecSetXenon1[i, 2] + Addop[i, 1]
+    SpecSetXenon1[i, 3] <- SpecSetXenon1[i, 3] + Addop[i, 2]
+    SpecSetXenon1[i, 4] <- SpecSetXenon1[i, 4] + Addop[i, 3]
+    SpecSetXenon1[i, 10] <- SpecSetXenon1[i, 10] + Addop[i, 4]
+    SpecSetXenon1[i, 7] <- SpecSetXenon1[i, 7] + Addop[i, 5]
+  }
+  SpecSetXenon1_A6S6 <- SpecSetXenon1
+  SpecSetXenon1_A6A3 <- SpecSetXenon1
+  
+  PoYes <- c(1:3, 6:17, 20:21)
+  t <- 1
+  for(i in PoYes) {
+    if(i!=17 & i!=9) {
+      if(t!=3) {
+        Po <- Potential(c("U", "E", "E"), c("A", "A", "O"))
+        t <- t + 1
+      } else {
+        Po <- Potential(c("U", "E", "E"), c("A", "O", "O"))
+        t <- 1
+      }
+    } else if(i==9) {
+      Po <- Potential(c("L", "U", "U"), c("A", "A", "M"))
+    } else {Po <- Potential(c("L", "U", "U"), c("CDR", "A", "O"))}
+    APo <- AddPotential(SpecSetXenon1_A6S6[i, 1], ChrInfo[1, 7], c("E", "R", "R"), c("ATK", "ATK", "O"))
+    SpecSetXenon1_A6S6[i, 9] <- SpecSetXenon1_A6S6[i, 9] + Po[1, 1] + APo[1, 1]
+    SpecSetXenon1_A6S6[i, 10] <- SpecSetXenon1_A6S6[i, 10] + Po[1, 2] + APo[1, 2]
+    SpecSetXenon1_A6S6[i, 6] <- SpecSetXenon1_A6S6[i, 6] + Po[1, 3] + APo[1, 5]
+    SpecSetXenon1_A6S6[i, 19] <- SpecSetXenon1_A6S6[i, 19] + Po[1, 5] + APo[1, 7]
+    SpecSetXenon1_A6S6[i, 2] <- SpecSetXenon1_A6S6[i, 2] + APo[1, 3]
+    SpecSetXenon1_A6S6[i, 7] <- SpecSetXenon1_A6S6[i, 7] + APo[1, 4]
+  }
+  
+  for(i in PoYes) {
+    if(i!=17 & i!=9) {
+      Po <- Potential(c("U", "E", "E"), c("A", "A", "O"))
+    } else if(i==9) {
+      Po <- Potential(c("L", "U", "U"), c("A", "A", "M"))
+    } else {Po <- Potential(c("L", "U", "U"), c("CDR", "A", "O"))}
+    APo <- AddPotential(SpecSetXenon1_A6A3[i, 1], ChrInfo[1, 7], c("E", "R", "R"), c("ATK", "ATK", "O"))
+    SpecSetXenon1_A6A3[i, 9] <- SpecSetXenon1_A6A3[i, 9] + Po[1, 1] + APo[1, 1]
+    SpecSetXenon1_A6A3[i, 10] <- SpecSetXenon1_A6A3[i, 10] + Po[1, 2] + APo[1, 2]
+    SpecSetXenon1_A6A3[i, 6] <- SpecSetXenon1_A6A3[i, 6] + Po[1, 3] + APo[1, 5]
+    SpecSetXenon1_A6A3[i, 19] <- SpecSetXenon1_A6A3[i, 19] + Po[1, 5] + APo[1, 7]
+    SpecSetXenon1_A6A3[i, 2] <- SpecSetXenon1_A6A3[i, 2] + APo[1, 3]
+    SpecSetXenon1_A6A3[i, 7] <- SpecSetXenon1_A6A3[i, 7] + APo[1, 4]
+  }
 }

@@ -869,8 +869,8 @@ BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFina
 BishopFinalDPM <- BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, BIUnsdata)
 BishopFinalDPMwithMax <- BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, BIUnsdata)
 
-DPM12347$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
-DPM12347$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (BIUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
+DPM12349$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
+DPM12349$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (BIUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
 
 ## PrayFDR Logic Needed
 ## Divine Puninshment Stack Logic Needed
@@ -881,8 +881,8 @@ colnames(Bishop40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Da
 
 subset(Bishop40s, Bishop40s$RR4>0)
 
-DPM12347$Bishop[3] <- sum(Bishop40s$Damage[341:424]) 
-DPM12347$Bishop[4] <- sum(Bishop40s$Damage[257:424])
+DPM12349$Bishop[3] <- sum(Bishop40s$Damage[341:424]) 
+DPM12349$Bishop[4] <- sum(Bishop40s$Damage[257:424])
 
 BishopDamage2 <- BishopDealCalcGeneral(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
 

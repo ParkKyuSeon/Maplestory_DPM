@@ -83,7 +83,16 @@ UnionPrior$INT <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "B
                     rownames(subset(UnionCharacters, UnionCharacters$Options=="INT")), 
                     rownames(subset(UnionCharacters, UnionCharacters$Options=="LUK")), "Xenon", 
                     rownames(subset(UnionCharacters, UnionCharacters$Options=="DEX")), 
-                    rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")))}
+                    rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")))
+UnionPrior$HP <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "Blaster", "WildHunter", "Mechanic", "DemonAvenger", 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="HPP")), 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="HP")), 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")), "Xenon")
+UnionPrior$Xenon <- c("Marksman", "NightLord", "Captain", "Mercedes", "Eunwol", "Blaster", "WildHunter", "Mechanic", "DemonAvenger", "Xenon", 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="LUK")), 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="DEX")), 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="STR")), 
+                   rownames(subset(UnionCharacters, UnionCharacters$Options=="INT")))}
 
 
 
@@ -101,6 +110,11 @@ ATK <- rep(3, 15)
 HyperStats <- cbind(pts, MainStat, SubStat1, SubStat2, DMR, BDR, IGR, CRR, CDMR, ATK)
 rownames(HyperStats) <- c(1:15)
 HyperStats <- data.frame(HyperStats)
+
+MainStatP <- rep(2, 15)
+HyperStatsDA <- cbind(pts, MainStatP, SubStat1, SubStat2, DMR, BDR, IGR, CRR, CDMR, ATK)
+rownames(HyperStatsDA) <- c(1:15)
+HyperStatsDA <- data.frame(HyperStatsDA)
 
 lv <- 140:275
 ptsperlv <- floor((lv-110)/10)
@@ -147,7 +161,6 @@ Eunwol <- c(0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0)
 ### STR
 FrankenRoid <- c(0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0)
 Leica <- c(0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0)
-NineTailedFox <- c(0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0) ## STR + 14 if there is no Leica
 ### DEX
 Lilinoch <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0)
 SleepyViking <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## DEX +8 if there is no Birds A+ or S
@@ -165,6 +178,7 @@ Hogeol <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0)
 ReeperSpector <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0)
 ### STR + LUK
 EliteBloodTooth <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 6, 0, 0, 0)
+NineTailedFox <- c(0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0) ## STR + 7, LUK + 7 if there is no Leica
 ### DEX + INT
 AkairumPriest <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0)
 ### DEX + LUK
@@ -180,6 +194,11 @@ Beril <- c(0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0)
 Oberon <- c(0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0)
 ReinforcedBeril <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0, 0, 0)
 Lania <- c(0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 20, 20, 0, 0, 0)
+## HP
+ModifiedFireBoar <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 300, 0, 0)
+InnerRage <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0)
+GiantDarkSoul <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0)
+KingCastleGolem <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 750, 0, 0)
 ### Others
 Serf <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 YetiPharaoh <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -206,31 +225,40 @@ MLTypeS11 <- rbind(FrankenRoid, Leica, ReeperSpector, EliteBloodTooth,
 
 ### Farm Level 30(26 Slots) + No Bigeup, Serf, MiniSpider, LightLumi, Pierre, VonBon
 #### STR Type 2-1 : STR, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeS21 <- rbind(FrankenRoid, ReeperSpector, EliteBloodTooth, NineTailedFox, 
+MLTypeS21 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
                    Oberon, Beril, AkairumPriest, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeS21) <- MonsterLifeSpecs
 
 #### STR Type 2-2 : STR, SummonedDuration=F, FinalATKDMR=T, CRR=F
-MLTypeS22 <- rbind(FrankenRoid, ReeperSpector, EliteBloodTooth, NineTailedFox, 
+MLTypeS22 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
                    Oberon, Beril, Puso, AkairumPriest, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeS22) <- MonsterLifeSpecs
 
 #### STR Type 2-3 : STR, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeS23 <- rbind(FrankenRoid, ReeperSpector, EliteBloodTooth, NineTailedFox, 
+MLTypeS23 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
                    Oberon, GoldYeti, CoupleYeti, AkairumPriest, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeS23) <- MonsterLifeSpecs
+
+#### HP Type 2-1 : HP, SummonedDuration=F, FinalATKDMR=F, CRR=F
+MLTypeH21 <- rbind(ModifiedFireBoar, FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
+                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
+                   Oberon, AkairumPriest, Phantom, Eunwol, Rang,
+                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, RomantistKingSlime,
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
+colnames(MLTypeH21) <- MonsterLifeSpecs
 
 #### DEX Type 2-1 : DEX, SummonedDuration=F, FinalATKDMR=F, CRR=F
 MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
@@ -238,7 +266,7 @@ MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox,
                    Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeD21) <- MonsterLifeSpecs
 
 #### DEX Type 2-2 : DEX, SummonedDuration=T, FinalATKDMR=F, CRR=F
@@ -247,7 +275,7 @@ MLTypeD22 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox,
                    Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeD22) <- MonsterLifeSpecs
 
 #### DEX Type 2-3 : DEX, SummonedDuration=F, FinalATKDMR=T, CRR=F
@@ -256,7 +284,7 @@ MLTypeD23 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox,
                    Oberon, Beril, Puso, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli,  
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeD23) <- MonsterLifeSpecs
 
 #### DEX Type 2-4 : DEX, SummonedDuration=T, FinalATKDMR=T, CRR=F
@@ -265,7 +293,7 @@ MLTypeD24 <- rbind(Lilinoch, Taeryun, AkairumPriest, CoupleYeti, NineTailedFox,
                    Oberon, GoldYeti, Puso, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli,  
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeD24) <- MonsterLifeSpecs
 
 #### INT Type 2-1 : INT, SummonedDuration=F, FinalATKDMR=F, CRR=F
@@ -274,7 +302,7 @@ MLTypeI21 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedF
                    Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeI21) <- MonsterLifeSpecs
 
 #### INT Type 2-2 : INT, SummonedDuration=T, FinalATKDMR=F, CRR=F
@@ -283,26 +311,35 @@ MLTypeI22 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedF
                    Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeI22) <- MonsterLifeSpecs
 
 #### LUK Type 2-1 : LUK, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeL21 <- rbind(Dunas, Hogeol, EliteBloodTooth, Papulatus, LightSoul, NineTailedFox, 
+MLTypeL21 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, Phantom, Eunwol, Rang,
+                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, Leica, YetiPharaoh
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
 colnames(MLTypeL21) <- MonsterLifeSpecs
 
 #### LUK Type 2-2 : LUK, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeL22 <- rbind(Dunas, Hogeol, EliteBloodTooth, Papulatus, LightSoul, NineTailedFox, 
+MLTypeL22 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, NineTailedFox, 
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   CoupleYeti, GoldYeti, Phantom, Eunwol, Rang,
+                   CoupleYeti, GoldYeti, Oberon, Phantom, Eunwol, Rang,
+                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
+                   WolmyoThief, ToyKnight, IncongruitySoul)
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
+colnames(MLTypeL22) <- MonsterLifeSpecs
+
+#### Allstat Type 2-1 : ALLSTAT(Xenon), SummonedDuration=F, FinalATKDMR=F, CRR=F
+MLTypeA21 <- rbind(Hogeol, Leica, Papulatus, Taeryun, NineTailedFox, 
+                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
+                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
                    WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Leica, YetiPharaoh
-colnames(MLTypeL22) <- MonsterLifeSpecs
+#### Shinsoo, EliteBloodTooth, YetiPharaoh
+colnames(MLTypeA21) <- MonsterLifeSpecs
 
 ### Farm Level 40(28 Slots)
 #### STR Type 3-1 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=F
@@ -378,17 +415,17 @@ MainStatSyrup <- c(27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 SubStat1Syrup <- c(0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 SubStat2Syrup <- c(0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 SP30Guild <- c(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 30, 0, 0)
-SP44Guild <- c(0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0)
+SP45Guild <- c(0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0)
 SP60Guild <- c(0, 0, 0, 0, 0, 0, 0, 0, 2, 30, 0, 0, 0)
 Guild <- c(40, 40, 40, 2000, 15, 15, 0, 0, 0, 0, 0, 0, 30)}
 Doping <- rbind(BDRArcanum, DMRArcanum, IGRArcanum, ATKArcanum, ALLArcanum, CRRArcanum, EqipArtisan, 
                 GuildBless, UnionPower, BreadDrop, UrusDrop, ExtremeRed, ExtremeGreen, Lv250Buff, Lv275Buff, 
-                MainStatSyrup, SubStat1Syrup, SubStat2Syrup, SP30Guild, SP44Guild, SP60Guild, Guild)
+                MainStatSyrup, SubStat1Syrup, SubStat2Syrup, SP30Guild, SP45Guild, SP60Guild, Guild)
 colnames(Doping) <- DopingOption
 
 DopingSet <- rbind(BDRArcanum, ATKArcanum, GuildBless, UnionPower, BreadDrop, UrusDrop, 
                    ExtremeRed, ExtremeGreen, Lv250Buff, MainStatSyrup, SubStat1Syrup, SubStat2Syrup, 
-                   SP30Guild, SP44Guild, Guild)
+                   SP30Guild, SP45Guild, Guild)
 colnames(DopingSet) <- DopingOption
 
 

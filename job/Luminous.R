@@ -764,8 +764,8 @@ LuminousSpecOpt2 <- Optimization2(LuminousDealCycleReduction, ATKFinal, BuffFina
 LuminousFinalDPM <- DealCalc(LuminousDealCycle, ATKFinal, BuffFinal, SummonedFinal, LuminousSpecOpt2)
 LuminousFinalDPMwithMax <- DealCalcWithMaxDMR(LuminousDealCycle, ATKFinal, BuffFinal, SummonedFinal, LuminousSpecOpt2)
 
-DPM12347$Luminous[1] <- sum(na.omit(LuminousFinalDPMwithMax)) / (max(LuminousDealCycle$Time) / 60000)
-DPM12347$Luminous[2] <- sum(na.omit(LuminousFinalDPM)) / (max(LuminousDealCycle$Time) / 60000) - sum(na.omit(LuminousFinalDPMwithMax)) / (max(LuminousDealCycle$Time) / 60000)
+DPM12349$Luminous[1] <- sum(na.omit(LuminousFinalDPMwithMax)) / (max(LuminousDealCycle$Time) / 60000)
+DPM12349$Luminous[2] <- sum(na.omit(LuminousFinalDPM)) / (max(LuminousDealCycle$Time) / 60000) - sum(na.omit(LuminousFinalDPMwithMax)) / (max(LuminousDealCycle$Time) / 60000)
 
 LuminousDealRatio <- DealRatio(LuminousDealCycle, LuminousFinalDPMwithMax)
 
@@ -775,8 +775,8 @@ colnames(LuminousDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(LuminousDealData, LuminousDealData$R4>0)
 
 LuminousRR <- LuminousDealData[622:755, ]
-DPM12347$Luminous[3] <- sum((LuminousRR$Deal))
+DPM12349$Luminous[3] <- sum((LuminousRR$Deal))
 
 Luminous40s <- LuminousDealData[622:909, ]
-DPM12347$Luminous[4] <- sum((Luminous40s$Deal))
+DPM12349$Luminous[4] <- sum((Luminous40s$Deal))
 

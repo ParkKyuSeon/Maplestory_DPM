@@ -679,7 +679,7 @@ MikhailDealCycle <- DCSummonedATKs(MikhailDealCycle, Skill=c("ShiningCrossInstal
 MikhailDealCycle <- AWCSCycleMikhail(MikhailDealCycle)
 MikhailDealCycle <- AddATKCycleMikhail(MikhailDealCycle)
 MikhailDealCycle <- DCSpiderInMirror(MikhailDealCycle, SummonedFinal)
-MikhailDealCycle <- BlessofCygnusCycle(MikhailDealCycle, 4000, ServerLag, MikhailCore[[2]][8, 2])
+MikhailDealCycle <- BlessofCygnusCycle(MikhailDealCycle, 4000, General$General$Serverlag, MikhailCore[[2]][8, 2])
 MikhailDealCycleReduction <- DealCycleReduction(MikhailDealCycle, "BlessofCygnusBDR")
 
 
@@ -695,17 +695,17 @@ MikhailSpecOpt2 <- WindBreakerOptimization2(MikhailDealCycleReduction, ATKFinal,
 MikhailFinalDPM <- WindBreakerDealCalc(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
 MikhailFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
 
-DPM12347$Mikhail[1] <- sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000)
-DPM12347$Mikhail[2] <- sum(na.omit(MikhailFinalDPM)) / (max(MikhailDealCycle$Time) / 60000) - sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000)
+DPM12349$Mikhail[1] <- sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000)
+DPM12349$Mikhail[2] <- sum(na.omit(MikhailFinalDPM)) / (max(MikhailDealCycle$Time) / 60000) - sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000)
 
 MikhailDealData <- data.frame(MikhailDealCycle$Skills, MikhailDealCycle$Time, MikhailDealCycle$Restraint4, MikhailFinalDPMwithMax, MikhailFinalDPM-MikhailFinalDPMwithMax)
 colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(MikhailDealData, MikhailDealData$R4 > 0)
 
 MikhailRR <- MikhailDealData[51:205, ]
-DPM12347$Mikhail[3] <- sum((MikhailRR$Deal))
+DPM12349$Mikhail[3] <- sum((MikhailRR$Deal))
 
 Mikhail40s <-  MikhailDealData[51:420, ]
-DPM12347$Mikhail[4] <- sum((Mikhail40s$Deal))
+DPM12349$Mikhail[4] <- sum((Mikhail40s$Deal))
 
 DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)

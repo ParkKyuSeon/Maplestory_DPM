@@ -875,8 +875,8 @@ AranSpecOpt2 <- Optimization2(AranDealCycleReduction, ATKFinal, BuffFinal, Summo
 AranFinalDPM <- DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
 AranFinalDPMwithMax <- DealCalcWithMaxDMR(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
 
-DPM12347$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
-DPM12347$Aran[2] <- sum(na.omit(AranFinalDPM)) / (max(240000, max(AranDealCycle$Time)) / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
+DPM12349$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
+DPM12349$Aran[2] <- sum(na.omit(AranFinalDPM)) / (max(240000, max(AranDealCycle$Time)) / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
 
 AranDealRatio <- DealRatio(AranDealCycle, AranFinalDPMwithMax)
 
@@ -886,7 +886,7 @@ colnames(AranDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(AranDealData, AranDealData$R4>0)
 
 AranRR <- AranDealData[151:664, ]
-DPM12347$Aran[3] <- sum((AranRR$Deal))
+DPM12349$Aran[3] <- sum((AranRR$Deal))
 
 Aran40s <-  AranDealData[151:1008, ]
-DPM12347$Aran[4] <- sum((Aran40s$Deal))
+DPM12349$Aran[4] <- sum((Aran40s$Deal))

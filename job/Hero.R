@@ -586,17 +586,17 @@ HeroSpecOpt2 <- HeroOptimization2(HeroDealCycleReduction, ATKFinal, BuffFinal, S
 HeroFinalDPM <- HeroDealCalc(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt2)
 HeroFinalDPMwithMax <- HeroDealCalcWithMaxDMR(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt2)
 
-DPM12347$Hero[1] <- sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000)
-DPM12347$Hero[2] <- sum(na.omit(HeroFinalDPM)) / (max(HeroDealCycle$Time) / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000)
+DPM12349$Hero[1] <- sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000)
+DPM12349$Hero[2] <- sum(na.omit(HeroFinalDPM)) / (max(HeroDealCycle$Time) / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000)
 
 HeroDealData <- data.frame(HeroDealCycle$Skills, HeroDealCycle$Time, HeroDealCycle$Restraint4, HeroFinalDPMwithMax)
 colnames(HeroDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(HeroDealData, HeroDealData$R4>0)
 
 HeroRR <- HeroDealData[57:179, ]
-DPM12347$Hero[3] <- sum((HeroRR$Deal))
+DPM12349$Hero[3] <- sum((HeroRR$Deal))
 
 Hero40s <- HeroDealData[30:361, ]
-DPM12347$Hero[4] <- sum((Hero40s$Deal)) 
+DPM12349$Hero[4] <- sum((Hero40s$Deal)) 
 
 DealRatio(HeroDealCycle, HeroFinalDPMwithMax)

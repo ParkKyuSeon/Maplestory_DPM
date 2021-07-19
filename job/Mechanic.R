@@ -199,14 +199,14 @@ colnames(info) <- c("option", "value")
 MetalArmorFullburstExhaust <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * MechanicCore[[2]][6, 2]) * 216))
+value <- c(floor((0.2 + 0.02 * MechanicCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
 info <- c(30, 70 - floor(MechanicCore[[2]][6, 2]/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(-1 * floor(0.15 * 216))
+value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
 info <- c(Cooldown(70 - floor(MechanicCore[[2]][6, 2]/5), T, MechanicBase$UnionChrs$CoolReduceP, MechanicBase$CoolReduce) - 30 - ServerLag, 70 - floor(MechanicCore[[2]][6, 2]/5), 540, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -729,8 +729,8 @@ MechanicSpecOpt2 <- LuckyDiceOptimization2(MechanicDealCycleReduction, ATKFinal,
 MechanicFinalDPM <- LuckyDiceDealCalc(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.745340, 0.245185, 0.009475))
 MechanicFinalDPMwithMax <- LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(0.745340, 0.245185, 0.009475))
 
-DPM12347$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
-DPM12347$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (max(MechanicDealCycle$Time) / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
+DPM12349$Mechanic[1] <- sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
+DPM12349$Mechanic[2] <- sum(na.omit(MechanicFinalDPM)) / (max(MechanicDealCycle$Time) / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000)
 
 MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time, MechanicDealCycle$Restraint4, 
                                LuckyDiceDealCalcWithMaxDMR(MechanicDealCycle, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt2, LuckyDiceProb=c(1, 0, 0)))
@@ -738,9 +738,9 @@ colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(MechanicDealData, MechanicDealData$R4>0)
 
 MechanicRR <- MechanicDealData[46:339, ]
-DPM12347$Mechanic[3] <- sum((MechanicRR$Deal))
+DPM12349$Mechanic[3] <- sum((MechanicRR$Deal))
 
 Mechanic40s <-  MechanicDealData[46:734, ]
-DPM12347$Mechanic[4] <- sum((Mechanic40s$Deal))
+DPM12349$Mechanic[4] <- sum((Mechanic40s$Deal))
 
 DealRatio(MechanicDealCycle, MechanicFinalDPMwithMax)

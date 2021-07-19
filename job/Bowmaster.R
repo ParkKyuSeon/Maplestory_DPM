@@ -748,8 +748,8 @@ BowmasterSpecOpt2 <- Optimization2(BowmasterDealCycleReduction, ATKFinal, BuffFi
 BowmasterFinalDPM <- DealCalc(BowmasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt2)
 BowmasterFinalDPMwithMax <- DealCalcWithMaxDMR(BowmasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt2)
 
-DPM12347$Bowmaster[1] <- sum(na.omit(BowmasterFinalDPMwithMax)) / (max(BowmasterDealCycle$Time) / 60000)
-DPM12347$Bowmaster[2] <- sum(na.omit(BowmasterFinalDPM)) / (max(BowmasterDealCycle$Time) / 60000) - sum(na.omit(BowmasterFinalDPMwithMax)) / (max(BowmasterDealCycle$Time) / 60000)
+DPM12349$Bowmaster[1] <- sum(na.omit(BowmasterFinalDPMwithMax)) / (max(BowmasterDealCycle$Time) / 60000)
+DPM12349$Bowmaster[2] <- sum(na.omit(BowmasterFinalDPM)) / (max(BowmasterDealCycle$Time) / 60000) - sum(na.omit(BowmasterFinalDPMwithMax)) / (max(BowmasterDealCycle$Time) / 60000)
 
 BowmasterDealRatio <- DealRatio(BowmasterDealCycle, BowmasterFinalDPMwithMax)
 
@@ -759,8 +759,8 @@ colnames(BowmasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(BowmasterDealData, BowmasterDealData$R4>0)
 
 BowmasterRR <- BowmasterDealData[70:766, ]
-DPM12347$Bowmaster[3] <- sum((BowmasterRR$Deal))
+DPM12349$Bowmaster[3] <- sum((BowmasterRR$Deal))
 
 Bowmaster40s <- BowmasterDealData[70:1871, ]
-DPM12347$Bowmaster[4] <- sum((Bowmaster40s$Deal))
+DPM12349$Bowmaster[4] <- sum((Bowmaster40s$Deal))
 

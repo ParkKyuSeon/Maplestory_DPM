@@ -1043,16 +1043,16 @@ ArchMageTCSpecOpt2 <- TCOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2,
 ArchMageTCFinalDPM <- TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
 ArchMageTCFinalDPMwithMax <- TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
 
-DPM12347$ArchMageTC[1] <- sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
-DPM12347$ArchMageTC[2] <- sum(na.omit(ArchMageTCFinalDPM)) / (TCUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
+DPM12349$ArchMageTC[1] <- sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
+DPM12349$ArchMageTC[2] <- sum(na.omit(ArchMageTCFinalDPM)) / (TCUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
 
 ArchMageTCDamage <- TCDealCalcGeneral(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 ArchMageTC40s <- data.frame(ArchMageTCDealCycle$Skills, ArchMageTCDealCycle$Time, ArchMageTCDealCycle$Restraint4, ArchMageTCDealCycle$Infinity, ArchMageTCDealCycle$InfinityFDR, ArchMageTCDamage)
 colnames(ArchMageTC40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 subset(ArchMageTC40s, ArchMageTC40s$RR4>0)
 
-DPM12347$ArchMageTC[3] <- sum(ArchMageTC40s$Damage[730:1009])
-DPM12347$ArchMageTC[4] <- sum(ArchMageTC40s$Damage[589:1009])
+DPM12349$ArchMageTC[3] <- sum(ArchMageTC40s$Damage[730:1009])
+DPM12349$ArchMageTC[4] <- sum(ArchMageTC40s$Damage[589:1009])
 
 ArchMageTCDamage2 <- TCDealCalcGeneral(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 
@@ -1085,10 +1085,10 @@ ArchMageTCDealCycleTB2 <- DealCycleFinal(ArchMageTCDealCycleTB2)
 ArchMageTCDealCycleTB2 <- TCAddATKCycle(ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, 2, ArchMageTCUnstable, ArchMageTCSpec)
 ArchMageTCDealCycleTB2 <- BishopInfinity(ArchMageTCDealCycleTB2, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
 
-ArchMageTCFinalDPM2 <- TCDealCalc(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, Unsdata)
-ArchMageTCFinalDPMwithMax2 <- TCDealCalcWithMaxDMR(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, Unsdata)
+ArchMageTCFinalDPM2 <- TCDealCalc(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
+ArchMageTCFinalDPMwithMax2 <- TCDealCalcWithMaxDMR(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
 
-TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPMwithMax2)) / (Unsdata$DealCycleTime * 1000 / 60000)
+TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPMwithMax2)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
 TCTB2HitDamage <- TCDealCalcGeneral(ArchMageTCDealCycleTB, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 TCTB2HitDamage2 <- TCDealCalcGeneral(ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
 TBTB2HitsDealRatio <- TCDealRatio(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, TCTB2HitDamage, TCTB2HitDamage2, UnsData)

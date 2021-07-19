@@ -134,8 +134,8 @@ colnames(info) <- c("option", "value")
 SharpEyes <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
-value <- c(floor((CannonShooterBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(CannonShooterBase$SkillLv/2))))
-info <- c(900 + 30 * CannonShooterBase$SkillLv, NA, 0, T, NA, NA, T)
+value <- c(floor((WildHunterBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(WildHunterBase$SkillLv/2))))
+info <- c(900 + 30 * WildHunterBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
@@ -1098,18 +1098,18 @@ WildHunterSpecOpt2 <- Optimization2(WildHunterDealCycleReduction, ATKFinal, Buff
 WildHunterFinalDPM <- DealCalc(WildHunterDealCycle, ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt2)
 WildHunterFinalDPMwithMax <- DealCalcWithMaxDMR(WildHunterDealCycle, ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt2)
 
-DPM12347$WildHunter[1] <- sum(na.omit(WildHunterFinalDPMwithMax)) / (max(WildHunterDealCycle$Time)/ 60000)
-DPM12347$WildHunter[2] <- sum(na.omit(WildHunterFinalDPM)) / (max(WildHunterDealCycle$Time) / 60000) - sum(na.omit(WildHunterFinalDPMwithMax)) / (max(WildHunterDealCycle$Time) / 60000)
+DPM12349$WildHunter[1] <- sum(na.omit(WildHunterFinalDPMwithMax)) / (max(WildHunterDealCycle$Time)/ 60000)
+DPM12349$WildHunter[2] <- sum(na.omit(WildHunterFinalDPM)) / (max(WildHunterDealCycle$Time) / 60000) - sum(na.omit(WildHunterFinalDPMwithMax)) / (max(WildHunterDealCycle$Time) / 60000)
 
 WildHunterDealData <- data.frame(WildHunterDealCycle$Skills, WildHunterDealCycle$Time, WildHunterDealCycle$Restraint4, WildHunterFinalDPMwithMax)
 colnames(WildHunterDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(WildHunterDealData, WildHunterDealData$R4>0)
 
 WildHunterRR <- WildHunterDealData[81:687, ]
-DPM12347$WildHunter[3] <- sum((WildHunterRR$Deal))
+DPM12349$WildHunter[3] <- sum((WildHunterRR$Deal))
 
 WildHunter40s <- WildHunterDealData[81:1937, ]
-DPM12347$WildHunter[4] <- sum((WildHunter40s$Deal))
+DPM12349$WildHunter[4] <- sum((WildHunter40s$Deal))
 
 WildHunterDealRatio <- DealRatio(WildHunterDealCycle, WildHunterFinalDPMwithMax)
 

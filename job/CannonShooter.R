@@ -231,14 +231,14 @@ colnames(info) <- c("option", "value")
 PoolMakerBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * CannonShooterCore[[2]][6, 2]) * 302))
+value <- c(floor((0.2 + 0.02 * CannonShooterCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="HandCannon", 6]))
 info <- c(30, 70 - floor(CannonShooterCore[[2]][6, 2]/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(-1 * floor(0.15 * 302))
+value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="HandCannon", 6]))
 info <- c(Cooldown(70 - floor(CannonShooterCore[[2]][6, 2]/5), T, CannonShooterBase$UnionChrs$CoolReduceP, CannonShooterBase$CoolReduce) - 30 - General$General$Serverlag, 
           70 - floor(CannonShooterCore[[2]][6, 2]/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
@@ -1029,8 +1029,8 @@ CannonShooterFinalCycle <- CannonShooterAddATK(CannonShooterDealCycle,
                                                CocoballHits=27)
 CannonShooterFinalCycle <- OverDriveExhaustBuff(CannonShooterFinalCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 
-DPM12347$CannonMaster[1] <- sum(na.omit(CannonShooterFinalDPMwithMax)) / (max(CannonShooterFinalCycle$Time)/ 60000)
-DPM12347$CannonMaster[2] <- sum(na.omit(CannonShooterFinalDPM)) / (max(CannonShooterFinalCycle$Time) / 60000) - sum(na.omit(CannonShooterFinalDPMwithMax)) / (max(CannonShooterFinalCycle$Time) / 60000)
+DPM12349$CannonMaster[1] <- sum(na.omit(CannonShooterFinalDPMwithMax)) / (max(CannonShooterFinalCycle$Time)/ 60000)
+DPM12349$CannonMaster[2] <- sum(na.omit(CannonShooterFinalDPM)) / (max(CannonShooterFinalCycle$Time) / 60000) - sum(na.omit(CannonShooterFinalDPMwithMax)) / (max(CannonShooterFinalCycle$Time) / 60000)
 
 
 CannonShooterDeal1 <- DealCalcWithMaxDMR(CannonShooter_5Others, ATKFinal, BuffFinal, SummonedFinal, CannonShooterSpecOpt2)
@@ -1061,10 +1061,10 @@ colnames(CannonShooterDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(CannonShooterDealData, CannonShooterDealData$R4>0)
 
 CannonShooterRR <- CannonShooterDealData[39:277, ]
-DPM12347$CannonMaster[3] <- sum((CannonShooterRR$Deal))
+DPM12349$CannonMaster[3] <- sum((CannonShooterRR$Deal))
 
 CannonShooter40s <- CannonShooterDealData[39:483, ]
-DPM12347$CannonMaster[4] <- sum((CannonShooter40s$Deal))
+DPM12349$CannonMaster[4] <- sum((CannonShooter40s$Deal))
 
 
 

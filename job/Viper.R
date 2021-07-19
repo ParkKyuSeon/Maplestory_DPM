@@ -247,14 +247,14 @@ colnames(info) <- c("option", "value")
 Transform <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * ViperCore[[2]][6, 2]) * ArcaneShade[28, 6]))
+value <- c(floor((0.2 + 0.02 * ViperCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
 info <- c(30, 70 - floor(ViperCore[[2]][6, 2]/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(-1 * floor(0.15 * ArcaneShade[28, 6]))
+value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
 info <- c(Cooldown(70 - floor(ViperCore[[2]][6, 2]/5), T, ViperBase$UnionChrs$CoolReduceP, ViperBase$CoolReduce) - 30 - General$General$Serverlag, 
           70 - floor(ViperCore[[2]][6, 2]/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
@@ -1086,15 +1086,15 @@ ViperDealRatio <- ResetDealRatio(DealCycles=list(ViperDealCycle5,
                                                  ViperDealCycle555, ViperDealCycle557, ViperDealCycle577), 
                                  DealDatas=ViperDealDatas, rep(max(ViperDealCycle5$Time), 6), ViperDealCycleProbs)
 
-DPM12347$Viper[1] <- sum(na.omit(ViperFinalDPMwithMax)) / (max(ViperDealCycle5$Time) / 60000)
-DPM12347$Viper[2] <- sum(na.omit(ViperFinalDPM)) / (max(ViperDealCycle5$Time) / 60000) - sum(na.omit(ViperFinalDPMwithMax)) / (max(ViperDealCycle5$Time) / 60000)
+DPM12349$Viper[1] <- sum(na.omit(ViperFinalDPMwithMax)) / (max(ViperDealCycle5$Time) / 60000)
+DPM12349$Viper[2] <- sum(na.omit(ViperFinalDPM)) / (max(ViperDealCycle5$Time) / 60000) - sum(na.omit(ViperFinalDPMwithMax)) / (max(ViperDealCycle5$Time) / 60000)
 
 ViperDealData <- data.frame(ViperDealCycle5$Skills, ViperDealCycle5$Time, ViperDealCycle5$Restraint4, ViperDealDatas[[1]])
 colnames(ViperDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ViperDealData, ViperDealData$R4>0)
 
 ViperRR <- ViperDealData[45:210, ]
-DPM12347$Viper[3] <- sum((ViperRR$Deal))
+DPM12349$Viper[3] <- sum((ViperRR$Deal))
 
 Viper40s <- ViperDealData[45:400, ]
-DPM12347$Viper[4] <- sum((Viper40s$Deal))
+DPM12349$Viper[4] <- sum((Viper40s$Deal))

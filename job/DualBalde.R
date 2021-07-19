@@ -686,17 +686,17 @@ DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFi
 DualBladeFinalDPM <- DealCalc(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 DualBladeFinalDPMwithMax <- DealCalcWithMaxDMR(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
 
-DPM12347$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000)
-DPM12347$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (max(DualBladeDealCycle$Time) / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000)
+DPM12349$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000)
+DPM12349$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (max(DualBladeDealCycle$Time) / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000)
 
 DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Time, DualBladeDealCycle$Restraint4, DualBladeFinalDPMwithMax)
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(DualBladeDealData, DualBladeDealData$R4>0)
 
 DualBladeRR <- DualBladeDealData[30:279, ]
-DPM12347$DualBlader[3] <- sum((DualBladeRR$Deal))
+DPM12349$DualBlader[3] <- sum((DualBladeRR$Deal))
 
 DualBlade40s <- DualBladeDealData[30:542, ]
-DPM12347$DualBlader[4] <- sum((DualBlade40s$Deal))
+DPM12349$DualBlader[4] <- sum((DualBlade40s$Deal))
 
 DealRatio(DualBladeDealCycle, DualBladeFinalDPMwithMax)

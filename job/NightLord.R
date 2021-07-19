@@ -589,17 +589,17 @@ NightLordSpecOpt2 <- Optimization2(NightLordDealCycleReduction, ATKFinal, BuffFi
 NightLordFinalDPM <- DealCalc(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt2)
 NightLordFinalDPMwithMax <- DealCalcWithMaxDMR(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt2)
 
-DPM12347$NightLord[1] <- sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000)
-DPM12347$NightLord[2] <- sum(na.omit(NightLordFinalDPM)) / (max(NightLordDealCycle$Time) / 60000) - sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000)
+DPM12349$NightLord[1] <- sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000)
+DPM12349$NightLord[2] <- sum(na.omit(NightLordFinalDPM)) / (max(NightLordDealCycle$Time) / 60000) - sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000)
 
 NightLordDealData <- data.frame(NightLordDealCycle$Skills, NightLordDealCycle$Time, NightLordDealCycle$Restraint4, NightLordFinalDPMwithMax)
 colnames(NightLordDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(NightLordDealData, NightLordDealData$R4>0)
 
 NightLordRR <- NightLordDealData[31:434, ]
-DPM12347$NightLord[3] <- sum((NightLordRR$Deal))
+DPM12349$NightLord[3] <- sum((NightLordRR$Deal))
 
 NightLord40s <- NightLordDealData[31:726, ]
-DPM12347$NightLord[4] <- sum((NightLord40s$Deal))
+DPM12349$NightLord[4] <- sum((NightLord40s$Deal))
 
 NightLordDealRatio <- DealRatio(NightLordDealCycle, NightLordFinalDPMwithMax)

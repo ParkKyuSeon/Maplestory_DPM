@@ -829,8 +829,8 @@ MercedesSpecOpt2_2 <- Optimization2(MercedesDealCycleReduction2, ATKFinal, BuffF
 MercedesFinalDPM2 <- DealCalc(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 MercedesFinalDPMwithMax2 <- DealCalcWithMaxDMR(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt2_2)
 
-DPM12347$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (max(MercedesDealCycle2$Time) / 60000)
-DPM12347$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (max(MercedesDealCycle2$Time) / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (max(MercedesDealCycle2$Time) / 60000)
+DPM12349$Mercedes[1] <- sum(na.omit(MercedesFinalDPMwithMax2)) / (max(MercedesDealCycle2$Time) / 60000)
+DPM12349$Mercedes[2] <- sum(na.omit(MercedesFinalDPM2)) / (max(MercedesDealCycle2$Time) / 60000) - sum(na.omit(MercedesFinalDPMwithMax2)) / (max(MercedesDealCycle2$Time) / 60000)
 
 MercedesDealRatio <- DealRatio(MercedesDealCycle2, MercedesFinalDPMwithMax2)
 
@@ -840,7 +840,7 @@ colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(MercedesDealData, MercedesDealData$R4>0)
 
 MercedesRR <- MercedesDealData[42:452, ]
-DPM12347$Mercedes[3] <- sum((MercedesRR$Deal))
+DPM12349$Mercedes[3] <- sum((MercedesRR$Deal))
 
 Mercedes40s <-  MercedesDealData[42:1314, ]
-DPM12347$Mercedes[4] <- sum((Mercedes40s$Deal))
+DPM12349$Mercedes[4] <- sum((Mercedes40s$Deal))

@@ -206,14 +206,14 @@ colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * AngelicBusterCore[[2]][6, 2]) * ArcaneShade[31, 6]))
+value <- c(floor((0.2 + 0.02 * AngelicBusterCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="SoulShooter", 6]))
 info <- c(30, 70 - floor(AngelicBusterCore[[2]][6, 2]/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATK", levels=BSkill)
-value <- c(-1 * floor(0.15 * ArcaneShade[31, 6]))
+value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="SoulShooter", 6]))
 info <- c(Cooldown(70 - floor(AngelicBusterCore[[2]][6, 2]/5), T, AngelicBusterBase$UnionChrs$CoolReduceP, AngelicBusterBase$CoolReduce) - 30 - General$General$Serverlag, 
           70 - floor(AngelicBusterCore[[2]][6, 2]/5), 540, F, T, F, F)
 info <- data.frame(BInfo, info)
@@ -1066,8 +1066,8 @@ AngelicBusterDealRatio <- ResetDealRatio(DealCycles=list(AngelicBusterDealCycle0
                                          DealDatas=ABDealDatas, 
                                          ABDealCycleTimes, ABDealCycleProbs)
 
-DPM12347$AngelicBuster[1] <- sum(na.omit(AngelicBusterFinalDPMwithMax)) / (ABDealCycleTime / 60000)
-DPM12347$AngelicBuster[2] <- sum(na.omit(AngelicBusterFinalDPM)) / (ABDealCycleTime / 60000) - sum(na.omit(AngelicBusterFinalDPMwithMax)) / (ABDealCycleTime / 60000)
+DPM12349$AngelicBuster[1] <- sum(na.omit(AngelicBusterFinalDPMwithMax)) / (ABDealCycleTime / 60000)
+DPM12349$AngelicBuster[2] <- sum(na.omit(AngelicBusterFinalDPM)) / (ABDealCycleTime / 60000) - sum(na.omit(AngelicBusterFinalDPMwithMax)) / (ABDealCycleTime / 60000)
 
 
 ## RR Deal
@@ -1077,7 +1077,7 @@ colnames(ABDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(ABDealData, ABDealData$R4>0)
 
 ABRR <- ABDealData[517:1180, ]
-DPM12347$AngelicBuster[3] <- sum((ABRR$Deal))
+DPM12349$AngelicBuster[3] <- sum((ABRR$Deal))
 
 
 ## 40s Deal
@@ -1086,7 +1086,7 @@ ABDealData2 <- data.frame(AngelicBusterDealCycle00$Skills, AngelicBusterDealCycl
 colnames(ABDealData2) <- c("Skills", "Time", "R4", "Deal")
 
 AB40s <- ABDealData2[29:1532, ]
-DPM12347$AngelicBuster[4] <- sum((AB40s$Deal))
+DPM12349$AngelicBuster[4] <- sum((AB40s$Deal))
 
 
 ## SpotLight 2 Hits

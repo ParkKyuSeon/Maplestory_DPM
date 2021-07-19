@@ -945,8 +945,8 @@ SoulMasterSpecOpt2 <- WindBreakerOptimization2(SoulMasterDealCycleReduction, ATK
 SoulMasterFinalDPM <- WindBreakerDealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 SoulMasterFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
 
-DPM12347$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
-DPM12347$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (max(SoulMasterDealCycle$Time) / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
+DPM12349$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
+DPM12349$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (max(SoulMasterDealCycle$Time) / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
 
 SoulMasterDealRatio <- DealRatio(SoulMasterDealCycle, SoulMasterFinalDPMwithMax)
 
@@ -956,7 +956,7 @@ colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(SoulMasterDealData, SoulMasterDealData$R4>0)
 
 SoulMasterRR <- SoulMasterDealData[359:576, ]
-DPM12347$SoulMaster[3] <- sum((SoulMasterRR$Deal))
+DPM12349$SoulMaster[3] <- sum((SoulMasterRR$Deal))
 
 SoulMaster40s <-  SoulMasterDealData[43:574, ]
-DPM12347$SoulMaster[4] <- sum((SoulMaster40s$Deal))
+DPM12349$SoulMaster[4] <- sum((SoulMaster40s$Deal))

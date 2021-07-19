@@ -104,7 +104,7 @@ colnames(info) <- c("option", "value")
 ElementalForce <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
-value <- c(floor((PalladinChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(PalladinBase$SkillLv/2))))
+value <- c(floor((PalladinBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(PalladinBase$SkillLv/2))))
 info <- c(900 + 30 * PalladinBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -327,7 +327,7 @@ BlessedHammerSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(525 + 21 * PalladinCore[[2]][2, 2], 3, 360, 600, 30 + ServerLag, 60, F, T, F, F)
+info <- c(525 + 21 * PalladinCore[[2]][2, 2], 3, 360, 600, 30 + General$General$Serverlag, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BlessedHammerBig <- rbind(data.frame(option, value), info)}
@@ -618,17 +618,17 @@ PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFina
 PalladinFinalDPM <- DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 PalladinFinalDPMwithMax <- DealCalcWithMaxDMR(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
 
-DPM12347$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time)/ 60000)
-DPM12347$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (max(PalladinDealCycle$Time) / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time) / 60000)
+DPM12349$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time)/ 60000)
+DPM12349$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (max(PalladinDealCycle$Time) / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time) / 60000)
 
 PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time, PalladinDealCycle$Restraint4, PalladinFinalDPMwithMax)
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(PalladinDealData, PalladinDealData$R4>0)
 
 PalladinRR <- PalladinDealData[25:208, ]
-DPM12347$Palladin[3] <- sum((PalladinRR$Deal))
+DPM12349$Palladin[3] <- sum((PalladinRR$Deal))
 
 Palladin40s <- PalladinDealData[25:372, ]
-DPM12347$Palladin[4] <- sum((Palladin40s$Deal))
+DPM12349$Palladin[4] <- sum((Palladin40s$Deal))
 
 PalladinDealRatio <- DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)

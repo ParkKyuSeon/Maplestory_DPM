@@ -790,8 +790,8 @@ IlliumSpecOpt2 <- Optimization2(IlliumDealCycleReduction, ATKFinal, BuffFinal, S
 IlliumFinalDPM <- DealCalc(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
 IlliumFinalDPMwithMax <- DealCalcWithMaxDMR(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
 
-DPM12347$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
-DPM12347$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (max(IlliumDealCycle$Time) / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
+DPM12349$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
+DPM12349$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (max(IlliumDealCycle$Time) / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
 
 IlliumDealRatio <- DealRatio(IlliumDealCycle, IlliumFinalDPMwithMax)
 
@@ -801,10 +801,10 @@ colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
 subset(IlliumDealData, IlliumDealData$R4>0)
 
 IlliumRR <- IlliumDealData[220:405, ]
-DPM12347$Illium[3] <- sum((IlliumRR$Deal))
+DPM12349$Illium[3] <- sum((IlliumRR$Deal))
 
 Illium40s <- IlliumDealData[220:676, ]
-DPM12347$Illium[4] <- sum((Illium40s$Deal))
+DPM12349$Illium[4] <- sum((Illium40s$Deal))
 
 
 ## Glorywing Ignition 

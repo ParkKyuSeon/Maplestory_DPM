@@ -1057,16 +1057,16 @@ ArchMageFPSpecOpt2 <- BishopOptimization2(ArchMageFPDealCycle, ArchMageFPDealCyc
 ArchMageFPFinalDPM <- BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, FPUnsdata)
 ArchMageFPFinalDPMwithMax <- BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, FPUnsdata)
 
-DPM12347$ArchMageFP[1] <- sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
-DPM12347$ArchMageFP[2] <- sum(na.omit(ArchMageFPFinalDPM)) / (FPUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
+DPM12349$ArchMageFP[1] <- sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
+DPM12349$ArchMageFP[2] <- sum(na.omit(ArchMageFPFinalDPM)) / (FPUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
 
 ArchMageFPDamage <- BishopDealCalcGeneral(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2)
 ArchMageFP40s <- data.frame(ArchMageFPDealCycle$Skills, ArchMageFPDealCycle$Time, ArchMageFPDealCycle$Restraint4, ArchMageFPDealCycle$Infinity, ArchMageFPDealCycle$InfinityFDR, ArchMageFPDamage)
 colnames(ArchMageFP40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
 subset(ArchMageFP40s, ArchMageFP40s$RR4>0)
 
-DPM12347$ArchMageFP[3] <- sum(ArchMageFP40s$Damage[1495:1829])
-DPM12347$ArchMageFP[4] <- sum(ArchMageFP40s$Damage[1149:1838])
+DPM12349$ArchMageFP[3] <- sum(ArchMageFP40s$Damage[1495:1829])
+DPM12349$ArchMageFP[4] <- sum(ArchMageFP40s$Damage[1149:1838])
 
 ArchMageFPDamage2 <- BishopDealCalcGeneral(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2)
 

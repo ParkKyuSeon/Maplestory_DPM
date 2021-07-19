@@ -621,7 +621,7 @@ WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "WindWall", 25, 0, ATK
 WindBreakerDealCycle <- DCSummonedATKs(WindBreakerDealCycle, Skill=c("GuidedArrow", "CygnusPhalanx"), SummonedFinal)
 WindBreakerDealCycle <- AddATKsCycleWB(WindBreakerDealCycle)
 WindBreakerDealCycle <- DCSpiderInMirror(WindBreakerDealCycle, SummonedFinal)
-WindBreakerDealCycle <- BlessofCygnusCycle(WindBreakerDealCycle, 4000, ServerLag, WindBreakerCore[[2]][8, 2])
+WindBreakerDealCycle <- BlessofCygnusCycle(WindBreakerDealCycle, 4000, General$General$Serverlag, WindBreakerCore[[2]][8, 2])
 WindBreakerDealCycleReduction <- DealCycleReduction(WindBreakerDealCycle, "BlessofCygnusBDR")
 
 sum(na.omit(WindBreakerDealCalc(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec)))

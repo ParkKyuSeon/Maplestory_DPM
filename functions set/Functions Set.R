@@ -1,10 +1,13 @@
 ## Addoption Function
+### Single1 : MainStat, Single2 : SubStat1, Single3 : SubStat2
 ### Double1 : MainStat+Substat1, Double2 : MainStat+Substat2, Double3 : MainStat+RemainStat
-Addoption <- function(ReqLv, AddOption=T, BossItem=T, Allstat=3, Single=3, Double1=3, Double2=0, Double3=0, ATK=0) {
+Addoption <- function(ReqLv, AddOption=T, BossItem=T, Allstat=3, Single1=3, Single2=0, Single3=0, Double1=3, Double2=0, Double3=0, ATK=0) {
   if(AddOption==T) {
     if(BossItem==T) {
       Allstat <- ifelse(Allstat==0, Allstat, Allstat+2)
-      Single <- ifelse(Single==0, Single, Single+2)
+      Single1 <- ifelse(Single1==0, Single1, Single1+2)
+      Single2 <- ifelse(Single2==0, Single2, Single2+2)
+      Single3 <- ifelse(Single3==0, Single3, Single3+2)
       Double1 <- ifelse(Double1==0, Double1, Double1+2)
       Double2 <- ifelse(Double2==0, Double2, Double2+2)
       Double3 <- ifelse(Double3==0, Double3, Double3+2)
@@ -12,9 +15,9 @@ Addoption <- function(ReqLv, AddOption=T, BossItem=T, Allstat=3, Single=3, Doubl
     }
     stat <- floor(ReqLv/20) + 1
     statdouble <- ceiling(stat/2)
-    MainStat <- Single * stat + Double1 * statdouble + Double2 * statdouble + Double3 * statdouble
-    SubStat1 <- Double1 * statdouble
-    SubStat2 <- Double2 * statdouble
+    MainStat <- Single1 * stat + Double1 * statdouble + Double2 * statdouble + Double3 * statdouble
+    SubStat1 <- Single2 * stat + Double1 * statdouble
+    SubStat2 <- Single3 * stat + Double2 * statdouble
     Result <- as.data.frame(t(c(MainStat, SubStat1, SubStat2, Allstat, ATK)))
     colnames(Result) <- c("MainStat", "SubStat1", "SubStat2", "AllstatP", "ATK")
     return(Result)
@@ -24,33 +27,67 @@ Addoption <- function(ReqLv, AddOption=T, BossItem=T, Allstat=3, Single=3, Doubl
     return(Result)
   }
 }
-
+### Single : STR, Double1 : STR + Any Stat
+AddoptionHP <- function(ReqLv, AddOption=T, BossItem=T, HP=4, Allstat=0, Single=0, Double1=3, ATK=4) {
+  if(AddOption==T) {
+    if(BossItem==T) {
+      HP <- ifelse(HP==0, HP, HP+2)
+      Allstat <- ifelse(Allstat==0, Allstat, Allstat+2)
+      Single <- ifelse(Single==0, Single, Single+2)
+      Double1 <- ifelse(Double1==0, Double1, Double1+2)
+      ATK <- ifelse(ATK==0, ATK, ATK+2)
+    }
+    HPstat <- floor(ReqLv/10) * 30
+    stat <- floor(ReqLv/20) + 1
+    statdouble <- ceiling(stat/2)
+    HP <- HP * HPstat
+    SubStat1 <- Single * stat + Double1 * statdouble
+    Result <- as.data.frame(t(c(HP, SubStat1, Allstat, ATK)))
+    colnames(Result) <- c("HP", "SubStat1", "AllstatP", "ATK")
+    return(Result)
+  } else {
+    Result <- as.data.frame(t(c(0, 0, 0, 0, 0)))
+    colnames(Result) <- c("HP", "SubStat1", "AllstatP", "ATK")
+    return(Result)
+  }
+}
 
 ## Upgrade Function
-### UpgradeOption : "1" : 30%, "2" : Miracle(ATK+2.5), "3" : AccScroll(ATK+2.5), 
+### UpgradeOption : "1" : 30%, "2" : Miracle(ATK+2.3), "3" : AccScroll(ATK+2.5), 
 ### UpgradeOption : "4", PremiumAccScroll(ATK+4.2), "5", Iggdrasil(Stat+10, ReqLv>=120), "6" : Chaos(ATK+6)
-Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHammerAvailable=T, UpgradeOption, InitialATK) {
+Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHammerAvailable=T, UpgradeOption, InitialATK, DA=F, XenonSubStat2=F) {
   Times <- Upgrade + ifelse(GoldHammerAvailable==T, 1, 0)
   Option1s <- ifelse(ReqLv<120, ifelse(ItemType=="Acc", 4, ifelse(ItemType=="Armor", 5, 0)), 
                      ifelse(ItemType=="Acc", 5, ifelse(ItemType=="Armor", 7, 0)))
+  Option1h <- ifelse(ReqLv<120, ifelse(ItemType=="Acc", 200, ifelse(ItemType=="Armor", 320, 0)), 
+                     ifelse(ItemType=="Acc", 250, ifelse(ItemType=="Armor", 470, 0)))
   Option1a <- ifelse(ItemType=="Gloves", 3, 0)
-  Option2 <- ifelse(ItemType=="Acc", NA, 2.5)
+  Option2 <- ifelse(ItemType=="Acc", NA, 2.3)
   Option3 <- ifelse(ItemType=="Acc", 2.5, NA)
   Option4 <- ifelse(ItemType=="Acc", 4.2, NA)
   Option5 <- ifelse(ReqLv>=120, 10, NA)
   if(length(UpgradeOption)==Times) {
     MainStat <- 0
+    SubStat2 <- 0
+    HP <- 0
     ATK <- InitialATK
     for(i in 1:Times) {
       Option6 <- ifelse(ATK>0, 6, 0)
+      h <- c(Option1h, 0, 0, 0, 0, 0)
       s <- c(Option1s, 0, 0, 0, Option5, 0)
       a <- c(Option1a, Option2, Option3, Option4, 0, Option6)
-      MainStat <- MainStat + s[UpgradeOption[i]]
+      HP <- HP + h[UpgradeOption[i]]
+      MainStat <- ifelse(XenonSubStat2==F, MainStat + s[UpgradeOption[i]], MainStat)
+      SubStat2 <- ifelse(XenonSubStat2==T, SubStat2 + s[UpgradeOption[i]], SubStat2)
       ATK <- ATK + a[UpgradeOption[i]] + ifelse(i==4&ItemType=="Armor"&UpgradeOption[i]==1, 1, 0)
     }
-    if(is.na(MainStat)==F & is.na(ATK)==F) {
-      Result <- as.data.frame(t(c(floor(ATK-InitialATK), 0, MainStat, 0, 0)))
+    if(is.na(MainStat)==F & is.na(ATK)==F & DA==F) {
+      Result <- as.data.frame(t(c(floor(ATK-InitialATK), 0, MainStat, 0, SubStat2)))
       colnames(Result) <- c("ATK", "ATKSub", "MainStat", "SubStat1", "SubStat2")
+      return(Result)
+    } else if(is.na(MainStat)==F & is.na(ATK)==F & DA==T) {
+      Result <- as.data.frame(t(c(floor(ATK-InitialATK), 0, HP, 0, 0)))
+      colnames(Result) <- c("ATK", "ATKSub", "HP", "SubStat1", "SubStat2")
       return(Result)
     } else {warning("Upgrade Option Incorrect")}
   } else {warning("Upgrade Option Incorrect")}
@@ -59,7 +96,7 @@ Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHa
 
 ## Heart Upgrade Function
 ### UpgradeOption : "1" : PartyQuest (ATK+5), "2" : Magical(ATK+9.5, AllStat+3)
-HeartUpgrade <- function(Upgrade, UpgradeOption) {
+HeartUpgrade <- function(Upgrade, UpgradeOption, DA=F) {
   Times <- Upgrade + 1
   ATK <- 0
   MainStat <- 0
@@ -73,8 +110,13 @@ HeartUpgrade <- function(Upgrade, UpgradeOption) {
       SubStat2 <- MainStat
     } 
   } else {warning("Invalid Input")}
-  Result <- as.data.frame(t(c(floor(ATK), 0, MainStat, SubStat1, SubStat2)))
-  colnames(Result) <- c("ATK", "ATKSub", "MainStat", "SubStat1", "SubStat2")
+  if(DA==F) {
+    Result <- as.data.frame(t(c(floor(ATK), 0, MainStat, SubStat1, SubStat2)))
+    colnames(Result) <- c("ATK", "ATKSub", "MainStat", "SubStat1", "SubStat2")
+  } else {
+    Result <- as.data.frame(t(c(floor(ATK), 0, 0, SubStat1, SubStat2)))
+    colnames(Result) <- c("ATK", "ATKSub", "HP", "SubStat1", "SubStat2")
+  }
   ifelse(sum(as.numeric(is.na(Result)))==0, return(Result), warning("Invalid Input"))
 }
 
@@ -485,7 +527,7 @@ UnionChr <- function(UnionPreSet, Job, ChrLv) {
     }
   }
   
-  MS <- ChrInfo$MainStat[i]
+  MS <- ifelse(Job=="Xenon", "Xenon", ChrInfo$MainStat[i])
   StatIndex <- c()
   for(i in 1:length(UnionPrior)) {
     if(names(UnionPrior)[i]==MS) {
@@ -2379,6 +2421,16 @@ JobBase <- function(ChrInfo=ChrInfo,
     }
   }
   JobData$MainStatP <- MainStatP
+  
+  if(Job=="Xenon") {
+    AllStatP <- 1
+    for(i in 1:length(JobData)) {
+      if(is.data.frame(JobData[[i]])==T) {
+        AllStatP <- AllStatP + sum(JobData[[i]]$AllstatP)/100
+      }
+    }
+    JobData$AllStatP <- AllStatP
+  }
   return(JobData)
 }
 
@@ -2448,7 +2500,7 @@ JobSpec <- function(JobBase,
   colnames(SoulWeapon) <- SoulWeaponOptions
   JobBase$SoulWeapon <- SoulWeapon
   
-  for(i in 1:4) {
+  for(i in 1:6) {
     colnames(JobBase$UnionChrs)[i] <- ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$MainStat, "MainStat", 
                                              ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$SubStat1, "SubStat1", 
                                              ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$SubStat2, "SubStat2", 
@@ -2465,7 +2517,10 @@ JobSpec <- function(JobBase,
   JobBase$UnionChrs$SubStat1 <- 0 ; JobBase$HyperStatBase$SubStat1 <- 0
   JobBase$UnionChrs$SubStat2 <- 0 ; JobBase$HyperStatBase$SubStat2 <- 0
   
-  MainStat <- 18 + 5 * JobBase$ChrLv ; SubStat1 <- 4 ; SubStat2 <- 4 ; ATK <- 0 ; ATKSub <- JobBase$ItemSet$ATKSub
+  MainStat <- 18 + 5 * JobBase$ChrLv + ifelse(JobBase$Job!="Xenon", 0, 8 - 660)
+  SubStat1 <- ifelse(JobBase$Job!="Xenon", 4, 330)
+  SubStat2 <- ifelse(JobBase$Job!="Xenon", 4, 330)
+  ATK <- 0 ; ATKSub <- JobBase$ItemSet$ATKSub
   ATKP <- 0 ; IGR <- floor(JobBase$Charisma/5)/2 ; BDR <- 0 ; CRR <- 5 ; CDMR <- 0 ; FDR <- 0
   ATKSpeed <- WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[17]
   Mastery <- JobBase$BaseMastery
@@ -2498,9 +2553,9 @@ JobSpec <- function(JobBase,
       MainStatP <- MainStatP + sum(JobBase[[i]]$AllstatP)/100 + sum(JobBase[[i]]$MainStatP)/100
     }
   }
-  MainStat <- floor(MainStat * MainStatP) + JobBase$ArcaneForceStat + UneffMainStat
-  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1
-  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2
+  MainStat <- floor(MainStat * MainStatP) + UneffMainStat + ifelse(JobBase$Job!="Xenon", JobBase$ArcaneForceStat, JobBase$ArcaneForceStat / 100 * 39)
+  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39)
+  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39)
   SubStat2 <- ifelse(is.na(JobBase$SubStat2)==T, 0, SubStat2)
   CRR <- ifelse(JobBase$CRROver==T, CRR, min(100, CRR))
   FDR <- FDRCalc(c(FDR, ArcaneForceFDR(JobBase$ArcaneForce, MobInfo$Basic$Arc), LevelFDR(JobBase$ChrLv, MobInfo$Basic$Lv), 
@@ -2519,6 +2574,10 @@ JobSpec <- function(JobBase,
                        ATKSpeed=ATKSpeed, Mastery=Mastery, BuffDuration=BuffDuration, SummonedDuration=SummonedDuration, ImmuneIgnore=ImmuneIgnore, 
                        CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, 
                        MainStatP=MainStatP)
+  }
+  
+  if(JobBase$Job=="Xenon") {
+    Spec$AllStatP <- AllstatP
   }
   
   Spec <- list(Spec=Spec, UnionRemained=UnionRemained, HyperStatBase=HyperStatBase, CoolReduceType=SpecSet$CoolReduceInfo)

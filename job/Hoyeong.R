@@ -496,10 +496,10 @@ HoyeongCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
                          Period=c(100, 190), CycleTime=c(400, 380)) {
   BuffSummonedPrior <- c("FanBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders",
                          "TaeeulSeondan", "BlessofGrandisGoddess", "Heupseongwaryu", "BunsinbuBuff", "SanryeongSohwan", "CheonjiinHwanyeongBuff", "Gwihwabu", "HojeopJimongBuff", 
-                         "MisaengGangbyeonDebuff", "SoulContractLink", "BunsinnanmuBuff", "ReadyToDie2Stack", "Goeryeoknansin", "Restraint4")
+                         "SoulContractLink", "MisaengGangbyeonDebuff", "BunsinnanmuBuff", "ReadyToDie2Stack", "Goeryeoknansin", "Restraint4")
   Times190 <- c(0, 0, 0, 0, 
                 1, 0.5, 4, 1, 1, 2, 4, 2, 
-                4, 2, 1, 2, 1, 1)
+                2, 4, 1, 2, 1, 1)
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -1881,17 +1881,17 @@ HoyeongSpecOpt2 <- Optimization2(HoyeongDealCycleReduction, ATKFinal, BuffFinal,
 HoyeongFinalDPM <- DealCalc(HoyeongDealCycle, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt2)
 HoyeongFinalDPMwithMax <- DealCalcWithMaxDMR(HoyeongDealCycle, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt2)
 
-DPM12347$Hoyeong[1] <- sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time)/ 60000)
-DPM12347$Hoyeong[2] <- sum(na.omit(HoyeongFinalDPM)) / (max(HoyeongDealCycle$Time) / 60000) - sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time) / 60000)
+DPM12349$Hoyeong[1] <- sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time)/ 60000)
+DPM12349$Hoyeong[2] <- sum(na.omit(HoyeongFinalDPM)) / (max(HoyeongDealCycle$Time) / 60000) - sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time) / 60000)
 
 HoyeongDealData <- data.frame(HoyeongDealCycle$Skills, HoyeongDealCycle$Time, HoyeongDealCycle$Restraint4, HoyeongFinalDPMwithMax)
 colnames(HoyeongDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(HoyeongDealData, HoyeongDealData$R4>0)
 
-HoyeongRR <- HoyeongDealData[67:232, ]
-DPM12347$Hoyeong[3] <- sum((HoyeongRR$Deal))
+HoyeongRR <- HoyeongDealData[67:231, ]
+DPM12349$Hoyeong[3] <- sum((HoyeongRR$Deal))
 
 Hoyeong40s <- HoyeongDealData[67:476, ]
-DPM12347$Hoyeong[4] <- sum((Hoyeong40s$Deal))
+DPM12349$Hoyeong[4] <- sum((Hoyeong40s$Deal))
 
 HoyeongDealRatio <- DealRatio(HoyeongDealCycle, HoyeongFinalDPMwithMax)

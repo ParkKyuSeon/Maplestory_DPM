@@ -1577,15 +1577,15 @@ KaiserDealRatio <- ResetDealRatio(DealCycles=KaiserDealCycles,
                                   DealDatas=KaiserDealDatas, 
                                   KaiserDealCycleTimes, KaiserDealCycleProbs)
 
-DPM12347$Kaiser[1] <- sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
-DPM12347$Kaiser[2] <- sum(na.omit(KaiserFinalDPM)) / (KaiserDealCycleTime / 60000) - sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
+DPM12349$Kaiser[1] <- sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
+DPM12349$Kaiser[2] <- sum(na.omit(KaiserFinalDPM)) / (KaiserDealCycleTime / 60000) - sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
 KaiserDealData <- data.frame(KaiserDealCycle0$Skills, KaiserDealCycle0$Time, KaiserDealCycle0$Restraint4, KaiserDealDatas[[1]])
 
 colnames(KaiserDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(KaiserDealData, KaiserDealData$R4>0)
 
 KaiserRR <- KaiserDealData[39:274, ]
-DPM12347$Kaiser[3] <- sum((KaiserRR$Deal))
+DPM12349$Kaiser[3] <- sum((KaiserRR$Deal))
 
 Kaiser40s <- KaiserDealData[39:597, ]
-DPM12347$Kaiser[4] <- sum((Kaiser40s$Deal))
+DPM12349$Kaiser[4] <- sum((Kaiser40s$Deal))
