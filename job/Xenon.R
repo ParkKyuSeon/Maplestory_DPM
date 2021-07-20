@@ -1,13 +1,12 @@
 ## Xenon - Data
 ## Xenon - Core
-## Matrix Points Check Needed (LoadedDice/Blink vs Spider In Mirror vs Passive Skills)
 XenonCore <- MatrixSet(PasSkills=c("PinpointRocket", "AegisSystem", "TriangleFormation", "FuzzylopMasquerade", "HologramGrafity", "MeltdownExplosion"), 
                        PasLvs=c(50, 50, 50, 50, 50, 50), 
-                       PasMP=c(10, 0, 0, 10, 10, 0), 
+                       PasMP=c(10, 5, 5, 10, 10, 5), 
                        ActSkills=c("MegaSmasher", "OverloadMode", "HologramGrafityFusion", "PhotonRay",
                                    unique(c(CommonV("Thief", "Resistance"), CommonV("Pirate", "Resistance")))[2:7]), 
                        ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                       ActMP=c(5, 5, 5, 5, 5, 5, 5, 0, 5, 5), 
+                       ActMP=c(5, 5, 5, 5, 5, 5, 5, 0, 0, 5), 
                        BlinkLv=1, 
                        BlinkMP=0, 
                        UsefulSkills=c("SharpEyes", "CombatOrders"), 
@@ -18,7 +17,6 @@ XenonCore <- MatrixSet(PasSkills=c("PinpointRocket", "AegisSystem", "TriangleFor
 
 
 ## Xenon - Basic Info
-## CoolReduceHat Check Needed, Mikhail Link Check Needed, Link Check Needed, Monster Life Set Needed
 XenonBase <- JobBase(ChrInfo=ChrInfo, 
                      MobInfo=MobDefault,
                      SpecSet=SpecDefaultXenon_A6S6, 
@@ -26,8 +24,8 @@ XenonBase <- JobBase(ChrInfo=ChrInfo,
                      CoreData=XenonCore, 
                      BuffDurationNeeded=0, 
                      AbilList=c("BDR", "DisorderBDR"), 
-                     LinkList=c("Mikhail", "DemonAvenger", "Xenon", "Phantom"), 
-                     MonsterLife=MLTypeL21, 
+                     LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom"), 
+                     MonsterLife=MLTypeA21, 
                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", SpecDefault$WeaponType)[, 1:16],
                      WeaponType=SpecDefault$WeaponType, 
                      SubWeapon=SubWeapon[rownames(SubWeapon)=="Controller", ], 
@@ -40,8 +38,8 @@ XenonBase2 <- JobBase(ChrInfo=ChrInfo,
                       CoreData=XenonCore, 
                       BuffDurationNeeded=0, 
                       AbilList=c("BDR", "DisorderBDR"), 
-                      LinkList=c("Mikhail", "DemonAvenger", "Xenon", "Phantom"), 
-                      MonsterLife=MLTypeL21, 
+                      LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom"), 
+                      MonsterLife=MLTypeA21, 
                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", SpecDefault$WeaponType)[, 1:16],
                       WeaponType=SpecDefault$WeaponType, 
                       SubWeapon=SubWeapon[rownames(SubWeapon)=="Controller", ], 
@@ -453,7 +451,7 @@ value <- c()
 info <- c(0, 0, 0, 6840, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-OverloadModeATKDummy <- rbind(data.frame(option, value), info) ## StartATK Check Needed
+OverloadModeATKDummy <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
@@ -514,7 +512,7 @@ XenonSummoned <- Summoned(list(HologramGrafity=HologramGrafity, ResistanceLineIn
 ATKFinal <- data.frame(XenonATK)
 ATKFinal$Delay[c(-8:-10)] <- Delay(ATKFinal$Delay, XenonSpec$ATKSpeed)[c(-8:-10)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
-ATKFinal <- AddATKRateSkills("VirtualProjection", BuffFinal, ATKFinal, c("FuzzylopMasquerade", "MegaSmasher", "OverloadModeATK"))
+ATKFinal <- AddATKRateSkills("VirtualProjection", BuffFinal, ATKFinal, c("FuzzylopMasquerade", "MegaSmasher", "OverloadModeATK", "MeltdownExplosion"))
 
 BuffFinal <- data.frame(XenonBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
@@ -1243,7 +1241,7 @@ XenonAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Ove
   
   ## Virtual Projection
   for(i in 1:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("FuzzylopMasquerade", "MegaSmasher", "OverloadModeATK"))>=1) {
+    if(sum(DealCycle$Skills[i]==c("FuzzylopMasquerade", "MegaSmasher", "OverloadModeATK", "MeltdownExplosion"))>=1) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- paste(DealCycle$Skills[nrow(DealCycle)], "Add", sep="")
     }
@@ -1254,7 +1252,7 @@ XenonAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Ove
   
   ## Meltdown Explosion ATK Debuff Exclusion
   for(i in 1:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("MeltdownExplosion"))>=1) {
+    if(sum(DealCycle$Skills[i]==c("MeltdownExplosion", "MeltdownExplosionAdd"))>=1) {
       DealCycle$MeltdownExplosionDebuff[i] <- 0
     }
   }
@@ -1309,10 +1307,10 @@ XenonDealData <- data.frame(XenonDealCycle$Skills, XenonDealCycle$Time, XenonDea
 colnames(XenonDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(XenonDealData, XenonDealData$R4>0)
 
-XenonRR <- XenonDealData[320:636, ]
+XenonRR <- XenonDealData[321:637, ]
 DPM12349$Xenon[3] <- sum((XenonRR$Deal))
 
-Xenon40s <- XenonDealData[274:812, ]
+Xenon40s <- XenonDealData[274:813, ]
 DPM12349$Xenon[4] <- sum((Xenon40s$Deal))
 
 XenonDealRatio <- DealRatio(XenonDealCycle, XenonFinalDPMwithMax)
@@ -1332,10 +1330,9 @@ XenonDPM_A9 <- sum(na.omit(XenonFinalDPM_A9)) / (max(XenonDealCycle$Time)/ 60000
 
 XenonDealData_A9 <- data.frame(XenonDealCycle$Skills, XenonDealCycle$Time, XenonDealCycle$Restraint4, XenonFinalDPM_A9)
 colnames(XenonDealData_A9) <- c("Skills", "Time", "R4", "Deal")
-subset(XenonDealData_A9, XenonDealData_A9$R4>0)
 
-XenonRR_A9 <- XenonDealData_A9[320:636, ]
+XenonRR_A9 <- XenonDealData_A9[321:637, ]
 XenonRR_A9 <- sum((XenonRR_A9$Deal))
 
-Xenon40s_A9 <- XenonDealData_A9[274:812, ]
+Xenon40s_A9 <- XenonDealData_A9[274:813, ]
 Xenon40s_A9 <- sum((Xenon40s_A9$Deal))
