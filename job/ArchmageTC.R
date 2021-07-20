@@ -60,7 +60,7 @@ value <- c(50)
 ElementAmplification <- data.frame(option, value)
 
 option <- factor(c("Mastery"), levels=PSkill)
-value <- c(70 + ceiling(ArchmageTCBase$SkillLv/2))
+value <- c(70 + ceiling(ArchMageTCBase$SkillLv/2))
 ElquinesPassive <- data.frame(option, value)
 
 option <- factor(c("ATK", "BuffDuration"), levels=PSkill)

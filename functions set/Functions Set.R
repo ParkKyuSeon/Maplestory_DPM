@@ -2407,11 +2407,20 @@ JobBase <- function(ChrInfo=ChrInfo,
     JobData$PSkillLv <- 2 + JobData$Ability$PassiveLv
   }
   
-  if(CoolReduceHat==T) {
-    JobData$ItemSet$MainStatP <- JobData$ItemSet$MainStatP + SpecSet$CoolReduceInfo$MainStatP[2]
-    JobData$CoolReduce <- SpecSet$CoolReduceInfo$CoolReduce[2]
+  if(Job!="Xenon") {
+    if(CoolReduceHat==T) {
+      JobData$ItemSet$MainStatP <- JobData$ItemSet$MainStatP + SpecSet$CoolReduceInfo$MainStatP[2]
+      JobData$CoolReduce <- SpecSet$CoolReduceInfo$CoolReduce[2]
+    } else {
+      JobData$CoolReduce <- 0
+    }
   } else {
-    JobData$CoolReduce <- 0
+    if(CoolReduceHat==T) {
+      JobData$ItemSet$AllstatP <- JobData$ItemSet$AllstatP + SpecSet$CoolReduceInfo$AllStatP[2]
+      JobData$CoolReduce <- SpecSet$CoolReduceInfo$CoolReduce[2]
+    } else {
+      JobData$CoolReduce <- 0
+    }
   }
   
   MainStatP <- 1
@@ -2553,6 +2562,11 @@ JobSpec <- function(JobBase,
       MainStatP <- MainStatP + sum(JobBase[[i]]$AllstatP)/100 + sum(JobBase[[i]]$MainStatP)/100
     }
   }
+  if(JobBase$Job=="Xenon") {
+    MainStatWithoutStatP <- MainStat
+    SubStat1WithoutStatP <- SubStat1
+    SubStat2WithoutStatP <- SubStat2
+  }
   MainStat <- floor(MainStat * MainStatP) + UneffMainStat + ifelse(JobBase$Job!="Xenon", JobBase$ArcaneForceStat, JobBase$ArcaneForceStat / 100 * 39)
   SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39)
   SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39)
@@ -2578,6 +2592,9 @@ JobSpec <- function(JobBase,
   
   if(JobBase$Job=="Xenon") {
     Spec$AllStatP <- AllstatP
+    Spec$MainStatWithoutStatP <- MainStatWithoutStatP
+    Spec$SubStat1WithoutStatP <- SubStat1WithoutStatP    
+    Spec$SubStat2WithoutStatP <- SubStat2WithoutStatP
   }
   
   Spec <- list(Spec=Spec, UnionRemained=UnionRemained, HyperStatBase=HyperStatBase, CoolReduceType=SpecSet$CoolReduceInfo)

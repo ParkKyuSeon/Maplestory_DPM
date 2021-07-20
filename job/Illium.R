@@ -194,7 +194,7 @@ colnames(info) <- c("option", "value")
 MagicCircuitFullDriveBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(10 + 3 * IlliumCore[[2]][8, 2] + (min((0.4 + 0.02 * IlliumCore[[2]][8, 2]) * IlliumBase$ItemSet$ATKSub, floor(ArcaneShade[16, 6] * 1.5))))
+value <- c(10 + 3 * IlliumCore[[2]][8, 2] + (min((0.4 + 0.02 * IlliumCore[[2]][8, 2]) * IlliumBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="MagicGuntlet", 6] * 1.5))))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")

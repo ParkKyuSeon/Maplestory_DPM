@@ -339,9 +339,10 @@ RRGraph(DualBladeDealData[30:279, ], "DualBlader", col=colorset[4], add=T)
 RRGraph(NightWalkerDealData[58:825, ], "NightWalker", col=colorset[5], add=T)
 RRGraph(PhantomDealData[23:429, ], "Phantom", col=colorset[6], add=T)
 RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[8], add=T)
+RRGraph(XenonDealData[320:636, ], "Xenon", col=colorset[9], add=T)
 
 legend(x=0, y=80000, legend=c("NightLord", "Shadower", "DualBlader", "NightWalker", 
-                              "Phantom", "Hoyeong"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
+                              "Phantom", "Hoyeong", "Xenon"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 ## Pirates
 RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[1])
@@ -627,6 +628,13 @@ ZeroDealTL <- DealTimeLine(ZeroDealData$Time, ZeroDealData$Deal)
 TLGraph(ZeroDealTL, max(ZeroDealData$Time)/1000, "Zero", F)
 TLGraph(ZeroDealTL, max(ZeroDealData$Time)/1000, "Zero", T)
 DealIrr(ZeroDealTL, max(ZeroDealData$Time)/1000)
+
+## Xenon
+XenonDealTL <- DealTimeLine(XenonDealData$Time, XenonDealData$Deal)
+TLGraph(XenonDealTL, max(XenonDealData$Time)/1000, "Xenon", F)
+TLGraph(XenonDealTL, max(XenonDealData$Time)/1000, "Xenon", T)
+DealIrr(XenonDealTL, max(XenonDealData$Time)/1000)
+
 
 
 
