@@ -1,6 +1,6 @@
 ## DemonAvenger - Data
 ## DemonAvenger - Core
-DemonAvengerCore <- MatrixSet(PasSkills=c("ExceedExecution", "ShieldChasing", "ExceedMoonlightSlash", "EnhancedExceed", "BatsSwarm", "ThousandSword"), 
+DemonAvengerCore <- MatrixSet(PasSkills=c("ExceedExecution", "ShieldChasing", "ExceedMoonlightSlash", "EnhancedExceed", "ArmorBreak", "ThousandSword"), 
                       PasLvs=c(50, 50, 50, 50, 50, 50), 
                       PasMP=c(10, 10, 10, 10, 10, 10), 
                       ActSkills=c("DemonFrenzy", "BloodFeast", "DimensionSword", "Revenant",
@@ -54,7 +54,7 @@ ConversionStarForceHP <- c(rep(35, 15), ## 1 ~ 15
 
 
 ## DemonAvenger - Passive
-SFHP <- sum(ConversionStarForceHP[1:247])
+SFHP <- sum(ConversionStarForceHP[1:264])
 {option <- factor(c("MainStat"), levels=PSkill)
 value <- c(SFHP / 17.5)
 ConversionStarForce <- data.frame(option, value)
@@ -297,8 +297,8 @@ DemonAvengerSpec <- DemonAvengerSpec$Spec
 
 ## DemonAvenger - Attacks
 ## Hyper : Exceed - Reinforce / Exceed - Reduce Overload / Exceed - Bonus Chance / Shield Chasing - Reinforce / Shield Chasing - Extra Target
-{option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(DemonAvengerCore[[1]][5, 2]>=40, 20, 0), 5 * DemonAvengerCore[[1]][5, 2])
+{option <- factor(levels=ASkill)
+value <- c()
 info <- c(200, 1, 840, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -340,14 +340,14 @@ colnames(info) <- c("option", "value")
 ExceedExecution5 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, IGRCalc(c(30, ifelse(DemonAvengerCore[[1]][2, 2]>=40, 20, 0))), 2 * DemonAvengerCore[[1]][2, 2])
+value <- c(40, IGRCalc(c(30 + DemonAvengerSpec$PSkillLv, ifelse(DemonAvengerCore[[1]][2, 2]>=40, 20, 0))), 2 * DemonAvengerCore[[1]][2, 2])
 info <- c(500 + 10 * DemonAvengerSpec$SkillLv, 2 * 2, 720, 500, 6, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShieldChasing <- rbind(data.frame(option, value), info) ## BDR : Defense Expertise, Shield Chasing - Reinforce, ATKSpeed Not Applied
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(DemonAvengerCore[[1]][5, 2]>=40, 20, 0), 2 * DemonAvengerCore[[1]][5, 2])
 info <- c(350 + 5 * DemonAvengerSpec$SkillLv, 4, 870, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -865,7 +865,7 @@ DemonAvengerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
                     "Revenant", "AuraWeaponBuff", "CallMastema", "BlessofIsekaiGoddess", "Restraint4", 
                     "BatsSwarmStart", "ExceedExecution1", "ExceedExecution2", "ExceedExecution3", "ExceedExecution4", "ExceedExecution5", "ShieldChasingStart", "ThousandSword", 
                     "DimensionSwordStart", "DimensionSwordFastStart", "SpiderInMirror", "CrestoftheSolar")
-  HPCost <- c(500000 * 0.01, 200, 900, 900, 1000 + Spec$SkillLv, 100, 5000, 500000 * 0.05, 500000 * 0.05, 500000 * 0.05, 
+  HPCost <- c(500000 * 0.01, 200, 900, 900, 1000 + 20 * Spec$SkillLv, 100, 5000, 500000 * 0.05, 500000 * 0.05, 500000 * 0.05, 
               500000 * 0.25, 500000 * 0.1, 500000 * 0.05, 500000 * 0.05, 600, 
               500000 * 0.01, 500000 * 0.04, 500000 * 0.04, 500000 * 0.05, 500000 * 0.05, 500000 * 0.06, 500000 * 0.08, 500000 * 0.15, 
               500000 * 0.2, 500000 * 0.2, 500000 * 0.15, 500000 * 0.15)

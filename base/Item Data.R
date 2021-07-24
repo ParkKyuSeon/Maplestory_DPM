@@ -981,7 +981,11 @@ for(i in PoYes) {
   
   Addop <- data.frame()
   for(i in 1:30) {
-    Addop <- rbind(Addop, AddoptionHP(SpecSetDemonAvenger1[i, 1], SpecSetDemonAvenger1[i, 12], SpecSetDemonAvenger1[i, 13], 4, 0, 0, 3, 4))
+    if(i==7) {
+      Addop <- rbind(Addop, AddoptionHP(SpecSetDemonAvenger1[i, 1], SpecSetDemonAvenger1[i, 12], SpecSetDemonAvenger1[i, 13], 4, 0, 0, 0, 0))
+    } else {
+      Addop <- rbind(Addop, AddoptionHP(SpecSetDemonAvenger1[i, 1], SpecSetDemonAvenger1[i, 12], SpecSetDemonAvenger1[i, 13], 4, 0, 0, 3, 4))
+    }
     SpecSetDemonAvenger1[i, 3] <- SpecSetDemonAvenger1[i, 3] + Addop[i, 2]
     SpecSetDemonAvenger1[i, 5] <- SpecSetDemonAvenger1[i, 5] + Addop[i, 1]
     SpecSetDemonAvenger1[i, 10] <- SpecSetDemonAvenger1[i, 10] + Addop[i, 3]
