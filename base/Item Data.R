@@ -898,3 +898,109 @@ for(i in PoYes) {
     SpecSetXenon1_A6A3[i, 7] <- SpecSetXenon1_A6A3[i, 7] + APo[1, 4]
   }
 }
+
+## Final Item Specs (Standard / DemonAvenger)
+{SpecSetDemonAvenger1 <- StandardSpecDemonAvenger
+  Up <- data.frame()
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[1, 1], "Acc", SpecSetDemonAvenger1[1, 11], T, c(3, 3, 3), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[2, 1], "Acc", SpecSetDemonAvenger1[2, 11], T, c(3, 3), 0, DA=T))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, DominatorUpgrade(rep(1, 6), DA=T))
+  Up <- rbind(Up, ChaosHorntailUpgrade(c(1, 2, 2)))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[8, 1], "Acc", SpecSetDemonAvenger1[8, 11], T, c(3, 3, 3, 3), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[9, 1], "Armor", SpecSetDemonAvenger1[9, 11], T, c(rep(1, 12)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[10, 1], "Acc", SpecSetDemonAvenger1[10, 11], T, c(rep(3, 6)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[11, 1], "Acc", SpecSetDemonAvenger1[11, 11], T, c(rep(3, 6)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[12, 1], "Armor", SpecSetDemonAvenger1[12, 11], T, c(rep(1, 8)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[13, 1], "Armor", SpecSetDemonAvenger1[13, 11], T, c(rep(1, 8)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[14, 1], "Armor", SpecSetDemonAvenger1[14, 11], T, c(rep(1, 8)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[15, 1], "Acc", SpecSetDemonAvenger1[15, 11], T, c(rep(3, 7)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[16, 1], "Armor", SpecSetDemonAvenger1[16, 11], T, c(rep(1, 2)), 0, DA=T))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[17, 1], "Gloves", SpecSetDemonAvenger1[17, 11], T, c(rep(1, 8)), 0, DA=T))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, Upgrade(SpecSetDemonAvenger1[20, 1], "Armor", SpecSetDemonAvenger1[20, 11], T, c(rep(1, 8)), 0, DA=T))
+  Up <- rbind(Up, HeartUpgrade(SpecSetDemonAvenger1[21, 11], rep(1, 10), DA=T))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetDemonAvenger1[22, 11], rep(1, 9), DA=T))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetDemonAvenger1[23, 11], rep(1, 9), DA=T))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetDemonAvenger1[24, 11], rep(1, 9), DA=T))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  for(i in 1:30) {
+    SpecSetDemonAvenger1[i, 3] <- SpecSetDemonAvenger1[i, 3] + Up[i, 4]
+    SpecSetDemonAvenger1[i, 4] <- SpecSetDemonAvenger1[i, 4] + Up[i, 5]
+    SpecSetDemonAvenger1[i, 5] <- SpecSetDemonAvenger1[i, 5] + Up[i, 3]
+    SpecSetDemonAvenger1[i, 7] <- SpecSetDemonAvenger1[i, 7] + Up[i, 1]
+    SpecSetDemonAvenger1[i, 8] <- SpecSetDemonAvenger1[i, 8] + Up[i, 2]
+  }
+  
+  Sf <- data.frame()
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[1, 1], F, 10, F, Items[1]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[2, 1], F, 17, F, Items[2]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[6, 1], F, 17, F, Items[6]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[7, 1], F, 15, F, Items[7]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[8, 1], F, 17, F, Items[8]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[9, 1], F, 17, T, Items[9]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[10, 1], F, 10, F, Items[10]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[11, 1], F, 17, F, Items[11]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[12, 1], F, 17, T, Items[12]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[13, 1], F, 17, T, Items[13]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[14, 1], F, 17, T, Items[14]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[15, 1], F, 17, F, Items[15]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[16, 1], F, 17, T, Items[16]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[17, 1], F, 17, T, Items[17]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[20, 1], F, 17, T, Items[20]))
+  Sf <- rbind(Sf, StarforceDA(SpecSetDemonAvenger1[21, 1], F, 8, F, Items[21]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  for(i in 1:30) {
+    SpecSetDemonAvenger1[i, 3] <- SpecSetDemonAvenger1[i, 3] + Sf[i, 4]
+    SpecSetDemonAvenger1[i, 4] <- SpecSetDemonAvenger1[i, 4] + Sf[i, 5]
+    SpecSetDemonAvenger1[i, 5] <- SpecSetDemonAvenger1[i, 5] + Sf[i, 3]
+    SpecSetDemonAvenger1[i, 7] <- SpecSetDemonAvenger1[i, 7] + Sf[i, 1]
+    SpecSetDemonAvenger1[i, 8] <- SpecSetDemonAvenger1[i, 8] + Sf[i, 2]
+  }
+  
+  Addop <- data.frame()
+  for(i in 1:30) {
+    Addop <- rbind(Addop, AddoptionHP(SpecSetDemonAvenger1[i, 1], SpecSetDemonAvenger1[i, 12], SpecSetDemonAvenger1[i, 13], 4, 0, 0, 3, 4))
+    SpecSetDemonAvenger1[i, 3] <- SpecSetDemonAvenger1[i, 3] + Addop[i, 2]
+    SpecSetDemonAvenger1[i, 5] <- SpecSetDemonAvenger1[i, 5] + Addop[i, 1]
+    SpecSetDemonAvenger1[i, 10] <- SpecSetDemonAvenger1[i, 10] + Addop[i, 3]
+    SpecSetDemonAvenger1[i, 7] <- SpecSetDemonAvenger1[i, 7] + Addop[i, 4]
+  }
+  
+  PoYes <- c(1:3, 6:17, 20:21)
+  for(i in PoYes) {
+    if(i!=17 & i!=9) {
+      Po <- Potential(c("U", "E", "E"), c("HP", "HP", "O"))
+    } else if(i==9) {
+      Po <- Potential(c("L", "U", "U"), c("HP", "HP", "HP"))
+    } else {Po <- Potential(c("L", "U", "U"), c("CDR", "HP", "O"))}
+    APo <- AddPotential(SpecSetDemonAvenger1[i, 1], ChrInfo[1, 7], c("E", "R", "R"), c("HPP", "ATK", "O"))
+    SpecSetDemonAvenger1[i, 9] <- SpecSetDemonAvenger1[i, 9] + Po[1, 1] + APo[1, 1]
+    SpecSetDemonAvenger1[i, 10] <- SpecSetDemonAvenger1[i, 10] + Po[1, 2] + APo[1, 2]
+    SpecSetDemonAvenger1[i, 6] <- SpecSetDemonAvenger1[i, 6] + Po[1, 3] + APo[1, 5]
+    SpecSetDemonAvenger1[i, 19] <- SpecSetDemonAvenger1[i, 19] + Po[1, 5] + APo[1, 7]
+    SpecSetDemonAvenger1[i, 2] <- SpecSetDemonAvenger1[i, 2] + APo[1, 3]
+    SpecSetDemonAvenger1[i, 7] <- SpecSetDemonAvenger1[i, 7] + APo[1, 4]
+  }
+}

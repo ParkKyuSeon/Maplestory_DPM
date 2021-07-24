@@ -297,12 +297,13 @@ legend(x=0, y=80000, legend=c("Hero", "Palladin", "DarkKnight", "Mikhail(R)",
 RRGraph(AranDealData[151:664, ], "Warrior(2)", col=colorset[2])
 RRGraph(BlasterDealData[19:275, ], "Blaster", col=colorset[3], add=T)
 RRGraph(DemonSlayerDealData[56:295, ], "DemonSlayer", col=colorset[4], add=T)
-RRGraph(KaiserDealData[39:274, ], "Kaiser", col=colorset[5], add=T)
-RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[6], add=T)
+RRGraph(DemonAvengerDealData[86:319, ], "DemonAvenger", col=colorset[5], add=T)
+RRGraph(KaiserDealData[39:274, ], "Kaiser", col=colorset[6], add=T)
+RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[8], add=T)
 RRGraph(ZeroDealData[11:173, ], "Zero", col=colorset[9], add=T)
 
-legend(x=0, y=80000, legend=c("Aran", "Blaster", "DemonSlayer", "Kaiser",
-                              "Adele", "Zero"), col=colorset[c(2:6, 9)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Aran", "Blaster", "DemonSlayer", "DemonAvenger", "Kaiser",
+                              "Adele", "Zero"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 ## Wizard
 RRGraph(data.frame(Time=ArchMageFP40s$Time, Deal=ArchMageFP40s$Damage)[1495:1829, ], "Wizard(1)", col=colorset[2], reverse=T)
@@ -375,7 +376,7 @@ RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bish
 RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[5], add=T)
 RRGraph(SoulMasterDealData[360:577, ], "SoulMaster", col=colorset[6], add=T, reverse=T)
 
-legend(x=0, y=80000, legend=c("Striker(R)", "WindBreaker", "Bishop(R)", "Luminous", "SoulMaster(R)"), col=colorset[c(2:6)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Striker(R)", "WindBreaker", "Bishop(R)", "Luminous", "SoulMaster(R)"), col=colorset[c(2:6, 9)], lty=1, lwd=4)
 
 
 
@@ -544,6 +545,12 @@ DemonSlayerDealTL <- DealTimeLine(DemonSlayerDealData$Time, DemonSlayerDealData$
 TLGraph(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000, "DemonSlayer", F)
 TLGraph(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000, "DemonSlayer", T)
 DealIrr(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000)
+
+## DemonAvenger
+DemonAvengerDealTL <- DealTimeLine(DemonAvengerDealData$Time, DemonAvengerDealData$Deal)
+TLGraph(DemonAvengerDealTL, max(DemonAvengerDealData$Time)/1000, "DemonAvenger", F)
+TLGraph(DemonAvengerDealTL, max(DemonAvengerDealData$Time)/1000, "DemonAvenger", T)
+DealIrr(DemonAvengerDealTL, max(DemonAvengerDealData$Time)/1000)
 
 ## Blaster
 BlasterDealTL <- DealTimeLine(BlasterDealData$Time, BlasterDealData$Deal)

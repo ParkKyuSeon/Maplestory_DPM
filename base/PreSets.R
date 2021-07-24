@@ -66,7 +66,8 @@ SpecDefault$Basic <- data.frame(ChrLv=255,
                                 AuthenticForce=0,
                                 Charisma=100, 
                                 Insight=100, 
-                                Sensibility=100)
+                                Sensibility=100, 
+                                Will=100)
 SpecDefault$AbilityGrade <- c("L", "E")
 SpecDefault$WeaponType <- "AR"
 SpecDefault$WeaponAddPGrade <- c("U", "U", "U")
@@ -84,14 +85,19 @@ SpecDefaultZero$ItemSet <- ItemSum(SpecSetZero1, SetOption(SpecSetZero1, "F"), P
 
 ## SpecSet - Default (Xenon_A6S6)
 SpecDefaultXenon_A6S6 <- SpecDefault
-SpecDefaultXenon_A6S6$ItemSet <- ItemSum(SpecSetXenon1_A6S6, SetOption(SpecSetXenon1_A6S6, "F"), PetSetOption(SpecDefaultXenon_A6S6$Pets))
+SpecDefaultXenon_A6S6$ItemSet <- ItemSum(SpecSetXenon1_A6S6, SetOption(SpecSetXenon1_A6S6, "AR"), PetSetOption(SpecDefaultXenon_A6S6$Pets))
 SpecDefaultXenon_A6S6$CoolReduceInfo <- data.frame(AllStatP=c(0, -9), 
                                                    CoolReduce=c(0, 2))
 
 SpecDefaultXenon_A6A3 <- SpecDefault
-SpecDefaultXenon_A6A3$ItemSet <- ItemSum(SpecSetXenon1_A6A3, SetOption(SpecSetXenon1_A6A3, "F"), PetSetOption(SpecDefaultXenon_A6A3$Pets))
+SpecDefaultXenon_A6A3$ItemSet <- ItemSum(SpecSetXenon1_A6A3, SetOption(SpecSetXenon1_A6A3, "AR"), PetSetOption(SpecDefaultXenon_A6A3$Pets))
 SpecDefaultXenon_A6A3$CoolReduceInfo <- data.frame(AllStatP=c(0, -9), 
                                                    CoolReduce=c(0, 2))
+
+
+## SpecSet - Default (DemonAvenger)
+SpecDefaultDemonAvenger <- SpecDefault
+SpecDefaultDemonAvenger$ItemSet <- ItemSum(SpecSetDemonAvenger1, SetOption(SpecSetDemonAvenger1, "AR"), PetSetOption(SpecDefaultDemonAvenger$Pets))
 
 
 # Union PreSet Structure (WITHOUT CALCULATING CHARACTER)

@@ -252,9 +252,9 @@ MLTypeS23 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox,
 colnames(MLTypeS23) <- MonsterLifeSpecs
 
 #### HP Type 2-1 : HP, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeH21 <- rbind(ModifiedFireBoar, FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
+MLTypeH21 <- rbind(ModifiedFireBoar, ReeperSpector, Leica, NineTailedFox, AkairumPriest,  
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   Oberon, AkairumPriest, Phantom, Eunwol, Rang,
+                   CoupleYeti, Oberon, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, RomantistKingSlime,
                    WolmyoThief, ToyKnight, IncongruitySoul)
 #### Shinsoo, EliteBloodTooth, YetiPharaoh
@@ -407,7 +407,7 @@ GuildBless <- c(0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0)
 UnionPower <- c(0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0)
 BreadDrop <- c(0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0)
 UrusDrop <- c(0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0)
-ExtremeRed <- c(0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0)
+ExtremeRed <- c(0, 0, 0, 2000, 30, 0, 0, 0, 0, 0, 0, 0, 0)
 ExtremeGreen <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0)
 Lv250Buff <- c(0, 0, 0, 0, 40, 0, 0, 0, 0, 0, 0, 0, 0)
 Lv275Buff <- c(0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0)
