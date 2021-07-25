@@ -1173,3 +1173,5 @@ Frenzy0StackRR <- sum((DemonAvengerRR0Stack$Deal))
 
 DemonAvenger40s0Stack <- DemonAvengerDealData0[34:344, ]
 Frenzy0Stack40s <- sum((DemonAvenger40s0Stack$Deal))
+
+print(c(Frenzy2StackDPM, Frenzy2StackRR, Frenzy2Stack40s, Frenzy0StackDPM, Frenzy0StackRR, Frenzy0Stack40s))

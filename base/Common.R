@@ -195,6 +195,7 @@ Oberon <- c(0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0)
 ReinforcedBeril <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0, 0, 0)
 Lania <- c(0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 20, 20, 0, 0, 0)
 ## HP
+Dodo <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 0, 0)
 ModifiedFireBoar <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 300, 0, 0)
 InnerRage <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0)
 GiantDarkSoul <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0)
@@ -252,7 +253,7 @@ MLTypeS23 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox,
 colnames(MLTypeS23) <- MonsterLifeSpecs
 
 #### HP Type 2-1 : HP, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeH21 <- rbind(ModifiedFireBoar, ReeperSpector, Leica, NineTailedFox, AkairumPriest,  
+MLTypeH21 <- rbind(ModifiedFireBoar, Dodo, Leica, NineTailedFox, AkairumPriest,  
                    VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
                    CoupleYeti, Oberon, Phantom, Eunwol, Rang,
                    VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, RomantistKingSlime,
