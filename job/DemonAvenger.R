@@ -54,7 +54,7 @@ ConversionStarForceHP <- c(rep(35, 15), ## 1 ~ 15
 
 
 ## DemonAvenger - Passive
-SFHP <- sum(ConversionStarForceHP[1:264])
+SFHP <- ConversionStarForceHP[264] * 264
 {option <- factor(c("MainStat"), levels=PSkill)
 value <- c(SFHP / 17.5)
 ConversionStarForce <- data.frame(option, value)

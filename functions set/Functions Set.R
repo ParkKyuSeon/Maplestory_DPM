@@ -2662,20 +2662,22 @@ JobSpec <- function(JobBase,
   for(i in 1:6) {
     colnames(JobBase$UnionChrs)[i] <- ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$MainStat, "MainStat", 
                                              ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$SubStat1, "SubStat1", 
-                                             ifelse(colnames(JobBase$UnionChrs)[i]=="HPP", "HPP", 
+                                             ifelse(colnames(JobBase$UnionChrs)[i]=="HPP", "MaxHPP", 
                                              ifelse(colnames(JobBase$UnionChrs)[i]==JobBase$SubStat2, "SubStat2", 
                                              colnames(JobBase$UnionChrs)[i]))))
     colnames(JobBase$MonsterLife)[i+8] <- ifelse(colnames(JobBase$MonsterLife)[i+8]==JobBase$MainStat, "MainStat", 
                                                  ifelse(colnames(JobBase$MonsterLife)[i+8]==JobBase$SubStat1, "SubStat1", 
-                                                 ifelse(colnames(JobBase$MonsterLife)[i+8]=="HPP", "HPP", 
+                                                 ifelse(colnames(JobBase$MonsterLife)[i+8]=="HPP", "MaxHPP", 
                                                  ifelse(colnames(JobBase$MonsterLife)[i+8]==JobBase$SubStat2, "SubStat2", 
                                                  colnames(JobBase$MonsterLife)[i+8]))))
   }
   ## DemonAvenger : Main Stat Conversion, HPP Effected
   if(JobBase$Job=="DemonAvenger") {
-    JobBase$UnionChrs$MainStat <- JobBase$UnionChrs$MainStat / 17.5
+    UneffMainStat <- JobBase$UnionChrs$MainStat / 17.5
     UneffSubStat1 <- JobBase$UnionChrs$SubStat1 + JobBase$HyperStatBase$SubStat1
     UneffSubStat2 <- JobBase$UnionChrs$SubStat2 + JobBase$HyperStatBase$SubStat2
+    JobBase$MonsterLife$MainStat <- JobBase$MonsterLife$MainStat / 17.5
+    JobBase$UnionChrs$MainStat <- 0 ; JobBase$UnionChrs$MaxHP <- 0
     JobBase$UnionChrs$SubStat1 <- 0 ; JobBase$HyperStatBase$SubStat1 <- 0
     JobBase$UnionChrs$SubStat2 <- 0 ; JobBase$HyperStatBase$SubStat2 <- 0
   } else {
@@ -2691,7 +2693,7 @@ JobSpec <- function(JobBase,
   MainStat <- ifelse(JobBase$Job!="DemonAvenger", 18 + 5 * JobBase$ChrLv + ifelse(JobBase$Job!="Xenon", 0, 8 - 660), (629 + 90 * JobBase$ChrLv + floor(JobBase$Will/5)*100)/17.5)
   if(JobBase$Job=="DemonAvenger") {
     DAMainStatBonus <- (629 + 90 * JobBase$ChrLv)/14 - (629 + 90 * JobBase$ChrLv)/17.5
-    UneffMainStat <- DAMainStatBonus
+    UneffMainStat <- UneffMainStat + DAMainStatBonus
   }
   SubStat1 <- ifelse(JobBase$Job!="Xenon", 4, 330)
   SubStat2 <- ifelse(JobBase$Job!="Xenon", 4, 330)
@@ -2730,7 +2732,7 @@ JobSpec <- function(JobBase,
       CoolTimeReset <- CoolTimeReset + sum(JobBase[[i]]$CoolTimeReset)
       CoolReduceP <- CoolReduceP + sum(JobBase[[i]]$CoolReduceP)
       AllstatP <- AllstatP + sum(JobBase[[i]]$AllstatP)/100
-      MainStatP <- MainStatP + ifelse(JobBase$Job!="DemonAvenger", sum(JobBase[[i]]$AllstatP)/100 + sum(JobBase[[i]]$MainStatP)/100, sum(JobBase[[i]]$MainStatP)/100 + sum(JobBase[[i]]$MaxHPP)/100 + sum(JobBase[[i]]$HPP)/100)
+      MainStatP <- MainStatP + ifelse(JobBase$Job!="DemonAvenger", sum(JobBase[[i]]$AllstatP)/100 + sum(JobBase[[i]]$MainStatP)/100, sum(JobBase[[i]]$MainStatP)/100 + sum(JobBase[[i]]$MaxHPP)/100)
     }
   }
   if(JobBase$Job=="Xenon") {
