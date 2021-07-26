@@ -1190,14 +1190,14 @@ DemonAvengerDealCycle1_off <- DemonAvengerCycle(DemonAvengerDealCycle1_off,
                                                 BuffFinal, 
                                                 SummonedFinal, 
                                                 DemonAvengerSpec,
-                                                120, 240, "Fusion", 1, T, F)
+                                                120, 240, "Normal", 1, T, F)
 DemonAvengerDealCycle1_off <- DealCycleFinal(DemonAvengerDealCycle1_off)
 DemonAvengerDealCycle1_off <- DemonAvengerAddATK(DemonAvengerDealCycle1_off, 
                                                  ATKFinal, 
                                                  BuffFinal, 
                                                  SummonedFinal, 
                                                  DemonAvengerSpec, 
-                                                 "Fusion", 1, DemonAvengerCore[[2]][7, 2], DemonAvengerCore[[2]][1, 2], DemonAvengerCore[[2]][8, 2])
+                                                 "Normal", 1, DemonAvengerCore[[2]][7, 2], DemonAvengerCore[[2]][1, 2], DemonAvengerCore[[2]][8, 2])
 
 DemonAvengerFinalDPM1_off <- DemonAvengerDealCalcWithMaxDMR(DemonAvengerDealCycle1_off, ATKFinal, BuffFinal, SummonedFinal, DemonAvengerSpecOpt2)
 Frenzy1_offDPM <- sum(na.omit(DemonAvengerFinalDPM1_off)) / (max(DemonAvengerDealCycle1_off$Time)/ 60000)
@@ -1206,10 +1206,10 @@ DemonAvengerDealData1_off <- data.frame(DemonAvengerDealCycle1_off$Skills, Demon
 colnames(DemonAvengerDealData1_off) <- c("Skills", "Time", "R4", "Deal")
 subset(DemonAvengerDealData1_off, DemonAvengerDealData1_off$R4>0)
 
-DemonAvengerRR1_off <- DemonAvengerDealData1_off[86:318, ]
+DemonAvengerRR1_off <- DemonAvengerDealData1_off[86:282, ]
 Frenzy1_offRR <- sum((DemonAvengerRR1_off$Deal))
 
-DemonAvenger40s1_off <- DemonAvengerDealData1_off[86:636, ]
+DemonAvenger40s1_off <- DemonAvengerDealData1_off[86:611, ]
 Frenzy1_off40s <- sum((DemonAvenger40s1_off$Deal))
 
 print(c(Frenzy2StackDPM, Frenzy2StackRR, Frenzy2Stack40s, Frenzy0StackDPM, Frenzy0StackRR, Frenzy0Stack40s, Frenzy1_offDPM, Frenzy1_offRR, Frenzy1_off40s))
