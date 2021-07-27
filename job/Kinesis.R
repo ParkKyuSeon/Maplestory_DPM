@@ -565,7 +565,7 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
                          "BlessofMasteriaGoddess", "SoulContractLink", "PsychicOver")
   
   Times180 <- c(1, 0, 0, 0, 0, 
-                1.5, 2, 0.5, 1)
+                1.5, 2, 0.5)
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
   for(i in 1:length(BuffSummonedPrior)) {
