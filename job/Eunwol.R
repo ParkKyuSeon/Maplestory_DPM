@@ -97,7 +97,7 @@ SohonGyeolgye <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(10)
-info <- c(10, 11, 0, F, F, F, F)
+info <- c(15, 16, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PashwaeCheoljoBan <- rbind(data.frame(option, value), info)
@@ -700,14 +700,6 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
   DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
   
-  DealCycle <- DCBuff(DealCycle, "PashwaeCheoljoBan", BuffFinal)
-  RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
-  DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-  
-  DealCycle <- DCATK(DealCycle, "PashwaeCheoljoHoe", ATKFinal)
-  RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
-  DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-  
   DealCycle <- DCATK(DealCycle, "SohonJangmak", ATKFinal)
   RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
   DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
@@ -780,15 +772,7 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
       DealCycle <- DCATK(DealCycle, "SohonJangmak", ATKFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-      
-      DealCycle <- DCBuff(DealCycle, "PashwaeCheoljoBan", BuffFinal)
-      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
-      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-      
-      DealCycle <- DCATK(DealCycle, "PashwaeCheoljoHoe", ATKFinal)
-      RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
-      DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
-      
+
       DealCycle <- DCATK(DealCycle, "JinGwicham", ATKFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
@@ -1416,10 +1400,10 @@ EunwolOnDeal <- EunwolDealCalc(EunwolDealCycleGanpaon, ATKFinal, BuffFinal, Summ
 EunwolDealData <- data.frame(EunwolDealCycle$Skills, EunwolDealCycle$Time, EunwolDealCycle$Restraint4, EunwolOffDeal, EunwolOnDeal)
 colnames(EunwolDealData) <- c("Skills", "Time", "R4", "Deal", "DealGanpa")
 
-EunwolRR <- EunwolDealData[72:1825, ]
+EunwolRR <- EunwolDealData[72:1804, ]
 MovingRR <- sum((EunwolRR$Deal))
 
-Eunwol40s <- EunwolDealData[72:3843, ]
+Eunwol40s <- EunwolDealData[72:3699, ]
 Moving40s <- sum((Eunwol40s$Deal))
 
 MovingGanpaRR <- sum((EunwolRR$DealGanpa))
@@ -1451,11 +1435,13 @@ EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFixed, EunwolDealCycleFixe
 EunwolDealDataFixed <- data.frame(EunwolDealCycleFixed$Skills, EunwolDealCycleFixed$Time, EunwolDealCycleFixed$Restraint4, EunwolOffDealFixed, EunwolOnDealFixed)
 colnames(EunwolDealDataFixed) <- c("Skills", "Time", "R4", "Deal", "DealGanpa")
 
-EunwolRRFixed <- EunwolDealDataFixed[51:1579, ]
+EunwolRRFixed <- EunwolDealDataFixed[51:1557, ]
 DPM12349$Eunwol[3] <- sum((EunwolRRFixed$Deal))
 
-Eunwol40sFixed <- EunwolDealDataFixed[51:3597, ]
+Eunwol40sFixed <- EunwolDealDataFixed[51:3452, ]
 DPM12349$Eunwol[4] <- sum((Eunwol40sFixed$Deal))
 
 FixedGanpaRR <- sum((EunwolRRFixed$DealGanpa))
 FixedGanpa40s <- sum((Eunwol40sFixed$DealGanpa))
+
+print(c(MovingDPM, MovingRR, Moving40s, MovingGanpaRR, MovingGanpa40s, FixedGanpaRR, FixedGanpa40s))

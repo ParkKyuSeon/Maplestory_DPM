@@ -318,8 +318,9 @@ RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[3], add=T)
 RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[4], add=T)
 RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[5], add=T)
 RRGraph(LaraDealData[30:205, ], "Lara", col=colorset[6], add=T)
+RRGraph(KinesisDealData[60:282, ], "Kinesis", col=colorset[8], add=T)
 
-legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara"), col=colorset[c(2:6)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara", "Kinesis"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
 
 ## Archer
 RRGraph(BowmasterDealData[70:766, ], "Archer", col=colorset[2])
@@ -644,6 +645,13 @@ XenonDealTL <- DealTimeLine(XenonDealData$Time, XenonDealData$Deal)
 TLGraph(XenonDealTL, max(XenonDealData$Time)/1000, "Xenon", F)
 TLGraph(XenonDealTL, max(XenonDealData$Time)/1000, "Xenon", T)
 DealIrr(XenonDealTL, max(XenonDealData$Time)/1000)
+
+## Kinesis
+KinesisDealTL <- DealTimeLine(KinesisDealData$Time, KinesisDealData$Deal)
+TLGraph(KinesisDealTL, max(KinesisDealData$Time)/1000, "Kinesis", F)
+TLGraph(KinesisDealTL, max(KinesisDealData$Time)/1000, "Kinesis", T)
+DealIrr(KinesisDealTL, max(KinesisDealData$Time)/1000)
+
 
 
 
