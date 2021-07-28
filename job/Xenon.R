@@ -26,7 +26,7 @@ XenonBase <- JobBase(ChrInfo=ChrInfo,
                      AbilList=c("BDR", "DisorderBDR"), 
                      LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom"), 
                      MonsterLife=MLTypeA21, 
-                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", SpecDefaultXenon_A6S6$WeaponType, XenonSubStat2=T)[, 1:16],
+                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", SpecDefaultXenon_A6S6$WeaponType, Xenon=T)[, 1:16],
                      WeaponType=SpecDefault$WeaponType, 
                      SubWeapon=SubWeapon[rownames(SubWeapon)=="Controller", ], 
                      Emblem=Emblem[rownames(Emblem)=="Resistance", ], 
@@ -295,7 +295,7 @@ XenonSpec <- JobSpec(JobBase=XenonBase,
                      MobInfo=MobDefault, 
                      SpecSet=SpecDefault, 
                      WeaponName="EnergySword", 
-                     UnionStance=10,
+                     UnionStance=0,
                      JobConstant=0.875)
 XenonSpec2 <- JobSpec(JobBase=XenonBase2, 
                       Passive=XenonPassive, 
@@ -303,7 +303,7 @@ XenonSpec2 <- JobSpec(JobBase=XenonBase2,
                       MobInfo=MobDefault, 
                       SpecSet=SpecDefault, 
                       WeaponName="EnergySword", 
-                      UnionStance=10,
+                      UnionStance=0,
                       JobConstant=0.875)
 
 XenonUnionRemained <- XenonSpec$UnionRemained
@@ -1296,7 +1296,7 @@ XenonSpecOpt$ATKP <- XenonSpecOpt$ATKP + XenonSpecOpt1$ATKP
 XenonSpecOpt$BDR <- XenonSpecOpt$BDR + XenonSpecOpt1$BDR
 XenonSpecOpt$IGR <- IGRCalc(c(XenonSpecOpt$IGR, XenonSpecOpt1$IGR))
 
-XenonSpecOpt2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver)
+XenonSpecOpt2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver, HyperStanceLv=5)
 XenonFinalDPM <- XenonDealCalc(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt2)
 XenonFinalDPMwithMax <- XenonDealCalcWithMaxDMR(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt2)
 
@@ -1323,7 +1323,7 @@ XenonSpecOpt_2$ATKP <- XenonSpecOpt_2$ATKP + XenonSpecOpt1_2$ATKP
 XenonSpecOpt_2$BDR <- XenonSpecOpt_2$BDR + XenonSpecOpt1_2$BDR
 XenonSpecOpt_2$IGR <- IGRCalc(c(XenonSpecOpt_2$IGR, XenonSpecOpt1_2$IGR))
 
-XenonSpecOpt2_2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt_2, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver)
+XenonSpecOpt2_2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt_2, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver, HyperStanceLv=5)
 XenonFinalDPM_A9 <- XenonDealCalcWithMaxDMR(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt2_2)
 
 XenonDPM_A9 <- sum(na.omit(XenonFinalDPM_A9)) / (max(XenonDealCycle$Time)/ 60000)
@@ -1336,3 +1336,5 @@ XenonRR_A9 <- sum((XenonRR_A9$Deal))
 
 Xenon40s_A9 <- XenonDealData_A9[274:813, ]
 Xenon40s_A9 <- sum((Xenon40s_A9$Deal))
+
+print(c(XenonDPM_A9, XenonRR_A9, Xenon40s_A9))

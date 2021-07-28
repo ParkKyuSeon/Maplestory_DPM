@@ -480,7 +480,7 @@ colnames(wsfstat) <- c(150, 160, 200)
 colnames(wsfatk) <- c(150, 160, 200)
 WeaponUpgrade <- function(UpgradeType=c(1, 2), Stars, AddoptionTier=c(4, 5), 
                           AddSingle=0, AddDouble1=0, AddDouble2=0, AddDouble3=0, AddBDR=0, AddDMR=0, AddAllstat=0,
-                          WeaponType=ItemTypes, ItemName=c("F", "AB", "AR"), XenonSubStat2=F) {
+                          WeaponType=ItemTypes, ItemName=c("F", "AB", "AR"), Xenon=F) {
   if(ItemName=="F") {
     w <- Fafnir
     a4 <- AddoptionTier4[, 1]
@@ -510,8 +510,7 @@ WeaponUpgrade <- function(UpgradeType=c(1, 2), Stars, AddoptionTier=c(4, 5),
   }
   Upgrade <- w[1, 9] + 1
   if(UpgradeType==1) {
-    w[1, 2] <- w[1, 2] + ifelse(XenonSubStat2==F, 4 * Upgrade, 4 * (Upgrade-1))
-    w[1, 4] <- w[1, 4] + ifelse(XenonSubStat2==F, 0, 4)
+    w[1, 2] <- w[1, 2] + 4 * Upgrade
     w[1, 6] <- w[1, 6] + 9 * Upgrade
   } else {if(UpgradeType==2) {
     w[1, 2:4] <- w[1, 2:4] + 3 * Upgrade
@@ -520,7 +519,7 @@ WeaponUpgrade <- function(UpgradeType=c(1, 2), Stars, AddoptionTier=c(4, 5),
   for(i in 1:Stars) {
     w[1, 2] <- w[1, 2] + wsfstat[i, t]
     w[1, 3] <- w[1, 3] + wsfstat[i, t]
-    w[1, 4] <- ifelse(w[1, 4]>0&i>15, w[1, 4] + wsfstat[i, t], w[1, 4])
+    w[1, 4] <- ifelse(w[1, 4]>0&i>15 | Xenon==T, w[1, 4] + wsfstat[i, t], w[1, 4])
     w[1, 6] <- ifelse(i<=15, w[1, 6] + floor(w[1, 6]/50) + 1, w[1, 6] + wsfatk[i, t])
   }
   w[1, 6] <- w[1, 6] + a

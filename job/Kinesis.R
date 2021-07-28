@@ -1052,7 +1052,7 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         PsychicGrabStack <- 5
       } 
       else {
-        if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PsychicGrab", "PsychicSmashing")) >= 1) {
+        if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PsychicSmashing")) >= 1) {
           DealCycle <- DCATK(DealCycle, "Delay1", ATKFinal)
           DealCycle <- KIStack(DealCycle)
           PGRemain <- max(0, PGRemain - DealCycle$Time[1])
@@ -1293,7 +1293,7 @@ KinesisAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   
   ## Law of Gravity (Pull FDR), Overload Mana, Gakseong (Ultimate Skills)
-  LOGFDR <- rep(c(12, 24, 36, rep(40, 13)), 10)
+  LOGFDR <- rep(c(0, 12, 24, 36, rep(40, 12)), 10)
   k <- 1
   for(i in 2:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("PsychicForce3", "PsychicSmashing", "PsychoBreak", 
@@ -1370,7 +1370,7 @@ KinesisDealData <- data.frame(KinesisDealCycle$Skills, KinesisDealCycle$Time, Ki
 colnames(KinesisDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(KinesisDealData, KinesisDealData$R4>0)
 
-KinesisRR <- KinesisDealData[60:282, ]
+KinesisRR <- KinesisDealData[60:281, ]
 DPM12349$Kinesis[3] <- sum((KinesisRR$Deal))
 
 Kinesis40s <- KinesisDealData[60:576, ]
