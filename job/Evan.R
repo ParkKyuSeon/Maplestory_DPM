@@ -42,6 +42,14 @@ EvanDealCycleType <- "DoE-DB-BoW"  ## "DoE-DB-BoW", "SoT-DoE-DB"
 
 ## Evan - Passive
 {option <- factor(c("ATK", "MainStat", "SubStat1"), levels=PSkill)
+value <- c(11, 18, 14)
+DragonEquip <- data.frame(option, value)
+## Abyss Mask : ATK + 1 + 10(Chaos), MainStat + 10 + 2(Level), SubStat + 2(Level)
+## Reverse Pendant : MainStat + 2(Level), SubStat + 6 + 2(Level)
+## Reverse Wings : MainStat + 2(Level), SubStat + 2(Level)
+## Reverse Tail : MainStat + 2(Level), SubStat + 2(Level)
+  
+option <- factor(c("ATK", "MainStat", "SubStat1"), levels=PSkill)
 value <- c(10, 10, 10)
 InheritedWill <- data.frame(option, value)
 
@@ -93,7 +101,7 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(EvanCore[[2]][9, 2])
 BlinkPassive <- data.frame(option, value)}
 
-EvanPassive <- Passive(list(InheritedWill, LinkedMagic, HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential, MagicMastery, DragonFury, HighDragonPotential, 
+EvanPassive <- Passive(list(DragonEquip, InheritedWill, LinkedMagic, HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential, MagicMastery, DragonFury, HighDragonPotential, 
                             SpiralofManaPassive, BlinkPassive))
 
 
