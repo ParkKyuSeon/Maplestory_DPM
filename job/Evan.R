@@ -1649,6 +1649,12 @@ EvanAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   print(paste("Spiral of Mana(Reduced) Hits", nrow(subset(DealCycle, DealCycle$Skills=="SpiralofManaRed")), "Times"))
   
   
+  ## Spider In Mirror, Summon Onix Dragon
+  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
+  DealCycle <- DCSummonedATKs(DealCycle, "SummonOnixDragon", SummonedFinal)
+  print(paste("Summon Onix Dragon Hits", nrow(subset(DealCycle, DealCycle$Skills=="SummonOnixDragon")), "Times"))
+  
+  
   ## Elemental Blast (ATK, FDR Buff)
   ElementalBlastDelay <- c(660, 1230, 2070)
   for(i in 1:nrow(DealCycle)) {
@@ -1689,6 +1695,7 @@ EvanAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       DealCycle$ElementalBlastFDR[i] <- 0
     }
   }
+  DealCycle[DealCycle$Skills=="ElementalBlast", ]$ElementalBlastFDR <- DealCycle[DealCycle$Skills=="ElementalBlast", ]$ElementalBlastFDR - 5
   
   
   ## Dragon Sparking
@@ -1701,12 +1708,6 @@ EvanAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)
   print(paste("Advance Dragon Sparking Hits", nrow(subset(DealCycle, DealCycle$Skills=="AdvancedDragonSparking")), "Times"))
-  
-  
-  ## Spider In Mirror, Summon Onix Dragon
-  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "SummonOnixDragon", SummonedFinal)
-  print(paste("Summon Onix Dragon Hits", nrow(subset(DealCycle, DealCycle$Skills=="SummonOnixDragon")), "Times"))
   
   
   ## Overload Mana, Dark Fog Buff Only for Magic Fragment
@@ -1781,7 +1782,7 @@ EvanDealCycle2 <- EvanDealCycle
 EvanDealCycle2[EvanDealCycle2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
 EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycle2), 
                                 list(EvanDealData$Deal, EvanDealCalc(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2)), 
-                                rep(max(EvanDealCycle$Time), 2), c(0.654, 0.346))
+                                rep(max(EvanDealCycle$Time), 2), c(0.6524, 0.3476))
 
 
 ## DoE(3) - DB - BoW
