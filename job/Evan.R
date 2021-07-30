@@ -1164,24 +1164,8 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DragonBuff(DealCycle)
         }
         
-        ## Circle of Mana 2 - Spiral of Mana
+        ## Spiral of Mana
         if(SMRemain <= 0) {
-          DealCycle <- DCATK(DealCycle, "CircleofMana2", ATKFinal)
-          DealCycle[1, 2:ncol(DealCycle)] <- 270
-          DealCycle <- DragonBuff(DealCycle)
-          DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 1000
-          RTRemain <- RTRemain - DealCycle$Time[1]
-          DFRemain <- DFRemain - DealCycle$Time[1]
-          R4Remain <- R4Remain - DealCycle$Time[1]
-          SCRemain <- SCRemain - DealCycle$Time[1]
-          DSRemain <- DSRemain - DealCycle$Time[1]
-          DDRemain <- DDRemain - DealCycle$Time[1]
-          DBHRemain <- DBHRemain - DealCycle$Time[1]
-          DBKRemain <- DBKRemain - DealCycle$Time[1]
-          EBRemain <- EBRemain - DealCycle$Time[1]
-          JRRemain <- JRRemain - DealCycle$Time[1]
-          SMRemain <- SMRemain - DealCycle$Time[1]
-          
           DealCycle <- DCATK(DealCycle, "SpiralofMana", ATKFinal)
           DealCycle <- DragonBuff(DealCycle)
           DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 0
@@ -1300,24 +1284,8 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             DealCycle <- DragonBuff(DealCycle)
           }
           
-          ## Circle of Mana 2 - Spiral of Mana
+          ## Spiral of Mana
           if(SMRemain <= 0) {
-            DealCycle <- DCATK(DealCycle, "CircleofMana2", ATKFinal)
-            DealCycle[1, 2:ncol(DealCycle)] <- 270
-            DealCycle <- DragonBuff(DealCycle)
-            DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 1000
-            RTRemain <- RTRemain - DealCycle$Time[1]
-            DFRemain <- DFRemain - DealCycle$Time[1]
-            R4Remain <- R4Remain - DealCycle$Time[1]
-            SCRemain <- SCRemain - DealCycle$Time[1]
-            DSRemain <- DSRemain - DealCycle$Time[1]
-            DDRemain <- DDRemain - DealCycle$Time[1]
-            DBHRemain <- DBHRemain - DealCycle$Time[1]
-            DBKRemain <- DBKRemain - DealCycle$Time[1]
-            EBRemain <- EBRemain - DealCycle$Time[1]
-            JRRemain <- JRRemain - DealCycle$Time[1]
-            SMRemain <- SMRemain - DealCycle$Time[1]
-            
             DealCycle <- DCATK(DealCycle, "SpiralofMana", ATKFinal)
             DealCycle <- DragonBuff(DealCycle)
             DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 0
@@ -1803,10 +1771,10 @@ EvanDealData <- data.frame(EvanDealCycle$Skills, EvanDealCycle$Time, EvanDealCyc
 colnames(EvanDealData) <- c("Skills", "Time", "R4", "Deal")
 subset(EvanDealData, EvanDealData$R4>0)
 
-EvanRR <- EvanDealData[55:358, ]
+EvanRR <- EvanDealData[55:357, ]
 DPM12349$Evan[3] <- sum((EvanRR$Deal))
 
-Evan40s <- EvanDealData[55:722, ]
+Evan40s <- EvanDealData[55:690, ]
 DPM12349$Evan[4] <- sum((Evan40s$Deal))
 
 EvanDealCycle2 <- EvanDealCycle
@@ -1843,10 +1811,10 @@ EvanDealData2 <- data.frame(EvanDealCycle2$Skills, EvanDealCycle2$Time, EvanDeal
 colnames(EvanDealData2) <- c("Skills", "Time", "R4", "Deal")
 subset(EvanDealData2, EvanDealData2$R4>0)
 
-EvanDoE3HitsRR <- EvanDealData2[55:356, ]
+EvanDoE3HitsRR <- EvanDealData2[55:345, ]
 EvanDoE3HitsRR <- sum((EvanDoE3HitsRR$Deal))
 
-EvanDoE3Hits40s <- EvanDealData2[55:707, ]
+EvanDoE3Hits40s <- EvanDealData2[55:683, ]
 EvanDoE3Hits40s <- sum((EvanDoE3Hits40s$Deal))
 
 
@@ -1877,10 +1845,10 @@ EvanDealData3 <- data.frame(EvanDealCycle3$Skills, EvanDealCycle3$Time, EvanDeal
 colnames(EvanDealData3) <- c("Skills", "Time", "R4", "Deal")
 subset(EvanDealData3, EvanDealData3$R4>0)
 
-EvanSoT4HitsRR <- EvanDealData3[54:344, ]
+EvanSoT4HitsRR <- EvanDealData3[54:345, ]
 EvanSoT4HitsRR <- sum((EvanSoT4HitsRR$Deal))
 
-EvanSoT4Hits40s <- EvanDealData3[54:713, ]
+EvanSoT4Hits40s <- EvanDealData3[54:725, ]
 EvanSoT4Hits40s <- sum((EvanSoT4Hits40s$Deal))
 
 print(c(EvanDoE3HitsDPM, EvanDoE3HitsRR, EvanDoE3Hits40s, EvanSoT4HitsDPM, EvanSoT4HitsRR, EvanSoT4Hits40s))
