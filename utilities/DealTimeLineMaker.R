@@ -313,14 +313,15 @@ RRGraph(FlameWizardDealData[89:256, ], "FlameWizard", col=colorset[5], add=T)
 
 legend(x=0, y=80000, legend=c("ArchMageFP(R)", "ArchMageTC(R)", "Bishop(R)", "FlameWizard"), col=colorset[c(2:5)], lty=1, lwd=4)
 
-RRGraph(LuminousDealData[622:755, ], "Wizard(2)", col=colorset[2])
-RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[3], add=T)
-RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[4], add=T)
-RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[5], add=T)
-RRGraph(LaraDealData[30:205, ], "Lara", col=colorset[6], add=T)
-RRGraph(KinesisDealData[60:282, ], "Kinesis", col=colorset[8], add=T)
+RRGraph(EvanDealData[56:370, ], "Wizard(2)", col=colorset[2])
+RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[3], add=T)
+RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[4], add=T)
+RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[5], add=T)
+RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[6], add=T)
+RRGraph(LaraDealData[30:205, ], "Lara", col=colorset[8], add=T)
+RRGraph(KinesisDealData[60:282, ], "Kinesis", col=colorset[9], add=T)
 
-legend(x=0, y=80000, legend=c("Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara", "Kinesis"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("Evan", "Luminous", "BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara", "Kinesis"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 ## Archer
 RRGraph(BowmasterDealData[70:766, ], "Archer", col=colorset[2])
@@ -361,30 +362,28 @@ legend(x=0, y=80000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)",
                               "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(1:7, 9:10)], lty=1, lwd=4)
 
 
-## 1~5
+## 1~7
 RRGraph(NightLordDealData[31:434, ], "", col=colorset[2])
 RRGraph(ArkDealData[58:391, ], "Ark", col=colorset[3], add=T)
 RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[4], add=T)
 RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[5], add=T)
 RRGraph(data.frame(Time=ArchMageTC40s$Time, Deal=ArchMageTC40s$Damage)[730:1009, ], "ArchMageTC", col=colorset[6], add=T, reverse=T)
+RRGraph(KainDealData[185:404, ], "Kain", col=colorset[8], add=T)
+RRGraph(BlasterDealData[19:275, ], "Blaster", col=colorset[9], add=T)
 
-legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Adele", "ArchMageTC(R)"), col=colorset[c(2:6)], lty=1, lwd=4)
+legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Adele", "ArchMageTC(R)", "Kain", "Blaster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
-## 38~43
-RRGraph(StrikerDealData[33:235, ], "", col=colorset[2], reverse=T)
+## 39~45
+RRGraph(DemonAvengerDealData[86:319, ], "", col=colorset[2])
 RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[3], add=T)
-RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[4], add=T, reverse=T)
-RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[5], add=T)
-RRGraph(SoulMasterDealData[360:577, ], "SoulMaster", col=colorset[6], add=T, reverse=T)
-RRGraph(KaiserDealData[39:274, ], "Kaiser", col=colorset[8], add=T)
-RRGraph(DemonAvengerDealData[86:319, ], "DemonAvenger", col=colorset[9], add=T)
+RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[4], reverse=T, add=T)
+RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[5], add=T, reverse=T)
+RRGraph(KaiserDealData[39:274, ], "Kaiser", col=colorset[6], add=T)
+RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[8], add=T)
+RRGraph(SoulMasterDealData[360:577, ], "SoulMaster", col=colorset[9], add=T, reverse=T)
 
-legend(x=0, y=80000, legend=c("Striker(R)", "WindBreaker", "Bishop(R)", "Luminous", "SoulMaster(R)",
-                              "Kaiser", "DemonAvenger"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
-
-
-
-
+legend(x=0, y=80000, legend=c("DemonAvenger", "WindBreaker", "Striker(R)", "Bishop", 
+                              "Kaiser", "Luminous", "SoulMaster(R)"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 
 ## Deal Graph
@@ -519,6 +518,12 @@ AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
 TLGraph(AranDealTL, max(AranDealData$Time)/1000, "Aran", F)
 TLGraph(AranDealTL, max(AranDealData$Time)/1000, "Aran", T)
 DealIrr(AranDealTL, max(AranDealData$Time)/1000)
+
+## Evan
+EvanDealTL <- DealTimeLine(EvanDealData$Time, EvanDealData$Deal)
+TLGraph(EvanDealTL, max(EvanDealData$Time)/1000, "Evan", F)
+TLGraph(EvanDealTL, max(EvanDealData$Time)/1000, "Evan", T)
+DealIrr(EvanDealTL, max(EvanDealData$Time)/1000)
 
 ## Luminous
 LuminousDealTL <- DealTimeLine(LuminousDealData$Time, LuminousDealData$Deal)
