@@ -313,7 +313,7 @@ RRGraph(FlameWizardDealData[89:256, ], "FlameWizard", col=colorset[5], add=T)
 
 legend(x=0, y=80000, legend=c("ArchMageFP(R)", "ArchMageTC(R)", "Bishop(R)", "FlameWizard"), col=colorset[c(2:5)], lty=1, lwd=4)
 
-RRGraph(EvanDealData[56:370, ], "Wizard(2)", col=colorset[2])
+RRGraph(EvanDealData[55:358, ], "Wizard(2)", col=colorset[2])
 RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[3], add=T)
 RRGraph(BattleMageDealData[18:183, ], "BattleMage", col=colorset[4], add=T)
 RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[5], add=T)
