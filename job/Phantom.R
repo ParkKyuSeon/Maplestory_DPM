@@ -289,7 +289,7 @@ NoirCarteJudgement <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(PhantomCore[[1]][5, 2]>=40, 20, 0), 2 * PhantomCore[[1]][5, 2])
-info <- c(450, 3, 180, NA, NA, NA, NA, F)
+info <- c(450 + 3 * PhantomBase$SkillLv, 3, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Twilight1 <- rbind(data.frame(option, value), info)
@@ -673,8 +673,8 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   ## Lift Break
   LiftBreakTime <- c(0, 270, 540, 1770, 1800, 1830, 1860)
-  DC2 <- subset(DealCycle, DealCycle$Skills=="LiftBreak")
-  DC2$Skills <- "LiftBreakStart"
+  DealCycle[DealCycle$Skills=="LiftBreak", ]$Skills <- "LiftBreakStart"
+  DC2 <- subset(DealCycle, DealCycle$Skills=="LiftBreakStart")
   for(i in 1:nrow(DC2)) {
     for(j in 1:length(LiftBreakTime)) {
       DC2 <- rbind(DC2, DC2[i, ])
@@ -802,8 +802,8 @@ colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 
 subset(PhantomDealData, PhantomDealData$R4>0)
 
-PhantomRR <- PhantomDealData[23:429, ]
+PhantomRR <- PhantomDealData[23:427, ]
 DPM12349$Phantom[3] <- sum((PhantomRR$Deal))
 
-Phantom40s <- PhantomDealData[23:827, ]
+Phantom40s <- PhantomDealData[23:825, ]
 DPM12349$Phantom[4] <- sum((Phantom40s$Deal))

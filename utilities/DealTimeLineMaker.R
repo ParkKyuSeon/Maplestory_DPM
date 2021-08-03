@@ -397,7 +397,7 @@ RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[8], add=T)
 RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[9], reverse=T, add=T)
 RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[10], add=T, reverse=T)
 
-legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Evan", 
+legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Adele", 
                               "DemonAvenger", "WindBreaker", "Striker(R)", "Bishop"), col=colorset[c(2:6, 8:10)], lty=1, lwd=4)
 
 
