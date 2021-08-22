@@ -1,37 +1,43 @@
 ## Eunwol - Data
 ## Eunwol - VMatrix
-EunwolCore <- MatrixSet(PasSkills=c("Gwicham", "SohonJangmak", "Bulyeouryeong", "JeongryeongeuiHwasin", "PashwaeCheoljoHoe", "Pokryugwon"), 
-                        PasLvs=c(50, 50, 50, 50, 50, 50), 
-                        PasMP=c(10, 10, 10, 10, 10, 10), 
-                        ActSkills=c("JeongryeongJipsok", "Gwimunjin", "JinGwicham", "PashwaeYeongwon", 
-                                    CommonV("Pirate", "Heroes")), 
-                        ActLvs=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
-                        ActMP=c(5, 5, 5, 5, 0, 5, 0, 5, 5), 
-                        BlinkLv=1, 
-                        BlinkMP=0, 
-                        UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
+EunwolCoreBase <- CoreBuilder(ActSkills=c("JeongryeongJipsok", "Gwimunjin", "JinGwicham", "PashwaeYeongwon", 
+                                          CommonV("Pirate", "Heroes")), 
+                              ActSkillsLv=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
+                              UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
+                              SpecSet=get(DPMCalcOption$SpecSet), 
+                              VPassiveList=EunwolVPassive, 
+                              VPassivePrior=EunwolVPrior, 
+                              SelfBind=T)
+
+EunwolCore <- MatrixSet(PasSkills=EunwolCoreBase$PasSkills$Skills, 
+                        PasLvs=EunwolCoreBase$PasSkills$Lv, 
+                        PasMP=EunwolCoreBase$PasSkills$MP, 
+                        ActSkills=EunwolCoreBase$ActSkills$Skills, 
+                        ActLvs=EunwolCoreBase$ActSkills$Lv, 
+                        ActMP=EunwolCoreBase$ActSkills$MP, 
+                        UsefulSkills=EunwolCoreBase$UsefulSkills, 
                         UsefulLvs=20, 
                         UsefulMP=0, 
-                        SpecSet=SpecDefault, 
-                        SelfBind=T)
+                        SpecSet=get(DPMCalcOption$SpecSet), 
+                        SpecialCore=EunwolCoreBase$SpecialCoreUse)
 
 
 ## Eunwol - Basic Info
 ## Link Check Needed
 EunwolBase <- JobBase(ChrInfo=ChrInfo, 
-                      MobInfo=MobDefault,
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       Job="Eunwol",
                       CoreData=EunwolCore, 
                       BuffDurationNeeded=0, 
-                      AbilList=c("BDR", "DisorderBDR"), 
-                      LinkList=c("Eunwol", "DemonAvenger", "Phantom", "AdventureBowman"), 
-                      MonsterLife=MLTypeS21, 
-                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", SpecDefault$WeaponType)[, 1:16],
-                      WeaponType=SpecDefault$WeaponType, 
-                      SubWeapon=SubWeapon[25, ], 
-                      Emblem=Emblem[2, ], 
-                      CoolReduceHat=T)
+                      AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Eunwol"), 
+                      LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Eunwol"), 
+                      MonsterLife=get(FindJob(MonsterLifePreSet, "Eunwol")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                      Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                      WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                      SubWeapon=SubWeapon[rownames(SubWeapon)=="FoxBead", ], 
+                      Emblem=Emblem[rownames(Emblem)=="Heroes", ], 
+                      CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Eunwol")))
 
 
 ## Eunwol - Passive
@@ -68,11 +74,11 @@ value <- c(25 + ceiling(EunwolBase$PSkillLv/2))
 YakjeomGanpa <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + EunwolCore[[2]][5, 2])
+value <- c(10 + GetCoreLv(EunwolCore, "LoadedDice"))
 LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(EunwolCore[[2]][10, 2])
+value <- c(GetCoreLv(EunwolCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 EunwolPassive <- Passive(list(JeongryeongChinhwa=JeongryeongChinhwa, JeongryeongGyeolsok2=JeongryeongGyeolsok2, GeunryeokDanryeon=GeunryeokDanryeon, 
@@ -137,37 +143,24 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 JeongryeongGyeolsokMax <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * EunwolCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * EunwolCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * EunwolCore[[3]][3, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(EunwolCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+UsefulWindBooster <- Useful$UsefulWindBooster
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(5 + floor(EunwolCore[[2]][1, 2])/2)
-info <- c(30 + EunwolCore[[2]][1, 2], 120, 900, F, T, F, T)
+value <- c(5 + floor(GetCoreLv(EunwolCore, "JeongryeongJipsok")/2))
+info <- c(30 + GetCoreLv(EunwolCore, "JeongryeongJipsok"), 120, 900, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 JeongryeongJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(40, 120 - EunwolCore[[2]][2, 2], 990, F, T, F, F)
+info <- c(40, 120 - GetCoreLv(EunwolCore, "Gwimunjin"), 990, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 GwimunjinBuff <- rbind(data.frame(option, value), info)
@@ -187,15 +180,15 @@ colnames(info) <- c("option", "value")
 GwimunjinStack <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * EunwolCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
-info <- c(30, 70 - floor(EunwolCore[[2]][6, 2]/5), 540, F, T, F, T)
+value <- c(floor((0.2 + 0.02 * GetCoreLv(EunwolCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
+info <- c(30, 70 - floor(GetCoreLv(EunwolCore, "OverDrive")/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
-info <- c(Cooldown(70 - floor(EunwolCore[[2]][6, 2]/5), T, EunwolBase$UnionChrs$CoolReduceP, EunwolBase$CoolReduce) - 30 - General$General$Serverlag, 70 - floor(EunwolCore[[2]][6, 2]/5), 0, F, T, F, F)
+info <- c(Cooldown(70 - floor(GetCoreLv(EunwolCore, "OverDrive")/5), T, EunwolBase$UnionChrs$CoolReduceP, EunwolBase$CoolReduce) - 30 - General$General$Serverlag, 70 - floor(GetCoreLv(EunwolCore, "OverDrive")/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info)
@@ -208,19 +201,24 @@ colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * EunwolCore[[2]][8, 2]) * MapleSoldier[1, 2]) * EunwolBase$MainStatP), 5 + floor(EunwolCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(EunwolCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * EunwolBase$MainStatP), 5 + floor(GetCoreLv(EunwolCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-EunwolBuff <- Buff(list(MapleSoldier=MapleSoldier, SohonGyeolgye=SohonGyeolgye, PashwaeCheoljoBan=PashwaeCheoljoBan, 
-                        BunhonGyeokchamDebuffFixed=BunhonGyeokchamDebuffFixed, BunhonGyeokchamDebuffMoving=BunhonGyeokchamDebuffMoving,
-                        YakjeomGanpaAdd=YakjeomGanpaAdd, HeroesOath=HeroesOath, JeongryeongGyeolsokMax=JeongryeongGyeolsokMax, 
-                        UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, 
-                        JeongryeongJipsok=JeongryeongJipsok, GwimunjinBuff=GwimunjinBuff, GwimunjinDebuff=GwimunjinDebuff, GwimunjinStack=GwimunjinStack, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
-                        LuckyDice5=LuckyDice5, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster
+EunwolBuff <- list(MapleSoldier=MapleSoldier, SohonGyeolgye=SohonGyeolgye, PashwaeCheoljoBan=PashwaeCheoljoBan, 
+                   BunhonGyeokchamDebuffFixed=BunhonGyeokchamDebuffFixed, BunhonGyeokchamDebuffMoving=BunhonGyeokchamDebuffMoving,
+                   YakjeomGanpaAdd=YakjeomGanpaAdd, HeroesOath=HeroesOath, JeongryeongGyeolsokMax=JeongryeongGyeolsokMax, 
+                   UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, 
+                   JeongryeongJipsok=JeongryeongJipsok, GwimunjinBuff=GwimunjinBuff, GwimunjinDebuff=GwimunjinDebuff, GwimunjinStack=GwimunjinStack, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
+                   LuckyDice5=LuckyDice5, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, UsefulWindBooster, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  EunwolBuff[[length(EunwolBuff)+1]] <- UsefulAdvancedBless
+  names(EunwolBuff)[[length(EunwolBuff)]] <- "UsefulAdvancedBless"
+}
+EunwolBuff <- Buff(EunwolBuff)
 EunwolAllTimeBuff <- AllTimeBuff(EunwolBuff)
 
 
@@ -228,8 +226,8 @@ EunwolAllTimeBuff <- AllTimeBuff(EunwolBuff)
 EunwolSpec <- JobSpec(JobBase=EunwolBase, 
                       Passive=EunwolPassive, 
                       AllTimeBuff=EunwolAllTimeBuff, 
-                      MobInfo=MobDefault, 
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet), 
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       WeaponName="Knuckle", 
                       UnionStance=0)
 
@@ -240,61 +238,15 @@ EunwolSpec <- EunwolSpec$Spec
 
 
 ## Eunwol - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * EunwolCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EunwolCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EunwolCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EunwolCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EunwolCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EunwolCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(EunwolCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## JeongryeongJipsok Data
@@ -309,70 +261,70 @@ JipsokData <- data.frame(Skills=JipsokSkills, Ind=JipsokInd, Prob=JipsokProb)
 ## Eunwol - Attacks
 ## Bunhon Add ATK Needed, Yeouryeong(Jipsok1(Ind5), Jipsok2(Ind10), Jipsok3(Ind25), Jipsok3(Ind25 + Cancelled)) Needed
 {option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], 40, ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Gwicham"), 40, ifelse(GetCoreLv(EunwolCore, "Gwicham")>=40, 20, 0))
 info <- c(265 + 5 * EunwolSpec$SkillLv, 13, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Gwicham <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], 40, IGRCalc(c(ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0), 50)))
-info <- c(540 + 6 * EunwolCore[[2]][3, 2], 13, 720, NA, 6, T, F, F)
+value <- c(2 * GetCoreLv(EunwolCore, "Gwicham"), 40, IGRCalc(c(ifelse(GetCoreLv(EunwolCore, "Gwicham")>=40, 20, 0), 50)))
+info <- c(540 + 6 * GetCoreLv(EunwolCore, "JinGwicham"), 13, 720, NA, 6, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JinGwicham <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(3 * EunwolCore[[1]][2, 2], ifelse(EunwolCore[[1]][2, 2]>=40, 20, 0))
+value <- c(3 * GetCoreLv(EunwolCore, "SohonJangmak"), ifelse(GetCoreLv(EunwolCore, "SohonJangmak")>=40, 20, 0))
 info <- c(45 * 8, 5, 10000, 180, 10 + Cooldown(10, T, EunwolSpec$CoolReduceP, EunwolSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SohonJangmak <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][3, 2], ifelse(EunwolCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Bulyeouryeong"), ifelse(GetCoreLv(EunwolCore, "Bulyeouryeong")>=40, 20, 0))
 info <- c(200 + 5 * EunwolSpec$PSkillLv, 0.35 + 0.01 * floor(EunwolSpec$PSkillLv/2), 0, 600, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Bulyeouryeong <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][3, 2], ifelse(EunwolCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Bulyeouryeong"), ifelse(GetCoreLv(EunwolCore, "Bulyeouryeong")>=40, 20, 0))
 info <- c(200 + 5 * EunwolSpec$PSkillLv, 1, 0, 600, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulyeouryeongPashwaeYeongwon <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][3, 2], ifelse(EunwolCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Bulyeouryeong"), ifelse(GetCoreLv(EunwolCore, "Bulyeouryeong")>=40, 20, 0))
 info <- c(200 + 5 * EunwolSpec$PSkillLv, (0.35 + 0.01 * floor(EunwolSpec$PSkillLv/2)) * (5 / sum(JipsokData$Ind)), 0, 600, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulyeouryeongJipsok1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][3, 2], ifelse(EunwolCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Bulyeouryeong"), ifelse(GetCoreLv(EunwolCore, "Bulyeouryeong")>=40, 20, 0))
 info <- c(200 + 5 * EunwolSpec$PSkillLv, (0.35 + 0.01 * floor(EunwolSpec$PSkillLv/2)) * (10 / sum(JipsokData$Ind)), 0, 600, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulyeouryeongJipsok2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][3, 2], ifelse(EunwolCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Bulyeouryeong"), ifelse(GetCoreLv(EunwolCore, "Bulyeouryeong")>=40, 20, 0))
 info <- c(200 + 5 * EunwolSpec$PSkillLv, (0.35 + 0.01 * floor(EunwolSpec$PSkillLv/2)) * (25 / sum(JipsokData$Ind)), 0, 600, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulyeouryeongJipsok3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][3, 2], ifelse(EunwolCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Bulyeouryeong"), ifelse(GetCoreLv(EunwolCore, "Bulyeouryeong")>=40, 20, 0))
 info <- c(200 + 5 * EunwolSpec$PSkillLv, (0.35 + 0.01 * floor(EunwolSpec$PSkillLv/2)) * (25 / sum(JipsokData$Ind) - (25 / sum(JipsokData$Ind))^2), 0, 600, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulyeouryeongJipsok3Cancelled <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(3 * EunwolCore[[1]][5, 2], ifelse(EunwolCore[[1]][5, 2]>=40, 20, 0))
+value <- c(3 * GetCoreLv(EunwolCore, "PashwaeCheoljoHoe"), ifelse(GetCoreLv(EunwolCore, "PashwaeCheoljoHoe")>=40, 20, 0))
 info <- c(160, 4, 630, NA, 1, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -400,14 +352,14 @@ colnames(info) <- c("option", "value")
 PashwaeCheoljoJeonJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(3 * EunwolCore[[1]][5, 2], ifelse(EunwolCore[[1]][5, 2]>=40, 20, 0))
+value <- c(3 * GetCoreLv(EunwolCore, "PashwaeCheoljoHoe"), ifelse(GetCoreLv(EunwolCore, "PashwaeCheoljoHoe")>=40, 20, 0))
 info <- c(160, 4 * JipsokData$Prob[3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PashwaeCheoljoHoeJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], 40, ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Gwicham"), 40, ifelse(GetCoreLv(EunwolCore, "Gwicham")>=40, 20, 0))
 info <- c(265 + 5 * EunwolSpec$SkillLv, 13 * JipsokData$Prob[4], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -421,28 +373,28 @@ colnames(info) <- c("option", "value")
 SahonGakinJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(3 * EunwolCore[[1]][2, 2], ifelse(EunwolCore[[1]][2, 2]>=40, 20, 0))
+value <- c(3 * GetCoreLv(EunwolCore, "SohonJangmak"), ifelse(GetCoreLv(EunwolCore, "SohonJangmak")>=40, 20, 0))
 info <- c(45, 5 * JipsokData$Prob[6], 0, 270, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SohonJangmakJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(3 * EunwolCore[[1]][2, 2], ifelse(EunwolCore[[1]][2, 2]>=40, 20, 0))
+value <- c(3 * GetCoreLv(EunwolCore, "SohonJangmak"), ifelse(GetCoreLv(EunwolCore, "SohonJangmak")>=40, 20, 0))
 info <- c(45, 5 * (JipsokData$Prob[6] - JipsokData$Prob[6]^2), 0, 270, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SohonJangmakJipsokCancelled <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][4, 2], ifelse(EunwolCore[[1]][4, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "JeongryeongeuiHwasin"), ifelse(GetCoreLv(EunwolCore, "JeongryeongeuiHwasin")>=40, 20, 0))
 info <- c(700, JipsokData$Prob[7], 0, 360, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JeongryeongeuiHwasinJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][4, 2], ifelse(EunwolCore[[1]][4, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "JeongryeongeuiHwasin"), ifelse(GetCoreLv(EunwolCore, "JeongryeongeuiHwasin")>=40, 20, 0))
 info <- c(700, JipsokData$Prob[7] - JipsokData$Prob[7]^2, 0, 360, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -484,28 +436,28 @@ colnames(info) <- c("option", "value")
 TongbaekgwonFAJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Pokryugwon"), ifelse(GetCoreLv(EunwolCore, "Pokryugwon")>=40, 20, 0))
 info <- c(300 + 4 * EunwolSpec$SkillLv, 3 * JipsokData$Prob[10], 0, 360, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Pokryugwon1Jipsok <- rbind(data.frame(option, value), info) # After 0ms
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Pokryugwon"), ifelse(GetCoreLv(EunwolCore, "Pokryugwon")>=40, 20, 0))
 info <- c(310 + 4 * EunwolSpec$SkillLv, 3 * JipsokData$Prob[10], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Pokryugwon2Jipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Pokryugwon"), ifelse(GetCoreLv(EunwolCore, "Pokryugwon")>=40, 20, 0))
 info <- c(320 + 4 * EunwolSpec$SkillLv, 3 * JipsokData$Prob[10], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Pokryugwon3Jipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * EunwolCore[[1]][1, 2], ifelse(EunwolCore[[1]][1, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(EunwolCore, "Pokryugwon"), ifelse(GetCoreLv(EunwolCore, "Pokryugwon")>=40, 20, 0))
 info <- c(350 + 4 * EunwolSpec$SkillLv, 3 * JipsokData$Prob[10], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -513,21 +465,21 @@ Pokryugwon4Jipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(300 + 12 * EunwolCore[[2]][2, 2], 12, 990, 1230, 120 - EunwolCore[[2]][2, 2], T, F, F)
+info <- c(300 + 12 * GetCoreLv(EunwolCore, "Gwimunjin"), 12, 990, 1230, 120 - GetCoreLv(EunwolCore, "Gwimunjin"), T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Gwimunjin <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * EunwolCore[[2]][4, 2], 5, 1320, 150, 90, T, F, F)
+info <- c(400 + 16 * GetCoreLv(EunwolCore, "PashwaeYeongwon"), 5, 1320, 150, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PashwaeYeongwon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(950 + 38 * EunwolCore[[2]][4, 2], 15, 1080, 30, 90, T, F, F)
+info <- c(950 + 38 * GetCoreLv(EunwolCore, "PashwaeYeongwon"), 15, 1080, 30, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PashwaeYeongwonLast <- rbind(data.frame(option, value), info) # After 270ms, Yeouryeong, Gan 1 Time
@@ -570,7 +522,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, E
 BuffFinal <- data.frame(EunwolBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, EunwolSpec$CoolReduceP, EunwolSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, EunwolSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 ATKFinal <- AddATKRateSkills("BunhonGyeokchamDebuffMoving", BuffFinal, ATKFinal, rownames(ATKFinal)[c(-11, -30)])
 
 SummonedFinal <- data.frame(EunwolSummoned)
@@ -662,6 +614,9 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   
   ## First Cycle
   DealCycle <- DCBuff(DealCycle, "MapleSoldier", BuffFinal)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5", "HeroesOath"), BuffFinal)
   DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
   DealCycle <- DCBuff(DealCycle, c("MapleWarriors2", "GwimunjinBuff", "JeongryeongJipsok", "OverDrive", "SoulContractLink", "JeongryeongGyeolsokMax"), BuffFinal)
@@ -894,6 +849,13 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
       DealCycle <- DCBuff(DealCycle, "UsefulCombatOrders", BuffFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
       DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+    }
+    if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+      if(DealCycle$UsefulAdvancedBless[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+        DealCycle <- DCBuff(DealCycle, "UsefulAdvancedBless", BuffFinal)
+        RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
+        DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
+      }
     }
     ## Heroes Oath
     if(DealCycle$HeroesOath[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
@@ -1375,73 +1337,94 @@ EunwolDealCycle <- DealCycleFinal(EunwolDealCycle)
 EunwolDealCycle <- EunwolAddATK(EunwolDealCycle, ATKFinal, BuffFinal, SummonedFinal, BunhonFixed = F)
 EunwolDealCycle <- EunwolGyeolsokMax(EunwolDealCycle, JipsokData)
 EunwolDealCycle <- EunwolDummyReduction(EunwolDealCycle)
-EunwolDealCycle <- OverDriveExhaustBuff(EunwolDealCycle, BuffFinal$Duration[16], BuffFinal$CoolTime[16])
+EunwolDealCycle <- OverDriveExhaustBuff(EunwolDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 EunwolDealCycleReduction <- DealCycleReduction(EunwolDealCycle, NotBuffColNames=c("GwimunjinStack"))
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Eunwol") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  EunwolSpecOpt1 <- EunwolOptimization1(EunwolDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EunwolSpec, EunwolUnionRemained, 
+                                        NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- EunwolSpecOpt1[1, 1:3]
+} else {
+  EunwolSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+EunwolSpecOpt <- OptDataAdd(EunwolSpec, EunwolSpecOpt1, "Potential", EunwolBase$CRROver, DemonAvenger=F)
 
-EunwolYakjeomGanpa(EunwolDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EunwolSpec)
+if(DPMCalcOption$Optimization==T) {
+  EunwolSpecOpt2 <- EunwolOptimization2(EunwolDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, EunwolHyperStatBase, EunwolBase$ChrLv, EunwolBase$CRROver, 
+                                        NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- EunwolSpecOpt2[1, ]
+} else {
+  EunwolSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+EunwolSpecOpt <- OptDataAdd(EunwolSpecOpt, EunwolSpecOpt2, "HyperStat", EunwolBase$CRROver, DemonAvenger=F)
 
-## Damage Optimization
-EunwolSpecOpt1 <- EunwolOptimization1(EunwolDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EunwolSpec, EunwolUnionRemained)
-EunwolSpecOpt <- EunwolSpec
-EunwolSpecOpt$ATKP <- EunwolSpecOpt$ATKP + EunwolSpecOpt1$ATKP
-EunwolSpecOpt$BDR <- EunwolSpecOpt$BDR + EunwolSpecOpt1$BDR
-EunwolSpecOpt$IGR <- IGRCalc(c(EunwolSpecOpt$IGR, EunwolSpecOpt1$IGR))
+EunwolMovingDPMwithMax <- EunwolYakjeomGanpa(EunwolDealCycle, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, 
+                                            NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+MovingDPM <- sum(na.omit(EunwolMovingDPMwithMax)) / (max(EunwolDealCycle$Time) / 60000)
 
-EunwolSpecOpt2 <- EunwolOptimization2(EunwolDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, EunwolHyperStatBase, EunwolBase$ChrLv, EunwolBase$CRROver)
-EunwolFinalDPMwithMax <- EunwolYakjeomGanpa(EunwolDealCycle, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
-MovingDPM <- sum(na.omit(EunwolFinalDPMwithMax)) / (max(EunwolDealCycle$Time) / 60000)
+## M : Moving, F : Fixed, GO : Ganpa On, GX : Ganpa Off
+EunwolDealCycleMGO <- EunwolDealCycle
+EunwolDealCycleMGO$YakjeomGanpaAdd <- 1
+EunwolMGXDeal <- DealCalc(EunwolDealCycle, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, Collapse=F, 
+                          NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+EunwolMGODeal <- DealCalc(EunwolDealCycleMGO, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, Collapse=F, 
+                          NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
 
-EunwolDealCycleGanpaon <- EunwolDealCycle
-EunwolDealCycleGanpaon$YakjeomGanpaAdd <- 1
-EunwolOffDeal <- EunwolDealCalc(EunwolDealCycle, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
-EunwolOnDeal <- EunwolDealCalc(EunwolDealCycleGanpaon, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
+EunwolDealDataMGX <- data.frame(EunwolDealCycle$Skills, EunwolDealCycle$Time, EunwolDealCycle$Restraint4, EunwolMGXDeal)
+colnames(EunwolDealDataMGX) <- c("Skills", "Time", "R4", "Deal")
+EunwolDealDataMGO <- data.frame(EunwolDealCycleMGO$Skills, EunwolDealCycleMGO$Time, EunwolDealCycleMGO$Restraint4, EunwolMGODeal)
+colnames(EunwolDealDataMGO) <- c("Skills", "Time", "R4", "Deal")
 
-EunwolDealData <- data.frame(EunwolDealCycle$Skills, EunwolDealCycle$Time, EunwolDealCycle$Restraint4, EunwolOffDeal, EunwolOnDeal)
-colnames(EunwolDealData) <- c("Skills", "Time", "R4", "Deal", "DealGanpa")
-
-EunwolRR <- EunwolDealData[72:1804, ]
-MovingRR <- sum((EunwolRR$Deal))
-
-Eunwol40s <- EunwolDealData[72:3699, ]
-Moving40s <- sum((Eunwol40s$Deal))
-
-MovingGanpaRR <- sum((EunwolRR$DealGanpa))
-MovingGanpa40s <- sum((Eunwol40s$DealGanpa))
-
+EunwolMGXRR <- Deal_RR(EunwolDealDataMGX)
+EunwolMGX40s <- Deal_40s(EunwolDealDataMGX)
+EunwolMGORR <- Deal_RR(EunwolDealDataMGO)
+EunwolMGO40s <- Deal_40s(EunwolDealDataMGO)
 
 
 ## Eunwol DPM(Fixed Boss)
 DealCycle <- c("Skills", "Time", rownames(EunwolBuff))
-EunwolDealCycleFixed <- t(rep(0, length(DealCycle)))
-colnames(EunwolDealCycleFixed) <- DealCycle
+EunwolDealCycleFGX <- t(rep(0, length(DealCycle)))
+colnames(EunwolDealCycleFGX) <- DealCycle
 
-EunwolDealCycleFixed <- EunwolCycle(EunwolDealCycleFixed, ATKFinal, BuffFinal, SummonedFinal)
-EunwolDealCycleFixed <- DealCycleFinal(EunwolDealCycleFixed)
-EunwolDealCycleFixed <- EunwolAddATK(EunwolDealCycleFixed, ATKFinal, BuffFinal, SummonedFinal, BunhonFixed = T)
-EunwolDealCycleFixed <- EunwolGyeolsokMax(EunwolDealCycleFixed, JipsokData)
-EunwolDealCycleFixed <- EunwolDummyReduction(EunwolDealCycleFixed)
-EunwolDealCycleFixed <- OverDriveExhaustBuff(EunwolDealCycleFixed, BuffFinal$Duration[16], BuffFinal$CoolTime[16])
+EunwolDealCycleFGX <- EunwolCycle(EunwolDealCycleFGX, ATKFinal, BuffFinal, SummonedFinal)
+EunwolDealCycleFGX <- DealCycleFinal(EunwolDealCycleFGX)
+EunwolDealCycleFGX <- EunwolAddATK(EunwolDealCycleFGX, ATKFinal, BuffFinal, SummonedFinal, BunhonFixed = T)
+EunwolDealCycleFGX <- EunwolGyeolsokMax(EunwolDealCycleFGX, JipsokData)
+EunwolDealCycleFGX <- EunwolDummyReduction(EunwolDealCycleFGX)
+EunwolDealCycleFGX <- OverDriveExhaustBuff(EunwolDealCycleFGX, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 
-EunwolFinalDPMFixed <- EunwolYakjeomGanpa(EunwolDealCycleFixed, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
-DPM12349$Eunwol[1] <- sum(na.omit(EunwolFinalDPMFixed)) / (max(EunwolDealCycle$Time) / 60000)
+EunwolFixedDPMWithMax <- EunwolYakjeomGanpa(EunwolDealCycleFGX, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, 
+                                            NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+set(get(DPMCalcOption$DataName), as.integer(1), "Eunwol", sum(na.omit(EunwolFixedDPMWithMax)) / (max(EunwolDealCycleFGX$Time) / 60000))
 
-EunwolDealCycleFixedGanpaon <- EunwolDealCycleFixed
-EunwolDealCycleFixedGanpaon$YakjeomGanpaAdd <- 1
-EunwolOffDealFixed <- EunwolDealCalc(EunwolDealCycleFixed, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
-EunwolOnDealFixed <- EunwolDealCalc(EunwolDealCycleFixedGanpaon, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt2)
-EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFixed, EunwolDealCycleFixedGanpaon), list(EunwolOffDealFixed, EunwolOnDealFixed), rep(max(EunwolDealCycleFixed$Time), 2), c(0.5137, 0.4863))
+EunwolDealCycleFGO <- EunwolDealCycleFGX
+EunwolDealCycleFGO$YakjeomGanpaAdd <- 1
+EunwolFGXDeal <- DealCalc(EunwolDealCycleFGX, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, Collapse=F, 
+                          NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+EunwolFGODeal <- DealCalc(EunwolDealCycleFGO, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, Collapse=F, 
+                          NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
+EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFGX, EunwolDealCycleFGO), list(EunwolFGXDeal, EunwolFGODeal), rep(max(EunwolDealCycleFGX$Time), 2), c(0.5136, 0.4864))
 
-EunwolDealDataFixed <- data.frame(EunwolDealCycleFixed$Skills, EunwolDealCycleFixed$Time, EunwolDealCycleFixed$Restraint4, EunwolOffDealFixed, EunwolOnDealFixed)
-colnames(EunwolDealDataFixed) <- c("Skills", "Time", "R4", "Deal", "DealGanpa")
+EunwolDealDataFGX <- data.frame(EunwolDealCycleFGX$Skills, EunwolDealCycleFGX$Time, EunwolDealCycleFGX$Restraint4, EunwolFGXDeal)
+colnames(EunwolDealDataFGX) <- c("Skills", "Time", "R4", "Deal")
+EunwolDealDataFGO <- data.frame(EunwolDealCycleFGO$Skills, EunwolDealCycleFGO$Time, EunwolDealCycleFGO$Restraint4, EunwolFGODeal)
+colnames(EunwolDealDataFGO) <- c("Skills", "Time", "R4", "Deal")
 
-EunwolRRFixed <- EunwolDealDataFixed[51:1557, ]
-DPM12349$Eunwol[3] <- sum((EunwolRRFixed$Deal))
+set(get(DPMCalcOption$DataName), as.integer(3), "Eunwol", Deal_RR(EunwolDealDataFGX))
+set(get(DPMCalcOption$DataName), as.integer(4), "Eunwol", Deal_40s(EunwolDealDataFGX))
+EunwolFGORR <- Deal_RR(EunwolDealDataFGO)
+EunwolFGO40s <- Deal_40s(EunwolDealDataFGO)
 
-Eunwol40sFixed <- EunwolDealDataFixed[51:3452, ]
-DPM12349$Eunwol[4] <- sum((Eunwol40sFixed$Deal))
-
-FixedGanpaRR <- sum((EunwolRRFixed$DealGanpa))
-FixedGanpa40s <- sum((Eunwol40sFixed$DealGanpa))
-
-print(c(MovingDPM, MovingRR, Moving40s, MovingGanpaRR, MovingGanpa40s, FixedGanpaRR, FixedGanpa40s))
+print(list(EWMoving=data.frame(MovingDPM=MovingDPM, MovingRR=EunwolMGXRR, Moving40s=EunwolMGX40s, MovingGanpaRR=EunwolMGORR, MovingGanpa40s=EunwolMGO40s),  
+           EWFixed=data.frame(FixedGanpaRR=EunwolFGORR, FixedGanpa40s=EunwolFGO40s)))

@@ -1,36 +1,42 @@
 ## AngelicBuster - Data
 ## AngelicBuster - VMatrix
-AngelicBusterCore <- MatrixSet(PasSkills=c("Trinity", "SoulSeeker", "SuperNova", "PrimalRoar", "FinituraPettuccia", "SoulResonance"), 
-                               PasLvs=c(50, 50, 50, 50, 50, 50), 
-                               PasMP=c(10, 10, 10, 0, 0, 0), 
-                               ActSkills=c("EnergeBust", "Spotlight", "MascotFamiliar", "TrinityFusion", 
-                                           CommonV("Pirate", "Nova")), 
-                               ActLvs=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
-                               ActMP=c(5, 5, 5, 5, 5, 5, 0, 5, 0), 
-                               BlinkLv=1, 
-                               BlinkMP=5, 
-                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+AngelicBusterCoreBase <- CoreBuilder(ActSkills=c("EnergeBust", "Spotlight", "MascotFamiliar", "TrinityFusion", 
+                                                 CommonV("Pirate", "Nova")), 
+                                     ActSkillsLv=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
+                                     UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                     SpecSet=get(DPMCalcOption$SpecSet), 
+                                     VPassiveList=AngelicBusterVPassive, 
+                                     VPassivePrior=AngelicBusterVPrior, 
+                                     SelfBind=F)
+
+AngelicBusterCore <- MatrixSet(PasSkills=AngelicBusterCoreBase$PasSkills$Skills, 
+                               PasLvs=AngelicBusterCoreBase$PasSkills$Lv, 
+                               PasMP=AngelicBusterCoreBase$PasSkills$MP, 
+                               ActSkills=AngelicBusterCoreBase$ActSkills$Skills, 
+                               ActLvs=AngelicBusterCoreBase$ActSkills$Lv, 
+                               ActMP=AngelicBusterCoreBase$ActSkills$MP, 
+                               UsefulSkills=AngelicBusterCoreBase$UsefulSkills, 
                                UsefulLvs=20, 
                                UsefulMP=0, 
-                               SpecSet=SpecDefault, 
-                               SelfBind=F)
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               SpecialCore=AngelicBusterCoreBase$SpecialCoreUse)
 
 
 ## AngelicBuster - Basic Info
 AngelicBusterBase <- JobBase(ChrInfo=ChrInfo, 
-                             MobInfo=MobDefault,
-                             SpecSet=SpecDefault, 
+                             MobInfo=get(DPMCalcOption$MobSet),
+                             SpecSet=get(DPMCalcOption$SpecSet), 
                              Job="AngelicBuster",
                              CoreData=AngelicBusterCore, 
                              BuffDurationNeeded=0, 
-                             AbilList=c("BDR", "DisorderBDR"), 
-                             LinkList=c("Xenon", "Phantom", "DemonAvenger", "CygnusKnights"), 
-                             MonsterLife=MLTypeD21, 
-                             Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "SoulShooter", SpecDefault$WeaponType)[, 1:16],
-                             WeaponType=SpecDefault$WeaponType, 
-                             SubWeapon=SubWeapon[36, ], 
-                             Emblem=Emblem[7, ], 
-                             CoolReduceHat=T)
+                             AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "AngelicBuster"), 
+                             LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "AngelicBuster"), 
+                             MonsterLife=get(FindJob(MonsterLifePreSet, "AngelicBuster")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                             Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "SoulShooter", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                             WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                             SubWeapon=SubWeapon[rownames(SubWeapon)=="SoulRing", ], 
+                             Emblem=Emblem[rownames(Emblem)=="Angel", ], 
+                             CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "AngelicBuster")))
 
 
 ## AngelicBuster - Passive
@@ -63,15 +69,15 @@ value <- c(70 + ceiling(AngelicBusterBase$SkillLv/2), 30 + AngelicBusterBase$Ski
 SoulShooterExpert <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(10 + AngelicBusterCore[[2]][4, 2])
+value <- c(10 + GetCoreLv(AngelicBusterCore, "TrinityFusion"))
 TrinityFusionPassive <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + AngelicBusterCore[[2]][5, 2])
+value <- c(10 + GetCoreLv(AngelicBusterCore, "LoadedDice"))
 LoadedDice <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(AngelicBusterCore[[2]][10, 2])
+value <- c(GetCoreLv(AngelicBusterCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 AngelicBusterPassive <- Passive(list(TrueSuccesser, SoulShooterMastery, InnerFire, CallofAincient, AffinityIII, TrinityPassive, SoulShooterExpert,
@@ -88,21 +94,21 @@ SoulContract <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 990, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LyricalCross <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(180, NA, 990, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PowerTransfer <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(180, NA, 1080, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 IronRotus <- rbind(data.frame(option, value), info) 
@@ -126,7 +132,7 @@ value <- c(25 + 2 * floor(AngelicBusterBase$SkillLv/3))
 info <- c(20, Cooldown(40 - AngelicBusterBase$SkillLv, T, 25 + AngelicBusterBase$UnionChrs$CoolReduceP, AngelicBusterBase$CoolReduce), Delay(1350, 2), F, F, T, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-FinituraFettucciaBuff <- rbind(data.frame(option, value), info) ## ATKSpeed Acceptance Check Needed
+FinituraFettucciaBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
 value <- c(0)
@@ -157,21 +163,21 @@ colnames(info) <- c("option", "value")
 EnergyBustBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(3 + floor(AngelicBusterCore[[2]][2, 2]/10))
+value <- c(3 + floor(GetCoreLv(AngelicBusterCore, "Spotlight")/10))
 info <- c(30, 120, 990, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SpotLightBuff1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(((3 * 2 + floor(AngelicBusterCore[[2]][2, 2]/10) * 2 + 100) / (100 + 3 + floor(AngelicBusterCore[[2]][2, 2]/10)) - 1) * 100)
+value <- c(((3 * 2 + floor(GetCoreLv(AngelicBusterCore, "Spotlight")/10) * 2 + 100) / (100 + 3 + floor(GetCoreLv(AngelicBusterCore, "Spotlight")/10)) - 1) * 100)
 info <- c(30, 120, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SpotLightBuff2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(((3 * 3 + floor(AngelicBusterCore[[2]][2, 2]/10) * 3 + 100) / (100 + 3 * 2 + floor(AngelicBusterCore[[2]][2, 2]/10) * 2) - 1) * 100)
+value <- c(((3 * 3 + floor(GetCoreLv(AngelicBusterCore, "Spotlight")/10) * 3 + 100) / (100 + 3 * 2 + floor(GetCoreLv(AngelicBusterCore, "Spotlight")/10) * 2) - 1) * 100)
 info <- c(30, 120, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -179,7 +185,7 @@ SpotLightBuff3 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30 + floor(AngelicBusterCore[[2]][3, 2]/5), 120, Delay(1080, 2), F, T, F, T)
+info <- c(30 + floor(GetCoreLv(AngelicBusterCore, "MascotFamiliar")/5), 120, Delay(1080, 2), F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MascotFamiliarBuff <- rbind(data.frame(option, value), info)
@@ -206,40 +212,34 @@ colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * AngelicBusterCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="SoulShooter", 6]))
-info <- c(30, 70 - floor(AngelicBusterCore[[2]][6, 2]/5), 540, F, T, F, T)
+value <- c(floor((0.2 + 0.02 * GetCoreLv(AngelicBusterCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="SoulShooter", 6]))
+info <- c(30, 70 - floor(GetCoreLv(AngelicBusterCore, "OverDrive")/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATK", levels=BSkill)
 value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="SoulShooter", 6]))
-info <- c(Cooldown(70 - floor(AngelicBusterCore[[2]][6, 2]/5), T, AngelicBusterBase$UnionChrs$CoolReduceP, AngelicBusterBase$CoolReduce) - 30 - General$General$Serverlag, 
-          70 - floor(AngelicBusterCore[[2]][6, 2]/5), 540, F, T, F, F)
+info <- c(Cooldown(70 - floor(GetCoreLv(AngelicBusterCore, "OverDrive")/5), T, AngelicBusterBase$UnionChrs$CoolReduceP, AngelicBusterBase$CoolReduce) - 30 - General$General$Serverlag, 
+          70 - floor(GetCoreLv(AngelicBusterCore, "OverDrive")/5), 540, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info) 
 
 option <- factor("BDR", levels=BSkill)
-value <- c(5 + AngelicBusterCore[[2]][8, 2])
+value <- c(5 + GetCoreLv(AngelicBusterCore, "BlessofGrandisGoddess"))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess <- rbind(data.frame(option, value), info) 
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * AngelicBusterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * AngelicBusterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)}
+Useful <- UsefulSkills(AngelicBusterCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
+}
 
 AngelicBusterBuff <- Buff(list(LyricalCross=LyricalCross, PowerTransfer=PowerTransfer, IronRotus=IronRotus, SoulGaze=SoulGaze, MapleSoldier=MapleSoldier, 
                                FinituraFettucciaBuff=FinituraFettucciaBuff, AffinityIVBuff=AffinityIVBuff, SoulExalt=SoulExalt, FinalContract=FinalContract, 
@@ -247,7 +247,7 @@ AngelicBusterBuff <- Buff(list(LyricalCross=LyricalCross, PowerTransfer=PowerTra
                                MascotFamiliarBuff=MascotFamiliarBuff, MascotFamiliarStack=MascotFamiliarStack, MascotFamiliarDummy=MascotFamiliarDummy, 
                                LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, BlessofGrandisGoddess=BlessofGrandisGoddess, 
                                UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, Restraint4=Restraint4, SoulContract=SoulContract))
-## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), SoulGaze(1080ms)
+## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), SoulGaze(1080ms), LyricalCross(990ms), PowerTransfer(990ms), IronRotus(1080ms) -> Not Use Useful Advanced Bless
 AngelicBusterAllTimeBuff <- AllTimeBuff(AngelicBusterBuff)
 
 
@@ -255,8 +255,8 @@ AngelicBusterAllTimeBuff <- AllTimeBuff(AngelicBusterBuff)
 AngelicBusterSpec <- JobSpec(JobBase=AngelicBusterBase, 
                              Passive=AngelicBusterPassive, 
                              AllTimeBuff=AngelicBusterAllTimeBuff, 
-                             MobInfo=MobDefault, 
-                             SpecSet=SpecDefault, 
+                             MobInfo=get(DPMCalcOption$MobSet), 
+                             SpecSet=get(DPMCalcOption$SpecSet), 
                              WeaponName="SoulShooter", 
                              UnionStance=10)
 
@@ -267,102 +267,56 @@ AngelicBusterSpec <- AngelicBusterSpec$Spec
 
 
 ## AngelicBuster - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * AngelicBusterCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AngelicBusterCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AngelicBusterCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AngelicBusterCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AngelicBusterCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AngelicBusterCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(AngelicBusterCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## AngelicBuster - Attacks
 ## Hyper : Trinity - Reinforce / Split Attack, Soul Seeker - Reinforce / Make Up,  Finitura Fettuccia - CoolTime Reduce
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
+value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
 info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 3, 660, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity1 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
+value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
 info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 4, 720, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity2 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
+value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
 info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 5, 480, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity3 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(AngelicBusterCore[[1]][2, 2]>=40, 20, 0), 20, 2 * AngelicBusterCore[[1]][2, 2]) 
+value <- c(ifelse(GetCoreLv(AngelicBusterCore, "SoulSeeker")>=40, 20, 0), 20, 2 * GetCoreLv(AngelicBusterCore, "SoulSeeker")) 
 info <- c(320 * 0.75, 2, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 SoulSeeker <- rbind(data.frame(option, value), info) ## ATKTime Vary -> Prob : (0.35 + 0.01 * AngerlicBusterSpec$PSkillLv(+ 0.15 when Soul Exalt)) / Re-Make : 95%
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AngelicBusterCore[[1]][5, 2]>=40, 20, 0), 2 * AngelicBusterCore[[1]][5, 2]) 
+value <- c(ifelse(GetCoreLv(AngelicBusterCore, "FinituraPettuccia")>=40, 20, 0), 2 * GetCoreLv(AngelicBusterCore, "FinituraPettuccia")) 
 info <- c(400 + 7 * AngelicBusterBase$SkillLv, 10, 0, NA, Cooldown(40 - AngelicBusterBase$SkillLv, T, 25 + AngelicBusterBase$UnionChrs$CoolReduceP, AngelicBusterBase$CoolReduce), F, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 FinituraFettuccia <- rbind(data.frame(option, value), info) ## Delay on Buff
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AngelicBusterCore[[1]][3, 2]>=40, 20, 0), 2 * AngelicBusterCore[[1]][3, 2]) 
+value <- c(ifelse(GetCoreLv(AngelicBusterCore, "SuperNova")>=40, 20, 0), 2 * GetCoreLv(AngelicBusterCore, "SuperNova")) 
 info <- c(600, 3, 600, 840, 60, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
@@ -370,35 +324,35 @@ SuperNova <- rbind(data.frame(option, value), info)  ## ATKSpeed, SubTime Check 
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(200) 
-info <- c(450 + 18 * AngelicBusterCore[[2]][1, 2], 15, 900, NA, 120, T, F, F) 
+info <- c(450 + 18 * GetCoreLv(AngelicBusterCore, "EnergeBust"), 15, 900, NA, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 EnergyBust <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(400 + 16 * AngelicBusterCore[[2]][2, 2], 3, 0, 720, 120, T, F, F) 
+info <- c(400 + 16 * GetCoreLv(AngelicBusterCore, "Spotlight"), 3, 0, 720, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 SpotLight <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(600 + 24 * AngelicBusterCore[[2]][3, 2], 5, 0, 0, NA, NA, NA, F) 
+info <- c(600 + 24 * GetCoreLv(AngelicBusterCore, "MascotFamiliar"), 5, 0, 0, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 TwinkleStar <- rbind(data.frame(option, value), info) ## Magical Bulloon : Same
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(250 + 10 * AngelicBusterCore[[2]][3, 2], 8, 0, 210, NA, NA, NA, F) 
+info <- c(250 + 10 * GetCoreLv(AngelicBusterCore, "MascotFamiliar"), 8, 0, 210, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 ShinyBubbleBreath <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(30, ifelse(AngelicBusterCore[[1]][1, 2]>=40, 20, 0))), 50, 2 * AngelicBusterCore[[1]][1, 2]) 
-info <- c(330 + AngelicBusterCore[[2]][4, 2], 3, 870, NA, 16 - floor(AngelicBusterCore[[2]][4, 2]/10), T, F, F) 
+value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
+info <- c(330 + GetCoreLv(AngelicBusterCore, "TrinityFusion"), 3, 870, NA, 16 - floor(GetCoreLv(AngelicBusterCore, "TrinityFusion")/10), T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 TrinityFusion <- rbind(data.frame(option, value), info)  ## 900ms(1), 90ms(2), 90ms(3), 90ms(4), 90ms(5), 90ms(6), 180ms(7), 90ms(8), 90ms(9)
@@ -424,7 +378,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, A
 BuffFinal <- data.frame(AngelicBusterBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, AngelicBusterSpec$CoolReduceP, AngelicBusterSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, AngelicBusterSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 BuffFinal[rownames(BuffFinal)=="AffinityIVBuff", ]$BDR <- 30 * 0.992 ## Affinity IV Buff 99.2%
 
 SummonedFinal <- data.frame(AngelicBusterSummoned)
@@ -451,18 +405,17 @@ AngelicBusterDealCycle <- t(rep(0, length(DealCycle)))
 colnames(AngelicBusterDealCycle) <- DealCycle
 AngelicBusterDealCycle <- data.frame(AngelicBusterDealCycle)
 
-## If Cool Reduce Hat Used, Period is 120. If not, Period is 121.6
 AngelicBusterCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
-                               Period=c(120, 122), CycleTime=c(240, 244), SoulContractReset=0, FinituraFettucciaReset=0) {
+                               Period=c(122), CycleTime=c(244), SoulContractReset=0, FinituraFettucciaReset=0) {
   BuffSummonedPrior <- c("MapleSoldier", "LyricalCross", "PowerTransfer", "IronRotus", "SoulGaze", "UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5", 
                          "MascotFamiliarBuff", "EnergyBustBuff", "BlessofGrandisGoddess", "OverDrive", "SoulExalt", "FinalContract", "SpotLightBuff1", "SoulContract", "FinituraFettucciaBuff")
   
-  Times120 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
+  Times122 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
                 1, 1, 0.5, 2, 1, 1, 1, 1, 0.5)
-  SubTime <- rep(Period, length(BuffSummonedPrior))
-  TotalTime <- CycleTime
+  SubTime <- rep(Period - min(2, Spec$CoolReduce), length(BuffSummonedPrior))
+  TotalTime <- CycleTime - min(2, Spec$CoolReduce) * (CycleTime/Period)
   for(i in 1:length(BuffSummonedPrior)) {
-    SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
+    SubTime[i] <- SubTime[i] / ifelse(Times122[i]==0, Inf, Times122[i])
   }
   
   SubTimeUniques <- unique(SubTime)
@@ -723,7 +676,7 @@ AngelicBusterCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
       ## Finitura Pettuccia
       else if(k!=5 & FFRemain <= 0 | 
               k==5 & FFRemain <= 0 & BuffStartTime + min(subset(DealCycle, DealCycle$Skills=="FinituraFettuccia")$Time) - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) >= 
-              FFCool - ifelse(Period==120, 1080, 0)) {
+              FFCool - ifelse(Spec$CoolReduce > 0, 1080, 0)) {
         DealCycle <- DCATKSkip(DealCycle, "FinituraFettuccia", ATKFinal, SkipStructure)
         DealCycle <- MFStackLogic(DealCycle)
         TFRemain <- TFRemain - DealCycle$Time[1]
@@ -978,8 +931,8 @@ AngelicBusterDealCycle00 <- AngelicBusterCycle(DealCycle=AngelicBusterDealCycle,
                                                SummonedFinal=SummonedFinal, 
                                                Spec=AngelicBusterSpec, 
                                                SkipStructure=AngelicBusterSkipATK, 
-                                               Period=120, 
-                                               CycleTime=240, 
+                                               Period=122, 
+                                               CycleTime=244, 
                                                SoulContractReset=0, 
                                                FinituraFettucciaReset=0)
 AngelicBusterDealCycle00 <- DealCycleFinal(AngelicBusterDealCycle00)
@@ -990,19 +943,19 @@ AngelicBusterDealCycle00 <- AngelicBusterAddATK(AngelicBusterDealCycle00,
                                                 Spec=AngelicBusterSpec, 
                                                 SpotLightHits=3)
 AngelicBusterDealCycle00 <- OverDriveExhaustBuff(AngelicBusterDealCycle00, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-AngelicBusterDealCycleReduction00 <- DealCycleReduction(AngelicBusterDealCycle00)
+AngelicBusterDealCycleReduction <- DealCycleReduction(AngelicBusterDealCycle00)
 
 for(i in 0:2) {
   for(j in 0:2) {
-    rm(ABDealCycle)
+    ABDealCycle <- data.frame()
     ABDealCycle <- AngelicBusterCycle(DealCycle=AngelicBusterDealCycle, 
                                       ATKFinal=ATKFinal, 
                                       BuffFinal=BuffFinal, 
                                       SummonedFinal=SummonedFinal, 
                                       Spec=AngelicBusterSpec, 
                                       SkipStructure=AngelicBusterSkipATK, 
-                                      Period=120, 
-                                      CycleTime=240, 
+                                      Period=122, 
+                                      CycleTime=244, 
                                       SoulContractReset=i, 
                                       FinituraFettucciaReset=j)
     ABDealCycle <- DealCycleFinal(ABDealCycle)
@@ -1013,7 +966,6 @@ for(i in 0:2) {
                                        Spec=AngelicBusterSpec, 
                                        SpotLightHits=3)
     ABDealCycle <- OverDriveExhaustBuff(ABDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-    ABDealCycleReduction <- DealCycleReduction(ABDealCycle)
     
     assign(paste("AngelicBusterDealCycle", i, j, sep=""), ABDealCycle)
     assign(paste("AngelicBusterDealCycleReduction", i, j, sep=""), ABDealCycleReduction)
@@ -1021,78 +973,78 @@ for(i in 0:2) {
   }
 }
 
-ABDealCycles <- list(AngelicBusterDealCycleReduction00, AngelicBusterDealCycleReduction10, AngelicBusterDealCycleReduction20, 
-                     AngelicBusterDealCycleReduction01, AngelicBusterDealCycleReduction11, AngelicBusterDealCycleReduction21, 
-                     AngelicBusterDealCycleReduction02, AngelicBusterDealCycleReduction21, AngelicBusterDealCycleReduction22)
-ABDealCycleTimes <- c(max(AngelicBusterDealCycle00$Time), max(AngelicBusterDealCycle10$Time), max(AngelicBusterDealCycle20$Time), 
-                      max(AngelicBusterDealCycle01$Time), max(AngelicBusterDealCycle11$Time), max(AngelicBusterDealCycle21$Time), 
-                      max(AngelicBusterDealCycle02$Time), max(AngelicBusterDealCycle12$Time), max(AngelicBusterDealCycle22$Time))
-ABDealCycleProbs <- c(0.45 * 0.45,        0.55 * 0.45 * 0.45,        0.55 * 0.55 * 0.45, 
-                      0.45 * 0.55 * 0.45, 0.55 * 0.45 * 0.55 * 0.45, 0.55 * 0.55 * 0.55 * 0.45, 
-                      0.45 * 0.55 * 0.55, 0.55 * 0.55 * 0.55 * 0.45, 0.55 * 0.55 * 0.55 * 0.55)
-ABDealCycleTime <- sum(ABDealCycleTimes * ABDealCycleProbs)
+AngelicBusterDealCycles <- list(AngelicBusterDealCycle00, AngelicBusterDealCycle10, AngelicBusterDealCycle20, 
+                                AngelicBusterDealCycle01, AngelicBusterDealCycle11, AngelicBusterDealCycle21, 
+                                AngelicBusterDealCycle02, AngelicBusterDealCycle12, AngelicBusterDealCycle22)
+AngelicBusterDealCycleTimes <- c(max(AngelicBusterDealCycle00$Time), max(AngelicBusterDealCycle10$Time), max(AngelicBusterDealCycle20$Time), 
+                                 max(AngelicBusterDealCycle01$Time), max(AngelicBusterDealCycle11$Time), max(AngelicBusterDealCycle21$Time), 
+                                 max(AngelicBusterDealCycle02$Time), max(AngelicBusterDealCycle12$Time), max(AngelicBusterDealCycle22$Time))
+AngelicBusterDealCycleProbs <- c(0.45 * 0.45,        0.55 * 0.45 * 0.45,        0.55 * 0.55 * 0.45, 
+                                 0.45 * 0.55 * 0.45, 0.55 * 0.45 * 0.55 * 0.45, 0.55 * 0.55 * 0.55 * 0.45, 
+                                 0.45 * 0.55 * 0.55, 0.55 * 0.55 * 0.55 * 0.45, 0.55 * 0.55 * 0.55 * 0.55)
+AngelicBusterDealCycleTime <- sum(AngelicBusterDealCycleTimes * AngelicBusterDealCycleProbs)
 
-AngelicBusterSpecOpt1 <- Optimization1(AngelicBusterDealCycleReduction00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpec, AngelicBusterUnionRemained)
-print(AngelicBusterSpecOpt1)
-AngelicBusterSpecOpt <- AngelicBusterSpec
-AngelicBusterSpecOpt$ATKP <- AngelicBusterSpecOpt$ATKP + AngelicBusterSpecOpt1$ATKP
-AngelicBusterSpecOpt$BDR <- AngelicBusterSpecOpt$BDR + AngelicBusterSpecOpt1$BDR
-AngelicBusterSpecOpt$IGR <- IGRCalc(c(AngelicBusterSpecOpt$IGR, AngelicBusterSpecOpt1$IGR))
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="AngelicBuster") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  AngelicBusterSpecOpt1 <- Optimization1(AngelicBusterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpec, AngelicBusterUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- AngelicBusterSpecOpt1[1, 1:3]
+} else {
+  AngelicBusterSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+AngelicBusterSpecOpt <- OptDataAdd(AngelicBusterSpec, AngelicBusterSpecOpt1, "Potential", AngelicBusterBase$CRROver, DemonAvenger=F)
 
-AngelicBusterSpecOpt2 <- Optimization2(AngelicBusterDealCycleReduction00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterHyperStatBase, AngelicBusterBase$ChrLv, AngelicBusterBase$CRROver, 
-                                       HyperStanceLv=5)
-AngelicBusterFinalDPM <- ResetDealCalc(DealCycles=list(AngelicBusterDealCycle00, AngelicBusterDealCycle10, AngelicBusterDealCycle20, 
-                                                       AngelicBusterDealCycle01, AngelicBusterDealCycle11, AngelicBusterDealCycle21, 
-                                                       AngelicBusterDealCycle02, AngelicBusterDealCycle12, AngelicBusterDealCycle22), 
-                                       ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2, ABDealCycleTimes, ABDealCycleProbs)
-AngelicBusterFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(AngelicBusterDealCycle00, AngelicBusterDealCycle10, AngelicBusterDealCycle20, 
-                                                                        AngelicBusterDealCycle01, AngelicBusterDealCycle11, AngelicBusterDealCycle21, 
-                                                                        AngelicBusterDealCycle02, AngelicBusterDealCycle12, AngelicBusterDealCycle22), 
-                                                        ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2, ABDealCycleTimes, ABDealCycleProbs)
+if(DPMCalcOption$Optimization==T) {
+  AngelicBusterSpecOpt2 <- Optimization2(AngelicBusterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterHyperStatBase, AngelicBusterBase$ChrLv, AngelicBusterBase$CRROver, 
+                                         HyperStanceLv=5)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- AngelicBusterSpecOpt2[1, ]
+} else {
+  AngelicBusterSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+AngelicBusterSpecOpt <- OptDataAdd(AngelicBusterSpecOpt, AngelicBusterSpecOpt2, "HyperStat", AngelicBusterBase$CRROver, DemonAvenger=F)
 
-ABDealDatas <- list(DealCalcWithMaxDMR(AngelicBusterDealCycle00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle10, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle20, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle01, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle21, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle02, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2),
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle12, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2), 
-                    DealCalcWithMaxDMR(AngelicBusterDealCycle22, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2))
+AngelicBusterFinalDPM <- ResetDealCalc(AngelicBusterDealCycles, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterDealCycleTimes, AngelicBusterDealCycleProbs)
+AngelicBusterFinalDPMwithMax <- ResetDealCalcWithMaxDMR(AngelicBusterDealCycles, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterDealCycleTimes, AngelicBusterDealCycleProbs)
 
-AngelicBusterDealRatio <- ResetDealRatio(DealCycles=list(AngelicBusterDealCycle00, AngelicBusterDealCycle10, AngelicBusterDealCycle20, 
-                                                         AngelicBusterDealCycle01, AngelicBusterDealCycle11, AngelicBusterDealCycle21, 
-                                                         AngelicBusterDealCycle02, AngelicBusterDealCycle12, AngelicBusterDealCycle22), 
-                                         DealDatas=ABDealDatas, 
-                                         ABDealCycleTimes, ABDealCycleProbs)
+set(get(DPMCalcOption$DataName), as.integer(1), "AngelicBuster", sum(na.omit(AngelicBusterFinalDPMwithMax)) / (AngelicBusterDealCycleTime / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "AngelicBuster", sum(na.omit(AngelicBusterFinalDPM)) / (AngelicBusterDealCycleTime / 60000) - sum(na.omit(AngelicBusterFinalDPMwithMax)) / (AngelicBusterDealCycleTime / 60000))
 
-DPM12349$AngelicBuster[1] <- sum(na.omit(AngelicBusterFinalDPMwithMax)) / (ABDealCycleTime / 60000)
-DPM12349$AngelicBuster[2] <- sum(na.omit(AngelicBusterFinalDPM)) / (ABDealCycleTime / 60000) - sum(na.omit(AngelicBusterFinalDPMwithMax)) / (ABDealCycleTime / 60000)
+AngelicBusterDealDatas <- list(DealCalcWithMaxDMR(AngelicBusterDealCycle00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle10, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle20, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle01, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle21, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle02, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt),
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle12, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt), 
+                               DealCalcWithMaxDMR(AngelicBusterDealCycle22, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+AngelicBusterDealRatio <- ResetDealRatio(DealCycles=AngelicBusterDealCycles, 
+                                         DealDatas=AngelicBusterDealDatas, 
+                                         AngelicBusterDealCycleTimes, AngelicBusterDealCycleProbs)
 
+AngelicBusterDealDataRR <- data.frame(AngelicBusterDealCycle11$Skills, AngelicBusterDealCycle11$Time, AngelicBusterDealCycle11$Restraint4, 
+                                      DealCalcWithMaxDMR(AngelicBusterDealCycle11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+colnames(AngelicBusterDealDataRR) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "AngelicBuster", Deal_RR(AngelicBusterDealDataRR))
 
-## RR Deal
-ABRRDeal <- DealCalcWithMaxDMR(AngelicBusterDealCycle11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2)
-ABDealData <- data.frame(AngelicBusterDealCycle11$Skills, AngelicBusterDealCycle11$Time, AngelicBusterDealCycle11$Restraint4, ABRRDeal)
-colnames(ABDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(ABDealData, ABDealData$R4>0)
-
-ABRR <- ABDealData[517:1180, ]
-DPM12349$AngelicBuster[3] <- sum((ABRR$Deal))
-
-
-## 40s Deal
-AB40sDeal <- DealCalcWithMaxDMR(AngelicBusterDealCycle00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2)
-ABDealData2 <- data.frame(AngelicBusterDealCycle00$Skills, AngelicBusterDealCycle00$Time, AngelicBusterDealCycle00$Restraint4, AB40sDeal)
-colnames(ABDealData2) <- c("Skills", "Time", "R4", "Deal")
-
-AB40s <- ABDealData2[29:1532, ]
-DPM12349$AngelicBuster[4] <- sum((AB40s$Deal))
+AngelicBusterDealData <- data.frame(AngelicBusterDealCycle00$Skills, AngelicBusterDealCycle00$Time, AngelicBusterDealCycle00$Restraint4, 
+                                    DealCalcWithMaxDMR(AngelicBusterDealCycle00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+colnames(AngelicBusterDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(4), "AngelicBuster", Deal_40s(AngelicBusterDealData, F, StartTime=subset(AngelicBusterDealData, AngelicBusterDealData$Skills=="FinituraFettuccia")$Time[1]))
 
 
 ## SpotLight 2 Hits
 for(i in 0:2) {
   for(j in 0:2) {
-    rm(ABDealCycle)
+    ABDealCycle <- data.frame()
     ABDealCycle <- AngelicBusterCycle(DealCycle=AngelicBusterDealCycle, 
                                       ATKFinal=ATKFinal, 
                                       BuffFinal=BuffFinal, 
@@ -1117,34 +1069,29 @@ for(i in 0:2) {
   }
 }
 
-ABDealCycles2Hits <- list(AngelicBusterDealCycle2Hits00, AngelicBusterDealCycle2Hits10, AngelicBusterDealCycle2Hits20, 
-                          AngelicBusterDealCycle2Hits01, AngelicBusterDealCycle2Hits11, AngelicBusterDealCycle2Hits21, 
-                          AngelicBusterDealCycle2Hits02, AngelicBusterDealCycle2Hits21, AngelicBusterDealCycle2Hits22)
+AngelicBusterDealCycles2Hits <- list(AngelicBusterDealCycle2Hits00, AngelicBusterDealCycle2Hits10, AngelicBusterDealCycle2Hits20, 
+                                     AngelicBusterDealCycle2Hits01, AngelicBusterDealCycle2Hits11, AngelicBusterDealCycle2Hits21, 
+                                     AngelicBusterDealCycle2Hits02, AngelicBusterDealCycle2Hits12, AngelicBusterDealCycle2Hits22)
 
-AngelicBusterDPM2Hits <- ResetDealCalcWithMaxDMR(DealCycles=ABDealCycles2Hits, 
-                                                 ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2, ABDealCycleTimes, ABDealCycleProbs)
-SpotLight2HitsDPM <- sum(na.omit(AngelicBusterDPM2Hits)) / (ABDealCycleTime / 60000)
+AngelicBusterDPM2Hits <- ResetDealCalcWithMaxDMR(DealCycles=AngelicBusterDealCycles2Hits, 
+                                                 ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterDealCycleTimes, AngelicBusterDealCycleProbs)
+SpotLight2HitsDPM <- sum(na.omit(AngelicBusterDPM2Hits)) / (AngelicBusterDealCycleTime / 60000)
 
-ABRRDeal2Hits <- DealCalcWithMaxDMR(AngelicBusterDealCycle2Hits11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2)
-ABDealData2Hits <- data.frame(AngelicBusterDealCycle2Hits11$Skills, AngelicBusterDealCycle2Hits11$Time, AngelicBusterDealCycle2Hits11$Restraint4, ABRRDeal2Hits)
-colnames(ABDealData2Hits) <- c("Skills", "Time", "R4", "Deal")
-subset(ABDealData2Hits, ABDealData2Hits$R4>0)
+AngelicBusterDealData2Hits <- data.frame(AngelicBusterDealCycle2Hits11$Skills, AngelicBusterDealCycle2Hits11$Time, AngelicBusterDealCycle2Hits11$Restraint4, 
+                                         DealCalcWithMaxDMR(AngelicBusterDealCycle2Hits11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+colnames(AngelicBusterDealData2Hits) <- c("Skills", "Time", "R4", "Deal")
+AngelicBusterRR2Hits <- Deal_RR(AngelicBusterDealData2Hits)
 
-ABRR2Hits <- ABDealData2Hits[495:1142, ]
-ABRR2Hits <- sum((ABRR2Hits$Deal))
-
-AB40sDeal2Hits <- DealCalcWithMaxDMR(AngelicBusterDealCycle2Hits00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2)
-ABDealData22Hits <- data.frame(AngelicBusterDealCycle2Hits00$Skills, AngelicBusterDealCycle2Hits00$Time, AngelicBusterDealCycle2Hits00$Restraint4, AB40sDeal2Hits)
-colnames(ABDealData22Hits) <- c("Skills", "Time", "R4", "Deal")
-
-AB40s2Hits <- ABDealData22Hits[28:1501, ]
-AB40s2Hits <- sum((AB40s2Hits$Deal))
+AngelicBusterDealData22Hits <- data.frame(AngelicBusterDealCycle2Hits00$Skills, AngelicBusterDealCycle2Hits00$Time, AngelicBusterDealCycle2Hits00$Restraint4, 
+                                          DealCalcWithMaxDMR(AngelicBusterDealCycle2Hits00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+colnames(AngelicBusterDealData22Hits) <- c("Skills", "Time", "R4", "Deal")
+AngelicBuster40s2Hits <- Deal_40s(AngelicBusterDealData22Hits, F, StartTime=subset(AngelicBusterDealData22Hits, AngelicBusterDealData22Hits$Skills=="FinituraFettuccia")$Time[1])
 
 
 ## SpotLight 1 Hit
 for(i in 0:2) {
   for(j in 0:2) {
-    rm(ABDealCycle)
+    ABDealCycle <- data.frame()
     ABDealCycle <- AngelicBusterCycle(DealCycle=AngelicBusterDealCycle, 
                                       ATKFinal=ATKFinal, 
                                       BuffFinal=BuffFinal, 
@@ -1169,25 +1116,23 @@ for(i in 0:2) {
   }
 }
 
-ABDealCycles1Hit <- list(AngelicBusterDealCycle1Hit00, AngelicBusterDealCycle1Hit10, AngelicBusterDealCycle1Hit20, 
-                          AngelicBusterDealCycle1Hit01, AngelicBusterDealCycle1Hit11, AngelicBusterDealCycle1Hit21, 
-                          AngelicBusterDealCycle1Hit02, AngelicBusterDealCycle1Hit21, AngelicBusterDealCycle1Hit22)
+AngelicBusterDealCycles1Hit <- list(AngelicBusterDealCycle1Hit00, AngelicBusterDealCycle1Hit10, AngelicBusterDealCycle1Hit20, 
+                                    AngelicBusterDealCycle1Hit01, AngelicBusterDealCycle1Hit11, AngelicBusterDealCycle1Hit21, 
+                                    AngelicBusterDealCycle1Hit02, AngelicBusterDealCycle1Hit12, AngelicBusterDealCycle1Hit22)
 
-AngelicBusterDPM1Hit <- ResetDealCalcWithMaxDMR(DealCycles=ABDealCycles1Hit, 
-                                                 ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2, ABDealCycleTimes, ABDealCycleProbs)
-SpotLight1HitDPM <- sum(na.omit(AngelicBusterDPM1Hit)) / (ABDealCycleTime / 60000)
+AngelicBusterDPM1Hit <- ResetDealCalcWithMaxDMR(DealCycles=AngelicBusterDealCycles1Hit, 
+                                                ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterDealCycleTimes, AngelicBusterDealCycleProbs)
+SpotLight1HitDPM <- sum(na.omit(AngelicBusterDPM1Hit)) / (AngelicBusterDealCycleTime / 60000)
 
-ABRRDeal1Hit <- DealCalcWithMaxDMR(AngelicBusterDealCycle1Hit11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2)
-ABDealData1Hit <- data.frame(AngelicBusterDealCycle1Hit11$Skills, AngelicBusterDealCycle1Hit11$Time, AngelicBusterDealCycle1Hit11$Restraint4, ABRRDeal1Hit)
-colnames(ABDealData1Hit) <- c("Skills", "Time", "R4", "Deal")
-subset(ABDealData1Hit, ABDealData1Hit$R4>0)
+AngelicBusterDealData1Hit <- data.frame(AngelicBusterDealCycle1Hit11$Skills, AngelicBusterDealCycle1Hit11$Time, AngelicBusterDealCycle1Hit11$Restraint4, 
+                                        DealCalcWithMaxDMR(AngelicBusterDealCycle1Hit11, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+colnames(AngelicBusterDealData1Hit) <- c("Skills", "Time", "R4", "Deal")
+AngelicBusterRR1Hit <- Deal_RR(AngelicBusterDealData1Hit)
 
-ABRR1Hit <- ABDealData1Hit[473:1104, ]
-ABRR1Hit <- sum((ABRR1Hit$Deal))
+AngelicBusterDealData21Hit <- data.frame(AngelicBusterDealCycle1Hit00$Skills, AngelicBusterDealCycle1Hit00$Time, AngelicBusterDealCycle1Hit00$Restraint4, 
+                                         DealCalcWithMaxDMR(AngelicBusterDealCycle1Hit00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt))
+colnames(AngelicBusterDealData21Hit) <- c("Skills", "Time", "R4", "Deal")
+AngelicBuster40s1Hit <- Deal_40s(AngelicBusterDealData21Hit, F, StartTime=subset(AngelicBusterDealData21Hit, AngelicBusterDealData21Hit$Skills=="FinituraFettuccia")$Time[1])
 
-AB40sDeal1Hit <- DealCalcWithMaxDMR(AngelicBusterDealCycle1Hit00, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt2)
-ABDealData21Hit <- data.frame(AngelicBusterDealCycle1Hit00$Skills, AngelicBusterDealCycle1Hit00$Time, AngelicBusterDealCycle1Hit00$Restraint4, AB40sDeal1Hit)
-colnames(ABDealData21Hit) <- c("Skills", "Time", "R4", "Deal")
-
-AB40s1Hit <- ABDealData21Hit[27:1456, ]
-AB40s1Hit <- sum((AB40s1Hit$Deal))
+print(list(ABSpotlight2Hits=data.frame(SpotLight2HitsDPM=SpotLight2HitsDPM, AngelicBusterRR2Hits=AngelicBusterRR2Hits, AngelicBuster40s2Hits=AngelicBuster40s2Hits), 
+           ABSpotlight1Hit=data.frame(SpotLight1HitDPM=SpotLight1HitDPM, AngelicBusterRR1Hit=AngelicBusterRR1Hit, AngelicBuster40s1Hit=AngelicBuster40s1Hit)))

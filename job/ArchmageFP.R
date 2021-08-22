@@ -1,37 +1,43 @@
 ## ArchmageFP - Data
 ## ArchmageFP - VMatrix
-ArchMageFPCore <- MatrixSet(PasSkills=c("Paralyze", "FlameHaze", "MistEruption", "FireAura", "Meteor", "Ignite", "MegiddoFlame", "Ifrit", "TeleportMastery"), 
-                            PasLvs=c(50, 50, 50, 50, 50, 50, 25, 25, 25), 
-                            PasMP=c(10, 10, 10, 10, 10, 10, 0, 0, 0), 
-                            ActSkills=c("DotPunisher", "PoisonNova", "FuryofIfrit", "PosionChain",
-                                        CommonV("Wizard", "Adventure")), 
-                            ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                            ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                            BlinkLv=1, 
-                            BlinkMP=0, 
-                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
+ArchMageFPCoreBase <- CoreBuilder(ActSkills=c("DotPunisher", "PoisonNova", "FuryofIfrit", "PoisonChain",
+                                              CommonV("Wizard", "Adventure")), 
+                                  ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                                  UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                  SpecSet=get(DPMCalcOption$SpecSet), 
+                                  VPassiveList=ArchMageFPVPassive, 
+                                  VPassivePrior=ArchMageFPVPrior, 
+                                  SelfBind=F)
+
+ArchMageFPCore <- MatrixSet(PasSkills=ArchMageFPCoreBase$PasSkills$Skills, 
+                            PasLvs=ArchMageFPCoreBase$PasSkills$Lv, 
+                            PasMP=ArchMageFPCoreBase$PasSkills$MP, 
+                            ActSkills=ArchMageFPCoreBase$ActSkills$Skills, 
+                            ActLvs=ArchMageFPCoreBase$ActSkills$Lv, 
+                            ActMP=ArchMageFPCoreBase$ActSkills$MP, 
+                            UsefulSkills=ArchMageFPCoreBase$UsefulSkills, 
                             UsefulLvs=20, 
                             UsefulMP=0, 
-                            SpecSet=SpecDefault,
-                            SelfBind=F)
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            SpecialCore=ArchMageFPCoreBase$SpecialCoreUse)
 
 
 ## ArchmageFP - Basic Info
 ## Link Check Needed
 ArchMageFPBase <- JobBase(ChrInfo=ChrInfo, 
-                          MobInfo=MobDefault,
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet),
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           Job="ArchMageFP",
                           CoreData=ArchMageFPCore, 
                           BuffDurationNeeded=310, 
-                          AbilList=c("BuffDuration", "DisorderBDR"), 
-                          LinkList=c("Zero", "Mikhail", "DemonAvenger", "Phantom"), 
-                          MonsterLife=MLTypeI21, 
-                          Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Wand", SpecDefault$WeaponType)[, 1:16],
-                          WeaponType=SpecDefault$WeaponType, 
-                          SubWeapon=SubWeapon[5, ], 
-                          Emblem=Emblem[1, ],
-                          CoolReduceHat=T)
+                          AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "ArchMageFP"), 
+                          LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "ArchMageFP"), 
+                          MonsterLife=get(FindJob(MonsterLifePreSet, "ArchMageFP")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                          Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Wand", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                          WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                          SubWeapon=SubWeapon[rownames(SubWeapon)=="FPGrimoire", ], 
+                          Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                          CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "ArchMageFP")))
 
 
 ## ArchMageFP - Passive
@@ -79,16 +85,12 @@ option <- factor(c("Mastery"), levels=PSkill)
 value <- c(70 + ceiling(ArchMageFPBase$SkillLv/2))
 Ifrit <- data.frame(option, value)
 
-option <- factor(c("FDR"), levels=PSkill)
-value <- c(8 + floor(ArchMageFPCore[[2]][5, 2]/10))
-OverloadMana <- data.frame(option, value) ## ATK Skills Only
-
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(ArchMageFPCore[[2]][7, 2])
+value <- c(GetCoreLv(ArchMageFPCore, "UnstableMemorize"))
 UnstableMemorize <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(ArchMageFPCore[[2]][10, 2])
+value <- c(GetCoreLv(ArchMageFPCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 ArchMageFPPassive <- Passive(list(MPIncrease=MPIncrease, HighWisdom=HighWisdom, SpellMastery=SpellMastery, ElementalReset=ElementalReset, ElementAmplification=ElementAmplification, 
@@ -106,14 +108,14 @@ MagicBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(240, NA, 600, T, NA, NA, T)
+info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Meditation <- rbind(data.frame(option, value), info)
 
 option <- factor("ImmuneIgnore", levels=BSkill)
 value <- c(10)
-info <- c(240, NA, 990, T, NA, NA, T)
+info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ElementalReset <- rbind(data.frame(option, value), info)
@@ -153,31 +155,29 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 FireAura <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * ArchMageFPCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * ArchMageFPCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(ArchMageFPCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * ArchMageFPCore[[2]][7, 2]) * MapleSoldier[1, 2]) * ArchMageFPBase$MainStatP), 5 + floor(ArchMageFPCore[[2]][7, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(ArchMageFPCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * ArchMageFPBase$MainStatP), 5 + floor(GetCoreLv(ArchMageFPCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-ArchMageFPBuff <- Buff(list(MagicBooster=MagicBooster, Meditation=Meditation, ElementalReset=ElementalReset, MeteorBuff=MeteorBuff, Infinity=Infinity, 
-                            MapleSoldier=MapleSoldier, EpicAdventure=EpicAdventure, FireAura=FireAura, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                            MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, MagicBooster(990ms)
+ArchMageFPBuff <- list(MagicBooster=MagicBooster, Meditation=Meditation, ElementalReset=ElementalReset, MeteorBuff=MeteorBuff, Infinity=Infinity, 
+                       MapleSoldier=MapleSoldier, EpicAdventure=EpicAdventure, FireAura=FireAura, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                       MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, MagicBooster(990ms), Meditation(600ms), ElementalReset(990ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  ArchMageFPBuff[[length(ArchMageFPBuff)+1]] <- UsefulAdvancedBless
+  names(ArchMageFPBuff)[[length(ArchMageFPBuff)]] <- "UsefulAdvancedBless"
+}
+ArchMageFPBuff <- Buff(ArchMageFPBuff)
 ArchMageFPAllTimeBuff <- AllTimeBuff(ArchMageFPBuff)
 
 
@@ -185,8 +185,8 @@ ArchMageFPAllTimeBuff <- AllTimeBuff(ArchMageFPBuff)
 ArchMageFPSpec <- JobSpec(JobBase=ArchMageFPBase, 
                           Passive=ArchMageFPPassive, 
                           AllTimeBuff=ArchMageFPAllTimeBuff, 
-                          MobInfo=MobDefault, 
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet), 
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           WeaponName="Wand", 
                           UnionStance=0, 
                           JobConstant=1.2)
@@ -198,61 +198,15 @@ ArchMageFPSpec <- ArchMageFPSpec$Spec
 
 
 ## ArchMageFP - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * ArchMageFPCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageFPCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageFPCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageFPCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageFPCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageFPCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(ArchMageFPCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## ArchMageFP - Unstable Memorize Data
@@ -270,288 +224,290 @@ IgniteUnsProb <- (sum(ArchMageFPUnstable$Prob[c(2, 4, 7, 9, 10, 13)])) * 0.5
 
 ## ArchMageFP - Attacks
 {option <- factor(c("FDR"), levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
 info <- c(309, ArchMageFPUnstable[1, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 EnergyBoltUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
 info <- c(301, 2 * ArchMageFPUnstable[2, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FlameOrbUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
 info <- c(180, ArchMageFPUnstable[3, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonBreathUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
 info <- c(405, 2 * ArchMageFPUnstable[4, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExplosionUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
 info <- c(270, ArchMageFPUnstable[5, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonMistUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][1, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, ifelse(ArchMageFPCore[[1]][1, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "Paralyze"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), 10, ifelse(GetCoreLv(ArchMageFPCore, "Paralyze")>=40, 20, 0))
 info <- c(220 + 3 * ArchMageFPSpec$SkillLv, 8 * ArchMageFPUnstable[7, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ParalyzeUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][3, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchMageFPCore[[1]][3, 2]>=40, 20, 0), 20, 40 + ArchMageFPSpec$SkillLv)))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "MistEruption"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), 10, 
+           IGRCalc(c(ifelse(GetCoreLv(ArchMageFPCore, "MistEruption")>=40, 20, 0), 20, 40 + ArchMageFPSpec$SkillLv)))
 info <- c((125 + ArchMageFPSpec$SkillLv) * 2.25, 20 * ArchMageFPUnstable[8, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MistEruptionUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][5, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), ifelse(ArchMageFPCore[[1]][5, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "Meteor"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(ArchMageFPCore, "Meteor")>=40, 20, 0))
 info <- c(315 + 3 * ArchMageFPSpec$SkillLv, 12 * ArchMageFPUnstable[9, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MeteorUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][2, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), ifelse(ArchMageFPCore[[1]][2, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "FlameHaze"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(ArchMageFPCore, "FlameHaze")>=40, 20, 0))
 info <- c(202 + 3 * ArchMageFPSpec$SkillLv, 15 * ArchMageFPUnstable[10, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FlameHazeUnstable <- rbind(data.frame(option, value), info)
 
-option <- factor("FDR", levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][7, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)))
+option <- factor(c("FDR", "IGR"), levels=ASkill)
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "MegiddoFlame"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(ArchMageFPCore, "MegiddoFlame")>=40, 20, 0))
 info <- c(420, 15 * ArchMageFPUnstable[13, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MegiddoFlameUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][1, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, ifelse(ArchMageFPCore[[1]][1, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "Paralyze"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), 10, ifelse(GetCoreLv(ArchMageFPCore, "Paralyze")>=40, 20, 0))
 info <- c(220 + 3 * ArchMageFPSpec$SkillLv, 8, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Paralyze <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][6, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), 10, IGRCalc(c(ifelse(ArchMageFPCore[[1]][3, 2]>=40, 20, 0), 20, 40 + ArchMageFPSpec$SkillLv)))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "MistEruption"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), 10, 
+           IGRCalc(c(ifelse(GetCoreLv(ArchMageFPCore, "MistEruption")>=40, 20, 0), 20, 40 + ArchMageFPSpec$SkillLv)))
 info <- c((125 + ArchMageFPSpec$SkillLv) * 2.25, 20, 930, NA, 8 * (1 - 0.5 - ArchMageFPSpec$CoolReduceP/100), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MistEruption <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][5, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), ifelse(ArchMageFPCore[[1]][5, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "Meteor"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(ArchMageFPCore, "Meteor")>=40, 20, 0))
 info <- c(315 + 3 * ArchMageFPSpec$SkillLv, 12, 900, NA, 45, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Meteor <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * ArchMageFPCore[[1]][5, 2], ifelse(ArchMageFPCore[[1]][5, 2]>=40, 20, 0))
+option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
+value <- c(2 * GetCoreLv(ArchMageFPCore, "Meteor"), ArchMageFPBase$MonsterLife$FinalATKDMR,  ifelse(GetCoreLv(ArchMageFPCore, "Meteor")>=40, 20, 0))
 info <- c(220 + 4 * ArchMageFPSpec$SkillLv, 0.6 + 0.02 * ArchMageFPSpec$SkillLv, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MeteorFinalAttack <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * ArchMageFPCore[[1]][5, 2], ifelse(ArchMageFPCore[[1]][5, 2]>=40, 20, 0))
+option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
+value <- c(2 * GetCoreLv(ArchMageFPCore, "Meteor"), ArchMageFPBase$MonsterLife$FinalATKDMR, ifelse(GetCoreLv(ArchMageFPCore, "Meteor")>=40, 20, 0))
 info <- c(220 + 4 * ArchMageFPSpec$SkillLv, MeteorFinalATKProb, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MeteorFinalAttackUnstable <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * ArchMageFPCore[[1]][5, 2], ifelse(ArchMageFPCore[[1]][5, 2]>=40, 20, 0))
-info <- c(220 + 4 * ArchMageFPSpec$SkillLv, ifelse(BossSize=="Scarecrow", 4, 12) * (0.6 + 0.02 * ArchMageFPSpec$SkillLv), 0, NA, NA, NA, NA, F)
+option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
+value <- c(2 * GetCoreLv(ArchMageFPCore, "Meteor"), ArchMageFPBase$MonsterLife$FinalATKDMR, ifelse(GetCoreLv(ArchMageFPCore, "Meteor")>=40, 20, 0))
+info <- c(220 + 4 * ArchMageFPSpec$SkillLv, ifelse(get(DPMCalcOption$MobSet)$Basic$Size==1, 4, 12) * (0.6 + 0.02 * ArchMageFPSpec$SkillLv), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MeteorFinalAttackPoisonNova <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * ArchMageFPCore[[1]][5, 2], ifelse(ArchMageFPCore[[1]][5, 2]>=40, 20, 0))
+option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
+value <- c(2 * GetCoreLv(ArchMageFPCore, "Meteor"), ArchMageFPBase$MonsterLife$FinalATKDMR, ifelse(GetCoreLv(ArchMageFPCore, "Meteor")>=40, 20, 0))
 info <- c(220 + 4 * ArchMageFPSpec$SkillLv, 22 * (0.6 + 0.02 * ArchMageFPSpec$SkillLv), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MeteorFinalAttackDotPunisher <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][2, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)), ifelse(ArchMageFPCore[[1]][2, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "FlameHaze"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(ArchMageFPCore, "FlameHaze")>=40, 20, 0))
 info <- c(202 + 3 * ArchMageFPSpec$SkillLv, 15, 1440, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FlameHaze <- rbind(data.frame(option, value), info)
 
-option <- factor("FDR", levels=ASkill)
-value <- c(3 * ArchMageFPCore[[1]][9, 2])
+option <- factor(c("FDR", "IGR"), levels=ASkill)
+value <- c(3 * GetCoreLv(ArchMageFPCore, "TeleportMastery"), ifelse(GetCoreLv(ArchMageFPCore, "TeleportMastery")>=40, 20, 0))
 info <- c(272, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TeleportMastery <- rbind(data.frame(option, value), info)
 
-option <- factor("FDR", levels=ASkill)
-value <- c(FDRCalc(c(2 * ArchMageFPCore[[1]][7, 2], floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)))
+option <- factor(c("FDR", "IGR"), levels=ASkill)
+value <- c(FDRCalc(c(2 * GetCoreLv(ArchMageFPCore, "MegiddoFlame"), floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(ArchMageFPCore, "MegiddoFlame")>=40, 20, 0))
 info <- c(420, 15, 900, NA, 50, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MegiddoFlame <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
 info <- c(40, 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Ignite <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
 info <- c(40, IgniteUnsProb * 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IgniteUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
 info <- c(40, (ArchMageFPSpec$SkillLv * 0.02 + 0.6) * 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IgniteMeteorFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
 info <- c(40, MeteorFinalATKProb * 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IgniteUnstableFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
 info <- c(40, 22 * 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IgniteDotPunisher <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
 info <- c(40, 22 * (ArchMageFPSpec$SkillLv * 0.02 + 0.6) * 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IgniteDotPunisherFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(4 * ArchMageFPCore[[1]][6, 2], ifelse(ArchMageFPCore[[1]][6, 2]>=40, 20, 0))
-info <- c(40, (ifelse(BossSize=="Scarecrow", 4, 12) * (ArchMageFPSpec$SkillLv * 0.02 + 0.6)) * 3 * 0.5, 0, 1500, NA, NA, NA, F)
+value <- c(4 * GetCoreLv(ArchMageFPCore, "Ignite"), ifelse(GetCoreLv(ArchMageFPCore, "Ignite")>=40, 20, 0))
+info <- c(40, (ifelse(get(DPMCalcOption$MobSet)$Basic$Size==1, 4, 12) * (ArchMageFPSpec$SkillLv * 0.02 + 0.6)) * 3 * 0.5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IgnitePoisonNova <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "FDR", "IGR"), levels=ASkill)
-value <- c(-50, 2 * ArchMageFPCore[[1]][4, 2], ifelse(ArchMageFPCore[[1]][4, 2]>=40, 20, 0))
+value <- c(-50, 2 * GetCoreLv(ArchMageFPCore, "FireAura"), ifelse(GetCoreLv(ArchMageFPCore, "FireAura")>=40, 20, 0))
 info <- c(400, 2, 0, 3000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FireAura <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(400 + 15 * ArchMageFPCore[[2]][1, 2], 5, 900, NA, 25, T, F, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(400 + 15 * GetCoreLv(ArchMageFPCore, "DotPunisher"), 5, 900, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DotPunisher1st <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c((400 + 15 * ArchMageFPCore[[2]][1, 2]) * 0.65, 5 * 21, 0, NA, 25, T, F, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c((400 + 15 * GetCoreLv(ArchMageFPCore, "DotPunisher")) * 0.65, 5 * 21, 0, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DotPunisherRemain <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(250 + 10 * ArchMageFPCore[[2]][2, 2], 12, 750, NA, 25, T, F, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(250 + 10 * GetCoreLv(ArchMageFPCore, "PoisonNova"), 12, 750, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonNovaStart <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * ArchMageFPCore[[2]][2, 2], 36, 0, NA, 25, T, F, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(ArchMageFPCore, "PoisonNova"), 36, 0, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonNova123 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c((225 + 9 * ArchMageFPCore[[2]][2, 2]) * 0.5, ifelse(BossSize=="Scarecrow", 12, 108), 0, NA, 25, T, F, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c((225 + 9 * GetCoreLv(ArchMageFPCore, "PoisonNova")) * 0.5, ifelse(get(DPMCalcOption$MobSet)$Basic$Size==1, 12, 108), 0, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonNovaRemain <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(200 + 8 * ArchMageFPCore[[2]][3, 2], 6, 480, 180, 75, T, F, F)
+info <- c(200 + 8 * GetCoreLv(ArchMageFPCore, "FuryofIfrit"), 6, 480, 180, 75, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FuryofIfrit <- rbind(data.frame(option, value), info) # FuryofIfrit StartDelay : 1560ms
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(250 + 10 * ArchMageFPCore[[2]][4, 2], 4, 0, NA, 25, T, F, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(250 + 10 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 4, 0, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChainPre <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 6 * ArchMageFPCore[[2]][4, 2], 6, 780, 1800, NA, NA, NA, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(150 + 6 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 6, 780, 1800, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 1 * (30 + ArchMageFPCore[[2]][4, 2]) + 6 * ArchMageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(150 + 1 * (30 + GetCoreLv(ArchMageFPCore, "PoisonChain")) + 6 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 2 * (30 + ArchMageFPCore[[2]][4, 2]) + 6 * ArchMageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(150 + 2 * (30 + GetCoreLv(ArchMageFPCore, "PoisonChain")) + 6 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain3 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 3 * (30 + ArchMageFPCore[[2]][4, 2]) + 6 * ArchMageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(150 + 3 * (30 + GetCoreLv(ArchMageFPCore, "PoisonChain")) + 6 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain4 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 4 * (30 + ArchMageFPCore[[2]][4, 2]) + 6 * ArchMageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(150 + 4 * (30 + GetCoreLv(ArchMageFPCore, "PoisonChain")) + 6 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChain5 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(ArchMageFPCore[[2]][5, 2] / 10) + 8)
-info <- c(150 + 5 * (30 + ArchMageFPCore[[2]][4, 2]) + 6 * ArchMageFPCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
+info <- c(150 + 5 * (30 + GetCoreLv(ArchMageFPCore, "PoisonChain")) + 6 * GetCoreLv(ArchMageFPCore, "PoisonChain"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PoisonChainMax <- rbind(data.frame(option, value), info)
@@ -585,8 +541,8 @@ ArchMageFPATK <- Attack(list(EnergyBoltUnstable=EnergyBoltUnstable, FlameOrbUnst
 
 
 ## ArchMageFP - Summoned
-{option <- factor("FDR", levels=SSkill)
-value <- c(2 * ArchMageFPCore[[1]][8, 2])
+{option <- factor(c("FDR", "IGR"), levels=SSkill)
+value <- c(2 * GetCoreLv(ArchMageFPCore, "Ifrit"), ifelse(GetCoreLv(ArchMageFPCore, "Ifrit")>=40, 20, 0))
 info <- c(150 + 2 * ArchMageFPSpec$SkillLv, 3, 600, 3030, 260 + 5 * ArchMageFPSpec$SkillLv, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -605,7 +561,7 @@ ATKFinal$CoolTime[-13] <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailab
 BuffFinal <- data.frame(ArchMageFPBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, ArchMageFPSpec$CoolReduceP, ArchMageFPSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, ArchMageFPSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(ArchMageFPSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, ArchMageFPSpec$CoolReduceP, ArchMageFPSpec$CoolReduce)
@@ -615,7 +571,6 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 DealCycle <- c("Skills", "Time", rownames(ArchMageFPBuff))
 ArchMageFPDealCycle <- t(rep(0, length(DealCycle)))
 colnames(ArchMageFPDealCycle) <- DealCycle
-
 DealCycle <- c("Skills", "Time", rownames(ArchMageFPBuff))
 ArchMageFPDealCycle2 <- t(rep(0, length(DealCycle)))
 colnames(ArchMageFPDealCycle2) <- DealCycle
@@ -623,6 +578,9 @@ colnames(ArchMageFPDealCycle2) <- DealCycle
 FPInfinityCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DCBuff(DealCycle, c("FireAura", "MagicBooster", "Meditation", "ElementalReset", "MapleSoldier", "EpicAdventure",
                                    "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCSummoned(DealCycle, "Ifrit", SummonedFinal)
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
   
@@ -915,6 +873,9 @@ FPInfinityCycle2 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
 }
 FPInfinityCycle3 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DCBuff(DealCycle, c("FireAura", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCSummoned(DealCycle, "Ifrit", SummonedFinal)
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
   
@@ -1023,7 +984,7 @@ ArchMageFPDealCycle2 <- FPInfinityCycle3(ArchMageFPDealCycle2, ATKFinal, BuffFin
 ArchMageFPDealCycle2 <- FPUnsCycle(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageFPDealCycle2 <- DealCycleFinal(ArchMageFPDealCycle2)
 
-FPUnsdata <- UnstableData(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPUnstable[11, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
+FPUnsdata <- UnstableData(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPUnstable[11, 3], BuffFinal[rownames(BuffFinal)=="Infinity", ]$Duration, BuffFinal[rownames(BuffFinal)=="Infinity", ]$CoolTime)
 
 ArchMageFPDealCycle <- DCSummonedATKs(ArchMageFPDealCycle, "Ifrit", SummonedFinal)
 ArchMageFPDealCycle <- FuryofIfritCycle(ArchMageFPDealCycle, ATKFinal)
@@ -1042,32 +1003,55 @@ ArchMageFPDealCycle2 <- FPAddATKCycle(ArchMageFPDealCycle2, ATKFinal)
 ArchMageFPDealCycle2 <- RepATKCycle(ArchMageFPDealCycle2, "FireAura", 70, 0, ATKFinal)
 ArchMageFPDealCycle2 <- BishopInfinity(ArchMageFPDealCycle2, 6000, 70 + ArchMageFPSpec$SkillLv, General$General$Serverlag)
 
+ArchMageFPDealCycle <- FPDealCycleReduction(ArchMageFPDealCycle, c("Ignite", "IgniteDotPunisher", "IgniteDotPunisherFinalAttack", "IgnitePoisonNova", "IgniteUnstableFinalAttack", "IgniteMeteorFinalAttack"))
+ArchMageFPDealCycle2 <- FPDealCycleReduction(ArchMageFPDealCycle2, c("Ignite", "IgniteDotPunisher", "IgniteDotPunisherFinalAttack", "IgnitePoisonNova", "IgniteUnstableFinalAttack", "IgniteMeteorFinalAttack"))
 
-## ArchMageFP Deal Calc
-BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, FPUnsdata)
-BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, FPUnsdata)
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="ArchMageFP") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  ArchMageFPSpecOpt1 <- InfinityOptimization1(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, ArchMageFPUnionRemained, FPUnsdata,
+                                          NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- ArchMageFPSpecOpt1[1, 1:3]
+} else {
+  ArchMageFPSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+ArchMageFPSpecOpt <- OptDataAdd(ArchMageFPSpec, ArchMageFPSpecOpt1, "Potential", ArchMageFPBase$CRROver, DemonAvenger=F)
 
-ArchMageFPSpecOpt1 <- BishopOptimization1(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpec, ArchMageFPUnionRemained, FPUnsdata)
-ArchMageFPSpecOpt <- ArchMageFPSpec
-ArchMageFPSpecOpt$ATKP <- ArchMageFPSpecOpt$ATKP + ArchMageFPSpecOpt1$ATKP
-ArchMageFPSpecOpt$BDR <- ArchMageFPSpecOpt$BDR + ArchMageFPSpecOpt1$BDR
-ArchMageFPSpecOpt$IGR <- IGRCalc(c(ArchMageFPSpecOpt$IGR, ArchMageFPSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  ArchMageFPSpecOpt2 <- InfinityOptimization2(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, ArchMageFPHyperStatBase, ArchMageFPBase$ChrLv, ArchMageFPBase$CRROver, FPUnsdata, 
+                                          NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- ArchMageFPSpecOpt2[1, ]
+} else {
+  ArchMageFPSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+ArchMageFPSpecOpt <- OptDataAdd(ArchMageFPSpecOpt, ArchMageFPSpecOpt2, "HyperStat", ArchMageFPBase$CRROver, DemonAvenger=F)
 
-ArchMageFPSpecOpt2 <- BishopOptimization2(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, ArchMageFPHyperStatBase, ArchMageFPBase$ChrLv, ArchMageFPBase$CRROver, FPUnsdata)
-ArchMageFPFinalDPM <- BishopDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, FPUnsdata)
-ArchMageFPFinalDPMwithMax <- BishopDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2, FPUnsdata)
+ArchMageFPFinalDPM <- InfinityDealCalc(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, FPUnsdata, 
+                                       NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+ArchMageFPFinalDPMwithMax <- InfinityDealCalcWithMaxDMR(ArchMageFPDealCycle, ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, FPUnsdata, 
+                                                        NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
 
-DPM12349$ArchMageFP[1] <- sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
-DPM12349$ArchMageFP[2] <- sum(na.omit(ArchMageFPFinalDPM)) / (FPUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "ArchMageFP", sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "ArchMageFP", sum(na.omit(ArchMageFPFinalDPM)) / (FPUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageFPFinalDPMwithMax)) / (FPUnsdata$DealCycleTime * 1000 / 60000))
 
-ArchMageFPDamage <- BishopDealCalcGeneral(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2)
-ArchMageFP40s <- data.frame(ArchMageFPDealCycle$Skills, ArchMageFPDealCycle$Time, ArchMageFPDealCycle$Restraint4, ArchMageFPDealCycle$Infinity, ArchMageFPDealCycle$InfinityFDR, ArchMageFPDamage)
-colnames(ArchMageFP40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
-subset(ArchMageFP40s, ArchMageFP40s$RR4>0)
+ArchMageFPDealData <- data.frame(ArchMageFPDealCycle$Skills, ArchMageFPDealCycle$Time, ArchMageFPDealCycle$Restraint4, 
+                                 DealCalcWithMaxDMR(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
+                                                    NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")))
+colnames(ArchMageFPDealData) <- c("Skills", "Time", "R4", "Deal")
+ArchMageFPDealRatio <- InfinityDealRatio(ArchMageFPDealCycle, ArchMageFPDealCycle2, 
+                                         DealCalcWithMaxDMR(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
+                                                            NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), 
+                                         DealCalcWithMaxDMR(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
+                                                            NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), FPUnsdata)
 
-DPM12349$ArchMageFP[3] <- sum(ArchMageFP40s$Damage[1495:1829])
-DPM12349$ArchMageFP[4] <- sum(ArchMageFP40s$Damage[1149:1838])
-
-ArchMageFPDamage2 <- BishopDealCalcGeneral(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt2)
-
-FPDealRatio <- BishopDealRatio(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPDamage, ArchMageFPDamage2, FPUnsdata)
+set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageFP", Deal_RR(ArchMageFPDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageFP", Deal_40s(ArchMageFPDealData, F, NA, FinishTime=subset(ArchMageFPDealData, ArchMageFPDealData$Skills=="Restraint4")$Time[1] + 15000))

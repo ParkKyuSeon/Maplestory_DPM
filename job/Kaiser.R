@@ -1,38 +1,42 @@
 ## Kaiser - Data
 ## Kaiser - VMatrix
-## Core Check Needed
-KaiserCore <- MatrixSet(PasSkills=c("WillofSword", "Wingbeat", "Petrified", "GigaSlasher", "InfernalBreath", "SwordStrike", "Prominance", "BlueStreak"), 
-                        PasLvs=c(50, 50, 50, 50, 50, 50, 50, 25), 
-                        PasMP=c(10, 10, 5, 10, 10, 5, 10, 0), 
-                        ActSkills=c("GuardianofNova", "WillofSwordStrike", "DracoSlasher", "DragonBlaze", 
-                                    CommonV("Warrior", "Nova")[c(1, 2, 4, 5)]), 
-                        ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
-                        ActMP=c(5, 5, 5, 5, 5, 0, 5, 5), 
-                        BlinkLv=1, 
-                        BlinkMP=0, 
-                        UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
+KaiserCoreBase <- CoreBuilder(ActSkills=c("GuardianofNova", "WillofSwordStrike", "DracoSlasher", "DragonBlaze", 
+                                          CommonV("Warrior", "Nova")[c(1, 2, 4, 5)]), 
+                              ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
+                              UsefulSkills=c("SharpEyes", "CombatOrders", "WindBooster"), 
+                              SpecSet=get(DPMCalcOption$SpecSet), 
+                              VPassiveList=KaiserVPassive, 
+                              VPassivePrior=KaiserVPrior, 
+                              SelfBind=F)
+
+KaiserCore <- MatrixSet(PasSkills=KaiserCoreBase$PasSkills$Skills, 
+                        PasLvs=KaiserCoreBase$PasSkills$Lv, 
+                        PasMP=KaiserCoreBase$PasSkills$MP, 
+                        ActSkills=KaiserCoreBase$ActSkills$Skills, 
+                        ActLvs=KaiserCoreBase$ActSkills$Lv, 
+                        ActMP=KaiserCoreBase$ActSkills$MP, 
+                        UsefulSkills=KaiserCoreBase$UsefulSkills, 
                         UsefulLvs=20, 
                         UsefulMP=0, 
-                        SpecSet=SpecDefault, 
-                        SelfBind=F)
+                        SpecSet=get(DPMCalcOption$SpecSet), 
+                        SpecialCore=KaiserCoreBase$SpecialCoreUse)
 
 
 ## Kaiser - Basic Info
-## Link Check(Cygnus vs Xenon)
 KaiserBase <- JobBase(ChrInfo=ChrInfo, 
-                      MobInfo=MobDefault,
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       Job="Kaiser",
                       CoreData=KaiserCore, 
                       BuffDurationNeeded=67, 
-                      AbilList=c("BDR", "BuffDuration"), 
-                      LinkList=c("Kaiser", "Mikhail", "DemonAvenger", "Xenon"), 
-                      MonsterLife=MLTypeS21, 
-                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandSword", SpecDefault$WeaponType)[, 1:16],
-                      WeaponType=SpecDefault$WeaponType, 
-                      SubWeapon=SubWeapon[34, ], 
-                      Emblem=Emblem[6, ], 
-                      CoolReduceHat=T)
+                      AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Kaiser"), 
+                      LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Kaiser"), 
+                      MonsterLife=get(FindJob(MonsterLifePreSet, "Kaiser")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                      Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandSword", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                      WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                      SubWeapon=SubWeapon[rownames(SubWeapon)=="DragonEssence", ], 
+                      Emblem=Emblem[rownames(Emblem)=="Dragon", ], 
+                      CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Kaiser")))
 
 
 ## Kaiser - Passive
@@ -65,15 +69,15 @@ value <- c(70 + ceiling(KaiserBase$SkillLv/2), 30 + KaiserBase$SkillLv, 20 + flo
 AdvancedSwordMastery <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(KaiserCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(KaiserCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(KaiserCore[[2]][9, 2])
+value <- c(GetCoreLv(KaiserCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 KaiserPassive <- Passive(list(ReshuffleSwitch, InnerBlaze, Catalize, AdvancedInnerBlaze, AdvancedWillofSwordPassive, UnpleasingCourage, AdvancedSwordMastery, 
-                              BodyofStealPassive, BlinkPassive))
+                              BodyofSteelPassive, BlinkPassive))
 
 
 ## Kaiser - Buff
@@ -107,14 +111,14 @@ FinalFiguration <- rbind(data.frame(option, value), info) ## Final Figuration, I
 
 option <- factor(c("ATKSpeed", "ATK"), levels=BSkill)
 value <- c(2, 20)
-info <- c(240, 0, 1080, T, NA, NA, T)
+info <- c(240, 0, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlazeUp <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
 value <- c(15)
-info <- c(240, 0, 720, T, NA, NA, T)
+info <- c(240, 0, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RegainStrength <- rbind(data.frame(option, value), info)
@@ -142,7 +146,7 @@ MajestyofKaiser <- rbind(data.frame(option, value), info) ## CoolTime Reset
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30 + floor(KaiserCore[[2]][1, 2]/2), 120, 600, F, T, F, F)
+info <- c(30 + floor(GetCoreLv(KaiserCore, "GuardianofNova")/2), 120, 600, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 GuardianofNovaBuff <- rbind(data.frame(option, value), info)
@@ -162,69 +166,62 @@ colnames(info) <- c("option", "value")
 DragonBlazeCooldown <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(KaiserCore[[2]][5, 2] / 5), ceiling(KaiserCore[[2]][5, 2] / 5))
-info <- c(80 + 2 * KaiserCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(KaiserCore, "AuraWeapon") / 5), ceiling(GetCoreLv(KaiserCore, "AuraWeapon") / 5))
+info <- c(80 + 2 * GetCoreLv(KaiserCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
-value <- c(5 + KaiserCore[[2]][[7, 2]])
+value <- c(5 + GetCoreLv(KaiserCore, "BlessofGrandisGoddess"))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
-value <- c(5 + floor(KaiserCore[[2]][[7, 2]]/5))
+value <- c(5 + floor(GetCoreLv(KaiserCore, "BlessofGrandisGoddess")/5))
 info <- c(40, 240, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
-value <- c(10 + 2 * floor(KaiserCore[[2]][[7, 2]]/5))
+value <- c(10 + 2 * floor(GetCoreLv(KaiserCore, "BlessofGrandisGoddess")/5))
 info <- c(40, 240, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
-value <- c(15 + 3 * floor(KaiserCore[[2]][[7, 2]]/5))
+value <- c(15 + 3 * floor(GetCoreLv(KaiserCore, "BlessofGrandisGoddess")/5))
 info <- c(40, 240, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess3 <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * KaiserCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(KaiserCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+UsefulWindBooster <- Useful$UsefulWindBooster
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
+}
 
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * KaiserCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * KaiserCore[[3]][3, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)}
-
-KaiserBuff <- Buff(list(MorphGauge=MorphGauge, Transfiguration1=Transfiguration1, Transfiguration2=Transfiguration2, FinalFiguration=FinalFiguration, 
-                        BlazeUp=BlazeUp, RegainStrength=RegainStrength, MapleSoldier=MapleSoldier, 
-                        FinalTrans=FinalTrans, MajestyofKaiser=MajestyofKaiser, 
-                        GuardianofNovaBuff=GuardianofNovaBuff, DragonBlazeBuff=DragonBlazeBuff, DragonBlazeCooldown=DragonBlazeCooldown, AuraWeaponBuff=AuraWeaponBuff, 
-                        BlessofGrandisGoddess=BlessofGrandisGoddess, BlessofGrandisGoddess1=BlessofGrandisGoddess1, BlessofGrandisGoddess2=BlessofGrandisGoddess2, 
-                        BlessofGrandisGoddess3=BlessofGrandisGoddess3, 
-                        UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), UsefulWindBooster(900ms)
+KaiserBuff <- list(MorphGauge=MorphGauge, Transfiguration1=Transfiguration1, Transfiguration2=Transfiguration2, FinalFiguration=FinalFiguration, 
+                   BlazeUp=BlazeUp, RegainStrength=RegainStrength, MapleSoldier=MapleSoldier, 
+                   FinalTrans=FinalTrans, MajestyofKaiser=MajestyofKaiser, 
+                   GuardianofNovaBuff=GuardianofNovaBuff, DragonBlazeBuff=DragonBlazeBuff, DragonBlazeCooldown=DragonBlazeCooldown, AuraWeaponBuff=AuraWeaponBuff, 
+                   BlessofGrandisGoddess=BlessofGrandisGoddess, BlessofGrandisGoddess1=BlessofGrandisGoddess1, BlessofGrandisGoddess2=BlessofGrandisGoddess2, 
+                   BlessofGrandisGoddess3=BlessofGrandisGoddess3, 
+                   UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulWindBooster=UsefulWindBooster, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : BlazeUp(1080ms), RegainStrength(720ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), UsefulWindBooster(900ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  KaiserBuff[[length(KaiserBuff)+1]] <- UsefulAdvancedBless
+  names(KaiserBuff)[[length(KaiserBuff)]] <- "UsefulAdvancedBless"
+}
+KaiserBuff <- Buff(KaiserBuff)
 KaiserAllTimeBuff <- AllTimeBuff(KaiserBuff)
 
 
@@ -232,8 +229,8 @@ KaiserAllTimeBuff <- AllTimeBuff(KaiserBuff)
 KaiserSpec <- JobSpec(JobBase=KaiserBase, 
                       Passive=KaiserPassive, 
                       AllTimeBuff=KaiserAllTimeBuff, 
-                      MobInfo=MobDefault, 
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet), 
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       WeaponName="TwohandSword", 
                       UnionStance=0)
 
@@ -244,90 +241,43 @@ KaiserSpec <- KaiserSpec$Spec
 
 
 ## Kaiser - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * KaiserCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KaiserCore[[2]][8, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KaiserCore[[2]][8, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KaiserCore[[2]][8, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KaiserCore[[2]][8, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KaiserCore[[2]][8, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(KaiserCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Kaiser - Attacks
-## Infernal Breath - Reinforce vs Infernal Breath - Tile Reinforce
 ## Hyper : Giga Slasher - Reinforce, Bonus ATK / WingBeat - Reinforce, Persist, Extra ATK
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KaiserCore[[1]][4, 2]>=40, 20, 0), 2 * KaiserCore[[1]][4, 2]) 
+value <- c(20, ifelse(GetCoreLv(KaiserCore, "GigaSlasher")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "GigaSlasher")) 
 info <- c(330 + 2 * KaiserSpec$SkillLv, 10, 720, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GigaSlasher <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KaiserCore[[1]][4, 2]>=40, 20, 0), 2 * KaiserCore[[1]][4, 2]) 
+value <- c(20, ifelse(GetCoreLv(KaiserCore, "GigaSlasher")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "GigaSlasher")) 
 info <- c(330 + 2 * KaiserSpec$SkillLv, 12, 720, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GigaSlasherFF <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(50, ifelse(KaiserCore[[1]][4, 2]>=40, 20, 0))), 2 * KaiserCore[[1]][4, 2]) 
-info <- c(500 + 5 * KaiserCore[[2]][3, 2], 18, 720, NA, 5, T, F, F) 
+value <- c(20, IGRCalc(c(50, ifelse(GetCoreLv(KaiserCore, "GigaSlasher")>=40, 20, 0))), 2 * GetCoreLv(KaiserCore, "GigaSlasher")) 
+info <- c(500 + 5 * GetCoreLv(KaiserCore, "DracoSlasher"), 18, 720, NA, 5, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DracoSlasher <- rbind(data.frame(option, value), info) ## 11 Hits + 7 Hits
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(50, ifelse(KaiserCore[[1]][4, 2]>=40, 20, 0))), 2 * KaiserCore[[1]][4, 2]) 
-info <- c(500 + 5 * KaiserCore[[2]][3, 2], 22, 720, NA, 5, T, F, F) 
+value <- c(20, IGRCalc(c(50, ifelse(GetCoreLv(KaiserCore, "GigaSlasher")>=40, 20, 0))), 2 * GetCoreLv(KaiserCore, "GigaSlasher")) 
+info <- c(500 + 5 * GetCoreLv(KaiserCore, "DracoSlasher"), 22, 720, NA, 5, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DracoSlasherFF <- rbind(data.frame(option, value), info) ## 13 Hits + 9 Hits
@@ -340,14 +290,14 @@ colnames(info) <- c("option", "value")
 WillofSwordSummon <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KaiserCore[[1]][1, 2]>=40, 20, 0), 2 * KaiserCore[[1]][1, 2]) 
+value <- c(ifelse(GetCoreLv(KaiserCore, "WillofSword")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "WillofSword")) 
 info <- c(400 + 3 * KaiserSpec$SkillLv, 20, 30, NA, 10, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 WillofSword <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KaiserCore[[1]][1, 2]>=40, 20, 0), 2 * KaiserCore[[1]][1, 2]) 
+value <- c(ifelse(GetCoreLv(KaiserCore, "WillofSword")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "WillofSword")) 
 info <- c(400 + 3 * KaiserSpec$SkillLv, 25, 30, NA, 10, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
@@ -355,28 +305,28 @@ WillofSwordFF <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(500 + 20 * KaiserCore[[2]][2, 2], 20, 30, NA, 30, T, T, F) 
+info <- c(500 + 20 * GetCoreLv(KaiserCore, "WillofSwordStrike"), 20, 30, NA, 30, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 WillofSwordStrike <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(500 + 20 * KaiserCore[[2]][2, 2], 25, 30, NA, 30, T, T, F) 
+info <- c(500 + 20 * GetCoreLv(KaiserCore, "WillofSwordStrike"), 25, 30, NA, 30, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 WillofSwordStrikeFF <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(1000 + 40 * KaiserCore[[2]][2, 2], 30, 0, NA, 30, T, T, F) 
+info <- c(1000 + 40 * GetCoreLv(KaiserCore, "WillofSwordStrike"), 30, 0, NA, 30, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 WillofSwordStrikeBlaze <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(1000 + 40 * KaiserCore[[2]][2, 2], 35, 0, NA, 30, T, T, F) 
+info <- c(1000 + 40 * GetCoreLv(KaiserCore, "WillofSwordStrike"), 35, 0, NA, 30, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 WillofSwordStrikeBlazeFF <- rbind(data.frame(option, value), info)
@@ -410,28 +360,28 @@ colnames(info) <- c("option", "value")
 WingBeat2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KaiserCore[[1]][2, 2]>=40, 20, 0), 3 * KaiserCore[[1]][2, 2]) 
+value <- c(20, ifelse(GetCoreLv(KaiserCore, "Wingbeat")>=40, 20, 0), 3 * GetCoreLv(KaiserCore, "Wingbeat")) 
 info <- c(200, 1, 330, 0, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 WingBeatTick <- rbind(data.frame(option, value), info) ## 48 Hits (if Persist Not Used, 45 Hits)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KaiserCore[[1]][5, 2]>=40, 20, 0), 2 * KaiserCore[[1]][5, 2]) 
+value <- c(ifelse(GetCoreLv(KaiserCore, "InfernalBreath")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "InfernalBreath")) 
 info <- c(300 + 4 * KaiserSpec$SkillLv, 8, 1020, NA, 20, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 InfernalBreath <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KaiserCore[[1]][5, 2]>=40, 20, 0), 2 * KaiserCore[[1]][5, 2]) 
+value <- c(ifelse(GetCoreLv(KaiserCore, "InfernalBreath")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "InfernalBreath")) 
 info <- c(200 + 3 * KaiserSpec$SkillLv, 2, 0, 1200, 20, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 InfernalBreathTile <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KaiserCore[[1]][7, 2]>=40, 20, 0), 2 * KaiserCore[[1]][7, 2]) 
+value <- c(ifelse(GetCoreLv(KaiserCore, "Prominance")>=40, 20, 0), 2 * GetCoreLv(KaiserCore, "Prominance")) 
 info <- c(1000, 15, 2940, NA, 60, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
@@ -439,49 +389,49 @@ Prominance <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(450 + 15 * KaiserCore[[2]][1, 2], 4, 0, 990, 120, T, F, F) 
+info <- c(450 + 15 * GetCoreLv(KaiserCore, "GuardianofNova"), 4, 0, 990, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GuardianofNova6th <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(250 + 10 * KaiserCore[[2]][1, 2], 6, 0, 1260, 120, T, F, F) 
+info <- c(250 + 10 * GetCoreLv(KaiserCore, "GuardianofNova"), 6, 0, 1260, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GuardianofNova15th <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(900 + 35 * KaiserCore[[2]][1, 2], 2, 0, 1680, 120, T, F, F) 
+info <- c(900 + 35 * GetCoreLv(KaiserCore, "GuardianofNova"), 2, 0, 1680, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GuardianofNova27th <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(250 + 10 * KaiserCore[[2]][4, 2], 6, 0, 270, 120, T, F, F) 
+info <- c(250 + 10 * GetCoreLv(KaiserCore, "DragonBlaze"), 6, 0, 270, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DragonBlazeBlaze <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(375 + 15 * KaiserCore[[2]][4, 2], 5, 0, NA, 3.6, F, F, F) 
+info <- c(375 + 15 * GetCoreLv(KaiserCore, "DragonBlaze"), 5, 0, NA, 3.6, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DragonBlazeExp <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(350 + 14 * KaiserCore[[2]][4, 2], 18, 0, NA, 10, F, F, F) 
+info <- c(350 + 14 * GetCoreLv(KaiserCore, "DragonBlaze"), 18, 0, NA, 10, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DragonBlazeSphere <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * KaiserCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(KaiserCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
@@ -497,7 +447,7 @@ KaiserATK <- Attack(list(GigaSlasher=GigaSlasher, GigaSlasherFF=GigaSlasherFF, D
 
 ## Kaiser - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(KaiserCore[[1]][3, 2]>=40, 20, 0), 3 * KaiserCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(KaiserCore, "Petrified")>=40, 20, 0), 3 * GetCoreLv(KaiserCore, "Petrified"))
 info <- c(400, 1, 450, 3030, 60, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -516,7 +466,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, K
 BuffFinal <- data.frame(KaiserBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, KaiserSpec$CoolReduceP, KaiserSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, KaiserSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(KaiserSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, KaiserSpec$CoolReduceP, KaiserSpec$CoolReduce)
@@ -531,12 +481,16 @@ KaiserDealCycle <- data.frame(KaiserDealCycle)
 
 KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                         Period=c(120), CycleTime=c(720), WillofSwordReset=0) {
-  BuffSummonedPrior <- c("BlazeUp", "RegainStrength", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster", 
+  BuffSummonedPrior <- c("BlazeUp", "RegainStrength", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster", "UsefulAdvancedBless", 
                          "AuraWeaponBuff", "Petrified", "GuardianofNovaBuff", "BlessofGrandisGoddess", "SoulContractLink", "MajestyofKaiser", "FinalTrans", "DragonBlazeBuff", "Restraint4")
-  
-  Times120 <- c(1/3, 1/3, 0, 0, 0, 
+  Times120 <- c(0, 0, 0, 0, 0, 0, 
                 0.5, 2, 1, 0.5, 1, 1, 1/3, 1, 1/6)
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce + 1, length(BuffSummonedPrior))
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (Period / 240), length(BuffSummonedPrior))
   TotalTime <- SubTime[1] * 6
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
@@ -1515,10 +1469,10 @@ KaiserDealCycle0 <- KaiserAddATK(DealCycle=KaiserDealCycle0,
                                  BuffFinal=BuffFinal, 
                                  SummonedFinal=SummonedFinal, 
                                  Spec=KaiserSpec)
-KaiserDealCycleReduction0 <- DealCycleReduction(KaiserDealCycle0)
+KaiserDealCycleReduction <- DealCycleReduction(KaiserDealCycle0)
 
 for(i in 1:6) {
-   rm(KADealCycle)
+  KADealCycle <- data.frame()
   KADealCycle <- KaiserCycle(DealCycle=KaiserDealCycle, 
                              ATKFinal=ATKFinal, 
                              BuffFinal=BuffFinal, 
@@ -1533,21 +1487,37 @@ for(i in 1:6) {
                               BuffFinal=BuffFinal, 
                               SummonedFinal=SummonedFinal, 
                               Spec=KaiserSpec)
-  KADealCycleReduction <- DealCycleReduction(KADealCycle)
   
   assign(paste("KaiserDealCycle", i, sep=""), KADealCycle)
-  assign(paste("KaiserDealCycleReduction", i, sep=""), KADealCycleReduction)
   print(paste("i=", i, " done", sep=""))
 }
 
-KaiserSpecOpt1 <- Optimization1(KaiserDealCycleReduction0, ATKFinal, BuffFinal, SummonedFinal, KaiserSpec, KaiserUnionRemained)
-print(KaiserSpecOpt1)
-KaiserSpecOpt <- KaiserSpec
-KaiserSpecOpt$ATKP <- KaiserSpecOpt$ATKP + KaiserSpecOpt1$ATKP
-KaiserSpecOpt$BDR <- KaiserSpecOpt$BDR + KaiserSpecOpt1$BDR
-KaiserSpecOpt$IGR <- IGRCalc(c(KaiserSpecOpt$IGR, KaiserSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Kaiser") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  KaiserSpecOpt1 <- Optimization1(KaiserDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KaiserSpec, KaiserUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- KaiserSpecOpt1[1, 1:3]
+} else {
+  KaiserSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+KaiserSpecOpt <- OptDataAdd(KaiserSpec, KaiserSpecOpt1, "Potential", KaiserBase$CRROver, DemonAvenger=F)
 
-KaiserSpecOpt2 <- Optimization2(KaiserDealCycleReduction0, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt, KaiserHyperStatBase, KaiserBase$ChrLv, KaiserBase$CRROver)
+if(DPMCalcOption$Optimization==T) {
+  KaiserSpecOpt2 <- Optimization2(KaiserDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt, KaiserHyperStatBase, KaiserBase$ChrLv, KaiserBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- KaiserSpecOpt2[1, ]
+} else {
+  KaiserSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+KaiserSpecOpt <- OptDataAdd(KaiserSpecOpt, KaiserSpecOpt2, "HyperStat", KaiserBase$CRROver, DemonAvenger=F)
 
 KaiserDealCycles <- list(KaiserDealCycle0, KaiserDealCycle1, KaiserDealCycle2, KaiserDealCycle3, KaiserDealCycle4, KaiserDealCycle5, KaiserDealCycle6)
 KaiserDealCycleProbs <- c(0.45, 0.55*0.45, 0.55^2*0.45, 0.55^3*0.45, 0.55^4*0.45, 0.55^6 + 0.55^5*0.45^2, 0.55^6*0.45)
@@ -1557,35 +1527,30 @@ KaiserDealCycleTimes <- c(max(KaiserDealCycle0$Time), max(KaiserDealCycle1$Time)
 KaiserDealCycleTime <- sum(KaiserDealCycleTimes * KaiserDealCycleProbs)
 
 KaiserFinalDPM <- ResetDealCalc(DealCycles=KaiserDealCycles, 
-                                ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2, KaiserDealCycleTimes, KaiserDealCycleProbs)
+                                ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt, KaiserDealCycleTimes, KaiserDealCycleProbs)
 KaiserFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=KaiserDealCycles, 
-                                                ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2, KaiserDealCycleTimes, KaiserDealCycleProbs)
+                                                 ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt, KaiserDealCycleTimes, KaiserDealCycleProbs)
 
-KaiserDealDatas <- list(DealCalcWithMaxDMR(KaiserDealCycle0, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
-                        DealCalcWithMaxDMR(KaiserDealCycle1, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
-                        DealCalcWithMaxDMR(KaiserDealCycle2, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
-                        DealCalcWithMaxDMR(KaiserDealCycle3, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
-                        DealCalcWithMaxDMR(KaiserDealCycle4, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
-                        DealCalcWithMaxDMR(KaiserDealCycle5, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2), 
-                        DealCalcWithMaxDMR(KaiserDealCycle6, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt2))
+set(get(DPMCalcOption$DataName), as.integer(1), "Kaiser", sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Kaiser", sum(na.omit(KaiserFinalDPM)) / (KaiserDealCycleTime / 60000) - sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000))
+
+KaiserDealDatas <- list(DealCalcWithMaxDMR(KaiserDealCycle0, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt), 
+                        DealCalcWithMaxDMR(KaiserDealCycle1, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt), 
+                        DealCalcWithMaxDMR(KaiserDealCycle2, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt), 
+                        DealCalcWithMaxDMR(KaiserDealCycle3, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt), 
+                        DealCalcWithMaxDMR(KaiserDealCycle4, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt), 
+                        DealCalcWithMaxDMR(KaiserDealCycle5, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt), 
+                        DealCalcWithMaxDMR(KaiserDealCycle6, ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt))
 
 for(i in 1:length(KaiserDealDatas)) {
-  print(sum(na.omit(KaiserDealDatas[[i]])) / (KaiserDealCycleTimes[1] / 60000))
+  print(sum(na.omit(KaiserDealDatas[[i]])) / (KaiserDealCycleTimes[i] / 60000))
 }
 
 KaiserDealRatio <- ResetDealRatio(DealCycles=KaiserDealCycles, 
                                   DealDatas=KaiserDealDatas, 
                                   KaiserDealCycleTimes, KaiserDealCycleProbs)
 
-DPM12349$Kaiser[1] <- sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
-DPM12349$Kaiser[2] <- sum(na.omit(KaiserFinalDPM)) / (KaiserDealCycleTime / 60000) - sum(na.omit(KaiserFinalDPMwithMax)) / (KaiserDealCycleTime / 60000)
 KaiserDealData <- data.frame(KaiserDealCycle0$Skills, KaiserDealCycle0$Time, KaiserDealCycle0$Restraint4, KaiserDealDatas[[1]])
-
 colnames(KaiserDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(KaiserDealData, KaiserDealData$R4>0)
-
-KaiserRR <- KaiserDealData[39:274, ]
-DPM12349$Kaiser[3] <- sum((KaiserRR$Deal))
-
-Kaiser40s <- KaiserDealData[39:597, ]
-DPM12349$Kaiser[4] <- sum((Kaiser40s$Deal))
+set(get(DPMCalcOption$DataName), as.integer(3), "Kaiser", Deal_RR(KaiserDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Kaiser", Deal_40s(KaiserDealData))

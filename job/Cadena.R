@@ -1,37 +1,41 @@
 ## Cadena - Core
-CadenaCore <- MatrixSet(PasSkills=c("ChainArtsStroke_WeaponVariety", "CuttingScimitar_ScratchingClaw", "SlashingKnife_ThrowingWingdagger", 
-                                    "ShootingShotgun_ReleasingBomb", "StrikingBrick", "BittingNeedlebat", 
-                                    "ChainArtsCrush_ProfessionalAgent", "ChainArtsTakedown"), 
-                        PasLvs=c(50, 50, 50, 50, 50, 50, 50, 25), 
-                        PasMP=c(10, 10, 10, 10, 10, 10, 10, 5), 
-                        ActSkills=c("ADOrdnance", "ChainArtsFury", "ChainArtsMaelstrom", "WeaponVarietyFinale",
-                                    CommonV("Thief", "Nova")), 
-                        ActLvs=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
-                        ActMP=c(5, 5, 5, 5, 0, 5, 0, 5, 0), 
-                        BlinkLv=1, 
-                        BlinkMP=0, 
-                        UsefulSkills=c("CombatOrders", "SharpEyes"), 
+CadenaCoreBase <- CoreBuilder(ActSkills=c("ADOrdnance", "ChainArtsFury", "ChainArtsMaelstrom", "WeaponVarietyFinale",
+                                          CommonV("Thief", "Nova")), 
+                              ActSkillsLv=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
+                              UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                              SpecSet=get(DPMCalcOption$SpecSet), 
+                              VPassiveList=CadenaVPassive, 
+                              VPassivePrior=CadenaVPrior, 
+                              SelfBind=F)
+
+CadenaCore <- MatrixSet(PasSkills=CadenaCoreBase$PasSkills$Skills, 
+                        PasLvs=CadenaCoreBase$PasSkills$Lv, 
+                        PasMP=CadenaCoreBase$PasSkills$MP, 
+                        ActSkills=CadenaCoreBase$ActSkills$Skills, 
+                        ActLvs=CadenaCoreBase$ActSkills$Lv, 
+                        ActMP=CadenaCoreBase$ActSkills$MP, 
+                        UsefulSkills=CadenaCoreBase$UsefulSkills, 
                         UsefulLvs=20, 
                         UsefulMP=0, 
-                        SpecSet=SpecDefault, 
-                        SelfBind=F)
+                        SpecSet=get(DPMCalcOption$SpecSet), 
+                        SpecialCore=CadenaCoreBase$SpecialCoreUse)
 
 
 ## Cadena - Basic Info
 CadenaBase <- JobBase(ChrInfo=ChrInfo, 
-                      MobInfo=MobDefault,
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       Job="Cadena",
                       CoreData=CadenaCore, 
                       BuffDurationNeeded=0, 
-                      AbilList=c("CoolTimeReset", "DisorderBDR"), 
-                      LinkList=c("Xenon", "DemonAvenger", "CygnusKnights", "Mikhail"), 
-                      MonsterLife=MLTypeL21, 
-                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Chain", SpecDefault$WeaponType)[, 1:16],
-                      WeaponType=SpecDefault$WeaponType, 
-                      SubWeapon=SubWeapon[35, ], 
-                      Emblem=Emblem[8, ], 
-                      CoolReduceHat=T)
+                      AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Cadena"), 
+                      LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Cadena"), 
+                      MonsterLife=get(FindJob(MonsterLifePreSet, "Cadena")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                      Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Chain", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                      WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                      SubWeapon=SubWeapon[rownames(SubWeapon)=="Transmitter", ], 
+                      Emblem=Emblem[rownames(Emblem)=="Agent", ], 
+                      CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Cadena")))
 
 
 ## Cadena - Passive
@@ -73,11 +77,11 @@ value <- c(30 + CadenaBase$PSkillLv, 5 + ceiling(CadenaBase$PSkillLv/6), 10 + ce
 QuickServiceMind2 <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(CadenaCore[[2]][6, 2])
+value <- c(GetCoreLv(CadenaCore, "ReadyToDie"))
 ReadyToDie <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(CadenaCore[[2]][10, 2])
+value <- c(GetCoreLv(CadenaCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 CadenaPassive <- Passive(list(CollectingFourleaf=CollectingFourleaf, PhysicalTraining=PhysicalTraining, QuickServiceMind1=QuickServiceMind1, BasicDetection=BasicDetection, WeaponVarietyBuff=WeaponVarietyBuff, 
@@ -114,43 +118,36 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ProfessionalAgentBuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * CadenaCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * CadenaCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(CadenaCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(35 + CadenaCore[[2]][1, 2], 180 - CadenaCore[[2]][1, 2], Delay(540, 2), F, T, F, T)
+info <- c(35 + GetCoreLv(CadenaCore, "ChainArtsFury"), 180 - GetCoreLv(CadenaCore, "ChainArtsFury"), Delay(540, 2), F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ChainArtsFuryBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(CadenaCore[[2]][6, 2]/10))
-info <- c(30, 90 - floor(CadenaCore[[2]][6, 2]/2), 780, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(CadenaCore, "ReadyToDie")/10))
+info <- c(30, 90 - floor(GetCoreLv(CadenaCore, "ReadyToDie")/2), 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(CadenaCore[[2]][6, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(CadenaCore[[2]][6, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(CadenaCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(CadenaCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(5 + CadenaCore[[2]][8, 2])
+value <- c(5 + GetCoreLv(CadenaCore, "BlessofGrandisGoddess"))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -166,7 +163,12 @@ Deal40s <- rbind(data.frame(option, value), info)}
 CadenaBuff <- Buff(list(WeaponBooster=WeaponBooster, MapleSoldier=MapleSoldier, ShadowdealersElixir=ShadowdealersElixir, ProfessionalAgentBuff=ProfessionalAgentBuff, 
                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ChainArtsFuryBuff=ChainArtsFuryBuff, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, 
                          BlessofGrandisGoddess=BlessofGrandisGoddess, Deal40s=Deal40s, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : WeaponBooster(600ms), UsefulSharpEyes, UsefulCombatOrders
+## Petbuff : WeaponBooster(600ms), MapleSoldier(0ms), UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  CadenaBuff[[length(CadenaBuff)+1]] <- UsefulAdvancedBless
+  names(CadenaBuff)[[length(CadenaBuff)]] <- "UsefulAdvancedBless"
+}
+CadenaBuff <- Buff(CadenaBuff)
 CadenaAllTimeBuff <- AllTimeBuff(CadenaBuff)
 
 
@@ -174,8 +176,8 @@ CadenaAllTimeBuff <- AllTimeBuff(CadenaBuff)
 CadenaSpec <- JobSpec(JobBase=CadenaBase, 
                       Passive=CadenaPassive, 
                       AllTimeBuff=CadenaAllTimeBuff, 
-                      MobInfo=MobDefault, 
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet), 
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       WeaponName="Chain", 
                       UnionStance=0)
 
@@ -186,74 +188,28 @@ CadenaSpec <- CadenaSpec$Spec
 
 
 ## Cadena - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * CadenaCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CadenaCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CadenaCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CadenaCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CadenaCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CadenaCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(CadenaCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Cadena - Attacks
 ## Hyper : NonChainArts - Reinforce / Boss Killer, ChainArtsStroke - Reinforce / NextATK Reinforce, ChainArtsTakedown - CoolTime Reduce
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(CadenaCore[[1]][1, 2]>=40, 20, 0), 2 * CadenaCore[[1]][1, 2])
+value <- c(20, ifelse(GetCoreLv(CadenaCore, "ChainArtsStroke_WeaponVariety")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ChainArtsStroke_WeaponVariety"))
 info <- c(150, 2, 330, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChainArtsStroke1 <- rbind(data.frame(option, value), info) ## CancellableDelay : 150 / 180
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(CadenaCore[[1]][1, 2]>=40, 20, 0), 2 * CadenaCore[[1]][1, 2])
+value <- c(20, ifelse(GetCoreLv(CadenaCore, "ChainArtsStroke_WeaponVariety")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ChainArtsStroke_WeaponVariety"))
 info <- c(400, 5, 510, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -267,112 +223,112 @@ colnames(info) <- c("option", "value")
 ChainArtsChase <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][2, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][2, 2])))
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw"))))
 info <- c(425 + 5 * CadenaSpec$PSkillLv, 5, 780, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonCuttingScimitar <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][2, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][2, 2])))
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw")>=40, 20, 0), FDRCalc(c(15, 2 *GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw"))))
 info <- c(455 + 5 * CadenaSpec$PSkillLv, 4, 600, NA, 3, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonScratchingClaw <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][3, 2])))
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))))
 info <- c(425 + 5 * CadenaSpec$PSkillLv, 1, 780, 330, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonThrowingWingdaggerFDR <- rbind(data.frame(option, value), info) ## Non Cancelled
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][3, 2]>=40, 20, 0), 2 * CadenaCore[[1]][3, 2])
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))
 info <- c(425 + 5 * CadenaSpec$PSkillLv, 1, 0, 0, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonThrowingWingdagger <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][3, 2]>=40, 20, 0), 2 * CadenaCore[[1]][3, 2])
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))
 info <- c(670 + 5 * CadenaSpec$PSkillLv, 3, 0, 0, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonThrowingWingdaggerExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][4, 2])))
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb"))))
 info <- c(510 + 5 * CadenaSpec$PSkillLv, 7, 840, NA, 5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonShootingShotgun <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][3, 2])))
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))))
 info <- c(435 + 5 * CadenaSpec$PSkillLv, 8, 750, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonSlashingKnife <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][4, 2]>=40, 20, 0), 2 * CadenaCore[[1]][4, 2])
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb"))
 info <- c(535 + 5 * CadenaSpec$PSkillLv, 6, 540, NA, 8, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonReleasingBomb <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][4, 2]>=40, 20, 0), 2 * CadenaCore[[1]][4, 2])
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb"))
 info <- c(535 + 5 * CadenaSpec$PSkillLv, 6, 540, NA, 8, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonReleasingBomb <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(CadenaCore[[1]][5, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][5, 2])))
+value <- c(40, ifelse(GetCoreLv(CadenaCore, "StrikingBrick")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "StrikingBrick"))))
 info <- c(485 + 8 * CadenaSpec$SkillLv, 7, 960, NA, 8, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonStrikingBrick <- rbind(data.frame(option, value), info) ## CancellableDelay : 240
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40 + 35, ifelse(CadenaCore[[1]][6, 2]>=40, 20, 0), FDRCalc(c(15, 2 * CadenaCore[[1]][6, 2])))
+value <- c(40 + 35, ifelse(GetCoreLv(CadenaCore, "BittingNeedlebat")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "BittingNeedlebat"))))
 info <- c(450 + 10 * CadenaSpec$SkillLv, 6, 480, NA, 12, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonBittingNeedlebat1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40 + 35, ifelse(CadenaCore[[1]][6, 2]>=40, 20, 0), 2 * CadenaCore[[1]][6, 2])
+value <- c(40 + 35, ifelse(GetCoreLv(CadenaCore, "BittingNeedlebat")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "BittingNeedlebat"))
 info <- c(555 + 10 * CadenaSpec$SkillLv, 7, 570, NA, 12, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonBittingNeedlebat2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40 + 45, ifelse(CadenaCore[[1]][6, 2]>=40, 20, 0), 2 * CadenaCore[[1]][6, 2])
+value <- c(40 + 45, ifelse(GetCoreLv(CadenaCore, "BittingNeedlebat")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "BittingNeedlebat"))
 info <- c(715 + 10 * CadenaSpec$SkillLv, 8, 810, NA, 12, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonBittingNeedlebat3 <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(CadenaCore[[1]][1, 2]>=40, 20, 0), 2 * CadenaCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(CadenaCore, "ChainArtsStroke_WeaponVariety")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ChainArtsStroke_WeaponVariety"))
 info <- c(350 + 15 * CadenaSpec$PSkillLv, 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WeaponVariety <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(CadenaCore[[1]][7, 2]>=40, 20, 0), 2 * CadenaCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(CadenaCore, "ChainArtsCrush_ProfessionalAgent")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ChainArtsCrush_ProfessionalAgent"))
 info <- c(255, 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ProfessionalAgent <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(CadenaCore[[1]][7, 2]>=40, 20, 0), 2 * CadenaCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(CadenaCore, "ChainArtsCrush_ProfessionalAgent")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ChainArtsCrush_ProfessionalAgent"))
 info <- c(510, 15, 990, NA, 30, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -380,35 +336,35 @@ ChainArtsCrush <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(225 + 9 * CadenaCore[[2]][1, 2], 5, 450, NA, 25, T, F, F)
+info <- c(225 + 9 * GetCoreLv(CadenaCore, "ADOrdnance"), 5, 450, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ADOrdnance <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(750 + 30 * CadenaCore[[2]][1, 2], 8, 0, NA, 25, T, F, F)
+info <- c(750 + 30 * GetCoreLv(CadenaCore, "ADOrdnance"), 8, 0, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ADOrdnanceSphere <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(250 + 10 * CadenaCore[[2]][2, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(250 + 10 * GetCoreLv(CadenaCore, "ChainArtsFury"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChainArtsFury <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(300 + 12 * CadenaCore[[2]][3, 2], 4, 720, 90, NA, NA, NA, F)
+info <- c(300 + 12 * GetCoreLv(CadenaCore, "ChainArtsMaelstrom"), 4, 720, 90, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChainArtsMaelstrom <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(250 + 10 * CadenaCore[[2]][4, 2], 7 * 4, 0, 0, NA, NA, NA, F)
+info <- c(250 + 10 * GetCoreLv(CadenaCore, "WeaponVarietyFinale"), 7 * 4, 0, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WeaponVarietyFinale <- rbind(data.frame(option, value), info) ## StartATK : 1050ms
@@ -443,7 +399,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, C
 BuffFinal <- data.frame(CadenaBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, CadenaSpec$CoolReduceP, CadenaSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, CadenaSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(CadenaSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, CadenaSpec$CoolReduceP, CadenaSpec$CoolReduce)
@@ -459,11 +415,15 @@ CadenaTimes <- read.csv(CadenaTimes, header=T, row.names=1)
 
 CadenaCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360)) {
-  BuffSummonedPrior <- c("WeaponBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders",
+  BuffSummonedPrior <- c("WeaponBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "ShadowdealersElixir", "BlessofGrandisGoddess", "ChainArtsFuryBuff", "SoulContractLink", "ReadyToDie2Stack", "ProfessionalAgentBuff", "Restraint4")
-  
-  Times180 <- c(0, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 
                 1, 0.5, 1, 2, 2, 1, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
@@ -727,38 +687,50 @@ ATKFinal <- CadenaATKCollapse(ATKFinal, CadenaDealCycle, CadenaTimes, CadenaTime
 CadenaDealCycle <- CadenaAddATK(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 CadenaDealCycleReduction <- DealCycleReduction(CadenaDealCycle)
 
-sum(na.omit(DealCalc(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpec)))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Cadena") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  CadenaSpecOpt1 <- Optimization1(CadenaDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CadenaSpec, CadenaUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- CadenaSpecOpt1[1, 1:3]
+} else {
+  CadenaSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+CadenaSpecOpt <- OptDataAdd(CadenaSpec, CadenaSpecOpt1, "Potential", CadenaBase$CRROver, DemonAvenger=F)
 
-CadenaSpecOpt1 <- Optimization1(CadenaDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CadenaSpec, CadenaUnionRemained)
-CadenaSpecOpt <- CadenaSpec
-CadenaSpecOpt$ATKP <- CadenaSpecOpt$ATKP + CadenaSpecOpt1$ATKP
-CadenaSpecOpt$BDR <- CadenaSpecOpt$BDR + CadenaSpecOpt1$BDR
-CadenaSpecOpt$IGR <- IGRCalc(c(CadenaSpecOpt$IGR, CadenaSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  CadenaSpecOpt2 <- Optimization2(CadenaDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt, CadenaHyperStatBase, CadenaBase$ChrLv, CadenaBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- CadenaSpecOpt2[1, ]
+} else {
+  CadenaSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+CadenaSpecOpt <- OptDataAdd(CadenaSpecOpt, CadenaSpecOpt2, "HyperStat", CadenaBase$CRROver, DemonAvenger=F)
 
-CadenaSpecOpt2 <- Optimization2(CadenaDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt, CadenaHyperStatBase, CadenaBase$ChrLv, CadenaBase$CRROver)
-CadenaFinalDPM <- DealCalc(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt2)
-CadenaFinalDPMwithMax <- DealCalcWithMaxDMR(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt2)
+CadenaFinalDPM <- DealCalc(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt, Collapse=F)
+CadenaFinalDPMwithMax <- DealCalcWithMaxDMR(CadenaDealCycle, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt)
 
-DPM12349$Cadena[1] <- sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time)/ 60000)
-DPM12349$Cadena[2] <- sum(na.omit(CadenaFinalDPM)) / (max(CadenaDealCycle$Time) / 60000) - sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time) / 60000)
-
-CadenaDealData <- data.frame(CadenaDealCycle$Skills, CadenaDealCycle$Time, CadenaDealCycle$Restraint4, CadenaFinalDPMwithMax)
-colnames(CadenaDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(CadenaDealData, CadenaDealData$R4>0)
-
-CadenaRR <- CadenaDealData[20:144, ]
-DPM12349$Cadena[3] <- sum((CadenaRR$Deal))
-
-Cadena40s <- CadenaDealData[20:362, ]
-DPM12349$Cadena[4] <- sum((Cadena40s$Deal))
+set(get(DPMCalcOption$DataName), as.integer(1), "Cadena", sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Cadena", sum(na.omit(CadenaFinalDPM)) / (max(CadenaDealCycle$Time) / 60000) - sum(na.omit(CadenaFinalDPMwithMax)) / (max(CadenaDealCycle$Time) / 60000))
 
 CadenaDealRatio <- DealRatio(CadenaDealCycle, CadenaFinalDPMwithMax)
 
+CadenaDealData <- data.frame(CadenaDealCycle$Skills, CadenaDealCycle$Time, CadenaDealCycle$Restraint4, CadenaFinalDPMwithMax)
+colnames(CadenaDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Cadena", Deal_RR(CadenaDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Cadena", Deal_40s(CadenaDealData))
 
 
 ## Cadena Without Cool Reset Ability
-CadenaSpecOpt2BDRAB <- CadenaSpecOpt2
-CadenaSpecOpt2BDRAB$BDR <- CadenaSpecOpt2BDRAB$BDR + 20
+CadenaSpecOptBDRAB <- CadenaSpecOpt
+CadenaSpecOptBDRAB$BDR <- CadenaSpecOptBDRAB$BDR + 20
 
 ATKFinal2 <- data.frame(CadenaATK)
 ATKFinal2$Delay[c(-18)] <- Delay(ATKFinal2$Delay, CadenaSpec$ATKSpeed)[c(-18)]
@@ -782,5 +754,7 @@ CadenaDealCycle2 <- DealCycleFinal(CadenaDealCycle2)
 ATKFinal2 <- CadenaATKCollapse(ATKFinal2, CadenaDealCycle2, CadenaTimes2, CadenaTimes2$TimesPerMin2[rownames(CadenaTimes2)=="WeaponVarietyFinale"])
 CadenaDealCycle2 <- CadenaAddATK(CadenaDealCycle2, ATKFinal2, BuffFinal, SummonedFinal)
 
-CadenaABBDR <- DealCalcWithMaxDMR(CadenaDealCycle2, ATKFinal2, BuffFinal, SummonedFinal, CadenaSpecOpt2BDRAB)
+CadenaABBDR <- DealCalcWithMaxDMR(CadenaDealCycle2, ATKFinal2, BuffFinal, SummonedFinal, CadenaSpecOptBDRAB)
 CadenaABBDRDPM <- sum(na.omit(CadenaABBDR)) / (max(CadenaDealCycle2$Time)/ 60000)
+
+print(data.frame(CadenaABBDRDPM=CadenaABBDRDPM))

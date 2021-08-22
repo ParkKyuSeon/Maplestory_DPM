@@ -1,3 +1,8 @@
+## Package Loading
+library(data.table)
+library(parallel)
+
+
 ## Option Settings
 options("scipen"=500)
 options("max.print"=100000)
@@ -37,6 +42,28 @@ BaseMastery <- c(20, 20, 20, 25, 25, 25, 15, 15, 15,
                  20, 25, 15, 15, 20, 20, 20, 
                  20, 15, 20, 15, 20, 20, 20, 25, 20, 20, 20)
 ChrInfo <- data.frame(job, class1, class2, MainStat, SubStat1, SubStat2, BaseMastery, stringsAsFactors=F)
+
+
+## Optimization Result
+PotentialOpt <- list()
+PotentialOpt$Dummy <- data.frame(ATKP=rep(0, nrow(ChrInfo)), 
+                                 IGR=rep(0, nrow(ChrInfo)), 
+                                 BDR=rep(0, nrow(ChrInfo)), 
+                                 row.names=ChrInfo$job, 
+                                 stringsAsFactors=F)
+HyperStatOpt <- list()
+HyperStatOpt$Dummy <- data.frame(MainStat=rep(0, nrow(ChrInfo)), 
+                                 MainStatP=rep(0, nrow(ChrInfo)), 
+                                 SubStat1=rep(0, nrow(ChrInfo)), 
+                                 SubStat2=rep(0, nrow(ChrInfo)), 
+                                 DMR=rep(0, nrow(ChrInfo)), 
+                                 BDR=rep(0, nrow(ChrInfo)), 
+                                 IGR=rep(0, nrow(ChrInfo)), 
+                                 CRR=rep(0, nrow(ChrInfo)), 
+                                 CDMR=rep(0, nrow(ChrInfo)), 
+                                 ATK=rep(0, nrow(ChrInfo)), 
+                                 row.names=ChrInfo$job, 
+                                 stringsAsFactors=F)
 
 
 ## DPMs

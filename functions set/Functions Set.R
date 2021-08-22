@@ -1326,6 +1326,11 @@ DealCycleFinal <- function(DealCycle) {
   return(DealCycle)
 }
 DealCycleReduction <- function(DealCycle, NotBuffColNames=c()) {
+  DealCycle[DealCycle$Skills=="SpiderInMirror2", ]$Skills <- "SpiderInMirror1"
+  DealCycle[DealCycle$Skills=="SpiderInMirror3", ]$Skills <- "SpiderInMirror1"
+  DealCycle[DealCycle$Skills=="SpiderInMirror4", ]$Skills <- "SpiderInMirror1"
+  DealCycle[DealCycle$Skills=="SpiderInMirror5", ]$Skills <- "SpiderInMirror1"
+  
   DC <- cbind(DealCycle, rep(1, nrow(DealCycle)))
   colnames(DC) <- c(colnames(DealCycle), "Repeats")
   
@@ -1386,11 +1391,18 @@ LevelFDR <- function(ChrLv, MobLv) {
   return(LvFDR[d, 2] * 100 - 100)
 }
 
-
 ## Damage Calculation Function
-DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs) {
+DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores=(detectCores(logical=F)-1), Collapse=T, 
+                     NotBuffCols=c(), NotBuffColOption=c()) {
+  if(length(NotBuffCols)!=length(NotBuffColOption)) {
+    warning("Invalid Input")
+  } 
+  
+  ## Act Skills and Summoned Skills Collapse
   ATKSkills <- c(rownames(ATKSkillsList), rownames(SummonedSkillsList))
   ATKSkillsList <- rbind(ATKSkillsList, SummonedSkillsList[, c(-16, -18)])
+  ATKSkillsList <- subset(ATKSkillsList, ATKSkillsList$Damage > 0)
+  
   BuffSkills <- rownames(BuffList)
   BuffOpList <- colnames(BuffList)
   SpecList <- colnames(Specs)
@@ -1398,6 +1410,68 @@ DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Spe
   BuffList <- data.frame(BuffList)
   BuffList$BuffOpRatio <- ifelse(is.na(BuffList$CoolTime)==T, 1, BuffList$Duration / BuffList$CoolTime)
   NonATimeBuff <- subset(BuffList, BuffList$BuffOpRatio<1)
+  
+  ## DealCycle Collapse
+  if(Collapse==T) {
+    EffectiveRow <- c()
+    for(i in 1:nrow(DealCycle)) {
+      EffectiveRow[i] <- sum(DealCycle$Skills[i]==rownames(ATKSkillsList)) >= 1
+    }
+    DealCycle <- DealCycle[EffectiveRow, ]
+  }
+  
+  ## Not Buff Options Control
+  if(length(NotBuffCols) > 0) {
+    Idx <- c()
+    for(i in 1:length(NotBuffCols)) {
+      for(j in 1:ncol(DealCycle)) {
+        if(NotBuffCols[i]==colnames(DealCycle)[j]) {
+          Idx <- c(Idx, j)
+          break
+        }
+      }
+    }
+    
+    Options <- unique(NotBuffColOption)
+    SpecialSpecEach <- function(i) {
+      if(length(Options)==1) {
+        SpecialSpec <- 0
+        for(j in 1:length(NotBuffColOption)) {
+          if(NotBuffColOption[j]=="IGR") {
+            SpecialSpec <- IGRCalc(c(SpecialSpec, DealCycle[i, Idx[j]]))
+          } else if(NotBuffColOption[j]=="FDR") {
+            SpecialSpec <- FDRCalc(c(SpecialSpec, DealCycle[i, Idx[j]]))
+          } else {
+            SpecialSpec <- SpecialSpec + DealCycle[i, Idx[j]]
+          }
+        }
+      } else {
+        SpecialSpec <- as.data.frame(matrix(rep(0, length(Options)), nrow=1, ncol=length(Options)))
+        colnames(SpecialSpec) <- Options
+        for(j in 1:length(NotBuffColOption)) {
+          if(NotBuffColOption[j]=="IGR") {
+            SpecialSpec[, colnames(SpecialSpec)=="IGR"] <- IGRCalc(c(SpecialSpec[, colnames(SpecialSpec)=="IGR"], DealCycle[i, Idx[j]]))
+          } else if(NotBuffColOption[j]=="FDR") {
+            SpecialSpec[, colnames(SpecialSpec)=="FDR"] <- FDRCalc(c(SpecialSpec[, colnames(SpecialSpec)=="FDR"], DealCycle[i, Idx[j]]))
+          } else {
+            SpecialSpec[, colnames(SpecialSpec)==NotBuffColOption[j]] <- SpecialSpec[, colnames(SpecialSpec)==NotBuffColOption[j]] + DealCycle[i, Idx[j]]
+          }
+        }
+      }
+      return(SpecialSpec)
+    }
+    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+    if(is.vector(SpecialSpecRaw)==T) {
+      SpecialSpec <- data.frame(Options=SpecialSpecRaw)
+    } else {
+      SpecialSpecRaw <- t(SpecialSpecRaw)
+      SpecialSpec <- data.frame(unlist(SpecialSpecRaw[, 1]))
+      for(i in 2:length(Options)) {
+        SpecialSpec <- cbind(SpecialSpec, unlist(SpecialSpecRaw[, i]))
+      }
+    }
+    colnames(SpecialSpec) <- Options
+  }
   
   t <- c()
   ind <- c()
@@ -1425,8 +1499,9 @@ DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Spe
   c <- data.frame(c(1:length(b)), b)
   c <- subset(c, c$b==1)[, 1] + 2
   
+  ## Deal Calculation
   Deal <- c()
-  for(i in 2:nrow(DealCycle)) {
+  DealCalcEach <- function(i) {
     BuffInd <- DealCycle[i, c] > 0
     
     d <- NonATimeBuff[BuffInd, ]
@@ -1468,17 +1543,31 @@ DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Spe
     SpecEach <- data.frame(t(SpecEach))
     colnames(SpecEach) <- colnames(Specs)
     
+    if(length(NotBuffCols) > 0) {
+      for(j in 1:ncol(SpecialSpec)) {
+        if(colnames(SpecialSpec)[j]=="IGR") {
+          SpecEach[, colnames(SpecEach)=="IGR"] <- IGRCalc(c(SpecEach[, colnames(SpecEach)=="IGR"], SpecialSpec[i, j]))
+        } else if(colnames(SpecialSpec)[j]=="FDR") {
+          SpecEach[, colnames(SpecEach)=="FDR"] <- FDRCalc(c(SpecEach[, colnames(SpecEach)=="FDR"], SpecialSpec[i, j]))
+        } else {
+          SpecEach[, colnames(SpecEach)==colnames(SpecialSpec)[j]] <- SpecEach[, colnames(SpecEach)==colnames(SpecialSpec)[j]] + SpecialSpec[i, j]
+        }
+      }
+    }
+    
     SkillInd <- DealCycle[i, 1]==rownames(ATKSkillsList)
     Skills <- ATKSkillsList[SkillInd, ]
     if(nrow(Skills)==0) {
-      Deal[i] <- 0
+      Deal <- 0
     } else {
-      Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+      Deal <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * ((SpecEach$ATK + Skills$ATK) / 100 *
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 + SpecEach$NotEffATK / 100) * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(MobDefault$Basic$PhysicImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
+    return(Deal)
   }
+  Deal <- mcmapply(DealCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
   return(Deal)
 }
 pdamdist <- function(Damage, DamageAVG, Mastery, CDMR) {
@@ -1587,9 +1676,17 @@ CutDam <- function(DamAVG, Mastery, CDMR) {
   }
   return(NewDMR)
 }
-DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs) {
+DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores=(detectCores(logical=F)-1), 
+                               NotBuffCols=c(), NotBuffColOption=c()) {
+  if(length(NotBuffCols)!=length(NotBuffColOption)) {
+    warning("Invalid Input")
+  } 
+  
+  ## Act Skills and Summoned Skills Collapse
   ATKSkills <- c(rownames(ATKSkillsList), rownames(SummonedSkillsList))
   ATKSkillsList <- rbind(ATKSkillsList, SummonedSkillsList[, c(-16, -18)])
+  ATKSkillsList <- subset(ATKSkillsList, ATKSkillsList$Damage > 0)
+  
   BuffSkills <- rownames(BuffList)
   BuffOpList <- colnames(BuffList)
   SpecList <- colnames(Specs)
@@ -1597,6 +1694,59 @@ DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkill
   BuffList <- data.frame(BuffList)
   BuffList$BuffOpRatio <- ifelse(is.na(BuffList$CoolTime)==T, 1, BuffList$Duration / BuffList$CoolTime)
   NonATimeBuff <- subset(BuffList, BuffList$BuffOpRatio<1)
+  
+  ## Not Buff Options Control
+  if(length(NotBuffCols) > 0) {
+    Idx <- c()
+    for(i in 1:length(NotBuffCols)) {
+      for(j in 1:ncol(DealCycle)) {
+        if(NotBuffCols[i]==colnames(DealCycle)[j]) {
+          Idx <- c(Idx, j)
+          break
+        }
+      }
+    }
+    
+    Options <- unique(NotBuffColOption)
+    SpecialSpecEach <- function(i) {
+      if(length(Options)==1) {
+        SpecialSpec <- 0
+        for(j in 1:length(NotBuffColOption)) {
+          if(NotBuffColOption[j]=="IGR") {
+            SpecialSpec <- IGRCalc(c(SpecialSpec, DealCycle[i, Idx[j]]))
+          } else if(NotBuffColOption[j]=="FDR") {
+            SpecialSpec <- FDRCalc(c(SpecialSpec, DealCycle[i, Idx[j]]))
+          } else {
+            SpecialSpec <- SpecialSpec + DealCycle[i, Idx[j]]
+          }
+        }
+      } else {
+        SpecialSpec <- as.data.frame(matrix(rep(0, length(Options)), nrow=1, ncol=length(Options)))
+        colnames(SpecialSpec) <- Options
+        for(j in 1:length(NotBuffColOption)) {
+          if(NotBuffColOption[j]=="IGR") {
+            SpecialSpec[, colnames(SpecialSpec)=="IGR"] <- IGRCalc(c(SpecialSpec[, colnames(SpecialSpec)=="IGR"], DealCycle[i, Idx[j]]))
+          } else if(NotBuffColOption[j]=="FDR") {
+            SpecialSpec[, colnames(SpecialSpec)=="FDR"] <- FDRCalc(c(SpecialSpec[, colnames(SpecialSpec)=="FDR"], DealCycle[i, Idx[j]]))
+          } else {
+            SpecialSpec[, colnames(SpecialSpec)==NotBuffColOption[j]] <- SpecialSpec[, colnames(SpecialSpec)==NotBuffColOption[j]] + DealCycle[i, Idx[j]]
+          }
+        }
+      }
+      return(SpecialSpec)
+    }
+    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+    if(is.vector(SpecialSpecRaw)==T) {
+      SpecialSpec <- data.frame(Options=SpecialSpecRaw)
+    } else {
+      SpecialSpecRaw <- t(SpecialSpecRaw)
+      SpecialSpec <- data.frame(unlist(SpecialSpecRaw[, 1]))
+      for(i in 2:length(Options)) {
+        SpecialSpec <- cbind(SpecialSpec, unlist(SpecialSpecRaw[, i]))
+      }
+    }
+    colnames(SpecialSpec) <- Options
+  }
   
   t <- c()
   ind <- c()
@@ -1624,8 +1774,9 @@ DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkill
   c <- data.frame(c(1:length(b)), b)
   c <- subset(c, c$b==1)[, 1] + 2
   
+  ## Deal Calculation
   Deal <- c()
-  for(i in 2:nrow(DealCycle)) {
+  DealCalcEach <- function(i) {
     BuffInd <- DealCycle[i, c] > 0
     
     d <- NonATimeBuff[BuffInd, ]
@@ -1667,18 +1818,32 @@ DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkill
     SpecEach <- data.frame(t(SpecEach))
     colnames(SpecEach) <- colnames(Specs)
     
+    if(length(NotBuffCols) > 0) {
+      for(j in 1:ncol(SpecialSpec)) {
+        if(colnames(SpecialSpec)[j]=="IGR") {
+          SpecEach[, colnames(SpecEach)=="IGR"] <- IGRCalc(c(SpecEach[, colnames(SpecEach)=="IGR"], SpecialSpec[i, j]))
+        } else if(colnames(SpecialSpec)[j]=="FDR") {
+          SpecEach[, colnames(SpecEach)=="FDR"] <- FDRCalc(c(SpecEach[, colnames(SpecEach)=="FDR"], SpecialSpec[i, j]))
+        } else {
+          SpecEach[, colnames(SpecEach)==colnames(SpecialSpec)[j]] <- SpecEach[, colnames(SpecEach)==colnames(SpecialSpec)[j]] + SpecialSpec[i, j]
+        }
+      }
+    }
+    
     SkillInd <- DealCycle[i, 1]==rownames(ATKSkillsList)
     Skills <- ATKSkillsList[SkillInd, ]
     if(nrow(Skills)==0) {
-      Deal[i] <- 0
+      Deal <- 0
     } else {
-      Deal[i] <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * (SpecEach$ATK + Skills$ATK) / 100 *
-        (100 + SpecEach$ATKP + Skills$ATKP) / 100 * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
+      Deal <- Skills$Damage / 100 * (SpecEach$MainStat * 4 + SpecEach$SubStat1 + ifelse(is.null(SpecEach$SubStat2)==T, 0, SpecEach$SubStat2)) * ((SpecEach$ATK + Skills$ATK) / 100 *
+        (100 + SpecEach$ATKP + Skills$ATKP) / 100 + SpecEach$NotEffATK / 100) * IGRDam(IGRCalc(c(SpecEach$IGR, Skills$IGR)), MobDefault$Basic$Guard) / 100 * (100 + SpecEach$BDR + Skills$BDR) / 100 * 
         CRRDam(SpecEach$CRR + Skills$CRR, SpecEach$CDMR + Skills$CDMR) / 100 * (FDRCalc(c(SpecEach$FDR, Skills$FDR)) + 100) / 100 * (SpecEach$Mastery + 100) / 200 * 
         ifelse(MobDefault$Basic$PhysicImmune==T, (50 + SpecEach$ImmuneIgnore/2 + Skills$ImmuneIgnore/2)/100, 1)
-      Deal[i] <- CutDam(Deal[i], SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
+      Deal <- CutDam(Deal, SpecEach$Mastery, SpecEach$CDMR + Skills$CDMR) * Skills$AttackTimes * ifelse(sum(colnames(DealCycle)=="Repeats")==1, DealCycle$Repeats[i], 1)
     }
+    return(Deal)
   }
+  Deal <- mcmapply(DealCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
   return(Deal)
 }
 DealRatio <- function(DealCycle, DealData) {
@@ -1729,13 +1894,14 @@ for(i in 1:length(PotIGR)) {
   ZeroPotList[[i]] <- subset(PotentialListZero, PotentialListZero$IGR==PotIGR[i])
 }
 
-Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, UnionBDRIGR) {
+Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, UnionBDRIGR, Cores=(detectCores(logical=F)-1), 
+                          NotBuffCols=c(), NotBuffColOption=c()) {
   BDR <- min(40, UnionBDRIGR) : max(0, (UnionBDRIGR - 40))
   IGR <- UnionBDRIGR - BDR
   UnionList <- data.frame(BDR, IGR)
   PotList <- PotList
   
-  BaseDeal <- DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs)
+  BaseDeal <- DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)
   
   NewDeal <- c()
   p <- 1
@@ -1744,7 +1910,7 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
     NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][p, 1]
     NewSpecs$BDR <- Specs$BDR + PotList[[1]][p, 3]
     NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][p, 2]))
-    NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+    NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     p <- p + 1
   }
   if(length(NewDeal)==2) {
@@ -1752,7 +1918,7 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
     NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][nrow(PotList[[1]]), 1]
     NewSpecs$BDR <- Specs$BDR + PotList[[1]][nrow(PotList[[1]]), 3]
     NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][nrow(PotList[[1]]), 2]))
-    NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+    NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     l <- NewDeal==max(NewDeal)
     Deals <- max(NewDeal)
     Combinations <- ifelse(l[1]==T, PotList[[1]][1, ], PotList[[1]][length(PotList[[1]]), ])
@@ -1772,7 +1938,7 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
       NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][p, 1]
       NewSpecs$BDR <- Specs$BDR + PotList[[k]][p, 3]
       NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][p, 2]))
-      NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+      NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
       p <- p + 1
     }
     if(length(NewDeal)==2) {
@@ -1780,7 +1946,7 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
       NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][nrow(PotList[[k]]), 1]
       NewSpecs$BDR <- Specs$BDR + PotList[[k]][nrow(PotList[[k]]), 3]
       NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][nrow(PotList[[k]]), 2]))
-      NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+      NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
       l <- NewDeal==max(NewDeal)
       Deals <- c(Deals, max(NewDeal))
       Combinations <- rbind(Combinations, ifelse(l[1]==T, PotList[[k]][1, ], PotList[[k]][length(PotList[[k]]), ]))
@@ -1878,21 +2044,21 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
     NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[1]
     NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[1]
     NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[1]))
-    NewDeal[1] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+    NewDeal[1] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     
     if(nrow(FinalList) > 1) {
       NewSpecs <- Specs
       NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[2]
       NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[2]
       NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[2]))
-      NewDeal[2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+      NewDeal[2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
       
       if(NewDeal[1] > NewDeal[2]) {
         NewSpecs <- Specs
         NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[nrow(FinalList)]
         NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[nrow(FinalList)]
         NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[nrow(FinalList)]))
-        NewDeal[2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs)))
+        NewDeal[2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
         
         FinalCombination[i, 1] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 1], FinalList[nrow(FinalList), 1])
         FinalCombination[i, 2] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 2], FinalList[nrow(FinalList), 2])
@@ -1905,7 +2071,7 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
           NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[p+2]
           NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[p+2]
           NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[p+2]))
-          NewDeal[p+2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList,  NewSpecs)))
+          NewDeal[p+2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
           p <- p + 1
         }
         FinalCombination[i, 1] <- FinalList[length(NewDeal), 1]
@@ -1924,7 +2090,8 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
   FinalCombination <- subset(FinalCombination, FinalCombination$Deal==max(FinalCombination$Deal))
   return(FinalCombination)
 }
-Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0) {
+Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0, Cores=(detectCores(logical=F)-1), 
+                          NotBuffCols=c(), NotBuffColOption=c()) {
   lvs <- c()
   for(i in 1:9) {
     p <- 0
@@ -1933,6 +2100,7 @@ Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
     }
     lvs[i] <- p
   }
+  originallvs <- lvs
   
   totalpts <- sum(subset(lvpts, lvpts$lv<=ChrLv)[, 2])
   usedpts <- 0
@@ -1949,7 +2117,7 @@ Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
       NewSpecs[[i]] <- Specs
     }
     names(NewSpecs) <- c("Pre", colnames(HyperBase))
-    PreDeal <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i]])))
+    PreDeal <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i]], Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     NewSpecs$MainStat$MainStat <- NewSpecs$MainStat$MainStat + ifelse(nextlevelpts[1] > remainpts, 0, HyperStats$MainStat[lvs[1]+1])
     NewSpecs$SubStat1$SubStat1 <- NewSpecs$SubStat1$SubStat1 + ifelse(nextlevelpts[2] > remainpts, 0, HyperStats$SubStat1[lvs[2]+1])
     if(is.null(NewSpecs$SubStat2$SubStat2)==F) {
@@ -1966,15 +2134,15 @@ Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
     
     NewDeal <- c()
     for(i in c(1:6, 8:9)) {
-      NewDeal[i] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i+1]])))
+      NewDeal[i] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i+1]], Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     }
     if(CRROver==T) {
       BuffListNew <- BuffList
       CRIlv <- BuffList[rownames(BuffList)=="CriticalReinforce", ]$CDMR / NewSpecs$Pre$CRR * 100 - 20
       BuffListNew[rownames(BuffListNew)=="CriticalReinforce", ]$CDMR <- NewSpecs$CRR$CRR * ((CRIlv + 20) / 100)
-      NewDeal[7] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffListNew, SummonedSkillsList, NewSpecs[[8]])))
+      NewDeal[7] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffListNew, SummonedSkillsList, NewSpecs[[8]], Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     } else {
-      NewDeal[7] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[8]])))
+      NewDeal[7] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[8]], Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     }
     
     Eff <- (NewDeal / PreDeal - 1) / nextlevelpts
@@ -2005,41 +2173,112 @@ Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
       remainpts <- 0
     }
   }
+  
+  SpecInc <- HyperBase
+  SpecInc[1, ] <- 0
+  for(i in 1:ncol(SpecInc)) {
+    if(lvs[i] - originallvs[i] > 0) {
+      if(colnames(SpecInc)[i]=="IGR") {
+        BeforeIGR <- sum(HyperStats$IGR[1:(originallvs[i])])
+        AfterIGR <- sum(HyperStats$IGR[1:(lvs[i])])
+        SpecInc[1, i] <- (1 - (((100 - AfterIGR) / 100) / ((100 - BeforeIGR) / 100))) * 100
+      } else {
+        SpecInc[1, i] <- sum(HyperStats[, colnames(HyperStats)==colnames(SpecInc)[i]][(originallvs[i]+1):lvs[i]])
+      }
+    }
+  }
   lvs <- data.frame(t(lvs))
   colnames(lvs) <- HyperTypes
+  print(Specs)
   print(lvs)
-  return(Specs)
+  return(SpecInc)
 }
+OptDataAdd <- function(Spec, OptData, Type=c("Potential", "HyperStat"), CRROver, DemonAvenger=F) {
+  if(Type=="Potential") {
+    Spec$ATKP <- Spec$ATKP + OptData$ATKP
+    Spec$BDR <- Spec$BDR + OptData$BDR
+    Spec$IGR <- IGRCalc(c(Spec$IGR, OptData$IGR))
+  } else if(Type=="HyperStat" & DemonAvenger==F) {
+    Spec$MainStat <- Spec$MainStat + OptData$MainStat
+    Spec$SubStat1 <- Spec$SubStat1 + OptData$SubStat1
+    if(OptData$SubStat2 > 0) {
+      Spec$SubStat2 <- Spec$SubStat2 + OptData$SubStat2
+    }
+    Spec$BDR <- Spec$BDR + OptData$BDR + OptData$DMR
+    Spec$IGR <- IGRCalc(c(Spec$IGR, OptData$IGR))
+    Spec$CDMR <- Spec$CDMR + OptData$CDMR
+    Spec$ATK <- Spec$ATK + OptData$ATK
+    if(CRROver==T) {
+      Spec$CRR <- Spec$CRR + OptData$CRR
+    } else {
+      Spec$CRR <- min(100, Spec$CRR + OptData$CRR)
+    }
+  } else if(Type=="HyperStat" & DemonAvenger==T) {
+    Spec$MainStat <- Spec$MainStat + floor((Spec$MainStatWithoutStatP * OptData$MainStatP / 100))
+    Spec$MainStatP <- Spec$MainStatP + OptData$MainStatP / 100
+    Spec$SubStat1 <- Spec$SubStat1 + OptData$SubStat1
+    if(OptData$SubStat2 > 0) {
+      Spec$SubStat2 <- Spec$SubStat2 + OptData$SubStat2
+    }
+    Spec$BDR <- Spec$BDR + OptData$BDR + OptData$DMR
+    Spec$IGR <- IGRCalc(c(Spec$IGR, OptData$IGR))
+    Spec$CDMR <- Spec$CDMR + OptData$CDMR
+    Spec$ATK <- Spec$ATK + OptData$ATK
+    if(CRROver==T) {
+      Spec$CRR <- Spec$CRR + OptData$CRR
+    } else {
+      Spec$CRR <- min(100, Spec$CRR + OptData$CRR)
+    }
+  }
+  return(Spec)
+}
+CriReinAdj <- function(Spec, SpecOpt, BuffFinal, CriReinLv) {
+  CRRInc <- SpecOpt$CRR - Spec$CRR
+  
+  BuffFinal[rownames(BuffFinal)=="CriticalReinforce", ]$CDMR <- BuffFinal[rownames(BuffFinal)=="CriticalReinforce", ]$CDMR + CRRInc * ((CriReinLv + 20) / 100)
+  return(BuffFinal)
+} 
+PrayFDRAdj <- function(Spec, SpecOpt, BuffFinal) {
+  PrayFDRInc <- floor((SpecOpt$MainStat + BuffFinal[rownames(BuffFinal)=="MapleWarriors2", ]$MainStat)/2500) - floor((Spec$MainStat + BuffFinal[rownames(BuffFinal)=="MapleWarriors2", ]$MainStat)/2500)
+  
+  BuffFinal[rownames(BuffFinal)=="Pray", ]$FDR <- BuffFinal[rownames(BuffFinal)=="Pray", ]$FDR + PrayFDRInc
+  return(BuffFinal)
+} 
 
 
 ## CoolTime Reset Deal Calc Functions
-ResetDealCalc <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, times=c(), prob=c()) {
+ResetDealCalc <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, times=c(), prob=c(), 
+                          Cores=(detectCores(logical=F)-1), Collapse=T, NotBuffCols=c(), NotBuffColOption=c()) {
   WeightedTime <- sum(times * prob)
   Weight <- times * prob / WeightedTime
   
   Deals <- c()
   for(i in 1:length(times)) {
-    Deals[i] <- sum(na.omit(DealCalc(DealCycles[[i]], ATKSkillsList, BuffList, SummonedSkillsList, Specs))) * Weight[i]
+    Deals[i] <- sum(na.omit(DealCalc(DealCycles[[i]], ATKSkillsList, BuffList, SummonedSkillsList, Specs, 
+                                     Cores, Collapse, NotBuffCols, NotBuffColOption))) * Weight[i]
   }
   return(sum(Deals))
 }
-ResetDealCalcWithMaxDMR <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, times=c(), prob=c()) {
+ResetDealCalcWithMaxDMR <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, times=c(), prob=c(), 
+                                    Cores=(detectCores(logical=F)-1), Collapse=T, NotBuffCols=c(), NotBuffColOption=c()) {
   WeightedTime <- sum(times * prob)
   Weight <- times * prob / WeightedTime
   
   Deals <- c()
   for(i in 1:length(times)) {
-    Deals[i] <- sum(na.omit(DealCalcWithMaxDMR(DealCycles[[i]], ATKSkillsList, BuffList, SummonedSkillsList, Specs))) * Weight[i]
+    Deals[i] <- sum(na.omit(DealCalcWithMaxDMR(DealCycles[[i]], ATKSkillsList, BuffList, SummonedSkillsList, Specs, 
+                                               Cores, NotBuffCols, NotBuffColOption))) * Weight[i]
   }
   return(sum(Deals))
 }
-ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, UnionBDRIGR, times=c(), prob=c()) {
+ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, UnionBDRIGR, times=c(), prob=c(), 
+                               Cores=(detectCores(logical=F)-1), NotBuffCols=c(), NotBuffColOption=c()) {
   BDR <- min(40, UnionBDRIGR) : max(0, (UnionBDRIGR - 40))
   IGR <- UnionBDRIGR - BDR
   UnionList <- data.frame(BDR, IGR)
   PotList <- PotList
   
-  BaseDeal <- ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, Specs, times, prob)
+  BaseDeal <- ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, Specs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)
   
   NewDeal <- c()
   p <- 1
@@ -2048,7 +2287,7 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
     NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][p, 1]
     NewSpecs$BDR <- Specs$BDR + PotList[[1]][p, 3]
     NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][p, 2]))
-    NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+    NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     p <- p + 1
   }
   if(length(NewDeal)==2) {
@@ -2056,7 +2295,7 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
     NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][nrow(PotList[[1]]), 1]
     NewSpecs$BDR <- Specs$BDR + PotList[[1]][nrow(PotList[[1]]), 3]
     NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][nrow(PotList[[1]]), 2]))
-    NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+    NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     l <- NewDeal==max(NewDeal)
     Deals <- max(NewDeal)
     Combinations <- ifelse(l[1]==T, PotList[[1]][1, ], PotList[[1]][length(PotList[[1]]), ])
@@ -2076,7 +2315,7 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
       NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][p, 1]
       NewSpecs$BDR <- Specs$BDR + PotList[[k]][p, 3]
       NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][p, 2]))
-      NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+      NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
       p <- p + 1
     }
     if(length(NewDeal)==2) {
@@ -2084,7 +2323,7 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
       NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][nrow(PotList[[k]]), 1]
       NewSpecs$BDR <- Specs$BDR + PotList[[k]][nrow(PotList[[k]]), 3]
       NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][nrow(PotList[[k]]), 2]))
-      NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+      NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
       l <- NewDeal==max(NewDeal)
       Deals <- c(Deals, max(NewDeal))
       Combinations <- rbind(Combinations, ifelse(l[1]==T, PotList[[k]][1, ], PotList[[k]][length(PotList[[k]]), ]))
@@ -2182,21 +2421,21 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
     NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[1]
     NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[1]
     NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[1]))
-    NewDeal[1] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+    NewDeal[1] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     
     if(nrow(FinalList) > 1) {
       NewSpecs <- Specs
       NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[2]
       NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[2]
       NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[2]))
-      NewDeal[2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+      NewDeal[2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
       
       if(NewDeal[1] > NewDeal[2]) {
         NewSpecs <- Specs
         NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[nrow(FinalList)]
         NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[nrow(FinalList)]
         NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[nrow(FinalList)]))
-        NewDeal[2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+        NewDeal[2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
         
         FinalCombination[i, 1] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 1], FinalList[nrow(FinalList), 1])
         FinalCombination[i, 2] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 2], FinalList[nrow(FinalList), 2])
@@ -2209,7 +2448,7 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
           NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[p+2]
           NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[p+2]
           NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[p+2]))
-          NewDeal[p+2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob)))
+          NewDeal[p+2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
           p <- p + 1
         }
         FinalCombination[i, 1] <- FinalList[length(NewDeal), 1]
@@ -2228,7 +2467,8 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
   FinalCombination <- subset(FinalCombination, FinalCombination$Deal==max(FinalCombination$Deal))
   return(FinalCombination)
 }
-ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0, times=c(), prob=c()) {
+ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0, times=c(), prob=c(), 
+                               Cores=(detectCores(logical=F)-1), NotBuffCols=c(), NotBuffColOption=c()) {
   lvs <- c()
   for(i in 1:9) {
     p <- 0
@@ -2237,6 +2477,7 @@ ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
     }
     lvs[i] <- p
   }
+  originallvs <- lvs
   
   totalpts <- sum(subset(lvpts, lvpts$lv<=ChrLv)[, 2])
   usedpts <- 0
@@ -2253,7 +2494,7 @@ ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
       NewSpecs[[i]] <- Specs
     }
     names(NewSpecs) <- c("Pre", colnames(HyperBase))
-    PreDeal <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i]], times, prob)))
+    PreDeal <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i]], times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     NewSpecs$MainStat$MainStat <- NewSpecs$MainStat$MainStat + ifelse(nextlevelpts[1] > remainpts, 0, HyperStats$MainStat[lvs[1]+1])
     NewSpecs$SubStat1$SubStat1 <- NewSpecs$SubStat1$SubStat1 + ifelse(nextlevelpts[2] > remainpts, 0, HyperStats$SubStat1[lvs[2]+1])
     if(is.null(NewSpecs$SubStat2$SubStat2)==F) {
@@ -2270,15 +2511,15 @@ ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
     
     NewDeal <- c()
     for(i in c(1:6, 8:9)) {
-      NewDeal[i] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i+1]], times, prob)))
+      NewDeal[i] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[i+1]], times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     }
     if(CRROver==T) {
       BuffListNew <- BuffList
       CRIlv <- BuffList[rownames(BuffList)=="CriticalReinforce", ]$CDMR / NewSpecs$Pre$CRR * 100 - 20
       BuffListNew[rownames(BuffListNew)=="CriticalReinforce", ]$CDMR <- NewSpecs$CRR$CRR * ((CRIlv + 20) / 100)
-      NewDeal[7] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffListNew, SummonedSkillsList, NewSpecs[[8]], times, prob)))
+      NewDeal[7] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffListNew, SummonedSkillsList, NewSpecs[[8]], times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     } else {
-      NewDeal[7] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[8]], times, prob)))
+      NewDeal[7] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs[[8]], times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
     }
     
     Eff <- (NewDeal / PreDeal - 1) / nextlevelpts
@@ -2309,10 +2550,25 @@ ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
       remainpts <- 0
     }
   }
+  
+  SpecInc <- HyperBase
+  SpecInc[1, ] <- 0
+  for(i in 1:ncol(SpecInc)) {
+    if(lvs[i] - originallvs[i] > 0) {
+      if(colnames(SpecInc)[i]=="IGR") {
+        BeforeIGR <- sum(HyperStats$IGR[1:(originallvs[i])])
+        AfterIGR <- sum(HyperStats$IGR[1:(lvs[i])])
+        SpecInc[1, i] <- (1 - (((100 - AfterIGR) / 100) / ((100 - BeforeIGR) / 100))) * 100
+      } else {
+        SpecInc[1, i] <- sum(HyperStats[, colnames(HyperStats)==colnames(SpecInc)[i]][(originallvs[i]+1):lvs[i]])
+      }
+    }
+  }
   lvs <- data.frame(t(lvs))
   colnames(lvs) <- HyperTypes
+  print(Specs)
   print(lvs)
-  return(Specs)
+  return(SpecInc)
 }
 ResetDealRatio <- function(DealCycles=list(), DealDatas=list(), times=c(), prob=c()) {
   WeightedTime <- sum(times * prob)
@@ -2387,22 +2643,19 @@ MatrixSet <- function(PasSkills,
                       ActSkills, 
                       ActLvs, 
                       ActMP, 
-                      BlinkLv=1, 
-                      BlinkMP=0, 
                       UsefulSkills, 
                       UsefulLvs, 
                       UsefulMP, 
                       SpecSet=SpecDefault, 
-                      SelfWill=T,
-                      SelfBind=F) {
+                      SpecialCore) {
   Cores <- floor((SpecSet$Basic$ChrLv - 200) / 5) + 5 + 2
   MatrixPoints <- SpecSet$Basic$ChrLv - 200
   
-  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + 1 + ifelse(SelfWill==F, 1, 0) + ifelse(SelfBind==F, 1, 0) + length(UsefulSkills)
+  CoreNumbers <- ceiling(sum(PasLvs) / 75) + length(ActSkills) + length(UsefulSkills) + as.numeric(SpecialCore)
   if(CoreNumbers > Cores) {warning("Invalid Input : Cores Exceeded") 
     stop()}
   
-  MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP) + BlinkMP
+  MPs <- ceiling(sum(PasMP) / 15) * 5 + sum(ActMP)
   if(MPs > MatrixPoints) {warning("Invalid Input : Matrix Points Exceeded") 
     stop()}
   
@@ -2412,22 +2665,15 @@ MatrixSet <- function(PasSkills,
   ActiveCore <- data.frame(ActSkills, ActLvs + ActMP)
   colnames(ActiveCore) <- c("Active", "Levels")
   
-  Blink <- data.frame(Active="Blink", Levels=BlinkLv + BlinkMP)
-  ErdaNova <- data.frame(Active="ErdaNova", Levels=1)
-  ErdaWill <- data.frame(Active="ErdaWill", Levels=1)
-  if(SelfBind==F) {
-    ActiveCore <- rbind(ActiveCore, Blink, ErdaNova)
-  } else {
-    ActiveCore <- rbind(ActiveCore, Blink)
-  }
-  
-  if(SelfWill==F) {
-    ActiveCore <- rbind(ActiveCore, ErdaWill)
-  }
-  
   UsefulCore <- data.frame(UsefulSkills, UsefulLvs + UsefulMP)
   colnames(UsefulCore) <- c("Useful", "Levels")
-  Cores <- list(PassiveCore, ActiveCore, UsefulCore)
+  
+  if(SpecialCore==T) {
+    SpecialCore <- data.frame(SpecialCore="SpecialCore", Levels=1)
+    Cores <- list(PassiveCore, ActiveCore, UsefulCore)
+  } else {
+    Cores <- list(PassiveCore, ActiveCore, UsefulCore)
+  }
   print("Valid Input")
   return(Cores)
 }
@@ -2473,7 +2719,7 @@ JobBase <- function(ChrInfo=ChrInfo,
   CoolReduceP <- UnionChr(UnionPreSet[[i]], Job, SpecSet$Basic$ChrLv)$CoolReduceP
   JobData$BuffDurationNeeded <- BuffDurationNeeded
   
-  InfoList2 <- c("ChrLv", "UnionLv", "ArcaneForce", "ArcaneForceStat", "AuthenticForce", "Charisma", "Insight", "Sensibility", "Will")
+  InfoList2 <- c("ChrLv", "UnionLv", "ArcaneForce", "ArcaneForceStat", "AuthenticForceStat", "Charisma", "Insight", "Sensibility", "Will")
   t <- length(JobData)
   for(i in 1:length(InfoList2)) {
     JobData[[i+t]] <- SpecSet$Basic[1, i]
@@ -2511,10 +2757,14 @@ JobBase <- function(ChrInfo=ChrInfo,
   rownames(LinkSet) <- c("Links")
   JobData$Links <- LinkSet
   
-  ML <- colSums(MonsterLife) ## IGR Logic Needed
-  JobData$MonsterLife <- data.frame(t(ML))
+  JobData$MonsterLife <- data.frame(MonsterLife)
+  if(JobData$MainStat=="INT") {
+    JobData$MonsterLife$ATK <- JobData$MonsterLife$MAT
+  }
+  JobData$MonsterLife$ATKPer20Lv <- floor(JobData$ChrLv / 20) * JobData$MonsterLife$ATKPer20Lv
+  colnames(JobData$MonsterLife)[colnames(JobData$MonsterLife)=="ATKPer20Lv"] <- "NotEffATK"
   JobData$CommonSkillSet <- data.frame(t(colSums(CommonSkills)))
-  JobData$Dopings <- data.frame(t(colSums(DopingSet))) ## IGR Logic Needed
+  JobData$Dopings <- data.frame(t(colSums(DopingSet)))
   
   Weapon <- rbind(Weapon, SubWeapon, Emblem)
   rownames(Weapon) <- c("Weapon", "SubWeapon", "Emblem")
@@ -2741,29 +2991,30 @@ JobSpec <- function(JobBase,
   } else if(JobBase$Job=="DemonAvenger") {
     MainStatWithoutStatP <- MainStat
   }
-  MainStat <- floor(MainStat * MainStatP) + floor(UneffMainStat) + ifelse(JobBase$Job!="Xenon", JobBase$ArcaneForceStat, JobBase$ArcaneForceStat / 100 * 39)
-  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39)
-  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39)
+  MainStat <- floor(MainStat * MainStatP) + floor(UneffMainStat) + ifelse(JobBase$Job!="Xenon", JobBase$ArcaneForceStat, JobBase$ArcaneForceStat / 100 * 39) + 
+    ifelse(JobBase$Job!="Xenon", JobBase$AuthenticForceStat, JobBase$AuthenticForceStat / 100 * 39)
+  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39) + ifelse(JobBase$Job!="Xenon", 0, JobBase$AuthenticForceStat / 100 * 39)
+  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39) + ifelse(JobBase$Job!="Xenon", 0, JobBase$AuthenticForceStat / 100 * 39)
   SubStat2 <- ifelse(is.na(JobBase$SubStat2)==T, 0, SubStat2)
   CRR <- ifelse(JobBase$CRROver==T, CRR, min(100, CRR))
   FDR <- FDRCalc(c(FDR, ArcaneForceFDR(JobBase$ArcaneForce, MobInfo$Basic$Arc), LevelFDR(JobBase$ChrLv, MobInfo$Basic$Lv), 
                    (WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, WeaponName, SpecSet$WeaponType)[19]*100-100), (JobConstant-1)*100))
   ATKSpeed <- max(ATKSpeed, 2)
   Mastery <- min(Mastery, 99)
+  NotEffATK <- JobBase$MonsterLife$NotEffATK
   if(SubStat2==0) {
     Spec <- data.frame(MainStat=MainStat, SubStat1=SubStat1, ATK=ATK, ATKSub=ATKSub,
                        ATKP=ATKP, IGR=IGR, BDR=BDR, CRR=CRR, CDMR=CDMR, FDR=FDR, 
                        ATKSpeed=ATKSpeed, Mastery=Mastery, BuffDuration=BuffDuration, SummonedDuration=SummonedDuration, ImmuneIgnore=ImmuneIgnore, 
-                       CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, 
+                       CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, NotEffATK=NotEffATK, 
                        MainStatP=MainStatP)
   } else {
     Spec <- data.frame(MainStat=MainStat, SubStat1=SubStat1, SubStat2=SubStat2, ATK=ATK, ATKSub=ATKSub,
                        ATKP=ATKP, IGR=IGR, BDR=BDR, CRR=CRR, CDMR=CDMR, FDR=FDR, 
                        ATKSpeed=ATKSpeed, Mastery=Mastery, BuffDuration=BuffDuration, SummonedDuration=SummonedDuration, ImmuneIgnore=ImmuneIgnore, 
-                       CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, 
+                       CoolTimeReset=CoolTimeReset, SkillLv=SkillLv, PSkillLv=PSkillLv, CoolReduceP=CoolReduceP, CoolReduce=CoolReduce, Disorder=Disorder, NotEffATK=NotEffATK, 
                        MainStatP=MainStatP)
   }
-  
   if(JobBase$Job=="Xenon") {
     Spec$AllStatP <- AllstatP
     Spec$MainStatWithoutStatP <- MainStatWithoutStatP
@@ -2775,4 +3026,83 @@ JobSpec <- function(JobBase,
   Spec <- list(Spec=Spec, UnionRemained=UnionRemained, HyperStatBase=HyperStatBase, CoolReduceType=SpecSet$CoolReduceInfo)
   print(CRRs)
   return(Spec)
+}
+
+
+## Restraint, 40s Deal Calc Function
+Deal_RR <- function(DealData) {
+  RR <- subset(DealData, DealData$R4 > 0)
+  rownames(RR) <- 1:nrow(RR)
+  Idx <- as.numeric(rownames(subset(RR, RR$Skills=="Restraint4")))
+  if(length(Idx)==1) {
+    return(sum(RR$Deal))
+  } else {
+    return(sum(RR[1:(Idx[2]-1), ]$Deal))
+  }
+}
+Deal_40s <- function(DealData, StartWithRR=T, StartTime=NA, FinishTime=NA) {
+  if(StartWithRR==T) {
+    Start_40s <- min(subset(DealData, DealData$Skills=="Restraint4")$Time)
+    Dealdata_40s <- DealData[DealData$Time >= Start_40s & DealData$Time < Start_40s + 40000, ]
+  } else if(is.na(StartTime)==F) {
+    Start_40s <- StartTime
+    Dealdata_40s <- DealData[DealData$Time >= Start_40s & DealData$Time < Start_40s + 40000, ]
+  } else {
+    Start_40s <- FinishTime - 40000
+    Dealdata_40s <- DealData[DealData$Time > Start_40s & DealData$Time <= Start_40s + 40000, ]
+  }
+  return(sum(Dealdata_40s$Deal))
+}
+
+
+## Double Lucky Dice Data
+LuckyDiceProbs <- function(PSkillLv = 0, Hyper_Enhance = F, Hyper_ExtraNumber = F) {
+  Ind <- c(17, 17, 17, 17, 17, 15, 0)
+  EnhanceBonus <- c(0, 0, 0, 5, 5, 5, 0)
+  ExtraNumber <- c(0, 0, 0, 0, 0, 0, 9)
+  
+  FinalInd <- Ind + ifelse(Hyper_Enhance==T, EnhanceBonus, rep(0, 7)) + ifelse(Hyper_ExtraNumber==T, ExtraNumber, rep(0, 7))
+  Prob <- FinalInd / sum(FinalInd)
+  FinalInd2 <- FinalInd
+  FinalInd2[5] <- FinalInd2[5] / 2
+  Prob2 <- FinalInd2 / sum(FinalInd2)
+  DoubleLuckyDiceProb <- 0.5 + 0.1 * PSkillLv
+  
+  Case_5 <- 0 ; Case_55 <- 0 ; Case_57 <- 0 ; Case_555 <- 0 ; Case_557 <- 0 ; Case_555 <- 0
+  
+  ## Case 1 : 55F
+  Case_55 <- Case_55 + Prob[5] * (1 - DoubleLuckyDiceProb)
+  
+  ## Case 2 : 57F
+  Case_57 <- Case_57 + Prob[7] * (1 - DoubleLuckyDiceProb)
+  
+  ## Case 3 : 5OF
+  Case_5 <- Case_5 + (1 - Prob[5] - Prob[7]) * (1 - DoubleLuckyDiceProb)
+  
+  ## Case 4 : 555
+  Case_555 <- Case_555 + Prob[5] * DoubleLuckyDiceProb * Prob2[5]
+  
+  ## Case 5 : 557
+  Case_557 <- Case_557 + Prob[5] * DoubleLuckyDiceProb * Prob2[7]
+  
+  ## Case 6 : 55O
+  Case_55 <- Case_55 + Prob[5] * DoubleLuckyDiceProb * (1 - Prob2[5] - Prob2[7])
+  
+  ## Case 7 : 575
+  Case_557 <- Case_557 + Prob[7] * DoubleLuckyDiceProb * Prob[5]
+  
+  ## Case 8 : 577
+  Case_577 <- Case_577 + Prob[7] * DoubleLuckyDiceProb * Prob[7]
+  
+  ## Case 9 : 57O
+  Case_57 <- Case_57 + Prob[7] * DoubleLuckyDiceProb * (1 - Prob[5] - Prob[7])
+  
+  ## Case 10 : 5O5
+  
+}
+
+
+## Job Indexing Function
+FindJob <- function(Data, Job) {
+  return(Data[rownames(Data)==Job, ])
 }

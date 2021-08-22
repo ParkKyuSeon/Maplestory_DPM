@@ -1,43 +1,47 @@
 ## Ark - Data
 ## Ark - VMatrix
-ArkCore <- MatrixSet(PasSkills=c("PlainChargeDrive", "EndlessNightmare_Dream", "ScarletChargeDrive_GrievousWound", "ImpendingDeath_VengefulHate", 
-                                 "GustChargeDrive_InsatiableHunger", "AbyssChargeDrive_UnbridledChaos", "CreepingTerror_BlissfulRestraint_EndlessAgony", 
-                                 "UnstoppableImpulse_TenaciousInstinct"), 
-                     PasLvs=c(50, 50, 50, 50, 50, 50, 50, 50), 
-                     PasMP=c(10, 10, 10, 10, 5, 10, 10, 5), 
-                     ActSkills=c("InfinitySpell", "AbyssalRecall", "DeviousNightmare_Dream", "EndlesslyStarvingBeast",
-                                 CommonV("Pirate", "Lef")), 
-                     ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                     ActMP=c(5, 5, 5, 5, 0, 5, 0, 5, 0), 
-                     BlinkLv=1, 
-                     BlinkMP=0, 
-                     UsefulSkills=c("SharpEyes", "CombatOrders"), 
+ArkCoreBase <- CoreBuilder(ActSkills=c("InfinitySpell", "AbyssalRecall", "DeviousNightmare_Dream", "EndlesslyStarvingBeast",
+                                       CommonV("Pirate", "Lef")), 
+                           ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                           UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                           SpecSet=get(DPMCalcOption$SpecSet), 
+                           VPassiveList=ArkVPassive, 
+                           VPassivePrior=ArkVPrior, 
+                           SelfBind=T)
+
+ArkCore <- MatrixSet(PasSkills=ArkCoreBase$PasSkills$Skills, 
+                     PasLvs=ArkCoreBase$PasSkills$Lv, 
+                     PasMP=ArkCoreBase$PasSkills$MP, 
+                     ActSkills=ArkCoreBase$ActSkills$Skills, 
+                     ActLvs=ArkCoreBase$ActSkills$Lv, 
+                     ActMP=ArkCoreBase$ActSkills$MP, 
+                     UsefulSkills=ArkCoreBase$UsefulSkills, 
                      UsefulLvs=20, 
                      UsefulMP=0, 
-                     SpecSet=SpecDefault, 
-                     SelfBind=T)
+                     SpecSet=get(DPMCalcOption$SpecSet), 
+                     SpecialCore=ArkCoreBase$SpecialCoreUse)
 
 
 ## Ark - Basic Info
-## Link Check Needed - Zero vs Phantom
 ArkBase <- JobBase(ChrInfo=ChrInfo, 
-                   MobInfo=MobDefault,
-                   SpecSet=SpecDefault, 
+                   MobInfo=get(DPMCalcOption$MobSet),
+                   SpecSet=get(DPMCalcOption$SpecSet), 
                    Job="Ark",
                    CoreData=ArkCore, 
                    BuffDurationNeeded=0, 
-                   AbilList=c("BDR", "DisorderBDR"), 
-                   LinkList=c("Zero", "Xenon", "DemonAvenger", "CygnusKnights"), 
-                   MonsterLife=MLTypeS21, 
-                   Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", SpecDefault$WeaponType)[, 1:16],
-                   WeaponType=SpecDefault$WeaponType, 
-                   SubWeapon=SubWeapon[39, ], 
-                   Emblem=Emblem[11, ])
+                   AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Ark"), 
+                   LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Ark"), 
+                   MonsterLife=get(FindJob(MonsterLifePreSet, "Ark")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                   Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                   WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                   SubWeapon=SubWeapon[rownames(SubWeapon)=="PathofAbyss", ], 
+                   Emblem=Emblem[rownames(Emblem)=="Abyss", ], 
+                   CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Ark")))
 
 
 ## Ark - Passive
 {option <- factor(c("ATK"), levels=PSkill)
-value <- c(min(floor(ArcaneShade[28, 6] * 0.10), floor(ArkBase$ItemSet$ATKSub * 0.25)))
+value <- c(min(floor(ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6] * 0.10), floor(ArkBase$ItemSet$ATKSub * 0.25)))
 MagicCircuit <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -57,7 +61,7 @@ value <- c(10, 20)
 InitateFusion <- data.frame(option, value) 
 
 option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
-value <- c(70 + ceiling(ArkBase$PSkillLv/2), 30 + ArkBase$PSkillLv, 30 +ArkBase$PSkillLv) 
+value <- c(70 + ceiling(ArkBase$PSkillLv/2), 30 + ArkBase$PSkillLv, 30 + ArkBase$PSkillLv) 
 KnuckleExpert <- data.frame(option, value) 
 
 option <- factor(c("ATK", "CRR", "IGR", "BDR"), levels=PSkill)
@@ -69,11 +73,11 @@ value <- c(20 + ArkBase$PSkillLv)
 BattleFrenzy <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + ArkCore[[2]][5, 2])
+value <- c(10 + GetArkCore(ArkCore, "LoadedDice"))
 LoadedDice <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(ArkCore[[2]][10, 2])
+value <- c(GetArkCore(ArkCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 ArkPassive <- Passive(list(MagicCircuit, MysticAchMastery, KnuckleMastery, PhysicalTraining, InitateFusion, KnuckleExpert, CompleteFusion, BattleFrenzy, LoadedDice, BlinkPassive))
@@ -194,7 +198,7 @@ RaceofGod <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(40 + 2 * ArkCore[[2]][1, 2], 240, 720, F, T, F, T)
+info <- c(40 + 2 * GetCoreLv(ArkCore, "InfinitySpell"), 240, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 InfinitySpell <- rbind(data.frame(option, value), info) 
@@ -207,63 +211,62 @@ colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * ArkCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
-info <- c(30, 70 - floor(ArkCore[[2]][6, 2]/5), 540, F, T, F, T)
+value <- c(floor((0.2 + 0.02 * GetCoreLv(ArkCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
+info <- c(30, 70 - floor(GetCoreLv(ArkCore, "OverDrive")/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATK", levels=BSkill)
 value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
-info <- c(Cooldown(70 - floor(ArkCore[[2]][6, 2]/5), T, ArkBase$UnionChrs$CoolReduceP, ArkBase$CoolReduce) - 30 - General$General$Serverlag, 70 - floor(ArkCore[[2]][6, 2]/5), 540, F, T, F, F)
+info <- c(Cooldown(70 - floor(GetCoreLv(ArkCore, "OverDrive")/5), T, ArkBase$UnionChrs$CoolReduceP, ArkBase$CoolReduce) - 30 - General$General$Serverlag, 70 - floor(GetCoreLv(ArkCore, "OverDrive")/5), 540, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info) 
 
 option <- factor("BDR", levels=BSkill)
-value <- c(19 + ArkCore[[2]][7, 2])
-info <- c(30 + ArkCore[[2]][7, 2], 200, 720, F, T, F, T)
+value <- c(19 + GetCoreLv(ArkCore, "MagicCircuitFullDrive"))
+info <- c(30 + GetCoreLv(ArkCore, "MagicCircuitFullDrive"), 200, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MagicCircuitFullDriveBuff <- rbind(data.frame(option, value), info) 
 
 option <- factor("ATK", levels=BSkill)
-value <- c(10 + 3 * ArkCore[[2]][8, 2] + (min((0.4 + 0.02 * ArkCore[[2]][8, 2]) * ArkBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6] * 1.5))))
+value <- c(10 + 3 * GetCoreLv(ArkCore, "BlessofGrandisGoddess") + (min((0.4 + 0.02 * GetCoreLv(ArkCore, "BlessofGrandisGoddess")) * ArkBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6] * 1.5))))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandis <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * ArkCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(ArkCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
+}
 
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * ArkCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)}
-
-ArkBuff <- Buff(list(Spectre=Spectre, Lef=Lef, SpecterGauge=SpecterGauge, SpecterGaugeDummy=SpecterGaugeDummy, VengefulHateStack=VengefulHateStack, AbyssalRecallBuff=AbyssalRecallBuff, 
-                     ContactCaravan=ContactCaravan, KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, 
-                     ScarletBuff=ScarletBuff, ScarletBuffAmplification=ScarletBuffAmplification, GustBuff=GustBuff, AbyssBuff=AbyssBuff, AbyssSpellBuffAmplification=AbyssSpellBuffAmplification, 
-                     ChargeSpellAmplification=ChargeSpellAmplification, RaceofGod=RaceofGod, InfinitySpell=InfinitySpell, LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
-                     MagicCircuitFullDriveBuff=MagicCircuitFullDriveBuff, BlessofGrandis=BlessofGrandis, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                     Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+ArkBuff <- list(Spectre=Spectre, Lef=Lef, SpecterGauge=SpecterGauge, SpecterGaugeDummy=SpecterGaugeDummy, VengefulHateStack=VengefulHateStack, AbyssalRecallBuff=AbyssalRecallBuff, 
+                ContactCaravan=ContactCaravan, KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, 
+                ScarletBuff=ScarletBuff, ScarletBuffAmplification=ScarletBuffAmplification, GustBuff=GustBuff, AbyssBuff=AbyssBuff, AbyssSpellBuffAmplification=AbyssSpellBuffAmplification, 
+                ChargeSpellAmplification=ChargeSpellAmplification, RaceofGod=RaceofGod, InfinitySpell=InfinitySpell, LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
+                MagicCircuitFullDriveBuff=MagicCircuitFullDriveBuff, BlessofGrandis=BlessofGrandis, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  ArkBuff[[length(ArkBuff)+1]] <- UsefulAdvancedBless
+  names(ArkBuff)[[length(ArkBuff)]] <- "UsefulAdvancedBless"
+}
+ArkBuff <- Buff(ArkBuff)
 ArkAllTimeBuff <- AllTimeBuff(ArkBuff)
-## Petbuff : UsefulCombatOrders, UsefulSharpEyes, KnuckleBooster
+## Petbuff : UsefulCombatOrders, UsefulSharpEyes, KnuckleBooster, MapleSoldier, (UsefulAdvancedBless)
 
 
 ## Ark - Union & HyperStat & SoulWeapon
 ArkSpec <- JobSpec(JobBase=ArkBase, 
                    Passive=ArkPassive, 
                    AllTimeBuff=ArkAllTimeBuff, 
-                   MobInfo=MobDefault, 
-                   SpecSet=SpecDefault, 
+                   MobInfo=get(DPMCalcOption$MobSet), 
+                   SpecSet=get(DPMCalcOption$SpecSet), 
                    WeaponName="Knuckle", 
                    UnionStance=0)
 
@@ -274,61 +277,15 @@ ArkSpec <- ArkSpec$Spec
 
 
 ## Ark - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * ArkCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArkCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArkCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArkCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArkCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArkCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(ArkCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Ark - Attacks
@@ -348,168 +305,168 @@ colnames(info) <- c("option", "value")
 SpectretoLef <- rbind(data.frame(option, value), info) 
   
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][1, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][1, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "PlainChargeDrive")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "PlainChargeDrive")) 
 info <- c(610 + 3 * ArkSpec$PSkillLv, 3, 720, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 PlainChargeDrive <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][1, 2]>=40, 20, 0), 2 * ArkCore[[1]][1, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "PlainChargeDrive")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "PlainChargeDrive")) 
 info <- c(370 + 3 * ArkSpec$PSkillLv, 2, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 PlainSpell <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][3, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][3, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")) 
 info <- c(350 + 3 * ArkSpec$PSkillLv, 3, 690, 1650, 3, T, T, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 ScarletChargeDrive <- rbind(data.frame(option, value), info)  # 2 Hits
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][3, 2]>=40, 20, 0), 2 * ArkCore[[1]][3, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")) 
 info <- c(220 + 1 * ArkSpec$PSkillLv, 5, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 ScarletSpell <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][3, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][3, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")) 
 info <- c(510 + 3 * ArkSpec$PSkillLv, 6, 630, NA, 3, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GrievousWound <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][8, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][8, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "UnstoppableImpulse_TenaciousInstinct")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "UnstoppableImpulse_TenaciousInstinct")) 
 info <- c(435 + 3 * ArkSpec$PSkillLv, 5, 720, NA, 6, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 UnstoppableImpulse <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][8, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][8, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "UnstoppableImpulse_TenaciousInstinct")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "UnstoppableImpulse_TenaciousInstinct")) 
 info <- c(460 + 3 * ArkSpec$PSkillLv, 6, 720, NA, 6, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 TenaciousInstinct <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][4, 2]>=40, 20, 0), 2 * ArkCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ArkCore, "ImpendingDeath_VengefulHate")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "ImpendingDeath_VengefulHate"))
 info <- c(450 + 3 * ArkSpec$PSkillLv, 2, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ImpendingDeath <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][5, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][5, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")) 
 info <- c(400 + 3 * ArkSpec$PSkillLv, 6, 600, NA, 5, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GustChargeDrive <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][5, 2]>=40, 20, 0), 2 * ArkCore[[1]][5, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")) 
 info <- c(230 + 1 * ArkSpec$PSkillLv, 4, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GustSpell <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][7, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][7, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")) 
 info <- c(1290 + 3 * ArkSpec$PSkillLv, 15, 900, NA, 60, T, T, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 CreepingTerror <- rbind(data.frame(option, value), info) 
   
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][5, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][5, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")) 
 info <- c(510 + 3 * ArkSpec$PSkillLv, 7, 990, NA, 5 , T, T, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 InsatiableHunger <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][4, 2]>=40, 20, 0), 2 * ArkCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ArkCore, "ImpendingDeath_VengefulHate")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "ImpendingDeath_VengefulHate"))
 info <- c(320 + 3 * ArkSpec$PSkillLv, 6, 0, NA, 12, T, F, F) 
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 VengefulHate <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][2, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][2, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "EndlessNightmare_Dream")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "EndlessNightmare_Dream")) 
 info <- c(440 + 3 * ArkSpec$SkillLv, 6, 720, NA, 2, T, T, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 EndlessNightmare <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][2, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][2, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "EndlessNightmare_Dream")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "EndlessNightmare_Dream")) 
 info <- c(445 + 3 * ArkSpec$SkillLv, 6, 720, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 EndlessOminousDream <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][6, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][6, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")) 
 info <- c(340 + 3 * ArkSpec$SkillLv, 4, 810, 30, 9, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 AbyssChargeDrive1 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][6, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][6, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")) 
 info <- c(410 + 3 * ArkSpec$SkillLv, 6, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 AbyssChargeDrive2 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][6, 2]>=40, 20, 0), 2 * ArkCore[[1]][6, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")) 
 info <- c(70 + 2 * ArkSpec$SkillLv, 2, 0, 300, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 AbyssSpell <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][6, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][6, 2]) 
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")) 
 info <- c(440 + 3 * ArkSpec$SkillLv, 12, 1080, NA, 9, T, T, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 UnbridledChaos <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][7, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][7, 2])
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony"))
 info <- c(600 + 10 * ArkSpec$SkillLv, 6, 900, NA, 180, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 BlissfulRestraint <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][7, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][7, 2])
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony"))
 info <- c(400 + 10 * ArkSpec$SkillLv, 3, 0, 450, 0, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 BlissfulRestraintContinuousATK <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(ArkCore[[1]][7, 2]>=40, 20, 0))), 40, 2 * ArkCore[[1]][7, 2])
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")>=40, 20, 0))), 40, 2 * GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony"))
 info <- c(1000 + 10 * ArkSpec$SkillLv, 8, 0, 0, F, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 BlissfulRestraintLastATK <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][7, 2]>=40, 20, 0), 2 * ArkCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony"))
 info <- c(300, 3, 3000, 180, 63, F, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 EndlessAgony <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][7, 2]>=40, 20, 0), 2 * ArkCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony")>=40, 20, 0), 2 * GetCoreLv(ArkCore, "CreepingTerror_BlissfulRestraint_EndlessAgony"))
 info <- c(350, 12, 1590, 30, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
@@ -517,69 +474,69 @@ EndlessAgonyLast <- rbind(data.frame(option, value), info) ## StartATK 180ms
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(400 + 16 * ArkCore[[2]][2, 2], 6, 9960, 210, 200, T, F, F) 
+info <- c(400 + 16 * GetCoreLv(ArkCore, "AbyssalRecall"), 6, 9960, 210, 200, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 AbyssalRecall <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(1200 + 48 * ArkCore[[2]][2, 2], 72, 0, NA, NA, NA, NA, F) 
+info <- c(1200 + 48 * GetCoreLv(ArkCore, "AbyssalRecall"), 72, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 AbyssalRecallExplosion <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(500 + 20 * ArkCore[[2]][3, 2], 9, 0, NA, 10, T, T, F)
+info <- c(500 + 20 * GetCoreLv(ArkCore, "DeviousNightmare_Dream"), 9, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DeviousNightmare <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(600 + 24 * ArkCore[[2]][3, 2], 9, 0, NA, 10, T, T, F)
+info <- c(600 + 24 * GetCoreLv(ArkCore, "DeviousNightmare_Dream"), 9, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 DeviousOminousDream <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c() 
-info <- c(400 + 16 * ArkCore[[2]][4, 2], 12, 690, 30, 120, T, F, F) 
+info <- c(400 + 16 * GetCoreLv(ArkCore, "EndlesslyStarvingBeast"), 12, 690, 30, 120, T, F, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 EndlesslyStarvingBeast <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * ArkCore[[2]][7, 2], 3, 0, 0, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(ArkCore, "MagicCircuitFullDrive"), 3, 0, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicCircuitFullDrive <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][1, 2]>=40, 20, 0), 20, 2 * ArkCore[[1]][1, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "PlainChargeDrive")>=40, 20, 0), 20, 2 * GetCoreLv(ArkCore, "PlainChargeDrive")) 
 info <- c(370 + 3 * ArkSpec$PSkillLv, 2, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 PlainSpellInfinitySpell <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][3, 2]>=40, 20, 0), 20, 2 * ArkCore[[1]][3, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")>=40, 20, 0), 20, 2 * GetCoreLv(ArkCore, "ScarletChargeDrive_GrievousWound")) 
 info <- c(220 + 1 * ArkSpec$PSkillLv, 5, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 ScarletSpellInfinitySpell <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][5, 2]>=40, 20, 0), 20, 2 * ArkCore[[1]][5, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")>=40, 20, 0), 20, 2 * GetCoreLv(ArkCore, "GustChargeDrive_InsatiableHunger")) 
 info <- c(230 + 1 * ArkSpec$PSkillLv, 4, 0, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 GustSpellInfinitySpell <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(ArkCore[[1]][6, 2]>=40, 20, 0), 20, 2 * ArkCore[[1]][6, 2]) 
+value <- c(ifelse(GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")>=40, 20, 0), 20, 2 * GetCoreLv(ArkCore, "AbyssChargeDrive_UnbridledChaos")) 
 info <- c(70 + 2 * ArkSpec$SkillLv, 2, 0, 300, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
@@ -614,7 +571,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, A
 BuffFinal <- data.frame(ArkBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, ArkSpec$CoolReduceP, ArkSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, ArkSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(ArkSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, ArkSpec$CoolReduceP, ArkSpec$CoolReduce)
@@ -655,13 +612,17 @@ ArkDealCycle <- data.frame(ArkDealCycle)
 ArkCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
                      Period=182.4, CycleTime=729.6, CancelDelay=30) {
   SkipStructure$SkippedDelay <- SkipStructure$SkippedDelay + (CancelDelay - 30)
-  BuffSummonedPrior <- c("KnuckleBooster", "LuckyDice5", "ContactCaravan", "RaceofGod", "UsefulSharpEyes", "UsefulCombatOrders", 
+  BuffSummonedPrior <- c("KnuckleBooster", "LuckyDice5", "ContactCaravan", "RaceofGod", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "ChargeSpellAmplification", "MagicCircuitFullDriveBuff", "OverDrive", "BlessofGrandis", "InfinitySpell", "SoulContractLink", "Restraint4")
-  
-  Times180 <- c(0, 0, 1/4, 0, 0, 0, 
+  Times180 <- c(0, 0, 1/4, 0, 0, 0, 0, 
                 1.5, 3/4, 3, 3/4, 3/4, 1.5, 3/4)
-  SubTime <- rep(Period, length(BuffSummonedPrior))
-  TotalTime <- CycleTime
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
+  SubTime <- rep(Period - min(2.4, Spec$CoolReduce), length(BuffSummonedPrior))
+  TotalTime <- CycleTime - min(2.4, Spec$CoolReduce) * (CycleTime/Period)
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -2163,30 +2124,45 @@ ArkDealCycle <- ArkAddATK(ArkDealCycle,
 ArkDealCycle <- OverDriveExhaustBuff(ArkDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 ArkDealCycleReduction <- DealCycleReduction(ArkDealCycle)
 
-ArkSpecOpt1 <- Optimization1(ArkDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ArkSpec, ArkUnionRemained)
-ArkSpecOpt <- ArkSpec
-ArkSpecOpt$ATKP <- ArkSpecOpt$ATKP + ArkSpecOpt1$ATKP
-ArkSpecOpt$BDR <- ArkSpecOpt$BDR + ArkSpecOpt1$BDR
-ArkSpecOpt$IGR <- IGRCalc(c(ArkSpecOpt$IGR, ArkSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Ark") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  ArkSpecOpt1 <- Optimization1(ArkDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ArkSpec, ArkUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- ArkSpecOpt1[1, 1:3]
+} else {
+  ArkSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+ArkSpecOpt <- OptDataAdd(ArkSpec, ArkSpecOpt1, "Potential", ArkBase$CRROver, DemonAvenger=F)
 
-ArkSpecOpt2 <- Optimization2(ArkDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt, ArkHyperStatBase, ArkBase$ChrLv, ArkBase$CRROver)
-ArkFinalDPM <- DealCalc(ArkDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt2)
-ArkFinalDPMwithMax <- DealCalcWithMaxDMR(ArkDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt2)
+if(DPMCalcOption$Optimization==T) {
+  ArkSpecOpt2 <- Optimization2(ArkDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt, ArkHyperStatBase, ArkBase$ChrLv, ArkBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- ArkSpecOpt2[1, ]
+} else {
+  ArkSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+ArkSpecOpt <- OptDataAdd(ArkSpecOpt, ArkSpecOpt2, "HyperStat", ArkBase$CRROver, DemonAvenger=F)
 
-DPM12349$Ark[1] <- sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time)/ 60000)
-DPM12349$Ark[2] <- sum(na.omit(ArkFinalDPM)) / (max(ArkDealCycle$Time) / 60000) - sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time) / 60000)
+ArkFinalDPM <- DealCalc(ArkDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt, Collapse=F)
+ArkFinalDPMwithMax <- DealCalcWithMaxDMR(ArkDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt)
+
+set(get(DPMCalcOption$DataName), as.integer(1), "Ark", sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Ark", sum(na.omit(ArkFinalDPM)) / (max(ArkDealCycle$Time) / 60000) - sum(na.omit(ArkFinalDPMwithMax)) / (max(ArkDealCycle$Time) / 60000))
+
+ArkDealRatio <- DealRatio(ArkDealCycle, ArkFinalDPMwithMax)
 
 ArkDealData <- data.frame(ArkDealCycle$Skills, ArkDealCycle$Time, ArkDealCycle$Restraint4, ArkFinalDPMwithMax)
 colnames(ArkDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(ArkDealData, ArkDealData$R4>0)
-
-ArkRR <- ArkDealData[58:395, ]
-DPM12349$Ark[3] <- sum((ArkRR$Deal))
-
-Ark40s <- ArkDealData[58:760, ]
-DPM12349$Ark[4] <- sum((Ark40s$Deal))
-
-ArkDealRatio <- DealRatio(ArkDealCycle, ArkFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Ark", Deal_RR(ArkDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Ark", Deal_40s(ArkDealData))
 
 # chaos : 50, hunger : 71, wound : 77, terror : 12, deviousominousdream : 53, restraint : 3, agony : 9, beast : 6, recall : 3, hate : 44
 # abyss : 57, gust : 86, scarlet : 101, nightmare : 97, deviousnightmare : 54
@@ -2215,15 +2191,13 @@ ArkDealCycle2 <- ArkAddATK(ArkDealCycle2,
                            30)
 ArkDealCycle2 <- OverDriveExhaustBuff(ArkDealCycle2, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
 
-Ark60ms <- DealCalcWithMaxDMR(ArkDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt2)
+Ark60ms <- DealCalcWithMaxDMR(ArkDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt)
 Ark60msDPM <- sum(na.omit(Ark60ms)) / (max(ArkDealCycle2$Time)/ 60000)
 
 ArkDealData2 <- data.frame(ArkDealCycle2$Skills, ArkDealCycle2$Time, ArkDealCycle2$Restraint4, Ark60ms)
 colnames(ArkDealData2) <- c("Skills", "Time", "R4", "Deal")
-subset(ArkDealData2, ArkDealData2$R4>0)
 
-Ark60msRR <- ArkDealData2[58:395, ]
-Ark60msRR <- sum((Ark60msRR$Deal))
+Ark60msRR <- Deal_RR(ArkDealData2)
+Ark60ms40s <- Deal_40s(ArkDealData2)
 
-Ark60ms40s <- ArkDealData2[58:755, ]
-Ark60ms40s <- sum((Ark60ms40s$Deal))
+print(data.frame(Ark60msDPM=Ark60msDPM, Ark60msRR=Ark60msRR, Ark60ms40s=Ark60ms40s))

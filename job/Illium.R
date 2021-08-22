@@ -1,42 +1,48 @@
 ## Illium - Data
 ## Illium - VMatrix
-IlliumCore <- MatrixSet(PasSkills=c("Javelin_EnhancedJavelin", "Destruction", "Machina_Domination", "Deus_Liyo", "CurseMark", "MotalSwing_MotalWingBeat"), 
-                        PasLvs=c(50, 50, 50, 50, 50, 50), 
-                        PasMP=c(10, 10, 10, 10, 10, 10), 
-                        ActSkills=c("CrystalIgnition", "Gramholder", "SoulofCrystal", "CrystalGate", 
-                                    CommonV("Wizard", "Lef")), 
-                        ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                        ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                        BlinkLv=1, 
-                        BlinkMP=0, 
-                        UsefulSkills=c("CombatOrders", "SharpEyes"), 
+IlliumCoreBase <- CoreBuilder(ActSkills=c("CrystalIgnition", "Gramholder", "SoulofCrystal", "CrystalGate", 
+                                          CommonV("Wizard", "Lef")), 
+                              ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                              UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                              SpecSet=get(DPMCalcOption$SpecSet), 
+                              VPassiveList=IlliumVPassive, 
+                              VPassivePrior=IlliumVPrior, 
+                              SelfBind=F)
+
+IlliumCore <- MatrixSet(PasSkills=IlliumCoreBase$PasSkills$Skills, 
+                        PasLvs=IlliumCoreBase$PasSkills$Lv, 
+                        PasMP=IlliumCoreBase$PasSkills$MP, 
+                        ActSkills=IlliumCoreBase$ActSkills$Skills, 
+                        ActLvs=IlliumCoreBase$ActSkills$Lv, 
+                        ActMP=IlliumCoreBase$ActSkills$MP, 
+                        UsefulSkills=IlliumCoreBase$UsefulSkills, 
                         UsefulLvs=20, 
                         UsefulMP=0, 
-                        SpecSet=SpecDefault, 
-                        SelfBind=F)
+                        SpecSet=get(DPMCalcOption$SpecSet), 
+                        SpecialCore=IlliumCoreBase$SpecialCoreUse)
 
 
 ## Illium - Basic Info
 ## Link Check Needed
 IlliumBase <- JobBase(ChrInfo=ChrInfo, 
-                        MobInfo=MobDefault,
-                        SpecSet=SpecDefault, 
-                        Job="Illium",
-                        CoreData=IlliumCore, 
-                        BuffDurationNeeded=0, 
-                        AbilList=c("BDR", "BuffDuration"), 
-                        LinkList=c("Phantom", "DemonAvenger", "Xenon"), 
-                        MonsterLife=MLTypeI22, 
-                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "MagicGuntlet", SpecDefault$WeaponType)[, 1:16],
-                        WeaponType=SpecDefault$WeaponType, 
-                        SubWeapon=SubWeapon[38, ], 
-                        Emblem=Emblem[10, ], 
-                        CoolReduceHat=F)
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$SpecSet), 
+                      Job="Illium",
+                      CoreData=IlliumCore, 
+                      BuffDurationNeeded=0, 
+                      AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Illium"), 
+                      LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Illium"), 
+                      MonsterLife=get(FindJob(MonsterLifePreSet, "Illium")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                      Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "MagicGuntlet", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                      WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                      SubWeapon=SubWeapon[rownames(SubWeapon)=="MagicWing", ], 
+                      Emblem=Emblem[rownames(Emblem)=="Crystal", ], 
+                      CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Illium")))
 
 
 ## Illium - Passive
 {option <- factor(c("ATK"), levels=PSkill)
-value <- c(min(floor(ArcaneShade[16, 6] * 0.2), floor(IlliumBase$ItemSet$ATKSub * 0.5)))
+value <- c(min(floor(ArcaneShade[rownames(ArcaneShade)=="MagicGuntlet", 6] * 0.2), floor(IlliumBase$ItemSet$ATKSub * 0.5)))
 MagicCircuit <- data.frame(option, value)
 
 option <- factor(c("CRR"), levels=PSkill)
@@ -72,15 +78,11 @@ value <- c(70, 1, 30, 25, 35)
 WisdomoftheCrystal <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(5 + 2 * IlliumCore[[2]][3, 2])
+value <- c(5 + 2 * GetCoreLv(IlliumCore, "CrystalGate"))
 SoulofCrystal <- data.frame(option, value)
 
-option <- factor(c("FDR"), levels=PSkill)
-value <- c(8 + floor(IlliumCore[[2]][5, 2]/10))
-OverloadMana <- data.frame(option, value) ## ATK Skills Only
-
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(IlliumCore[[2]][10, 2])
+value <- c(GetCoreLv(IlliumCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 IlliumPassive <- Passive(list(MagicCircuit=MagicCircuit, MagicGuntletMastery=MagicGuntletMastery, BlessMark=BlessMark, LefMastery=LefMastery, Tenacity=Tenacity, EndlessResearch=EndlessResearch, 
@@ -137,19 +139,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RaceofGod <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * IlliumCore[[3]][2, 2], NA, 900, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * IlliumCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(IlliumCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -166,35 +161,36 @@ colnames(info) <- c("option", "value")
 SoulofCrystal2 <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(5 + IlliumCore[[2]][3, 2])
+value <- c(5 + GetCoreLv(IlliumCore, "SoulofCrystal"))
 info <- c(30, 40, 660, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulofCrystal1Glory <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(5 + IlliumCore[[2]][3, 2])
+value <- c(5 + GetCoreLv(IlliumCore, "SoulofCrystal"))
 info <- c(30, 40, 660, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulofCrystal2Glory <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATK", "ATKSkill"), levels=BSkill)
-value <- c(5 + 2 * IlliumCore[[2]][4, 2], 1)
-info <- c(ceiling((130 + IlliumCore[[2]][4, 2]) / (25 + General$General$Serverlag)) * (25 + General$General$Serverlag), 180, 540, F, T, F, F)
+value <- c(5 + 2 * GetCoreLv(IlliumCore, "CrystalGate"), 1)
+info <- c(ceiling((130 + GetCoreLv(IlliumCore, "CrystalGate")) / (25 + General$General$Serverlag)) * (25 + General$General$Serverlag), 180, 540, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CrystalGateBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(19 + IlliumCore[[2]][7, 2])
-info <- c(30 + IlliumCore[[2]][7, 2], 200, 720, F, T, F, T)
+value <- c(19 + GetCoreLv(IlliumCore, "MagicCircuitFullDrive"))
+info <- c(30 + GetCoreLv(IlliumCore, "MagicCircuitFullDrive"), 200, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MagicCircuitFullDriveBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(10 + 3 * IlliumCore[[2]][8, 2] + (min((0.4 + 0.02 * IlliumCore[[2]][8, 2]) * IlliumBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="MagicGuntlet", 6] * 1.5))))
+value <- c(10 + 3 * GetCoreLv(IlliumCore, "BlessofGrandisGoddess") + 
+             (min((0.4 + 0.02 * GetCoreLv(IlliumCore, "BlessofGrandisGoddess")) * IlliumBase$ItemSet$ATKSub, floor(ArcaneShade[rownames(ArcaneShade)=="MagicGuntlet", 6] * 1.5))))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -207,22 +203,27 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CrystalCharge <- rbind(data.frame(option, value), info)}
 
-IlliumBuff <- Buff(list(MagicGuntletBooster=MagicGuntletBooster, JavelinBuffDummy=JavelinBuffDummy, JavelinBuff=JavelinBuff, GloryWing=GloryWing, MapleSoldier=MapleSoldier, FastCharge=FastCharge, 
-                        RaceofGod=RaceofGod, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, SoulofCrystal1=SoulofCrystal1, SoulofCrystal2=SoulofCrystal2, 
-                        SoulofCrystal1Glory=SoulofCrystal1Glory, SoulofCrystal2Glory=SoulofCrystal2Glory, CrystalGateBuff=CrystalGateBuff, MagicCircuitFullDriveBuff=MagicCircuitFullDriveBuff, 
-                        BlessofGrandis=BlessofGrandis, CrystalCharge=CrystalCharge, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+IlliumBuff <- list(MagicGuntletBooster=MagicGuntletBooster, JavelinBuffDummy=JavelinBuffDummy, JavelinBuff=JavelinBuff, GloryWing=GloryWing, MapleSoldier=MapleSoldier, FastCharge=FastCharge, 
+                   RaceofGod=RaceofGod, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, SoulofCrystal1=SoulofCrystal1, SoulofCrystal2=SoulofCrystal2, 
+                   SoulofCrystal1Glory=SoulofCrystal1Glory, SoulofCrystal2Glory=SoulofCrystal2Glory, CrystalGateBuff=CrystalGateBuff, MagicCircuitFullDriveBuff=MagicCircuitFullDriveBuff, 
+                   BlessofGrandis=BlessofGrandis, CrystalCharge=CrystalCharge, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  IlliumBuff[[length(IlliumBuff)+1]] <- UsefulAdvancedBless
+  names(IlliumBuff)[[length(IlliumBuff)]] <- "UsefulAdvancedBless"
+}
+IlliumBuff <- Buff(IlliumBuff)
 IlliumAllTimeBuff <- AllTimeBuff(IlliumBuff)
-## PetBuff : MagicGuntletBooster, MapleSoldiers
+## PetBuff : MagicGuntletBooster, MapleSoldiers, UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
 
 
 ## Illium - Union & HyperStat & SoulWeapon
 IlliumSpec <- JobSpec(JobBase=IlliumBase, 
-                        Passive=IlliumPassive, 
-                        AllTimeBuff=IlliumAllTimeBuff, 
-                        MobInfo=MobDefault, 
-                        SpecSet=SpecDefault, 
-                        WeaponName="MagicGuntlet", 
-                        UnionStance=0)
+                      Passive=IlliumPassive, 
+                      AllTimeBuff=IlliumAllTimeBuff, 
+                      MobInfo=get(DPMCalcOption$MobSet), 
+                      SpecSet=get(DPMCalcOption$SpecSet), 
+                      WeaponName="MagicGuntlet", 
+                      UnionStance=0)
 
 IlliumUnionRemained <- IlliumSpec$UnionRemained
 IlliumHyperStatBase <- IlliumSpec$HyperStatBase
@@ -231,164 +232,118 @@ IlliumSpec <- IlliumSpec$Spec
 
 
 ## Illium - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * IlliumCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * IlliumCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * IlliumCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * IlliumCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * IlliumCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * IlliumCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(IlliumCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Illium - Attacks
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][6, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][6, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "MotalSwing_MotalWingBeat")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "MotalSwing_MotalWingBeat"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(600 + 2 * IlliumSpec$SkillLv, 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MotalSwing <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][2, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][2, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Destruction")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Destruction"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(710 + 2 * IlliumSpec$SkillLv, 8, 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Destruction <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][3, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Machina_Domination")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Machina_Domination"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(710 + 2 * IlliumSpec$SkillLv, 2, 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Domination <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][3, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
-info <- c((710 + 2 * IlliumSpec$SkillLv) * (0.01 * IlliumCore[[2]][3, 2] + 0.5), 2, 0, NA, 4, T, T, F)
+value <- c(ifelse(GetCoreLv(IlliumCore, "Machina_Domination")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Machina_Domination"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
+info <- c((710 + 2 * IlliumSpec$SkillLv) * (0.01 * GetCoreLv(IlliumCore, "SoulofCrystal") + 0.5), 2, 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DominationSoul <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][2, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][2, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
-info <- c((710 + 2 * IlliumSpec$SkillLv) * (0.01 * IlliumCore[[2]][3, 2] + 0.5), 8, 0, NA, 4, T, T, F)
+value <- c(ifelse(GetCoreLv(IlliumCore, "Destruction")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Destruction"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
+info <- c((710 + 2 * IlliumSpec$SkillLv) * (0.01 * GetCoreLv(IlliumCore, "SoulofCrystal") + 0.5), 8, 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DestructionSoul <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][1, 2]>=40, 20, 0), 40, FDRCalc(c(2 * IlliumCore[[1]][1, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin")>=40, 20, 0), 40, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(375 + 2 * IlliumSpec$SkillLv, 12, 730, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Javelin <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][1, 2]>=40, 20, 0), 40, FDRCalc(c(2 * IlliumCore[[1]][1, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin")>=40, 20, 0), 40, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(375 + 2 * IlliumSpec$SkillLv, 4, 730, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JavelinAddATK <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][1, 2]>=40, 20, 0), 40, FDRCalc(c(2 * IlliumCore[[1]][1, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin")>=40, 20, 0), 40, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(130 + 2 * IlliumSpec$SkillLv, 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JavelinFragment <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][1, 2]>=40, 20, 0), 40, FDRCalc(c(2 * IlliumCore[[1]][1, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin")>=40, 20, 0), 40, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(130 + 2 * IlliumSpec$SkillLv, 2, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JavelinAddFragment <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][1, 2]>=40, 20, 0), 40, FDRCalc(c(2 * IlliumCore[[1]][1, 2], 40, floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin")>=40, 20, 0), 40, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin"), 40, floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(465 + 3 * IlliumSpec$SkillLv, 7, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 EnhancedJavelin <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][1, 2]>=40, 20, 0), 40, 2 * IlliumCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin")>=40, 20, 0), 40, 2 * GetCoreLv(IlliumCore, "Javelin_EnhancedJavelin"))
 info <- c(250 + 5 * IlliumSpec$SkillLv, 9, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicMissile <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(IlliumCore[[2]][5, 2] / 10) + 8)
+value <- c(floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)
 info <- c(300 + 4 * IlliumSpec$SkillLv, 1, 730, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Orb <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][6, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][6, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "MotalSwing_MotalWingBeat")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "MotalSwing_MotalWingBeat"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(1070 + 20 * IlliumSpec$SkillLv, 15, 840, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MotalWingBeat <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][5, 2]>=40, 20, 0), 2 * IlliumCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(IlliumCore, "CurseMark")>=40, 20, 0), 2 * GetCoreLv(IlliumCore, "CurseMark"))
 info <- c(200, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CurseMark <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(IlliumCore[[1]][5, 2]>=40, 20, 0), 2 * IlliumCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(IlliumCore, "CurseMark")>=40, 20, 0), 2 * GetCoreLv(IlliumCore, "CurseMark"))
 info <- c(200, 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -402,8 +357,8 @@ colnames(info) <- c("option", "value")
 CrystalIgnitionPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "FDR"), levels=ASkill)
-value <- c(20, floor(IlliumCore[[2]][5, 2] / 10) + 8)
-info <- c(750 + 30 * IlliumCore[[2]][1, 2], 4, 9340, 150, 180, T, F, F)
+value <- c(20, floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)
+info <- c(750 + 30 * GetCoreLv(IlliumCore, "CrystalIgnition"), 4, 9340, 150, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CrystalIgnition <- rbind(data.frame(option, value), info)
@@ -416,22 +371,22 @@ colnames(info) <- c("option", "value")
 CrystalIgnitionEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "FDR"), levels=ASkill)
-value <- c(20, floor(IlliumCore[[2]][5, 2] / 10) + 8)
-info <- c(1000 + 40 * IlliumCore[[2]][1, 2], 5, 0, 1000, 180, T, F, F)
+value <- c(20, floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)
+info <- c(1000 + 40 * GetCoreLv(IlliumCore, "CrystalIgnition"), 5, 0, 1000, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ReactionSpectrum <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(450 + 18 * IlliumCore[[2]][4, 2], 5, 0, 1500, NA, NA, NA, F)
+info <- c(450 + 18 * GetCoreLv(IlliumCore, "CrystalIgnition"), 5, 0, 1500, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CrystalGate <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * IlliumCore[[2]][7, 2], 3, 0, 0, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(IlliumCore, "MagicCircuitFullDrive"), 3, 0, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicCircuitFullDrive <- rbind(data.frame(option, value), info)}
@@ -444,21 +399,21 @@ IlliumATK <- Attack(list(MotalSwing=MotalSwing, Destruction=Destruction, Dominat
 
 ## Illium - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(160, 1, 30, 480, 180, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Liyo1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(200, 1, 0, 480, 180, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Liyo2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(300, 1, 0, 480, 180, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -472,35 +427,35 @@ colnames(info) <- c("option", "value")
 LiyoWait <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][3, 2]>=40, 20, 0), FDRCalc(c(2 * IlliumCore[[1]][3, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Machina_Domination")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Machina_Domination"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(350, 4, 30, 3030, 180, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Machina <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), 20, FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(500 + 4 * IlliumSpec$SkillLv, 6, 30, 3030, 30, 180, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Deus <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), 20, FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(160, 2, 30, 480, 30, 180, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 DeusSatelite1stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), 20, FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(200, 2, 0, 480, 30, 180, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 DeusSatelite2stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=SSkill)
-value <- c(ifelse(IlliumCore[[1]][4, 2]>=40, 20, 0), 20, FDRCalc(c(2 * IlliumCore[[1]][4, 2], floor(IlliumCore[[2]][5, 2] / 10) + 8)))
+value <- c(ifelse(GetCoreLv(IlliumCore, "Deus_Liyo")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Deus_Liyo"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(300, 2, 0, 480, 30, 180, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -514,8 +469,8 @@ colnames(info) <- c("option", "value")
 DeusSateliteWait <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=SSkill)
-value <- c(floor(IlliumCore[[2]][5, 2] / 10) + 8)
-info <- c((500 + 20 * IlliumCore[[2]][2, 2]) * 2, 12, 210, 3030, 40, 180, F, T, F, F)
+value <- c(floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)
+info <- c((500 + 20 * GetCoreLv(IlliumCore, "Gramholder")) * 2, 12, 210, 3030, 40, 180, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Gramholder <- rbind(data.frame(option, value), info)}
@@ -535,7 +490,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, I
 BuffFinal <- data.frame(IlliumBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, IlliumSpec$CoolReduceP, IlliumSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, IlliumSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(IlliumSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, IlliumSpec$CoolReduceP, IlliumSpec$CoolReduce)
@@ -563,6 +518,9 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
   DealCycle <- PreDealCycle
   IGDummy <- 0
   ## First Cycle
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "MagicGuntletBooster", "MapleSoldier", "RaceofGod", "CrystalGateBuff", "FastCharge"), BuffFinal)
   DealCycle <- DCSummoned(DealCycle, "Liyo1Stack", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "Machina", SummonedFinal)
@@ -618,6 +576,9 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
   ## ith Cycle
   for(i in 2:12) {
     if(sum(i==c(4, 7, 10))==1) {
+      if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+        DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+      }
       DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "RaceofGod", "CrystalGateBuff", "FastCharge"), BuffFinal)
       CrystalDummy <- 1
     }
@@ -773,38 +734,53 @@ IlliumDealCycle <- RepATKCycle(IlliumDealCycle, "CrystalIgnition", 62, 0, ATKFin
 IlliumDealCycle <- RepATKCycle(IlliumDealCycle, "ReactionSpectrum", 9, 0, ATKFinal)
 IlliumDealCycle <- MCFCycle(IlliumDealCycle, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
 IlliumDealCycle <- SoulofCrystalBuffLogic(IlliumDealCycle)
-IlliumDealCycle <- AddATKCycleIllium(IlliumDealCycle, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
+IlliumDealCycle <- AddATKCycleIllium(IlliumDealCycle, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), 
+                                     ATKFinal[rownames(ATKFinal)=="Destruction", ]$CoolTime, ATKFinal[rownames(ATKFinal)=="DestructionSoul", ]$CoolTime)
 IlliumDealCycle <- JavelinBuffLogic(IlliumDealCycle)
-IlliumDealCycle <- DeusExMachinaLogic(IlliumDealCycle, SummonedFinal$Duration[6], SummonedFinal)
+IlliumDealCycle <- DeusExMachinaLogic(IlliumDealCycle, SummonedFinal[rownames(SummonedFinal)=="Deus", ]$Duration, SummonedFinal)
 IlliumDealCycle <- DCSummonedATKs(IlliumDealCycle, "Gramholder", SummonedFinal)
 IlliumDealCycle <- DCSpiderInMirror(IlliumDealCycle, SummonedFinal)
 IlliumDealCycleReduction <- DealCycleReduction(IlliumDealCycle)
 
-IlliumSpecOpt <- Optimization1(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpec, IlliumUnionRemained)
-IlliumSpecOpt <- IlliumSpec
-IlliumSpecOpt$ATKP <- IlliumSpecOpt$ATKP + IlliumSpecOpt1$ATKP
-IlliumSpecOpt$BDR <- IlliumSpecOpt$BDR + IlliumSpecOpt1$BDR
-IlliumSpecOpt$IGR <- IGRCalc(c(IlliumSpecOpt$IGR, IlliumSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Illium") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  IlliumSpecOpt1 <- Optimization1(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpec, IlliumUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- IlliumSpecOpt1[1, 1:3]
+} else {
+  IlliumSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+IlliumSpecOpt <- OptDataAdd(IlliumSpec, IlliumSpecOpt1, "Potential", IlliumBase$CRROver, DemonAvenger=F)
 
-IlliumSpecOpt2 <- Optimization2(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt, IlliumHyperStatBase, IlliumBase$ChrLv, IlliumBase$CRROver, 0)
-IlliumFinalDPM <- DealCalc(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
-IlliumFinalDPMwithMax <- DealCalcWithMaxDMR(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+if(DPMCalcOption$Optimization==T) {
+  IlliumSpecOpt2 <- Optimization2(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt, IlliumHyperStatBase, IlliumBase$ChrLv, IlliumBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- IlliumSpecOpt2[1, ]
+} else {
+  IlliumSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+IlliumSpecOpt <- OptDataAdd(IlliumSpecOpt, IlliumSpecOpt2, "HyperStat", IlliumBase$CRROver, DemonAvenger=F)
 
-DPM12349$Illium[1] <- sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
-DPM12349$Illium[2] <- sum(na.omit(IlliumFinalDPM)) / (max(IlliumDealCycle$Time) / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000)
+IlliumFinalDPM <- DealCalc(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt, Collapse=F)
+IlliumFinalDPMwithMax <- DealCalcWithMaxDMR(IlliumDealCycle, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt)
+
+set(get(DPMCalcOption$DataName), as.integer(1), "Illium", sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Illium", sum(na.omit(IlliumFinalDPM)) / (max(IlliumDealCycle$Time) / 60000) - sum(na.omit(IlliumFinalDPMwithMax)) / (max(IlliumDealCycle$Time) / 60000))
 
 IlliumDealRatio <- DealRatio(IlliumDealCycle, IlliumFinalDPMwithMax)
 
-IlliumDealData <- data.frame(IlliumDealCycle$Skills, IlliumDealCycle$Time, IlliumDealCycle$Restraint4, IlliumFinalDPMwithMax, IlliumFinalDPM-IlliumFinalDPMwithMax)
-colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(IlliumDealData, IlliumDealData$R4>0)
-
-IlliumRR <- IlliumDealData[220:405, ]
-DPM12349$Illium[3] <- sum((IlliumRR$Deal))
-
-Illium40s <- IlliumDealData[220:676, ]
-DPM12349$Illium[4] <- sum((Illium40s$Deal))
+IlliumDealData <- data.frame(IlliumDealCycle$Skills, IlliumDealCycle$Time, IlliumDealCycle$Restraint4, IlliumFinalDPMwithMax)
+colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Illium", Deal_RR(IlliumDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Illium", Deal_40s(IlliumDealData))
 
 
 ## Glorywing Ignition 
@@ -817,6 +793,9 @@ Winggnition40s <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Ski
   DealCycle <- PreDealCycle
   IGDummy <- 0
   ## First Cycle
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "MagicGuntletBooster", "MapleSoldier", "RaceofGod", "CrystalGateBuff", "FastCharge"), BuffFinal)
   DealCycle <- DCSummoned(DealCycle, "Liyo1Stack", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "Machina", SummonedFinal)
@@ -896,15 +875,18 @@ WinggnitionCycle1 <- RepATKCycle(WinggnitionCycle1, "CrystalIgnition", 62, 0, AT
 WinggnitionCycle1 <- RepATKCycle(WinggnitionCycle1, "ReactionSpectrum", 9, 0, ATKFinal)
 WinggnitionCycle1 <- MCFCycle(WinggnitionCycle1, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"))
 WinggnitionCycle1 <- SoulofCrystalBuffLogic(WinggnitionCycle1)
-WinggnitionCycle1 <- AddATKCycleIllium(WinggnitionCycle1, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), ATKFinal$CoolTime[2], ATKFinal$CoolTime[4])
+WinggnitionCycle1 <- AddATKCycleIllium(WinggnitionCycle1, c("Javelin", "EnhancedJavelin", "Orb", "CrystalIgnition"), 
+                                       ATKFinal[rownames(ATKFinal)=="Destruction", ]$CoolTime, ATKFinal[rownames(ATKFinal)=="DestructionSoul", ]$CoolTime)
 WinggnitionCycle1 <- JavelinBuffLogic(WinggnitionCycle1)
-WinggnitionCycle1 <- DeusExMachinaLogic(WinggnitionCycle1, SummonedFinal$Duration[6], SummonedFinal)
+WinggnitionCycle1 <- DeusExMachinaLogic(WinggnitionCycle1, SummonedFinal[rownames(SummonedFinal)=="Deus", ]$Duration, SummonedFinal)
 WinggnitionCycle1 <- DCSummonedATKs(WinggnitionCycle1, "Gramholder", SummonedFinal)
 WinggnitionCycle1 <- DCSpiderInMirror(WinggnitionCycle1, SummonedFinal)
 
-Winggnition40s <- DealCalcWithMaxDMR(WinggnitionCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt2)
+Winggnition40s <- DealCalcWithMaxDMR(WinggnitionCycle1, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt)
 WinggnitionDealData <- data.frame(WinggnitionCycle1$Skills, WinggnitionCycle1$Time, WinggnitionCycle1$Restraint4, Winggnition40s)
 colnames(WinggnitionDealData) <- c("Skills", "Time", "R4", "Deal")
 
-WinggitionRR <- sum(WinggnitionDealData$Deal[220:392])
-Winggition40s <- sum(WinggnitionDealData$Deal[220:704])
+WinggitionRR <- Deal_RR(WinggnitionDealData)
+Winggition40s <- Deal_40s(WinggnitionDealData)
+
+print(data.frame(WinggitionRR=WinggitionRR, Winggition40s=Winggition40s))

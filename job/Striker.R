@@ -1,36 +1,42 @@
 ## Striker - Data
 ## Striker - VMatrix
-StrikerCore <- MatrixSet(PasSkills=c("Annihilate", "Thunderbolt", "Typhoon", "DeepRising", "TidalCrash"), 
-                         PasLvs=c(50, 50, 50, 50, 50), 
-                         PasMP=c(10, 10, 10, 10, 5), 
-                         ActSkills=c("LightningCascade", "SharkTorpedo", "LightningGodSpearStrike", "LightningSpearMultistrike", 
-                                     CommonV("Pirate", "CygnusKnights")), 
-                         ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                         ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 5), 
-                         BlinkLv=1, 
-                         BlinkMP=0, 
-                         UsefulSkills=c("SharpEyes", "CombatOrders"), 
+StrikerCoreBase <- CoreBuilder(ActSkills=c("LightningCascade", "SharkTorpedo", "LightningGodSpearStrike", "LightningSpearMultistrike", 
+                                           CommonV("Pirate", "CygnusKnights")), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=StrikerVPassive, 
+                               VPassivePrior=StrikerVPrior, 
+                               SelfBind=F)
+
+StrikerCore <- MatrixSet(PasSkills=StrikerCoreBase$PasSkills$Skills, 
+                         PasLvs=StrikerCoreBase$PasSkills$Lv, 
+                         PasMP=StrikerCoreBase$PasSkills$MP, 
+                         ActSkills=StrikerCoreBase$ActSkills$Skills, 
+                         ActLvs=StrikerCoreBase$ActSkills$Lv, 
+                         ActMP=StrikerCoreBase$ActSkills$MP, 
+                         UsefulSkills=StrikerCoreBase$UsefulSkills, 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=StrikerCoreBase$SpecialCoreUse)
 
 
 ## Striker - Basic Info
 StrikerBase <- JobBase(ChrInfo=ChrInfo, 
-                       MobInfo=MobDefault,
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        Job="Striker",
                        CoreData=StrikerCore, 
                        BuffDurationNeeded=0, 
-                       AbilList=c("BDR", "DisorderBDR"), 
-                       LinkList=c("CygnusKnights", "Xenon", "DemonAvenger", "Phantom"), 
-                       MonsterLife=MLTypeS21, 
-                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", SpecDefault$WeaponType)[, 1:16],
-                       WeaponType=SpecDefault$WeaponType, 
-                       SubWeapon=SubWeapon[19, ], 
-                       Emblem=Emblem[3, ],
-                       CoolReduceHat=T)
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Striker"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Striker"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Striker")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Knuckle", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                       SubWeapon=SubWeapon[rownames(SubWeapon)=="CygnusKnightsJewel", ], 
+                       Emblem=Emblem[rownames(Emblem)=="Cygnus", ], 
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Striker")))
 
 
 ## Striker - Passive
@@ -71,11 +77,11 @@ value <- c(20)
 PrimalBolt <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + StrikerCore[[2]][5, 2])
+value <- c(10 + GetCoreLv(StrikerCore, "LoadedDice"))
 LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(StrikerCore[[2]][10, 2])
+value <- c(GetCoreLv(StrikerCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 StrikerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, PhysicalTraining=PhysicalTraining, Noebaek=Noebaek, 
@@ -85,7 +91,7 @@ StrikerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExper
 ## Striker - Buff
 {option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 600, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 KnuckleBooster <- rbind(data.frame(option, value), info)
@@ -106,7 +112,7 @@ ArcCharger <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 900, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 WindBooster <- rbind(data.frame(option, value), info)
@@ -146,23 +152,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LinkMastery <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * SoulMasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * SoulMasterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(StrikerCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(5 + floor(StrikerCore[[2]][1, 2]/6))
-info <- c(30 + floor(StrikerCore[[2]][1, 2]/2), 120 - floor(StrikerCore[[2]][1, 2]/2), 540, F, T, F, T)
+value <- c(5 + floor(GetCoreLv(StrikerCore, "LightningCascade")/6))
+info <- c(30 + floor(GetCoreLv(StrikerCore, "LightningCascade")/2), 120 - floor(GetCoreLv(StrikerCore, "LightningCascade")/2), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LightningCascadeBuff <- rbind(data.frame(option, value), info)
@@ -175,15 +174,16 @@ colnames(info) <- c("option", "value")
 LightningSpearMultistrikeBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * StrikerCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
-info <- c(30, 70 - floor(StrikerCore[[2]][6, 2]/5), 540, F, T, F, T)
+value <- c(floor((0.2 + 0.02 * GetCoreLv(StrikerCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
+info <- c(30, 70 - floor(GetCoreLv(StrikerCore, "OverDrive")/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
-info <- c(Cooldown(70 - floor(StrikerCore[[2]][6, 2]/5), T, StrikerBase$UnionChrs$CoolReduceP, StrikerBase$CoolReduce) - 30 - General$General$Serverlag, 70 - floor(StrikerCore[[2]][6, 2]/5), 0, F, T, F, F)
+info <- c(Cooldown(70 - floor(GetCoreLv(StrikerCore, "OverDrive")/5), T, StrikerBase$UnionChrs$CoolReduceP, StrikerBase$CoolReduce) - 30 - General$General$Serverlag, 
+          70 - floor(GetCoreLv(StrikerCore, "OverDrive")/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info)
@@ -202,13 +202,17 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-
-StrikerBuff <- Buff(list(KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, ArcCharger=ArcCharger, WindBooster=WindBooster, TyphoonBuff=TyphoonBuff, 
-                         GloryofGardians=GloryofGardians, PrimalBolt=PrimalBolt, LightningStack=LightningStack, LinkMastery=LinkMastery, 
-                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, LightningCascadeBuff=LightningCascadeBuff, 
-                         LightningSpearMultistrikeBuff=LightningSpearMultistrikeBuff, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, LuckyDice5=LuckyDice5, 
-                         BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : ArcCharger(900ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
+StrikerBuff <- list(KnuckleBooster=KnuckleBooster, MapleSoldier=MapleSoldier, ArcCharger=ArcCharger, WindBooster=WindBooster, TyphoonBuff=TyphoonBuff, 
+                    GloryofGardians=GloryofGardians, PrimalBolt=PrimalBolt, LightningStack=LightningStack, LinkMastery=LinkMastery, 
+                    UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, LightningCascadeBuff=LightningCascadeBuff, 
+                    LightningSpearMultistrikeBuff=LightningSpearMultistrikeBuff, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, LuckyDice5=LuckyDice5, 
+                    BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : KunckleBooster(600ms), ArcCharger(900ms), WindBooster(900ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  StrikerBuff[[length(StrikerBuff)+1]] <- UsefulAdvancedBless
+  names(StrikerBuff)[[length(StrikerBuff)]] <- "UsefulAdvancedBless"
+}
+StrikerBuff <- Buff(StrikerBuff)
 StrikerAllTimeBuff <- AllTimeBuff(StrikerBuff)
 
 
@@ -216,8 +220,8 @@ StrikerAllTimeBuff <- AllTimeBuff(StrikerBuff)
 StrikerSpec <- JobSpec(JobBase=StrikerBase, 
                        Passive=StrikerPassive, 
                        AllTimeBuff=StrikerAllTimeBuff, 
-                       MobInfo=MobDefault, 
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        WeaponName="Knuckle", 
                        UnionStance=0)
 
@@ -228,88 +232,42 @@ StrikerSpec <- StrikerSpec$Spec
 
 
 ## Striker - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * StrikerCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * StrikerCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * StrikerCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * StrikerCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * StrikerCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * StrikerCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(StrikerCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Striker - Attacks
 ## Hyper Setting : Typhoon - Bonus ATK, Thunderbolt - Reinforce / Bonus ATK, Annihilate - Reinforce / Boss Killer
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, ifelse(StrikerCore[[1]][1, 2]>=40, 20, 0), 2 * StrikerCore[[1]][1, 2])
+value <- c(40, ifelse(GetCoreLv(StrikerCore, "Annihilate")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Annihilate"))
 info <- c(350 + 4 * StrikerSpec$SkillLv, 7, 1170, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Annihilate <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(20, ifelse(StrikerCore[[1]][2, 2]>=40, 20, 0), 2 * StrikerCore[[1]][2, 2])
+value <- c(20, ifelse(GetCoreLv(StrikerCore, "Thunderbolt")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Thunderbolt"))
 info <- c(320 + 4 * StrikerSpec$SkillLv, 6, 1050, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Thunderbolt <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(StrikerCore[[1]][3, 2]>=40, 20, 0), 2 * StrikerCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(StrikerCore, "Typhoon")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Typhoon"))
 info <- c(390 + 3 * StrikerSpec$SkillLv, 6, 1200, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Typhoon <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(StrikerCore[[1]][4, 2]>=40, 20, 0), 2 * StrikerCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(StrikerCore, "DeepRising")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "DeepRising"))
 info <- c(860, 7, 2130, NA, 45, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -317,56 +275,56 @@ DeepRising <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(400 + 16 * StrikerCore[[2]][1, 2], 7, 0, NA, NA, NA, NA, F)
+info <- c(400 + 16 * GetCoreLv(StrikerCore, "LightningCascade"), 7, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningCascade <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(1000 + 40 * StrikerCore[[2]][2, 2], 7, 630, NA, 8, T, F, F)
+info <- c(1000 + 40 * GetCoreLv(StrikerCore, "SharkTorpedo"), 7, 630, NA, 8, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SharkTorpedo <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(150 + 6 * StrikerCore[[2]][3, 2], 6, 0, NA, 7, T, F, F)
+info <- c(150 + 6 * GetCoreLv(StrikerCore, "LightningGodSpearStrike"), 6, 0, NA, 7, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningGodSpearStrike <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(208 + 8 * StrikerCore[[2]][3, 2], 7, 0, 202.5, NA, NA, NA, F)
+info <- c(208 + 8 * GetCoreLv(StrikerCore, "LightningGodSpearStrike"), 7, 0, 202.5, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningGodSpearStrikeShock <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(500 + 20 * StrikerCore[[2]][4, 2], 5, 660, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(StrikerCore, "LightningSpearMultistrike"), 5, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrike <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(700 + 28 * StrikerCore[[2]][4, 2], 7, 660, NA, NA, NA, NA, F)
+info <- c(700 + 28 * GetCoreLv(StrikerCore, "LightningSpearMultistrike"), 7, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLast <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(550 + 22 * StrikerCore[[2]][4, 2], 4, 0, NA, NA, NA, NA, F)
+info <- c(550 + 22 * GetCoreLv(StrikerCore, "LightningSpearMultistrike"), 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLightning <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(750 + 30 * StrikerCore[[2]][4, 2], 6, 0, 180, NA, NA, NA, F)
+info <- c(750 + 30 * GetCoreLv(StrikerCore, "LightningSpearMultistrike"), 6, 0, 180, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearMultistrikeLastLightning <- rbind(data.frame(option, value), info)}
@@ -380,7 +338,7 @@ StrikerATK <- Attack(list(Annihilate=Annihilate, Thunderbolt=Thunderbolt, Typhoo
 ## Striker - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * StrikerCore[[2]][7, 2], 1, 780, 240, 0.24*(39 + StrikerCore[[2]][7, 2])+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * GetCoreLv(StrikerCore, "CygnusPhalanx"), 1, 780, 240, 0.24 * (39 + GetCoreLv(StrikerCore, "CygnusPhalanx")) + 0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -397,7 +355,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, S
 BuffFinal <- data.frame(StrikerBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, StrikerSpec$CoolReduceP, StrikerSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, StrikerSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(StrikerSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, StrikerSpec$CoolReduceP, StrikerSpec$CoolReduce)
@@ -428,9 +386,14 @@ StrikerDealCycle <- data.frame(StrikerDealCycle)
 
 StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, 
                           Period=c(120), CycleTime=c(240)) {
-  BuffSummonedPrior <- c("KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5",
+  BuffSummonedPrior <- c("KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "LuckyDice5",
                          "GloryofGardians", "CygnusPhalanx", "BlessofCygnus", "LightningCascadeBuff", "PrimalBolt", "OverDrive", "SoulContractLink", "Restraint4")
-  Times120 <- c(0.5, 0, 0.5, 0.5, 0, 0, 0, 0, 4, 0.5, 1, 1, 2, 1, 0.5)
+  Times120 <- c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0, 
+                0, 4, 0.5, 1, 1, 2, 1, 0.5)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -815,6 +778,7 @@ StrikerAddATK <- function(DealCycle, ATKFinal, SummonedFinal) {
       DealCycle$LightningStack[i] <- 5
     }
   }
+  DealCycle$LightningStack <- DealCycle$LightningStack * 9
   
   ## Arc Charger (Chukroe)
   SkillList <- c("Annihilate", "Thunderbolt", "Typhoon", "DeepRising", "LightningCascade", "SharkTorpedo", 
@@ -867,38 +831,49 @@ StrikerDealCycle <- StrikerAddATK(DealCycle=StrikerDealCycle,
                                   ATKFinal=ATKFinal, 
                                   SummonedFinal=SummonedFinal)
 StrikerDealCycle <- OverDriveExhaustBuff(StrikerDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-StrikerDealCycle <- BlessofCygnusCycle(StrikerDealCycle, 4000, General$General$Serverlag, StrikerCore[[2]][8, 2])
+StrikerDealCycle <- BlessofCygnusCycle(StrikerDealCycle, 4000, General$General$Serverlag, GetCoreLv(StrikerCore, "OverDrive"))
 StrikerDealCycleReduction <- DealCycleReduction(StrikerDealCycle, c("BlessofCygnusBDR", "LightningStack"))
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Striker") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  StrikerSpecOpt1 <- Optimization1(StrikerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, StrikerSpec, StrikerUnionRemained, 
+                                   NotBuffCols=c("LightningStack", "BlessofCygnusBDR"), NotBuffColOption=c("IGR", "BDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- StrikerSpecOpt1[1, 1:3]
+} else {
+  StrikerSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+StrikerSpecOpt <- OptDataAdd(StrikerSpec, StrikerSpecOpt1, "Potential", StrikerBase$CRROver, DemonAvenger=F)
 
-StrikerDealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpec)
-StrikerDealData <- data.frame(StrikerDealCycle$Skills, DealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpec))
-colnames(StrikerDealData) <- c("Skills", "Deal")
+if(DPMCalcOption$Optimization==T) {
+  StrikerSpecOpt2 <- Optimization2(StrikerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, StrikerHyperStatBase, StrikerBase$ChrLv, StrikerBase$CRROver, 
+                                   NotBuffCols=c("LightningStack", "BlessofCygnusBDR"), NotBuffColOption=c("IGR", "BDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- StrikerSpecOpt2[1, ]
+} else {
+  StrikerSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+StrikerSpecOpt <- OptDataAdd(StrikerSpecOpt, StrikerSpecOpt2, "HyperStat", StrikerBase$CRROver, DemonAvenger=F)
 
+StrikerFinalDPM <- DealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, Collapse=F, 
+                            NotBuffCols=c("LightningStack", "BlessofCygnusBDR"), NotBuffColOption=c("IGR", "BDR"))
+StrikerFinalDPMwithMax <- DealCalcWithMaxDMR(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, 
+                                             NotBuffCols=c("LightningStack", "BlessofCygnusBDR"), NotBuffColOption=c("IGR", "BDR"))
 
-## Damage Optimization
-StrikerSpecOpt1 <- StrikerOptimization1(StrikerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, StrikerSpec, StrikerUnionRemained)
-StrikerSpecOpt <- StrikerSpec
-StrikerSpecOpt$ATKP <- StrikerSpecOpt$ATKP + StrikerSpecOpt1$ATKP
-StrikerSpecOpt$BDR <- StrikerSpecOpt$BDR + StrikerSpecOpt1$BDR
-StrikerSpecOpt$IGR <- IGRCalc(c(StrikerSpecOpt$IGR, StrikerSpecOpt1$IGR))
-
-StrikerSpecOpt2 <- StrikerOptimization2(StrikerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, StrikerHyperStatBase, StrikerBase$ChrLv, StrikerBase$CRROver)
-StrikerFinalDPM <- StrikerDealCalc(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
-StrikerFinalDPMwithMax <- StrikerDealCalcWithMaxDMR(StrikerDealCycle, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt2)
-
-DPM12349$Striker[1] <- sum(na.omit(StrikerFinalDPMwithMax)) / (max(StrikerDealCycle$Time) / 60000)
-DPM12349$Striker[2] <- sum(na.omit(StrikerFinalDPM)) / (max(StrikerDealCycle$Time) / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (max(StrikerDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Striker", sum(na.omit(StrikerFinalDPMwithMax)) / (max(StrikerDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Striker", sum(na.omit(StrikerFinalDPM)) / (max(StrikerDealCycle$Time) / 60000) - sum(na.omit(StrikerFinalDPMwithMax)) / (max(StrikerDealCycle$Time) / 60000))
 
 StrikerDealRatio <- DealRatio(StrikerDealCycle, StrikerFinalDPMwithMax)
 
-StrikerDealData <- data.frame(StrikerDealCycle$Skills, StrikerDealCycle$Time, StrikerDealCycle$Restraint4, StrikerFinalDPMwithMax, StrikerFinalDPM-StrikerFinalDPMwithMax)
-colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(StrikerDealData, StrikerDealData$R4>0)
-
-StrikerRR <- StrikerDealData[33:235, ]
-DPM12349$Striker[3] <- sum((StrikerRR$Deal))
-
-Striker40s <- StrikerDealData[33:482, ]
-DPM12349$Striker[4] <- sum((Striker40s$Deal))
+StrikerDealData <- data.frame(StrikerDealCycle$Skills, StrikerDealCycle$Time, StrikerDealCycle$Restraint4, StrikerFinalDPMwithMax)
+colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Striker", Deal_RR(StrikerDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Striker", Deal_40s(StrikerDealData))

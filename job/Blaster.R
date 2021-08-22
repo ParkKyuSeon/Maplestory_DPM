@@ -1,37 +1,43 @@
 ## Blaster - Data
 ## Blaster - VMatrix
-BlasterCore <- MatrixSet(PasSkills=c("MagnumPunch", "DoubleFang", "RevolvingCannon", "ReleasePileBunker", "HammerSmash", "ShockWavePunch"), 
-                         PasLvs=c(50, 50, 50, 50, 50, 50), 
-                         PasMP=c(10, 10, 10, 10, 10, 10), 
-                         ActSkills=c("BunkerBuster", "VulcanPunch", "BurningBreaker", "AfterimageShock",  
-                                     CommonV("Warrior", "Resistance")), 
-                         ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                         ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                         BlinkLv=1, 
-                         BlinkMP=0, 
-                         UsefulSkills=c("SharpEyes", "CombatOrders"), 
+BlasterCoreBase <- CoreBuilder(ActSkills=c("BunkerBuster", "VulcanPunch", "BurningBreaker", "AfterimageShock",  
+                                           CommonV("Warrior", "Resistance")), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=BlasterVPassive, 
+                               VPassivePrior=BlasterVPrior, 
+                               SelfBind=F)
+
+BlasterCore <- MatrixSet(PasSkills=BlasterCoreBase$PasSkills$Skills, 
+                         PasLvs=BlasterCoreBase$PasSkills$Lv, 
+                         PasMP=BlasterCoreBase$PasSkills$MP, 
+                         ActSkills=BlasterCoreBase$ActSkills$Skills, 
+                         ActLvs=BlasterCoreBase$ActSkills$Lv, 
+                         ActMP=BlasterCoreBase$ActSkills$MP, 
+                         UsefulSkills=BlasterCoreBase$UsefulSkills, 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=BlasterCoreBase$SpecialCoreUse)
 
 
 ## Blaster - Basic Info
 ## Link Check Needed
 BlasterBase <- JobBase(ChrInfo=ChrInfo, 
-                      MobInfo=MobDefault,
-                      SpecSet=SpecDefault, 
-                      Job="Blaster",
-                      CoreData=BlasterCore, 
-                      BuffDurationNeeded=0, 
-                      AbilList=c("BDR", "DisorderBDR"), 
-                      LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Zero"), 
-                      MonsterLife=MLTypeS22, 
-                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "GuntletRevolver", SpecDefault$WeaponType)[, 1:16],
-                      WeaponType=SpecDefault$WeaponType, 
-                      SubWeapon=SubWeapon[26, ], 
-                      Emblem=Emblem[4, ], 
-                      CoolReduceHat=F)
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
+                       Job="Blaster",
+                       CoreData=BlasterCore, 
+                       BuffDurationNeeded=0, 
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Blaster"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Blaster"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Blaster")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "GuntletRevolver", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                       SubWeapon=SubWeapon[rownames(SubWeapon)=="BlasterGunpowder", ],
+                       Emblem=Emblem[rownames(Emblem)=="Resistance", ],
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Blaster")))
 
 
 ## Blaster - Passive
@@ -64,16 +70,16 @@ value <- c(40 + 2 * BlasterBase$PSkillLv, 10 * (6 + ceiling(BlasterBase$PSkillLv
 CombinationTrainingII <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(BlasterCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(BlasterCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(BlasterCore[[2]][10, 2])
+value <- c(GetCoreLv(BlasterCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 BlasterPassive <- Passive(list(GuntletMastery=GuntletMastery, PhysicalTraining=PhysicalTraining, ChargeMastery=ChargeMastery, CombinationTraining=CombinationTraining, 
                                GuntletExpert=GuntletExpert, AdvancedChargeMastery=AdvancedChargeMastery, CombinationTrainingII=CombinationTrainingII, 
-                               BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
+                               BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
 
 
 ## Blaster - Buff
@@ -133,19 +139,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MaximizeCannonRevolvingBunkerBDR <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * BlasterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * BlasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(BlasterCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -162,33 +161,38 @@ colnames(info) <- c("option", "value")
 AfterimageShockBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(BlasterCore[[2]][5, 2]/5), ceiling(BlasterCore[[2]][5, 2]/5))
-info <- c(80 + 2 * BlasterCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(BlasterCore, "AuraWeapon")/5), ceiling(GetCoreLv(BlasterCore, "AuraWeapon")/5))
+info <- c(80 + 2 * GetCoreLv(BlasterCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * BlasterCore[[2]][8, 2]) * MapleSoldier[1, 2]) * BlasterBase$MainStatP), 5 + floor(BlasterCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(BlasterCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * BlasterBase$MainStatP), 5 + floor(GetCoreLv(BlasterCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-BlasterBuff <- Buff(list(GuntletBooster=GuntletBooster, MapleSoldier=MapleSoldier, CylinderGauge=CylinderGauge, CylinderOverload=CylinderOverload, HammerSmashDebuff=HammerSmashDebuff, 
-                         WillofLiberty=WillofLiberty, MaximizeCannon=MaximizeCannon, MaximizeCannonRevolvingBunkerBDR=MaximizeCannonRevolvingBunkerBDR, UsefulSharpEyes=UsefulSharpEyes, 
-                         UsefulCombatOrders=UsefulCombatOrders, BunkerBusterBuff=BunkerBusterBuff, AfterimageShockBuff=AfterimageShockBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
-                         Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+BlasterBuff <- list(GuntletBooster=GuntletBooster, MapleSoldier=MapleSoldier, CylinderGauge=CylinderGauge, CylinderOverload=CylinderOverload, HammerSmashDebuff=HammerSmashDebuff, 
+                     WillofLiberty=WillofLiberty, MaximizeCannon=MaximizeCannon, MaximizeCannonRevolvingBunkerBDR=MaximizeCannonRevolvingBunkerBDR, UsefulSharpEyes=UsefulSharpEyes, 
+                     UsefulCombatOrders=UsefulCombatOrders, BunkerBusterBuff=BunkerBusterBuff, AfterimageShockBuff=AfterimageShockBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
+                     Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  BlasterBuff[[length(BlasterBuff)+1]] <- UsefulAdvancedBless
+  names(BlasterBuff)[[length(BlasterBuff)]] <- "UsefulAdvancedBless"
+}
+BlasterBuff <- Buff(BlasterBuff)
 BlasterAllTimeBuff <- AllTimeBuff(BlasterBuff)
-## PetBuff : GuntleBooster, UsefulSharpEyes, UsefulCombatOrders
+## PetBuff : GuntleBooster, MapleSoldier, UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
 
 
 ## Blaster - Union & HyperStat & SoulWeapon
 BlasterSpec <- JobSpec(JobBase=BlasterBase, 
                        Passive=BlasterPassive, 
                        AllTimeBuff=BlasterAllTimeBuff, 
-                       MobInfo=MobDefault, 
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        WeaponName="GuntletRevolver", 
                        UnionStance=0)
 
@@ -199,73 +203,27 @@ BlasterSpec <- BlasterSpec$Spec
 
 
 ## Blaster - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * BlasterCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BlasterCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BlasterCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BlasterCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BlasterCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BlasterCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(BlasterCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Blaster - Attacks
 {option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][1, 2], 10, IGRCalc(c(20, ifelse(BlasterCore[[1]][1, 2]>=40, 20, 0))))
+value <- c(2 * GetCoreLv(BlasterCore, "MagnumPunch"), 10, IGRCalc(c(20, ifelse(GetCoreLv(BlasterCore, "MagnumPunch")>=40, 20, 0))))
 info <- c(430 + 2 * BlasterSpec$SkillLv, 3, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagnumPunch <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][2, 2], 10, IGRCalc(c(20, ifelse(BlasterCore[[1]][2, 2]>=40, 20, 0))))
+value <- c(2 * GetCoreLv(BlasterCore, "DoubleFang"), 10, IGRCalc(c(20, ifelse(GetCoreLv(BlasterCore, "DoubleFang")>=40, 20, 0))))
 info <- c(360 + 2 * BlasterSpec$SkillLv, 4, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -279,63 +237,63 @@ colnames(info) <- c("option", "value")
 Ducking <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][3, 2], ifelse(BlasterCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(BlasterCore, "RevolvingCannon"), ifelse(GetCoreLv(BlasterCore, "RevolvingCannon")>=40, 20, 0))
 info <- c(180 + BlasterSpec$PSkillLv, 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RevolvingCannon <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][4, 2], 20, IGRCalc(c(80, ifelse(BlasterCore[[1]][4, 2]>=40, 20, 0))))
+value <- c(2 * GetCoreLv(BlasterCore, "ReleasePileBunker"), 20, IGRCalc(c(80, ifelse(GetCoreLv(BlasterCore, "ReleasePileBunker")>=40, 20, 0))))
 info <- c(370 + BlasterSpec$PSkillLv, 8, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ReleasePileBunker <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][4, 2], 15, ifelse(BlasterCore[[1]][4, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(BlasterCore, "ReleasePileBunker"), 15, ifelse(GetCoreLv(BlasterCore, "ReleasePileBunker")>=40, 20, 0))
 info <- c(220 + BlasterSpec$PSkillLv, 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ReleasePileBunkerShockwaveA <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][4, 2], 15, ifelse(BlasterCore[[1]][4, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(BlasterCore, "ReleasePileBunker"), 15, ifelse(GetCoreLv(BlasterCore, "ReleasePileBunker")>=40, 20, 0))
 info <- c(230 + BlasterSpec$PSkillLv, 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ReleasePileBunkerShockwaveB <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][4, 2], 15, ifelse(BlasterCore[[1]][4, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(BlasterCore, "ReleasePileBunker"), 15, ifelse(GetCoreLv(BlasterCore, "ReleasePileBunker")>=40, 20, 0))
 info <- c(270 + BlasterSpec$PSkillLv, 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ReleasePileBunkerShockwaveC <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][4, 2], 15, ifelse(BlasterCore[[1]][4, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(BlasterCore, "ReleasePileBunker"), 15, ifelse(GetCoreLv(BlasterCore, "ReleasePileBunker")>=40, 20, 0))
 info <- c(320 + BlasterSpec$PSkillLv, 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ReleasePileBunkerShockwaveD <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][5, 2], 10, IGRCalc(c(20, ifelse(BlasterCore[[1]][5, 2]>=40, 20, 0))))
+value <- c(2 * GetCoreLv(BlasterCore, "HammerSmash"), 10, IGRCalc(c(20, ifelse(GetCoreLv(BlasterCore, "HammerSmash")>=40, 20, 0))))
 info <- c(390 + 2 * BlasterSpec$PSkillLv, 6, 270, NA, NA, NA, NA, F) ## Skip Type Check Needed
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HammerSmash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * BlasterCore[[1]][5, 2], IGRCalc(c(20, ifelse(BlasterCore[[1]][5, 2]>=40, 20, 0))))
+value <- c(2 * GetCoreLv(BlasterCore, "HammerSmash"), IGRCalc(c(20, ifelse(GetCoreLv(BlasterCore, "HammerSmash")>=40, 20, 0))))
 info <- c(150, 4, 0, 1000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HammerSmashShockwave <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=ASkill)
-value <- c(10)
+value <- c(BlasterBase$MonsterLife$FinalATKDMR)
 info <- c(215 + BlasterSpec$PSkillLv, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -343,21 +301,21 @@ RevolvingCannonMastery <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(180 + 7 * BlasterCore[[2]][1, 2], 8, 0, NA, NA, NA, NA, F)
+info <- c(180 + 7 * GetCoreLv(BlasterCore, "BunkerBuster"), 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BunkerBuster <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * BlasterCore[[2]][2, 2], 12, 1080, NA, 60, T, F, F)
+info <- c(500 + 20 * GetCoreLv(BlasterCore, "VulcanPunch"), 12, 1080, NA, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 VulcanPunchPre <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(425 + 17 * BlasterCore[[2]][2, 2], 8, 2920, 120, NA, NA, NA, F)
+info <- c(425 + 17 * GetCoreLv(BlasterCore, "VulcanPunch"), 8, 2920, 120, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 VulcanPunch <- rbind(data.frame(option, value), info)
@@ -378,28 +336,28 @@ BurningBreakerPre <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(1500 + 60 * BlasterCore[[2]][3, 2], 15, 2940, NA, NA, NA, NA, F)
+info <- c(1500 + 60 * GetCoreLv(BlasterCore, "BurningBreaker"), 15, 2940, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BurningBreaker <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(1200 + 48 * BlasterCore[[2]][3, 2], 90, 0, NA, NA, NA, NA, F)
+info <- c(1200 + 48 * GetCoreLv(BlasterCore, "BurningBreaker"), 90, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BurningBreakerEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(450 + 18 * BlasterCore[[2]][4, 2], 5, 0, NA, NA, NA, NA, F)
+info <- c(450 + 18 * GetCoreLv(BlasterCore, "AfterimageShock"), 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AfterimageShock <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * BlasterCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(BlasterCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
@@ -414,7 +372,7 @@ BlasterATK <- Attack(list(MagnumPunch=MagnumPunch, DoubleFang=DoubleFang, Duckin
 ## Blaster - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(215 + 8 * BlasterCore[[2]][7, 2], 9, 360, 990, 10, 25, F, T, F, F)
+info <- c(215 + 8 * GetCoreLv(BlasterCore, "ResistanceLineInfantry"), 9, 360, 990, 10, 25, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 ResistanceLineInfantry <- rbind(data.frame(option, value), info)}
@@ -431,7 +389,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, B
 BuffFinal <- data.frame(BlasterBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, BlasterSpec$CoolReduceP, BlasterSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, BlasterSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(BlasterSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, BlasterSpec$CoolReduceP, BlasterSpec$CoolReduce)
@@ -455,11 +413,15 @@ BlasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
   }
   
-  BuffSummonedPrior <- c("GuntletBooster", "MapleSoldier", "WillofLiberty", "UsefulSharpEyes", "UsefulCombatOrders", 
+  BuffSummonedPrior <- c("GuntletBooster", "MapleSoldier", "WillofLiberty", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "AfterimageShockBuff", "AuraWeaponBuff", "MaximizeCannon", "MapleWarriors2", "BunkerBusterBuff", "SoulContractLink", "Restraint4")
-  
-  Times120 <- c(0.5, 0.5, 0, 0, 0, 
+  Times120 <- c(0.5, 0.5, 0, 0, 0, 0, 
                 0.5, 0.5, 0.5, 0.5, 1, 1, 0.5)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
@@ -800,6 +762,7 @@ BlasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
       DealCycle$CylinderGauge[i] <- 5
     }
   }
+  DealCycle$CylinderGauge <- ((1.1 ^ DealCycle$CylinderGauge) - 1) * 100
   return(DealCycle)
 }
 
@@ -815,35 +778,49 @@ BlasterDealCycle <- DealCycleFinal(BlasterDealCycle)
 BlasterDealCycle <- BlasterAddATK(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 BlasterDealCycleReduction <- DealCycleReduction(BlasterDealCycle)
 
-BlasterDealData <- data.frame(BlasterDealCycle$Skills, DealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpec))
-colnames(BlasterDealData) <- c("Skills", "Deal")
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Blaster") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  BlasterSpecOpt1 <- Optimization1(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpec, BlasterUnionRemained, 
+                                   NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- BlasterSpecOpt1[1, 1:3]
+} else {
+  BlasterSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+BlasterSpecOpt <- OptDataAdd(BlasterSpec, BlasterSpecOpt1, "Potential", BlasterBase$CRROver, DemonAvenger=F)
 
-## Damage Optimization
-BlasterSpecOpt1 <- BlasterOptimization1(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpec, BlasterUnionRemained)
-BlasterSpecOpt <- BlasterSpec
-BlasterSpecOpt$ATKP <- BlasterSpecOpt$ATKP + BlasterSpecOpt1$ATKP
-BlasterSpecOpt$BDR <- BlasterSpecOpt$BDR + BlasterSpecOpt1$BDR
-BlasterSpecOpt$IGR <- IGRCalc(c(BlasterSpecOpt$IGR, BlasterSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  BlasterSpecOpt2 <- Optimization2(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, BlasterHyperStatBase, BlasterBase$ChrLv, BlasterBase$CRROver, 
+                                   NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- BlasterSpecOpt2[1, ]
+} else {
+  BlasterSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+BlasterSpecOpt <- OptDataAdd(BlasterSpecOpt, BlasterSpecOpt2, "HyperStat", BlasterBase$CRROver, DemonAvenger=F)
 
-BlasterSpecOpt2 <- BlasterOptimization2(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, BlasterHyperStatBase, BlasterBase$ChrLv, BlasterBase$CRROver)
-BlasterFinalDPM <- BlasterDealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
-BlasterFinalDPMwithMax <- BlasterDealCalcWithMaxDMR(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+BlasterFinalDPM <- DealCalc(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, Collapse=F, 
+                            NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
+BlasterFinalDPMwithMax <- DealCalcWithMaxDMR(BlasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, 
+                                             NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
 
-DPM12349$Blaster[1] <- sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
-DPM12349$Blaster[2] <- sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Blaster", sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Blaster", sum(na.omit(BlasterFinalDPM)) / (max(BlasterDealCycle$Time) / 60000) - sum(na.omit(BlasterFinalDPMwithMax)) / (max(BlasterDealCycle$Time) / 60000))
 
 BlasterDealRatio <- DealRatio(BlasterDealCycle, BlasterFinalDPMwithMax)
 
-BlasterDealData <- data.frame(BlasterDealCycle$Skills, BlasterDealCycle$Time, BlasterDealCycle$Restraint4, BlasterFinalDPMwithMax, BlasterFinalDPM-BlasterFinalDPMwithMax)
-colnames(BlasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(BlasterDealData, BlasterDealData$R4>0)
-
-BlasterRR <- BlasterDealData[19:275, ]
-DPM12349$Blaster[3] <- sum((BlasterRR$Deal))
-
-Blaster40s <- BlasterDealData[19:798, ]
-DPM12349$Blaster[4] <- sum((Blaster40s$Deal))
+BlasterDealData <- data.frame(BlasterDealCycle$Skills, BlasterDealCycle$Time, BlasterDealCycle$Restraint4, BlasterFinalDPMwithMax)
+colnames(BlasterDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Blaster", Deal_RR(BlasterDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Blaster", Deal_40s(BlasterDealData))
 
 
 ## Mag - Fang 540ms
@@ -852,30 +829,25 @@ BlasterDealCycle540 <- t(rep(0, length(DealCycle)))
 colnames(BlasterDealCycle540) <- DealCycle
 
 BlasterDealCycle540 <- BlasterCycle(PreDealCycle=BlasterDealCycle540, 
-                                 ATKFinal=ATKFinal,
-                                 BuffFinal=BuffFinal, 
-                                 SummonedFinal=SummonedFinal, 
-                                 Spec=BlasterSpec,
-                                 Period=120, 
-                                 CycleTime=240, 
-                                 MagFangDelay=540)
+                                    ATKFinal=ATKFinal,
+                                    BuffFinal=BuffFinal, 
+                                    SummonedFinal=SummonedFinal, 
+                                    Spec=BlasterSpec,
+                                    Period=120, 
+                                    CycleTime=240, 
+                                    MagFangDelay=540)
 BlasterDealCycle540 <- DealCycleFinal(BlasterDealCycle540)
 BlasterDealCycle540 <- BlasterAddATK(BlasterDealCycle540, ATKFinal, BuffFinal, SummonedFinal)
-BlasterDealCycle540Reduction <- DealCycleReduction(BlasterDealCycle540)
 
-Blaster540 <- BlasterDealCalcWithMaxDMR(BlasterDealCycle540, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+Blaster540 <- DealCalcWithMaxDMR(BlasterDealCycle540, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, 
+                                 NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
 BlasterDPM540 <- sum(na.omit(Blaster540)) / (max(BlasterDealCycle540$Time) / 60000)
 
 BlasterDealData540 <- data.frame(BlasterDealCycle540$Skills, BlasterDealCycle540$Time, BlasterDealCycle540$Restraint4, Blaster540)
 colnames(BlasterDealData540) <- c("Skills", "Time", "R4", "Deal")
 
-subset(BlasterDealData540, BlasterDealData540$R4>0)
-
-BlasterRR540 <- BlasterDealData540[19:268, ]
-BlasterRR540 <- sum((BlasterRR540$Deal))
-
-Blaster40s540 <- BlasterDealData540[19:766, ]
-Blaster40s540 <- sum((Blaster40s540$Deal))
+BlasterRR540 <- Deal_RR(BlasterDealData540)
+Blaster40s540 <- Deal_40s(BlasterDealData540)
 
 
 ## Mag - Fang 480ms
@@ -893,18 +865,16 @@ BlasterDealCycle480 <- BlasterCycle(PreDealCycle=BlasterDealCycle480,
                                     MagFangDelay=480)
 BlasterDealCycle480 <- DealCycleFinal(BlasterDealCycle480)
 BlasterDealCycle480 <- BlasterAddATK(BlasterDealCycle480, ATKFinal, BuffFinal, SummonedFinal)
-BlasterDealCycle480Reduction <- DealCycleReduction(BlasterDealCycle480)
 
-Blaster480 <- BlasterDealCalcWithMaxDMR(BlasterDealCycle480, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt2)
+Blaster480 <- DealCalcWithMaxDMR(BlasterDealCycle480, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, 
+                                 NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
 BlasterDPM480 <- sum(na.omit(Blaster480)) / (max(BlasterDealCycle480$Time) / 60000)
 
 BlasterDealData480 <- data.frame(BlasterDealCycle480$Skills, BlasterDealCycle480$Time, BlasterDealCycle480$Restraint4, Blaster480)
 colnames(BlasterDealData480) <- c("Skills", "Time", "R4", "Deal")
 
-subset(BlasterDealData480, BlasterDealData480$R4>0)
+BlasterRR480 <- Deal_RR(BlasterDealData480)
+Blaster40s480 <- Deal_40s(BlasterDealData480)
 
-BlasterRR480 <- BlasterDealData480[19:286, ]
-BlasterRR480 <- sum((BlasterRR480$Deal))
-
-Blaster40s480 <- BlasterDealData480[19:833, ]
-Blaster40s480 <- sum((Blaster40s480$Deal))
+print(list(BL540=data.frame(BlasterDPM540=BlasterDPM540, BlasterRR540=BlasterRR540, Blaster40s540=Blaster40s540), 
+           BL480=data.frame(BlasterDPM480=BlasterDPM480, BlasterRR480=BlasterRR480, Blaster40s480=Blaster40s480)))

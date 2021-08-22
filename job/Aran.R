@@ -1,35 +1,42 @@
 ## Aran - Data
 ## Aran - VMatrix
-AranCore <- MatrixSet(PasSkills=c("Swing", "FinalBlow", "Beyonder", "HuntersTargeting", "FinalAttack", "ZoneofMaha"), 
-                      PasLvs=c(50, 50, 50, 50, 50, 50), 
-                      PasMP=c(10, 10, 10, 10, 10, 10), 
-                      ActSkills=c("InstallMaha", "BrandishMaha", "FenrirCrash", "BlizardTempest", 
-                                  CommonV("Warrior", "Heroes")), 
-                      ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
-                      ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
-                      BlinkLv=1, 
-                      BlinkMP=0, 
-                      UsefulSkills=c("SharpEyes", "CombatOrders"), 
+AranCoreBase <- CoreBuilder(ActSkills=c("InstallMaha", "BrandishMaha", "FenrirCrash", "BlizardTempest", 
+                                        CommonV("Warrior", "Heroes")), 
+                            ActSkillsLv=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
+                            UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            VPassiveList=AranVPassive, 
+                            VPassivePrior=AranVPrior, 
+                            SelfBind=F)
+
+AranCore <- MatrixSet(PasSkills=AranCoreBase$PasSkills$Skills, 
+                      PasLvs=AranCoreBase$PasSkills$Lv, 
+                      PasMP=AranCoreBase$PasSkills$MP, 
+                      ActSkills=AranCoreBase$ActSkills$Skills, 
+                      ActLvs=AranCoreBase$ActSkills$Lv, 
+                      ActMP=AranCoreBase$ActSkills$MP, 
+                      UsefulSkills=AranCoreBase$UsefulSkills, 
                       UsefulLvs=20, 
                       UsefulMP=0, 
-                      SpecSet=SpecDefault, 
-                      SelfBind=F)
+                      SpecSet=get(DPMCalcOption$SpecSet), 
+                      SpecialCore=AranCoreBase$SpecialCoreUse)
 
 
 ## Aran - Basic Info
 AranBase <- JobBase(ChrInfo=ChrInfo, 
-                    MobInfo=MobDefault,
-                    SpecSet=SpecDefault, 
+                    MobInfo=get(DPMCalcOption$MobSet),
+                    SpecSet=get(DPMCalcOption$SpecSet), 
                     Job="Aran",
                     CoreData=AranCore, 
                     BuffDurationNeeded=0, 
-                    AbilList=c("BDR", "DisorderBDR"), 
-                    LinkList=c("CygnusKnights", "Aran", "DemonAvenger", "CygnusKnights"), 
-                    MonsterLife=MLTypeS22, 
-                    Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Polarm", SpecDefault$WeaponType)[, 1:16],
-                    WeaponType=SpecDefault$WeaponType, 
-                    SubWeapon=SubWeapon[20, ], 
-                    Emblem=Emblem[2, ])
+                    AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Aran"), 
+                    LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Aran"), 
+                    MonsterLife=get(FindJob(MonsterLifePreSet, "Aran")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                    Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Polarm", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                    WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                    SubWeapon=SubWeapon[rownames(SubWeapon)=="AranWeight", ], 
+                    Emblem=Emblem[rownames(Emblem)=="Heroes", ], 
+                    CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Aran")))
 
 
 ## Aran - Passive
@@ -70,22 +77,22 @@ value <- c(30 + AranBase$PSkillLv)
 AdvancedFinalAttack <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(AranCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(AranCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(AranCore[[2]][10, 2])
+value <- c(GetCoreLv(AranCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 AranPassive <- Passive(list(RegainedMemory=RegainedMemory, SnowCharge=SnowCharge, PolarmMastery=PolarmMastery, PhysicalTraining=PhysicalTraining, 
                             AdvancedComboAbility=AdvancedComboAbility, Might=Might, CleavingAttack=CleavingAttack, HighMastery=HighMastery, AdvancedFinalAttack=AdvancedFinalAttack, 
-                            BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
+                            BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
 
 
 ## Aran - Buff
 {option <- factor("ATKSpeed", levels=BSkill)
 value <- c(2)
-info <- c(200, NA, 600, T, NA, NA, T)
+info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PolarmBooster <- rbind(data.frame(option, value), info)
@@ -113,7 +120,7 @@ AdrenalineGenerator <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(200, NA, 600, T, NA, NA, T)
+info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessingMaha <- rbind(data.frame(option, value), info)
@@ -139,23 +146,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HeroesOath <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * AranCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * AranCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(AranCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("ATKP", levels=BSkill)
-value <- c(5 + AranCore[[2]][5, 2])
-info <- c(30 + AranCore[[2]][5, 2], 150, 960, F, T, F, T)
+value <- c(5 + GetCoreLv(AranCore, "InstallMaha"))
+info <- c(30 + GetCoreLv(AranCore, "InstallMaha"), 150, 960, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 InstallMahaBuff <- rbind(data.frame(option, value), info)
@@ -175,14 +175,14 @@ colnames(info) <- c("option", "value")
 DireWolfCurseStack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR", "ATKSkill"), levels=BSkill)
-value <- c(10 + floor(AranCore[[2]][5, 2]/5), ceiling(AranCore[[2]][5, 2]/5), 1)
-info <- c(80 + 2 * AranCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(AranCore, "AuraWeapon")/5), ceiling(GetCoreLv(AranCore, "AuraWeapon")/5), 1)
+info <- c(80 + 2 * GetCoreLv(AranCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * AranCore[[2]][8, 2]) * MapleSoldier[1, 2]) * AranBase$MainStatP), 5 + floor(AranCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(AranCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * AranBase$MainStatP), 5 + floor(GetCoreLv(AranCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -195,11 +195,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Combo <- rbind(data.frame(option, value), info)}
 
-AranBuff <- Buff(list(PolarmBooster=PolarmBooster, SnowCharge=SnowCharge, AdrenalineBoost=AdrenalineBoost, AdrenalineGenerator=AdrenalineGenerator, 
-                      BlessingMaha=BlessingMaha, MapleSoldier=MapleSoldier, SwingBuff=SwingBuff, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                      InstallMahaBuff=InstallMahaBuff, DireWolfCurse=DireWolfCurse, DireWolfCurseStack=DireWolfCurseStack, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, Combo=Combo, 
-                      Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : SnowCharge(900ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
+AranBuff <- list(PolarmBooster=PolarmBooster, SnowCharge=SnowCharge, AdrenalineBoost=AdrenalineBoost, AdrenalineGenerator=AdrenalineGenerator, 
+                 BlessingMaha=BlessingMaha, MapleSoldier=MapleSoldier, SwingBuff=SwingBuff, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                 InstallMahaBuff=InstallMahaBuff, DireWolfCurse=DireWolfCurse, DireWolfCurseStack=DireWolfCurseStack, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, Combo=Combo, 
+                 Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## Petbuff : SnowCharge(900ms), PolarmBooster(600ms), BlessingMaha(600ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  AranBuff[[length(AranBuff)+1]] <- UsefulAdvancedBless
+  names(AranBuff)[[length(AranBuff)]] <- "UsefulAdvancedBless"
+}
+AranBuff <- Buff(AranBuff)
 AranAllTimeBuff <- AllTimeBuff(AranBuff)
 
 
@@ -207,8 +212,8 @@ AranAllTimeBuff <- AllTimeBuff(AranBuff)
 AranSpec <- JobSpec(JobBase=AranBase, 
                     Passive=AranPassive, 
                     AllTimeBuff=AranAllTimeBuff, 
-                    MobInfo=MobDefault, 
-                    SpecSet=SpecDefault, 
+                    MobInfo=get(DPMCalcOption$MobSet), 
+                    SpecSet=get(DPMCalcOption$SpecSet), 
                     WeaponName="Polarm", 
                     UnionStance=0)
 
@@ -219,80 +224,34 @@ AranSpec <- AranSpec$Spec
 
 
 ## Aran - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * AranCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AranCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AranCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AranCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AranCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * AranCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(AranCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Aran - Attacks
 {option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(AranCore[[1]][1, 2]>=40, 20, 0), 2 * AranCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "Swing")>=40, 20, 0), 2 * GetCoreLv(AranCore, "Swing"))
 info <- c(825 + 51 * AranSpec$PSkillLv, 2, 450, NA, NA, NA, NA, F) ## Dynamic Mastery Check Needed
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Swing <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=ASkill)
-value <- c(10)
+value <- c(AranBase$MonsterLife$FinalATKDMR)
 info <- c(380 + 40 * AranSpec$PSkillLv, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SwingAfterimage <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(ifelse(AranCore[[1]][2, 2]>=40, 20, 0), 15)), 2 * AranCore[[1]][2, 2])
+value <- c(IGRCalc(c(ifelse(GetCoreLv(AranCore, "FinalBlow")>=40, 20, 0), 15)), 2 * GetCoreLv(AranCore, "FinalBlow"))
 info <- c(470 + 3 * AranSpec$PSkillLv, 5, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -306,77 +265,77 @@ colnames(info) <- c("option", "value")
 GatheringCatcherCommand <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 30)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 30)), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(385 + 10 * AranSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 30)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 30)), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(400 + 10 * AranSpec$SkillLv, 6, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 30)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 30)), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(415 + 10 * AranSpec$SkillLv, 6, 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(30, ifelse(AranCore[[1]][4, 2]>=40, 20, 0), 2 * AranCore[[1]][4, 2])
+value <- c(30, ifelse(GetCoreLv(AranCore, "HuntersTargeting")>=40, 20, 0), 2 * GetCoreLv(AranCore, "HuntersTargeting"))
 info <- c(1195 + 10 * AranSpec$SkillLv + 1 * AranSpec$PSkillLv, 15, 600, 30, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HuntersTargeting <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][5, 2]>=40, 20, 0), 10, 2 * AranCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "FinalAttack")>=40, 20, 0), AranBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(AranCore, "FinalAttack"))
 info <- c(185 + 1 * AranSpec$PSkillLv, 3 * (0.6 + 0.01 * ceiling(AranSpec$PSkillLv/2)), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][6, 2]>=40, 20, 0), 2 * AranCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "ZoneofMaha")>=40, 20, 0), 2 * GetCoreLv(AranCore, "ZoneofMaha"))
 info <- c(900, 5, 30, NA, 150, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ZoneofMaha <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][6, 2]>=40, 20, 0), 2 * AranCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "ZoneofMaha")>=40, 20, 0), 2 * GetCoreLv(AranCore, "ZoneofMaha"))
 info <- c(600, 3, 0, 1000, 150, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ZoneofMahaZone <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(AranCore[[1]][1, 2]>=40, 20, 0), 2 * AranCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "Swing")>=40, 20, 0), 2 * GetCoreLv(AranCore, "Swing"))
 info <- c(975 + 51 * AranSpec$PSkillLv, 4, 450, NA, NA, NA, NA, F) ## Dynamic Mastery Check Needed
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SwingAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=ASkill)
-value <- c(10)
+value <- c(AranBase$MonsterLife$FinalATKDMR)
 info <- c(530 + 40 * AranSpec$PSkillLv, 7, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SwingAfterimageAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(ifelse(AranCore[[1]][2, 2]>=40, 20, 0), 15)), 2 * AranCore[[1]][2, 2])
+value <- c(IGRCalc(c(ifelse(GetCoreLv(AranCore, "FinalBlow")>=40, 20, 0), 15)), 2 * GetCoreLv(AranCore, "FinalBlow"))
 info <- c(620 + 3 * AranSpec$PSkillLv, 7, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FinalBlowCommandAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][2, 2]>=40, 20, 0), 2 * AranCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "FinalBlow")>=40, 20, 0), 2 * GetCoreLv(AranCore, "FinalBlow"))
 info <- c(450, 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -390,49 +349,49 @@ colnames(info) <- c("option", "value")
 GatheringCatcherCommandAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 30)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 30)), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(535 + 10 * AranSpec$SkillLv, 8, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder1Adrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 30)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 30)), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(550 + 10 * AranSpec$SkillLv, 8, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder2Adrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 30)), 2 * AranCore[[1]][3, 2])
+value <- c(20 + (1.06 ^ 5 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 30)), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(565 + 10 * AranSpec$SkillLv, 8, 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Beyonder3Adrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 2 * AranCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 2 * GetCoreLv(AranCore, "Beyonder"))
 info <- c(500, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BeyonderWave <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][5, 2]>=40, 20, 0), 10, 2 * AranCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "FinalAttack")>=40, 20, 0), AranBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(AranCore, "FinalAttack"))
 info <- c(335 + 1 * AranSpec$PSkillLv, 5 * (0.6 + 0.01 * ceiling(AranSpec$PSkillLv/2)), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedFinalAttackAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][6, 2]>=40, 20, 0), 2 * AranCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "ZoneofMaha")>=40, 20, 0), 2 * GetCoreLv(AranCore, "ZoneofMaha"))
 info <- c(1050, 7, 30, NA, 150, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ZoneofMahaAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][6, 2]>=40, 20, 0), 2 * AranCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(AranCore, "ZoneofMaha")>=40, 20, 0), 2 * GetCoreLv(AranCore, "ZoneofMaha"))
 info <- c(750, 3, 0, 1000, 150, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -440,56 +399,56 @@ ZoneofMahaZoneAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * AranCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(AranCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(550 + 18 * AranCore[[2]][1, 2], 5, 0, NA, NA, NA, NA, F)
+info <- c(550 + 18 * GetCoreLv(AranCore, "InstallMaha"), 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 InstallMaha <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(725 + 24 * AranCore[[2]][2, 2] + AranSpec$PSkillLv, 15, 960, 420, 20, T, F, F)
+info <- c(725 + 24 * GetCoreLv(AranCore, "BrandishMaha") + AranSpec$PSkillLv, 15, 960, 420, 20, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BrandishMahaCommand <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 9 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
-info <- c(600 + 5 * AranCore[[2]][3, 2], 7 + floor(AranCore[[2]][3, 2]/30), 600, NA, NA, NA, NA, F)
+value <- c(20 + (1.06 ^ 9 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 50)), 2 * GetCoreLv(AranCore, "Beyonder"))
+info <- c(600 + 5 * GetCoreLv(AranCore, "FenrirCrash"), 7 + floor(GetCoreLv(AranCore, "FenrirCrash")/30), 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FenrirCrash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + (1.06 ^ 9 - 1) * 100, IGRCalc(c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 50)), 2 * AranCore[[1]][3, 2])
-info <- c(750 + 5 * AranCore[[2]][3, 2], 9 + floor(AranCore[[2]][3, 2]/30), 600, NA, NA, NA, NA, F)
+value <- c(20 + (1.06 ^ 9 - 1) * 100, IGRCalc(c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 50)), 2 * GetCoreLv(AranCore, "Beyonder"))
+info <- c(750 + 5 * GetCoreLv(AranCore, "FenrirCrash"), 9 + floor(GetCoreLv(AranCore, "FenrirCrash")/30), 600, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FenrirCrashAdrenaline <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(AranCore[[1]][3, 2]>=40, 20, 0), 2 * AranCore[[1]][3, 2])
-info <- c(600 + 5 * AranCore[[2]][3, 2], 6, 0, NA, NA, NA, NA, F)
+value <- c(ifelse(GetCoreLv(AranCore, "Beyonder")>=40, 20, 0), 2 * GetCoreLv(AranCore, "Beyonder"))
+info <- c(600 + 5 * GetCoreLv(AranCore, "FenrirCrash"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FenrirCrashIceberg <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(900 + 32 * AranCore[[2]][4, 2], 8, 990, NA, NA, NA, NA, F)
+info <- c(900 + 32 * GetCoreLv(AranCore, "BlizardTempest"), 8, 990, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlizardTempest <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(575 + 19 * AranCore[[2]][4, 2], 1, 0, NA, NA, NA, NA, F)
+info <- c(575 + 19 * GetCoreLv(AranCore, "BlizardTempest"), 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlizardTempestIce <- rbind(data.frame(option, value), info)
@@ -524,7 +483,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, A
 BuffFinal <- data.frame(AranBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, AranSpec$CoolReduceP, AranSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, AranSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(AranSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, AranSpec$CoolReduceP, AranSpec$CoolReduce)
@@ -560,9 +519,11 @@ AranDealCycle <- t(rep(0, length(DealCycle)))
 colnames(AranDealCycle) <- DealCycle
 AranDealCycle <- data.frame(AranDealCycle)
 
-
 AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec) {
   StartBuff <- c("PolarmBooster", "SnowCharge", "BlessingMaha", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath") 
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+    StartBuff <- c(StartBuff, "UsefulAdvancedBless")
+  }
   DealCycle <- PreDealCycle
   DealCycle <- DCBuff(DealCycle, StartBuff, BuffFinal)
   DealCycle$Combo <- 500
@@ -694,9 +655,38 @@ AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStru
     Cool <- ifelse(DealCycle$InstallMaha[nrow(DealCycle)] > 0, BMCoolIM, BMCool)
     BMCoolDown <- max(Cool - ((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BrandishMahaCommand")$Time)), 0)
   }
+  
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= 240000) {
+    if(CycleDummy == 0) {
+      DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
+      DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
+      DealCycle <- ComboF(DealCycle, 2, ADDummy)
+      ADDummy <- ADDummyF(DealCycle, ADDummy)
+      CycleDummy <- ifelse(DealCycle$InstallMaha[nrow(DealCycle)] > 0, 2, 1)
+    } else {
+      for(i in 1:length(AranSkillSetA)) {
+        if(AranSkillSetA[i]=="FinalBlowCommand") {
+          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
+          DealCycle <- ComboF(DealCycle, 5, ADDummy)
+          ADDummy <- ADDummyF(DealCycle, ADDummy)
+        } else if(AranSkillSetA[i]=="FenrirCrash") {
+          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
+          DealCycle <- ComboF(DealCycle, subset(ATKFinal, rownames(ATKFinal)=="FenrirCrash")$AttackTimes, ADDummy)
+          ADDummy <- ADDummyF(DealCycle, ADDummy)
+        } else {
+          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
+          DealCycle <- ComboF(DealCycle, 6, ADDummy)
+          ADDummy <- ADDummyF(DealCycle, ADDummy)
+        }
+        CycleDummy <- CycleDummy + 1
+        CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+      }
+    }
+  }
+  
   End <- c()
   for(i in (nrow(DealCycle)-4):nrow(DealCycle)) {
-    if(DealCycle$AdrenalineBoost[i] == 0) {
+    if(DealCycle$Time[i] >= 240000) {
       End <- c(End, i)
     }
   }
@@ -859,34 +849,42 @@ AranDealCycle <- AranAddATK(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 AranDealCycle <- DCSpiderInMirror(AranDealCycle, SummonedFinal)
 AranDealCycleReduction <- DealCycleReduction(AranDealCycle)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Aran") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  AranSpecOpt1 <- Optimization1(AranDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AranSpec, AranUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- AranSpecOpt1[1, 1:3]
+} else {
+  AranSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+AranSpecOpt <- OptDataAdd(AranSpec, AranSpecOpt1, "Potential", AranBase$CRROver, DemonAvenger=F)
 
-DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpec)
-AranDealData <- data.frame(AranDealCycle$Skills, DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpec))
-colnames(AranDealData) <- c("Skills", "Deal")
+if(DPMCalcOption$Optimization==T) {
+  AranSpecOpt2 <- Optimization2(AranDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt, AranHyperStatBase, AranBase$ChrLv, AranBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- AranSpecOpt2[1, ]
+} else {
+  AranSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+AranSpecOpt <- OptDataAdd(AranSpecOpt, AranSpecOpt2, "HyperStat", AranBase$CRROver, DemonAvenger=F)
 
-## Damage Optimization
-AranSpecOpt1 <- Optimization1(AranDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AranSpec, AranUnionRemained)
-AranSpecOpt <- AranSpec
-AranSpecOpt$ATKP <- AranSpecOpt$ATKP + AranSpecOpt1$ATKP
-AranSpecOpt$BDR <- AranSpecOpt$BDR + AranSpecOpt1$BDR
-AranSpecOpt$IGR <- IGRCalc(c(AranSpecOpt$IGR, AranSpecOpt1$IGR))
+AranFinalDPM <- DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt, Collapse=F)
+AranFinalDPMwithMax <- DealCalcWithMaxDMR(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt)
 
-AranSpecOpt2 <- Optimization2(AranDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt, AranHyperStatBase, AranBase$ChrLv, AranBase$CRROver)
-AranFinalDPM <- DealCalc(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
-AranFinalDPMwithMax <- DealCalcWithMaxDMR(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt2)
-
-DPM12349$Aran[1] <- sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
-DPM12349$Aran[2] <- sum(na.omit(AranFinalDPM)) / (max(240000, max(AranDealCycle$Time)) / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (max(240000, max(AranDealCycle$Time)) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Aran", sum(na.omit(AranFinalDPMwithMax)) / (max(AranDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Aran", sum(na.omit(AranFinalDPM)) / (max(AranDealCycle$Time) / 60000) - sum(na.omit(AranFinalDPMwithMax)) / (max(AranDealCycle$Time) / 60000))
 
 AranDealRatio <- DealRatio(AranDealCycle, AranFinalDPMwithMax)
 
-AranDealData <- data.frame(AranDealCycle$Skills, AranDealCycle$Time, AranDealCycle$Restraint4, AranFinalDPMwithMax, AranFinalDPM-AranFinalDPMwithMax)
-colnames(AranDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(AranDealData, AranDealData$R4>0)
-
-AranRR <- AranDealData[151:664, ]
-DPM12349$Aran[3] <- sum((AranRR$Deal))
-
-Aran40s <-  AranDealData[151:1008, ]
-DPM12349$Aran[4] <- sum((Aran40s$Deal))
+AranDealData <- data.frame(AranDealCycle$Skills, AranDealCycle$Time, AranDealCycle$Restraint4, AranFinalDPMwithMax)
+colnames(AranDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Aran", Deal_RR(AranDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Aran", Deal_40s(AranDealData))

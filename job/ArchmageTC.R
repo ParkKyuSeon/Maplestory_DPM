@@ -1,37 +1,43 @@
 ## ArchMageTC - Data
 ## ArchMageTC - VMatrix
-ArchMageTCCore <- MatrixSet(PasSkills=c("ChainLightning", "LightningSpear", "FrozenOrb", "Elquines", "Blizard", "ThunderStorm"), 
-                            PasLvs=c(50, 50, 50, 50, 50, 50), 
-                            PasMP=c(10, 10, 10, 10, 10, 10), 
-                            ActSkills=c("IceAge", "ThunderBreak", "SpiritofSnow", "JupiterThunder", 
-                                        CommonV("Wizard", "Adventure")), 
-                            ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                            ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                            BlinkLv=1, 
-                            BlinkMP=0, 
-                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
+ArchMageTCCoreBase <- CoreBuilder(ActSkills=c("IceAge", "ThunderBreak", "SpiritofSnow", "JupiterThunder", 
+                                              CommonV("Wizard", "Adventure")), 
+                                  ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                                  UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                  SpecSet=get(DPMCalcOption$SpecSet), 
+                                  VPassiveList=ArchMageTCVPassive, 
+                                  VPassivePrior=ArchMageTCVPrior, 
+                                  SelfBind=F)
+
+ArchMageTCCore <- MatrixSet(PasSkills=ArchMageTCCoreBase$PasSkills$Skills, 
+                            PasLvs=ArchMageTCCoreBase$PasSkills$Lv, 
+                            PasMP=ArchMageTCCoreBase$PasSkills$MP, 
+                            ActSkills=ArchMageTCCoreBase$ActSkills$Skills, 
+                            ActLvs=ArchMageTCCoreBase$ActSkills$Lv, 
+                            ActMP=ArchMageTCCoreBase$ActSkills$MP, 
+                            UsefulSkills=ArchMageTCCoreBase$UsefulSkills, 
                             UsefulLvs=20, 
                             UsefulMP=0, 
-                            SpecSet=SpecDefault, 
-                            SelfBind=F)
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            SpecialCore=ArchMageTCCoreBase$SpecialCoreUse)
 
 
 ## ArchMageTC - Basic Info
 ## Link Check Needed
 ArchMageTCBase <- JobBase(ChrInfo=ChrInfo, 
-                          MobInfo=MobDefault,
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet),
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           Job="ArchMageTC",
                           CoreData=ArchMageTCCore, 
                           BuffDurationNeeded=310, 
-                          AbilList=c("BuffDuration", "DisorderBDR"), 
-                          LinkList=c("Zero", "Mikhail", "DemonAvenger", "Phantom"), 
-                          MonsterLife=MLTypeI21, 
-                          Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Wand", SpecDefault$WeaponType)[, 1:16],
-                          WeaponType=SpecDefault$WeaponType, 
-                          SubWeapon=SubWeapon[5, ], 
-                          Emblem=Emblem[1, ],
-                          CoolReduceHat=F)
+                          AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "ArchMageTC"), 
+                          LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "ArchMageTC"), 
+                          MonsterLife=get(FindJob(MonsterLifePreSet, "ArchMageTC")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                          Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Wand", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                          WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                          SubWeapon=SubWeapon[rownames(SubWeapon)=="TCGrimoire", ], 
+                          Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                          CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "ArchMageTC")))
 
 
 ## ArchMageTC - Passive
@@ -72,11 +78,11 @@ value <- c(20 + ceiling(ArchmageTCBase$SkillLv/2), 40)
 ArcaneAim <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(ArchMageTCCore[[2]][7, 2])
+value <- c(GetCoreLv(ArchMageTCCore, "UnstableMemorize"))
 UnstableMemorizePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(ArchMageTCCore[[2]][10, 2])
+value <- c(GetCoreLv(ArchMageTCCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 ArchMageTCPassive <- Passive(list(MPIncrease=MPIncrease, SpellMastery=SpellMastery, HighWisdom=HighWisdom, ElementalResetPassive=ElementalResetPassive, 
@@ -88,7 +94,7 @@ ArchMageTCPassive <- Passive(list(MPIncrease=MPIncrease, SpellMastery=SpellMaste
 ## FrostEffect, ExtremeMagic, FrozenBreak, OverloadMana
 {option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(240, NA, 600, T, NA, NA, T)
+info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Meditation <- rbind(data.frame(option, value), info)
@@ -102,7 +108,7 @@ MagicBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ImmuneIgnore", levels=BSkill)
 value <- c(10)
-info <- c(240, NA, 990, T, NA, NA, T)
+info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ElementalReset <- rbind(data.frame(option, value), info)
@@ -142,6 +148,20 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 FrostEffectStackCalc <- rbind(data.frame(option, value), info)
 
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(0, 1, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+FrostEffectStackBDR <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(0, 1, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+FrostEffectStackCDMR <- rbind(data.frame(option, value), info)
+
 option <- factor("FDR", levels=BSkill)
 value <- c(20)
 info <- c(0, 1, 0, F, F, F, F)
@@ -156,29 +176,22 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 EpicAdventure <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * ArchMageTCCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * ArchMageTCCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(ArchMageTCCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(8 + floor(ArchMageTCCore[[2]][5, 2]/10))
+value <- c(8 + floor(GetCoreLv(ArchMageTCCore, "OverloadMana")/10))
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverloadMana <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * ArchMageTCCore[[2]][8, 2]) * MapleSoldier[1, 2]) * ArchMageTCBase$MainStatP), 5 + floor(ArchMageTCCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(ArchMageTCCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * ArchMageTCBase$MainStatP), 5 + floor(GetCoreLv(ArchMageTCCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -191,11 +204,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 JupiterThunderFDR <- rbind(data.frame(option, value), info)}
 
-ArchMageTCBuff <- Buff(list(MagicBooster=MagicBooster, Meditation=Meditation, ElementalReset=ElementalReset, BlizardBuff=BlizardBuff, Infinity=Infinity, MapleSoldier=MapleSoldier, 
-                            FrostEffectStack=FrostEffectStack, FrostEffectStackCalc=FrostEffectStackCalc, ExtremeMagic=ExtremeMagic, 
-                            EpicAdventure=EpicAdventure, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                            OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, JupiterThunderFDR=JupiterThunderFDR, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, MagicBooster(990ms)
+ArchMageTCBuff <- list(MagicBooster=MagicBooster, Meditation=Meditation, ElementalReset=ElementalReset, BlizardBuff=BlizardBuff, Infinity=Infinity, MapleSoldier=MapleSoldier, 
+                       FrostEffectStack=FrostEffectStack, FrostEffectStackCalc=FrostEffectStackCalc, FrostEffectStackBDR=FrostEffectStackBDR, FrostEffectStackCDMR=FrostEffectStackCDMR, ExtremeMagic=ExtremeMagic, 
+                       EpicAdventure=EpicAdventure, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                       OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, JupiterThunderFDR=JupiterThunderFDR, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, MagicBooster(990ms), Meditation(600ms), ElementalReset(990ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  ArchMageTCBuff[[length(ArchMageTCBuff)+1]] <- UsefulAdvancedBless
+  names(ArchMageTCBuff)[[length(ArchMageTCBuff)]] <- "UsefulAdvancedBless"
+}
+ArchMageTCBuff <- Buff(ArchMageTCBuff)
 ArchMageTCAllTimeBuff <- AllTimeBuff(ArchMageTCBuff)
 
 
@@ -203,8 +221,8 @@ ArchMageTCAllTimeBuff <- AllTimeBuff(ArchMageTCBuff)
 ArchMageTCSpec <- JobSpec(JobBase=ArchMageTCBase, 
                           Passive=ArchMageTCPassive, 
                           AllTimeBuff=ArchMageTCAllTimeBuff, 
-                          MobInfo=MobDefault, 
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet), 
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           WeaponName="Wand", 
                           UnionStance=0, 
                           JobConstant=1.2)
@@ -216,61 +234,15 @@ ArchMageTCSpec <- ArchMageTCSpec$Spec
 
 
 ## ArchMageTC - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * ArchMageTCCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageTCCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageTCCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageTCCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageTCCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ArchMageTCCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(ArchMageTCCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## ArchMageTC - Unstable Memorize Data
@@ -289,42 +261,42 @@ UnsFrostEffectCost <- sum(ArchMageTCUnstable$Prob[c(3, 7, 12)])
 
 ## ArchMageTC - Attacks
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(20, ifelse(ArchMageTCCore[[1]][1, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][1, 2])
+value <- c(20, ifelse(GetCoreLv(ArchMageTCCore, "ChainLightning")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "ChainLightning"))
 info <- c(185 + 3 * ArchMageTCSpec$SkillLv, 11, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChainLightning <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][2, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "LightningSpear")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "LightningSpear"))
 info <- c(150, 15, 3600, 270, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearLoop <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][2, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "LightningSpear")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "LightningSpear"))
 info <- c(780, 15, 1080, NA, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(20, ifelse(ArchMageTCCore[[1]][3, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][3, 2])
+value <- c(20, ifelse(GetCoreLv(ArchMageTCCore, "FrozenOrb")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "FrozenOrb"))
 info <- c(220, 1, 900, 210, 5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FrozenOrb <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][4, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "Blizard")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "Blizard"))
 info <- c(301 + 3 * ArchMageTCSpec$SkillLv, 12, 900, NA, 45, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Blizard <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][4, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][4, 2])
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill) 
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "Blizard")>=40, 20, 0), ArchMageTCBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(ArchMageTCCore, "Blizard"))
 info <- c(220 + 4 * ArchMageTCSpec$SkillLv, 0.6 + 0.02 * ArchMageTCSpec$SkillLv, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -332,77 +304,77 @@ BlizardFA <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(500 + 20 * ArchMageTCCore[[2]][1, 2], 10, 0, NA, 60, T, F, F)
+info <- c(500 + 20 * GetCoreLv(ArchMageTCCore, "IceAge"), 10, 0, NA, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IceAge <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(125 + 5 * ArchMageTCCore[[2]][1, 2], 3, 870, 800, NA, NA, NA, F)
+info <- c(125 + 5 * GetCoreLv(ArchMageTCCore, "IceAge"), 3, 870, 800, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IceAgeFloor <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 0), 12, 660, 210, 40, T, F, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 0), 12, 660, 210, 40, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 1), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 1), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 2), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 2), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak3 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 3), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 3), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak4 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 4), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 4), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak5 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 5), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 5), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak6 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 6), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 6), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak7 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c((800 + 32 * ArchMageTCCore[[2]][2, 2]) * (0.8 ^ 7), 12, 0, NA, NA, NA, NA, F)
+info <- c((800 + 32 * GetCoreLv(ArchMageTCCore, "ThunderBreak")) * (0.8 ^ 7), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThunderBreak8 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(300 + 12 * ArchMageTCCore[[2]][4, 2], 8, 810, 330, 120, T, F, F)
+info <- c(300 + 12 * GetCoreLv(ArchMageTCCore, "JupiterThunder"), 8, 810, 330, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JupiterThunder <- rbind(data.frame(option, value), info)
@@ -437,48 +409,48 @@ IceStrikeUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(383, 3 * ArchMageTCUnstable[4, 3], 0, NA, NA, NA, NA, F)
+info <- c(383, 3 * ArchMageTCUnstable[5, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GlacialChainUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(20, ifelse(ArchMageTCCore[[1]][1, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][1, 2])
+value <- c(20, ifelse(GetCoreLv(ArchMageTCCore, "ChainLightning")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "ChainLightning"))
 info <- c(185 + 3 * ArchMageTCSpec$SkillLv, 11 * ArchMageTCUnstable[7, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChainLightningUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][4, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "Blizard")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "Blizard"))
 info <- c(301 + 3 * ArchMageTCSpec$SkillLv, 12 * ArchMageTCUnstable[8, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlizardUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(20, ifelse(ArchMageTCCore[[1]][3, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][3, 2])
+value <- c(20, ifelse(GetCoreLv(ArchMageTCCore, "FrozenOrb")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "FrozenOrb"))
 info <- c(220, 1 * ArchMageTCUnstable[9, 3], 0, 210, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FrozenOrbUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][2, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "LightningSpear")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "LightningSpear"))
 info <- c(78, 15 * ArchMageTCUnstable[12, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningSpearEndUnstable <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][4, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][4, 2])
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill) 
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "Blizard")>=40, 20, 0), ArchMageTCBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(ArchMageTCCore, "Blizard"))
 info <- c(220 + 4 * ArchMageTCSpec$SkillLv, BlizardFinalATKProb, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UnstableBlizardFA <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(ArchMageTCCore[[1]][4, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][4, 2])
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill) 
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "Blizard")>=40, 20, 0), ArchMageTCBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(ArchMageTCCore, "Blizard"))
 info <- c(220 + 4 * ArchMageTCSpec$SkillLv, (0.6 + 0.02 * ArchMageTCSpec$SkillLv) * ArchMageTCUnstable$Prob[9], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -516,14 +488,14 @@ ArchMageTCATK <- Attack(list(ChainLightning=ChainLightning, LightningSpearLoop=L
 
 ## ArchMageTC - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(ArchMageTCCore[[1]][4, 2]>=40, 20, 0), 2 * ArchMageTCCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "Elquines")>=40, 20, 0), 2 * GetCoreLv(ArchMageTCCore, "Elquines"))
 info <- c(127 + 2 * ArchMageTCSpec$SkillLv, 3, 600, 3030, 260 + 5 * ArchMageTCSpec$SkillLv, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Elquines <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(ArchMageTCCore[[1]][6, 2]>=40, 20, 0), 3 * ArchMageTCCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(ArchMageTCCore, "ThunderStorm")>=40, 20, 0), 3 * GetCoreLv(ArchMageTCCore, "ThunderStorm"))
 info <- c(430, 1, 900, 1800, 90, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -531,7 +503,7 @@ ThunderStorm <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(850 + 34 * ArchMageTCCore[[2]][2, 2], 9, 720, 3030, 30, 120, T, T, F, F)
+info <- c(850 + 34 * GetCoreLv(ArchMageTCCore, "SpiritofSnow"), 9, 720, 3030, 30, 120, T, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SpiritofSnow <- rbind(data.frame(option, value), info)}
@@ -548,7 +520,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, A
 BuffFinal <- data.frame(ArchMageTCBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, ArchMageTCSpec$CoolReduceP, ArchMageTCSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, ArchMageTCSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(ArchMageTCSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, ArchMageTCSpec$CoolReduceP, ArchMageTCSpec$CoolReduce)
@@ -560,7 +532,6 @@ DealCycle <- c("Skills", "Time", rownames(ArchMageTCBuff))
 ArchMageTCDealCycle <- t(rep(0, length(DealCycle)))
 colnames(ArchMageTCDealCycle) <- DealCycle
 ArchMageTCDealCycle <- data.frame(ArchMageTCDealCycle)
-
 DealCycle <- c("Skills", "Time", rownames(ArchMageTCBuff))
 ArchMageTCDealCycle2 <- t(rep(0, length(DealCycle)))
 colnames(ArchMageTCDealCycle2) <- DealCycle
@@ -569,6 +540,9 @@ ArchMageTCDealCycle2 <- data.frame(ArchMageTCDealCycle2)
 TCInfinityCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DCATK(DealCycle, c("IceAuraDummy"), ATKFinal)
   DealCycle <- DCBuff(DealCycle, c("MagicBooster", "Meditation", "ElementalReset", "MapleSoldier", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCSummoned(DealCycle, "Elquines", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "ThunderStorm", SummonedFinal)
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
@@ -790,6 +764,9 @@ TCInfinityCycle2 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
 TCInfinityCycle3 <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DCATK(DealCycle, c("IceAuraDummy"), ATKFinal)
   DealCycle <- DCBuff(DealCycle, c("EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders"), BuffFinal)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
   DealCycle <- DCSummoned(DealCycle, "Elquines", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "ThunderStorm", SummonedFinal)
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
@@ -998,6 +975,8 @@ TCAddATKCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Thunder
     }
   }
   DealCycle$FrostEffectStack <- 0
+  DealCycle$FrostEffectStackBDR <- DealCycle$FrostEffectStackCalc * 12
+  DealCycle$FrostEffectStackCDMR <- DealCycle$FrostEffectStackCalc * 3
   
   ## Overload Mana
   for(i in 1:nrow(DealCycle)) {
@@ -1015,12 +994,11 @@ ArchMageTCDealCycle <- TCInfinityCycle(ArchMageTCDealCycle, ATKFinal, BuffFinal,
 ArchMageTCDealCycle <- TCUnsCycle(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageTCDealCycle <- TCInfinityCycle2(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageTCDealCycle <- DealCycleFinal(ArchMageTCDealCycle)
-
 ArchMageTCDealCycle2 <- TCInfinityCycle3(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageTCDealCycle2 <- TCUnsCycle(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal)
 ArchMageTCDealCycle2 <- DealCycleFinal(ArchMageTCDealCycle2)
 
-TCUnsdata <- UnstableData(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCUnstable[10, 3], BuffFinal$Duration[5], BuffFinal$CoolTime[5])
+TCUnsdata <- UnstableData(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCUnstable[10, 3], BuffFinal[rownames(BuffFinal)=="Infinity", ]$Duration, BuffFinal[rownames(BuffFinal)=="Infinity", ]$CoolTime)
 
 ArchMageTCDealCycle <- TCAddATKCycle(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, 8, ArchMageTCUnstable, ArchMageTCSpec)
 ArchMageTCDealCycle <- BishopInfinity(ArchMageTCDealCycle, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
@@ -1028,36 +1006,56 @@ ArchMageTCDealCycle <- BishopInfinity(ArchMageTCDealCycle, 6000, 70 + ArchMageTC
 ArchMageTCDealCycle2 <- TCAddATKCycle(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, 8, ArchMageTCUnstable, ArchMageTCSpec)
 ArchMageTCDealCycle2 <- BishopInfinity(ArchMageTCDealCycle2, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="ArchMageTC") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  ArchMageTCSpecOpt1 <- InfinityOptimization1(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, ArchMageTCUnionRemained, TCUnsdata, 
+                                              NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- ArchMageTCSpecOpt1[1, 1:3]
+} else {
+  ArchMageTCSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+ArchMageTCSpecOpt <- OptDataAdd(ArchMageTCSpec, ArchMageTCSpecOpt1, "Potential", ArchMageTCBase$CRROver, DemonAvenger=F)
 
-## ArchMageTC Deal Calc
-TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, TCUnsdata)
-TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, TCUnsdata)
+if(DPMCalcOption$Optimization==T) {
+  ArchMageTCSpecOpt2 <- InfinityOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, ArchMageTCHyperStatBase, ArchMageTCBase$ChrLv, ArchMageTCBase$CRROver, TCUnsdata, 
+                                              NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- ArchMageTCSpecOpt2[1, ]
+} else {
+  ArchMageTCSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+ArchMageTCSpecOpt <- OptDataAdd(ArchMageTCSpecOpt, ArchMageTCSpecOpt2, "HyperStat", ArchMageTCBase$CRROver, DemonAvenger=F)
+BuffFinal <- PrayFDRAdj(ArchMageTCSpec, ArchMageTCSpecOpt, BuffFinal)
 
-ArchMageTCSpecOpt1 <- TCOptimization1(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpec, ArchMageTCUnionRemained, TCUnsdata)
-ArchMageTCSpecOpt <- ArchMageTCSpec
-ArchMageTCSpecOpt$ATKP <- ArchMageTCSpecOpt$ATKP + ArchMageTCSpecOpt1$ATKP
-ArchMageTCSpecOpt$BDR <- ArchMageTCSpecOpt$BDR + ArchMageTCSpecOpt1$BDR
-ArchMageTCSpecOpt$IGR <- IGRCalc(c(ArchMageTCSpecOpt$IGR, ArchMageTCSpecOpt1$IGR))
+ArchMageTCFinalDPM <- InfinityDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, TCUnsdata, 
+                                       NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
+ArchMageTCFinalDPMwithMax <- InfinityDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, TCUnsdata, 
+                                                        NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
 
-ArchMageTCSpecOpt2 <- TCOptimization2(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, ArchMageTCHyperStatBase, ArchMageTCBase$ChrLv, ArchMageTCBase$CRROver, TCUnsdata)
-ArchMageTCFinalDPM <- TCDealCalc(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
-ArchMageTCFinalDPMwithMax <- TCDealCalcWithMaxDMR(ArchMageTCDealCycle, ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
+set(get(DPMCalcOption$DataName), as.integer(1), "ArchMageTC", sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "ArchMageTC", sum(na.omit(ArchMageTCFinalDPM)) / (TCUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000))
 
-DPM12349$ArchMageTC[1] <- sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
-DPM12349$ArchMageTC[2] <- sum(na.omit(ArchMageTCFinalDPM)) / (TCUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(ArchMageTCFinalDPMwithMax)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
+ArchMageTCDealData <- data.frame(ArchMageTCDealCycle$Skills, ArchMageTCDealCycle$Time, ArchMageTCDealCycle$Restraint4, 
+                                 DealCalcWithMaxDMR(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+                                                    NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")))
+colnames(ArchMageTCDealData) <- c("Skills", "Time", "R4", "Deal")
+ArchMageTCDealRatio <- InfinityDealRatio(ArchMageTCDealCycle, ArchMageTCDealCycle2, 
+                                         DealCalcWithMaxDMR(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+                                                            NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")), 
+                                         DealCalcWithMaxDMR(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+                                                            NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")), TCUnsdata)
 
-ArchMageTCDamage <- TCDealCalcGeneral(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
-ArchMageTC40s <- data.frame(ArchMageTCDealCycle$Skills, ArchMageTCDealCycle$Time, ArchMageTCDealCycle$Restraint4, ArchMageTCDealCycle$Infinity, ArchMageTCDealCycle$InfinityFDR, ArchMageTCDamage)
-colnames(ArchMageTC40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
-subset(ArchMageTC40s, ArchMageTC40s$RR4>0)
-
-DPM12349$ArchMageTC[3] <- sum(ArchMageTC40s$Damage[730:1009])
-DPM12349$ArchMageTC[4] <- sum(ArchMageTC40s$Damage[589:1009])
-
-ArchMageTCDamage2 <- TCDealCalcGeneral(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
-
-ArchMageTCDealRatio <- TCDealRatio(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCDamage, ArchMageTCDamage2, TCUnsdata)
-
+set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageTC", Deal_RR(ArchMageTCDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageTC", Deal_40s(ArchMageTCDealData, F, NA, FinishTime=subset(ArchMageTCDealData, ArchMageTCDealData$Skills=="Restraint4")$Time[1] + 15000))
 
 
 ## ThunderBreak 2Hits
@@ -1085,17 +1083,16 @@ ArchMageTCDealCycleTB2 <- DealCycleFinal(ArchMageTCDealCycleTB2)
 ArchMageTCDealCycleTB2 <- TCAddATKCycle(ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, 2, ArchMageTCUnstable, ArchMageTCSpec)
 ArchMageTCDealCycleTB2 <- BishopInfinity(ArchMageTCDealCycleTB2, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
 
-ArchMageTCFinalDPM2 <- TCDealCalc(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
-ArchMageTCFinalDPMwithMax2 <- TCDealCalcWithMaxDMR(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2, TCUnsdata)
-
+ArchMageTCFinalDPM2 <- InfinityDealCalcWithMaxDMR(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, TCUnsdata, 
+                                                  NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
 TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPMwithMax2)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
-TCTB2HitDamage <- TCDealCalcGeneral(ArchMageTCDealCycleTB, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
-TCTB2HitDamage2 <- TCDealCalcGeneral(ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt2)
-TBTB2HitsDealRatio <- TCDealRatio(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, TCTB2HitDamage, TCTB2HitDamage2, UnsData)
 
-TCTB2Hit40s <- data.frame(ArchMageTCDealCycleTB$Skills, ArchMageTCDealCycleTB$Time, ArchMageTCDealCycleTB$Restraint4, ArchMageTCDealCycleTB$Infinity, ArchMageTCDealCycleTB$InfinityFDR, TCTB2HitDamage)
-colnames(TCTB2Hit40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
-subset(TCTB2Hit40s, TCTB2Hit40s$RR4>0)
+ArchMageTCDealData2 <- data.frame(ArchMageTCDealCycleTB$Skills, ArchMageTCDealCycleTB$Time, ArchMageTCDealCycleTB$Restraint4, 
+                                 DealCalcWithMaxDMR(ArchMageTCDealCycleTB, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+                                                    NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")))
+colnames(ArchMageTCDealData2) <- c("Skills", "Time", "R4", "Deal")
 
-TCTB2HitR4 <- sum(TCTB2Hit40s$Damage[706:973])
-TCTB2Hit40s <- sum(TCTB2Hit40s$Damage[565:973])
+TCTB2HitR4 <- Deal_RR(ArchMageTCDealData2)
+TCTB2Hit40s <- Deal_40s(ArchMageTCDealData2, F, NA, FinishTime=subset(ArchMageTCDealData2, ArchMageTCDealData2$Skills=="Restraint4")$Time[1] + 15000)
+
+print(data.frame(ThunderBreak2HitsDPM=TCTB2Hits, ThunderBreak2HitsRR=TCTB2HitR4, ThunderBreak2Hits40s=TCTB2Hit40s))

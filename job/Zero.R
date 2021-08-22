@@ -1,39 +1,43 @@
 ## Zero - Data
 ## Zero - VMatrix
-ZeroCore <- MatrixSet(PasSkills=c("MoonStrike_ShadowStrike_UpperSlash", "PierceThrust_PowerStump", "SpinCutter_ThrowingWeapon", 
-                                  "RollingCurve_TurningDrive", "RollingAssaulter_WhirlWind", "WindCutter_GigaCrash", 
-                                  "WindStrike_JumpingCrash", "StormBreak_EarthBreak", "ShadowRain"), 
-                      PasLvs=c(50, 50, 50, 50, 50, 50, 50, 50, 50), 
-                      PasMP=c(10, 10, 10, 10, 10, 10, 10, 10, 10), 
-                      ActSkills=c("LimitBreak", "JointAttack", "ShadowFlash", "EgoWeapon", 
-                                  na.omit(CommonV("Warrior", "Transcedent"))), 
-                      ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
-                      ActMP=c(5, 5, 5, 5, 5, 0, 0, 0), 
-                      BlinkLv=1, 
-                      BlinkMP=0, 
-                      UsefulSkills=c("SharpEyes", "WindBooster"), 
+ZeroCoreBase <- CoreBuilder(ActSkills=c("LimitBreak", "JointAttack", "ShadowFlash", "EgoWeapon", 
+                                        na.omit(CommonV("Warrior", "Transcedent"))), 
+                            ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
+                            UsefulSkills=c("SharpEyes", "WindBooster"), 
+                            SpecSet=get(DPMCalcOption$ZeroSpecSet), 
+                            VPassiveList=ZeroVPassive, 
+                            VPassivePrior=ZeroVPrior, 
+                            SelfBind=F)
+
+ZeroCore <- MatrixSet(PasSkills=ZeroCoreBase$PasSkills$Skills, 
+                      PasLvs=ZeroCoreBase$PasSkills$Lv, 
+                      PasMP=ZeroCoreBase$PasSkills$MP, 
+                      ActSkills=ZeroCoreBase$ActSkills$Skills, 
+                      ActLvs=ZeroCoreBase$ActSkills$Lv, 
+                      ActMP=ZeroCoreBase$ActSkills$MP, 
+                      UsefulSkills=ZeroCoreBase$UsefulSkills, 
                       UsefulLvs=20, 
                       UsefulMP=0, 
-                      SpecSet=SpecDefault, 
-                      SelfBind=F)
+                      SpecSet=get(DPMCalcOption$ZeroSpecSet), 
+                      SpecialCore=ZeroCoreBase$SpecialCoreUse)
 
 
 ## Zero - Basic Info
 ## Link Check Needed
 ZeroBase <- JobBase(ChrInfo=ChrInfo, 
-                    MobInfo=MobDefault,
-                    SpecSet=SpecDefaultZero, 
+                    MobInfo=get(DPMCalcOption$MobSet),
+                    SpecSet=get(DPMCalcOption$ZeroSpecSet), 
                     Job="Zero",
                     CoreData=ZeroCore, 
                     BuffDurationNeeded=0, 
-                    AbilList=c("BDR", "DisorderBDR"), 
-                    LinkList=c("Mikhail", "DemonAvenger", "Zero", "Phantom"), 
-                    MonsterLife=MLTypeS21, 
-                    Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 0, 0, 0, "LongSword", SpecDefaultZero$WeaponType)[, 1:16],
-                    WeaponType=SpecDefault$WeaponType, 
-                    SubWeapon=SubWeapon[43, ], 
-                    Emblem=Emblem[13, ], 
-                    CoolReduceHat=F)
+                    AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Zero"), 
+                    LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Zero"), 
+                    MonsterLife=get(FindJob(MonsterLifePreSet, "Zero")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                    Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 0, 0, 0, "LongSword", get(DPMCalcOption$ZeroSpecSet)$WeaponType)[, 1:16],
+                    WeaponType=get(DPMCalcOption$ZeroSpecSet)$WeaponType, 
+                    SubWeapon=SubWeapon[rownames(SubWeapon)==ifelse(get(DPMCalcOption$ZeroSpecSet)$WeaponType=="AR", "ArcaneShadeZeroSubWeapon", "FafnirZeroSubWeapon"), ], 
+                    Emblem=Emblem[rownames(Emblem)=="Time", ], 
+                    CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Zero")))
 
 
 ## Zero - Passive
@@ -63,18 +67,18 @@ value <- c(-5, -5, -5)
 NoWillofUnion <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(ZeroCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(ZeroCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(ZeroCore[[2]][9, 2])
+value <- c(GetCoreLv(ZeroCore, "Blink"))
 BlinkPassive <- data.frame(option, value)
 
 option <- factor(c("BDR"), levels=PSkill)
 value <- c(0 * 2)
 WeaponAddOption <- data.frame(option, value)}
 
-ZeroPassive <- Passive(list(DivineForce, ResolveTime, Mastery, RapidTime, ImmuneBarrier, NoWillofUnion, BodyofStealPassive, BlinkPassive, WeaponAddOption))
+ZeroPassive <- Passive(list(DivineForce, ResolveTime, Mastery, RapidTime, ImmuneBarrier, NoWillofUnion, BodyofSteelPassive, BlinkPassive, WeaponAddOption))
 
 
 ## Zero - Buff
@@ -128,37 +132,30 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 TimeHolding <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * ZeroCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * ZeroCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulWindBooster <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(ZeroCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulWindBooster <- Useful$UsefulWindBooster
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(ZeroCore[[2]][5, 2] / 5), ceiling(ZeroCore[[2]][5, 2] / 5))
-info <- c(80 + 2 * ZeroCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(ZeroCore, "AuraWeapon") / 5), ceiling(GetCoreLv(ZeroCore, "AuraWeapon") / 5))
+info <- c(80 + 2 * GetCoreLv(ZeroCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATK"), levels=BSkill)
-value <- c(10 + 3 * ZeroCore[[2]][7, 2])
-info <- c(30 + floor(ZeroCore[[2]][7, 2] / 2), 240, 480, F, T, F, T)
+value <- c(10 + 3 * GetCoreLv(ZeroCore, "BlessofRhinne"))
+info <- c(30 + floor(GetCoreLv(ZeroCore, "BlessofRhinne") / 2), 240, 480, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofRhinneBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(30 + floor(ZeroCore[[2]][1, 2] / 5))
-info <- c(30 + floor(ZeroCore[[2]][1, 2] / 2), 240, 0, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(ZeroCore, "LimitBreak") / 5))
+info <- c(30 + floor(GetCoreLv(ZeroCore, "LimitBreak") / 2), 240, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LimitBreakBuff <- rbind(data.frame(option, value), info)
@@ -173,7 +170,12 @@ CriticalBindDebuff <- rbind(data.frame(option, value), info)}
 ZeroBuff <- Buff(list(Alpha=Alpha, Beta=Beta, Tag=Tag, BetaTargetBDR=BetaTargetBDR, MapleSoldier=MapleSoldier, TimeDistortion=TimeDistortion, TimeHolding=TimeHolding, 
                       UsefulSharpEyes=UsefulSharpEyes, UsefulWindBooster=UsefulWindBooster, AuraWeaponBuff=AuraWeaponBuff, BlessofRhinneBuff=BlessofRhinneBuff, LimitBreakBuff=LimitBreakBuff, 
                       CriticalBindDebuff=CriticalBindDebuff, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : UsefulSharpEyes, UsefulWindBooster
+## Petbuff : UsefulSharpEyes, UsefulWindBooster, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  ZeroBuff[[length(ZeroBuff)+1]] <- UsefulAdvancedBless
+  names(ZeroBuff)[[length(ZeroBuff)]] <- "UsefulAdvancedBless"
+}
+ZeroBuff <- Buff(ZeroBuff)
 ZeroAllTimeBuff <- AllTimeBuff(ZeroBuff)
 
 
@@ -181,8 +183,8 @@ ZeroAllTimeBuff <- AllTimeBuff(ZeroBuff)
 ZeroSpec <- JobSpec(JobBase=ZeroBase, 
                     Passive=ZeroPassive, 
                     AllTimeBuff=ZeroAllTimeBuff, 
-                    MobInfo=MobDefault, 
-                    SpecSet=SpecDefaultZero, 
+                    MobInfo=get(DPMCalcOption$MobSet), 
+                    SpecSet=get(DPMCalcOption$ZeroSpecSet), 
                     WeaponName="LongSword", 
                     UnionStance=0)
 
@@ -193,290 +195,244 @@ ZeroSpec <- ZeroSpec$Spec
 
 
 ## Zero - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * ZeroCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][8, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][8, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][8, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][8, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][8, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(ZeroCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Zero - Attacks
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][1, 2]>=40, 20, 0), 3 * ZeroCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash"))
 info <- c(120, 6, 510, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 MoonStrike <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][2, 2]>=40, 20, 0), 3 * ZeroCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "PierceThrust_PowerStump")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "PierceThrust_PowerStump"))
 info <- c(170, 6, 660, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PierceThrust <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][1, 2]>=40, 20, 0), 3 * ZeroCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash"))
 info <- c(195, 8, Delay(300, ZeroSpec$ATKSpeed) + 90, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowStrike <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][1, 2]>=40, 20, 0), 3 * ZeroCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash"))
 info <- c(310, 1, 0, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowStrikeAura <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(ZeroCore, "FlashAssaulter_FrontSlash")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "FlashAssaulter_FrontSlash"))
 info <- c(165, 8, 630, NA, 5, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 FlashAssaulter <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][3, 2]>=40, 20, 0), 2 * ZeroCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "SpinCutter_ThrowingWeapon")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "SpinCutter_ThrowingWeapon"))
 info <- c(260 + 3 * ZeroSpec$SkillLv, 10, 840, NA, 5, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 SpinCutter <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][3, 2]>=40, 20, 0), 2 * ZeroCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "SpinCutter_ThrowingWeapon")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "SpinCutter_ThrowingWeapon"))
 info <- c(130 + 3 * ZeroSpec$SkillLv, 4, 0, NA, 5, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 SpinCutterAura <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][4, 2]>=40, 20, 0), 2 * ZeroCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingCurve_TurningDrive")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingCurve_TurningDrive"))
 info <- c(365 + 3 * ZeroSpec$SkillLv, 12, 1260, NA, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 RollingCurve <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][4, 2]>=40, 20, 0), 2 * ZeroCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingCurve_TurningDrive")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingCurve_TurningDrive"))
 info <- c(350 + ZeroSpec$SkillLv, 2, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 RollingCurveAura <- rbind(data.frame(option, value), info) ## Assist
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][4, 2]>=40, 20, 0), 2 * ZeroCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingCurve_TurningDrive")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingCurve_TurningDrive"))
 info <- c(350 + ZeroSpec$SkillLv, 1, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 RollingCurveAura2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][5, 2]>=40, 20, 0), 2 * ZeroCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingAssaulter_WhirlWind")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingAssaulter_WhirlWind"))
 info <- c(375 + 2 * ZeroSpec$SkillLv, 12, 1260, NA, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 RollingAssaulter <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][5, 2]>=40, 20, 0), 2 * ZeroCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingAssaulter_WhirlWind")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingAssaulter_WhirlWind"))
 info <- c(250 + ZeroSpec$SkillLv, 3, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 RollingAssaulterAura <- rbind(data.frame(option, value), info) ## Assist
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][6, 2]>=40, 20, 0), 2 * ZeroCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "WindCutter_GigaCrash")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "WindCutter_GigaCrash"))
 info <- c(165, 8, 720, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 WindCutter <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][6, 2]>=40, 20, 0), 2 * ZeroCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "WindCutter_GigaCrash")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "WindCutter_GigaCrash"))
 info <- c(110, 3, 0, 510, 15, T, T ,F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 WindCutterVortex <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][7, 2]>=40, 20, 0), 2 * ZeroCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "WindStrike_JumpingCrash")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "WindStrike_JumpingCrash"))
 info <- c(250, 8, 810, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 WindStrike <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][8, 2]>=40, 20, 0), 2 * ZeroCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "StormBreak_EarthBreak")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "StormBreak_EarthBreak"))
 info <- c(335 + 2 * ZeroSpec$SkillLv, 10, 900, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 StormBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][8, 2]>=40, 20, 0), 2 * ZeroCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "StormBreak_EarthBreak")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "StormBreak_EarthBreak"))
 info <- c(335 + 2 * ZeroSpec$SkillLv, 4, 0, 510, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 StormBreakVortex <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][8, 2]>=40, 20, 0), 2 * ZeroCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "StormBreak_EarthBreak")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "StormBreak_EarthBreak"))
 info <- c(230 + 2 * ZeroSpec$SkillLv, 1, 0, 900, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 StormBreakFloor <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][1, 2]>=40, 20, 0), 3 * ZeroCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "MoonStrike_ShadowStrike_UpperSlash"))
 info <- c(210, 6, 930, NA, 0, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UpperSlash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][2, 2]>=40, 20, 0), 3 * ZeroCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "PierceThrust_PowerStump")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "PierceThrust_PowerStump"))
 info <- c(330 + 5 * ZeroSpec$SkillLv, 9, 750, NA, 0, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PowerStump <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][2,2]>=40, 20, 0), 3 * ZeroCore[[1]][2,2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "PierceThrust_PowerStump")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "PierceThrust_PowerStump"))
 info <- c(330 + 5 * ZeroSpec$SkillLv, 9, 0, NA, 0, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PowerStumpShockwave <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(ZeroCore, "FlashAssaulter_FrontSlash")>=40, 20, 0), 3 * GetCoreLv(ZeroCore, "FlashAssaulter_FrontSlash"))
 info <- c(205, 6, 840, NA, 5, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 FrontSlash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][3, 2]>=40, 20, 0), 2 * ZeroCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "SpinCutter_ThrowingWeapon")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "SpinCutter_ThrowingWeapon"))
 info <- c(550 + 5 * ZeroSpec$SkillLv, 2, 480, 300, 5, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ThrowingWeapon <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][4, 2]>=40, 20, 0), 2 * ZeroCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingCurve_TurningDrive")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingCurve_TurningDrive"))
 info <- c(260, 6, 720, NA, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 TurningDrive <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][5, 2]>=40, 20, 0), 2 * ZeroCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "RollingAssaulter_WhirlWind")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "RollingAssaulter_WhirlWind"))
 info <- c(200 + 2 * ZeroSpec$SkillLv, 2, 60, 120, 10, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 WhirlWind <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][6, 2]>=40, 20, 0), 2 * ZeroCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "WindCutter_GigaCrash")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "WindCutter_GigaCrash"))
 info <- c(250, 6, 840, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 GigaCrash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][7, 2]>=40, 20, 0), 2 * ZeroCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "WindStrike_JumpingCrash")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "WindStrike_JumpingCrash"))
 info <- c(225, 6, Delay(390, ZeroSpec$ATKSpeed) + Delay(270, ZeroSpec$ATKSpeed), NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 JumpingCrash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][7,2 ]>=40, 20, 0), 2 * ZeroCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "WindStrike_JumpingCrash")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "WindStrike_JumpingCrash"))
 info <- c(225, 3, 0, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 JumpingCrashShockwave <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][8, 2]>=40, 20, 0), 2 * ZeroCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "StormBreak_EarthBreak")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "StormBreak_EarthBreak"))
 info <- c(380 + 3 * ZeroSpec$SkillLv, 10, 1560, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 EarthBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][8, 2]>=40, 20, 0), 2 * ZeroCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "StormBreak_EarthBreak")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "StormBreak_EarthBreak"))
 info <- c(285 + 3 * ZeroSpec$SkillLv, 10, 0, NA, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 EarthBreakShockwave <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][8, 2]>=40, 20, 0), 2 * ZeroCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "StormBreak_EarthBreak")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "StormBreak_EarthBreak"))
 info <- c(340 + 3 * ZeroSpec$SkillLv, 1, 0, 900, 15, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 EarthBreakFloor <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][9, 2]>=40, 20, 0), 2 * ZeroCore[[1]][9, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "ShadowRain")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "ShadowRain"))
 info <- c(1400, 14, 4410, NA, 300, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowRainAlpha <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ZeroCore[[1]][9, 2]>=40, 20, 0), 2 * ZeroCore[[1]][9, 2])
+value <- c(ifelse(GetCoreLv(ZeroCore, "ShadowRain")>=40, 20, 0), 2 * GetCoreLv(ZeroCore, "ShadowRain"))
 info <- c(1400, 14, 4980, NA, 300, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
@@ -484,98 +440,98 @@ ShadowRainBeta <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 15 * ZeroCore[[2]][1, 2], 5, 600, NA, 240, T, F, F)
+info <- c(400 + 15 * GetCoreLv(ZeroCore, "LimitBreak"), 5, 600, NA, 240, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 LimitBreak <- rbind(data.frame(option, value), info) ## Beta
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(650 + 26 * ZeroCore[[2]][1, 2], 12, 0, 30, 240, T, F, F)
+info <- c(650 + 26 * GetCoreLv(ZeroCore, "LimitBreak"), 12, 0, 30, 240, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 LimitBreakLast <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(875 + 35 * ZeroCore[[2]][2, 2], 8, 3240, 540, 120, T, F, F)
+info <- c(875 + 35 * GetCoreLv(ZeroCore, "JointAttack"), 8, 3240, 540, 120, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 JointAttack1 <- rbind(data.frame(option, value), info) ## Beta / 0ms(1), 540ms(2), 990ms(3), 1440ms(4), 2160ms(5), 2520ms(6), 3240ms(Last) / ATKSpeed Not Applied
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(835 + 33 * ZeroCore[[2]][2, 2], 12, 0, 450, 120, T, F, F)
+info <- c(835 + 33 * GetCoreLv(ZeroCore, "JointAttack"), 12, 0, 450, 120, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 JointAttack2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(1000 + 40 * ZeroCore[[2]][2, 2], 13, 0, 360, 120, T, F, F)
+info <- c(1000 + 40 * GetCoreLv(ZeroCore, "JointAttack"), 13, 0, 360, 120, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 JointAttack3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(900 + 36 * ZeroCore[[2]][2, 2], 15, 1380, 120, 120, T, F, F)
+info <- c(900 + 36 * GetCoreLv(ZeroCore, "JointAttack"), 15, 1380, 120, 120, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 JointAttackLast <- rbind(data.frame(option, value), info) ## ATKSpeed Applied
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * ZeroCore[[2]][3, 2], 6, 670, NA, 40, T, F, F)
+info <- c(500 + 20 * GetCoreLv(ZeroCore, "ShadowFlash"), 6, 670, NA, 40, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowFlashAlphaInstall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * ZeroCore[[2]][3, 2], 15, 880, 90, 40, T, F, F)
+info <- c(400 + 16 * GetCoreLv(ZeroCore, "ShadowFlash"), 15, 880, 90, 40, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowFlashAlphaExp <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * ZeroCore[[2]][3, 2], 5, 670, NA, 40, T, F, F)
+info <- c(600 + 24 * GetCoreLv(ZeroCore, "ShadowFlash"), 5, 670, NA, 40, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowFlashBetaInstall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(750 + 30 * ZeroCore[[2]][3, 2], 12, 880, 150, 40, T, F, F)
+info <- c(750 + 30 * GetCoreLv(ZeroCore, "ShadowFlash"), 12, 880, 150, 40, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 ShadowFlashBetaExp <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][4, 2], 6, 0, 120, 15, T, F, F)
+info <- c(175 + 7 * GetCoreLv(ZeroCore, "EgoWeapon"), 6, 0, 120, 15, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 EgoWeaponAlpha <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(175 + 7 * ZeroCore[[2]][4, 2], 9, 0, NA, 15, T, F, F)
+info <- c(175 + 7 * GetCoreLv(ZeroCore, "EgoWeapon"), 9, 0, NA, 15, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 EgoWeaponBeta <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * ZeroCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(ZeroCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(125 + 5 * ZeroCore[[2]][7, 2], 5, 0, NA, NA, NA, NA, F)
+info <- c(125 + 5 * GetCoreLv(ZeroCore, "BlessofRhinne"), 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlessofRhinne <- rbind(data.frame(option, value), info)
@@ -637,7 +593,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, Z
 BuffFinal <- data.frame(ZeroBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, ZeroSpec$CoolReduceP, ZeroSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, ZeroSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(ZeroSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, ZeroSpec$CoolReduceP, ZeroSpec$CoolReduce)
@@ -676,11 +632,15 @@ ZeroDealCycle <- data.frame(ZeroDealCycle)
 
 ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
                       Period=240, CycleTime=240, DealCycleType=c("WMM-WTWT", "WMM-WTWTA", "WMPMP-WTWT", "MMMW-WAWTA"), TagCancelDelay=60, SIM=T) {
-  BuffSummonedPrior <- c("UsefulSharpEyes", "UsefulWindBooster", 
+  BuffSummonedPrior <- c("UsefulSharpEyes", "UsefulWindBooster", "UsefulAdvancedBless", 
                          "AuraWeaponBuff", "TimeDistortion", "SoulContractLink", "LimitBreakBuff", "Restraint4")
-  
-  Times240 <- c(1, 1, 
+  Times240 <- c(1, 1, 1, 
                 1, 1, 1, 1, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times240 <- Times240[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
@@ -1537,27 +1497,27 @@ ZeroCycleAttach <- function(DealCycle1, DealCycle2) {
 
 
 ZeroDealCycle1 <- ZeroCycle(DealCycle=ZeroDealCycle, 
-                           ATKFinal, 
-                           BuffFinal, 
-                           SummonedFinal, 
-                           Spec=ZeroSpec, 
-                           SkipStructure=ZeroSkipATK,
-                           Period=240, 
-                           CycleTime=240, 
-                           DealCycleType="WMM-WTWTA", 
-                           TagCancelDelay=60, 
-                           SIM=T)
+                            ATKFinal, 
+                            BuffFinal, 
+                            SummonedFinal, 
+                            Spec=ZeroSpec, 
+                            SkipStructure=ZeroSkipATK,
+                            Period=240, 
+                            CycleTime=240, 
+                            DealCycleType="WMM-WTWTA", 
+                            TagCancelDelay=60, 
+                            SIM=T)
 ZeroDealCycle2 <- ZeroCycle(DealCycle=ZeroDealCycle, 
-                           ATKFinal, 
-                           BuffFinal, 
-                           SummonedFinal, 
-                           Spec=ZeroSpec, 
-                           SkipStructure=ZeroSkipATK,
-                           Period=240, 
-                           CycleTime=240, 
-                           DealCycleType="WMM-WTWTA", 
-                           TagCancelDelay=60, 
-                           SIM=F)
+                            ATKFinal, 
+                            BuffFinal, 
+                            SummonedFinal, 
+                            Spec=ZeroSpec, 
+                            SkipStructure=ZeroSkipATK,
+                            Period=240, 
+                            CycleTime=240, 
+                            DealCycleType="WMM-WTWTA", 
+                            TagCancelDelay=60, 
+                            SIM=F)
 ZeroDealCycle <- ZeroCycleAttach(ZeroDealCycle1, ZeroDealCycle2)
 ZeroDealCycle <- ZeroAddATK(DealCycle=ZeroDealCycle, 
                             ATKFinal, 
@@ -1567,27 +1527,46 @@ ZeroDealCycle <- ZeroAddATK(DealCycle=ZeroDealCycle,
                             DealCycleType="WMM-WTWTA")
 ZeroDealCycleReduction <- DealCycleReduction(ZeroDealCycle, c("BetaTargetBDR"))
 
-ZeroSpecOpt1 <- ZeroOptimization1(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpec, ZeroUnionRemained)
-ZeroSpecOpt <- ZeroSpec
-ZeroSpecOpt$ATKP <- ZeroSpecOpt$ATKP + ZeroSpecOpt1$ATKP
-ZeroSpecOpt$BDR <- ZeroSpecOpt$BDR + ZeroSpecOpt1$BDR
-ZeroSpecOpt$IGR <- IGRCalc(c(ZeroSpecOpt$IGR, ZeroSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Zero") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  ZeroSpecOpt1 <- ZeroOptimization1(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpec, ZeroUnionRemained, 
+                                    NotBuffCols=c("BetaTargetBDR"), NotBuffColOption=c("BDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- ZeroSpecOpt1[1, 1:3]
+} else {
+  ZeroSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+ZeroSpecOpt <- OptDataAdd(ZeroSpec, ZeroSpecOpt1, "Potential", ZeroBase$CRROver, DemonAvenger=F)
 
-ZeroSpecOpt2 <- ZeroOptimization2(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, ZeroHyperStatBase, ZeroBase$ChrLv, ZeroBase$CRROver, HyperStanceLv=5)
-ZeroFinalDPM <- ZeroDealCalc(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt2)
-ZeroFinalDPMwithMax <- ZeroDealCalcWithMaxDMR(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt2)
+if(DPMCalcOption$Optimization==T) {
+  ZeroSpecOpt2 <- Optimization2(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, ZeroHyperStatBase, ZeroBase$ChrLv, ZeroBase$CRROver, HyperStanceLv=5, 
+                                NotBuffCols=c("BetaTargetBDR"), NotBuffColOption=c("BDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- ZeroSpecOpt2[1, ]
+} else {
+  ZeroSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+ZeroSpecOpt <- OptDataAdd(ZeroSpecOpt, ZeroSpecOpt2, "HyperStat", ZeroBase$CRROver, DemonAvenger=F)
 
-DPM12349$Zero[1] <- sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time)/ 60000)
-DPM12349$Zero[2] <- sum(na.omit(ZeroFinalDPM)) / (max(ZeroDealCycle$Time) / 60000) - sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time) / 60000)
+ZeroFinalDPM <- DealCalc(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, Collapse=F, 
+                         NotBuffCols=c("BetaTargetBDR"), NotBuffColOption=c("BDR"))
+ZeroFinalDPMwithMax <- DealCalcWithMaxDMR(ZeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, 
+                                          NotBuffCols=c("BetaTargetBDR"), NotBuffColOption=c("BDR"))
+
+set(get(DPMCalcOption$DataName), as.integer(1), "Zero", sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Zero", sum(na.omit(ZeroFinalDPM)) / (max(ZeroDealCycle$Time) / 60000) - sum(na.omit(ZeroFinalDPMwithMax)) / (max(ZeroDealCycle$Time) / 60000))
+
+ZeroDealRatio <- DealRatio(ZeroDealCycle, ZeroFinalDPMwithMax)
 
 ZeroDealData <- data.frame(ZeroDealCycle$Skills, ZeroDealCycle$Time, ZeroDealCycle$Restraint4, ZeroFinalDPMwithMax)
 colnames(ZeroDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(ZeroDealData, ZeroDealData$R4>0)
-
-ZeroRR <- ZeroDealData[11:173, ]
-DPM12349$Zero[3] <- sum((ZeroRR$Deal))
-
-Zero40s <- ZeroDealData[11:590, ]
-DPM12349$Zero[4] <- sum((Zero40s$Deal))
-
-ZeroDealRatio <- DealRatio(ZeroDealCycle, ZeroFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Zero", Deal_RR(ZeroDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Zero", Deal_40s(ZeroDealData))

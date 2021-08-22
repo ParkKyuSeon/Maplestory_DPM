@@ -1,43 +1,42 @@
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Common.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/Item%20Data.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/base/PreSets.R")
-
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/functions%20set/Functions%20Set.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/functions%20set/JobFunctions.R")
-
-
 ## WindBreaker - Data
 ## WindBreaker - VMatrix
-WindBreakerCore <- MatrixSet(PasSkills=c("SongofSky", "TriflingWhim", "StormBringer", "FairyTurn", "PinpointPierce", "Monsoon"), 
-                             PasLvs=c(50, 50, 50, 50, 50, 50), 
-                             PasMP=c(10, 10, 10, 0, 0, 0), 
-                             ActSkills=c("HowlingGale", "IdleWhim", "WindWall", "VortexSphere", 
-                                         CommonV("Bowman", "CygnusKnights")), 
-                             ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                             ActMP=c(5, 5, 5, 5, 5, 5, 5, 5, 5), 
-                             BlinkLv=1, 
-                             BlinkMP=0, 
-                             UsefulSkills=c("CombatOrders"), 
+WindBreakerCoreBase <- CoreBuilder(ActSkills=c("HowlingGale", "IdleWhim", "WindWall", "VortexSphere", 
+                                               CommonV("Bowman", "CygnusKnights")), 
+                                   ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                                   UsefulSkills=c("CombatOrders"), 
+                                   SpecSet=get(DPMCalcOption$SpecSet), 
+                                   VPassiveList=WindBreakerVPassive, 
+                                   VPassivePrior=WindBreakerVPrior, 
+                                   SelfBind=F)
+
+WindBreakerCore <- MatrixSet(PasSkills=WindBreakerCoreBase$PasSkills$Skills, 
+                             PasLvs=WindBreakerCoreBase$PasSkills$Lv, 
+                             PasMP=WindBreakerCoreBase$PasSkills$MP, 
+                             ActSkills=WindBreakerCoreBase$ActSkills$Skills, 
+                             ActLvs=WindBreakerCoreBase$ActSkills$Lv, 
+                             ActMP=WindBreakerCoreBase$ActSkills$MP, 
+                             UsefulSkills=WindBreakerCoreBase$UsefulSkills, 
                              UsefulLvs=20, 
                              UsefulMP=0, 
-                             SpecSet=SpecDefault, 
-                             SelfBind=F)
+                             SpecSet=get(DPMCalcOption$SpecSet), 
+                             SpecialCore=WindBreakerCoreBase$SpecialCoreUse)
 
 
 ## WindBreaker - Basic Info
 WindBreakerBase <- JobBase(ChrInfo=ChrInfo, 
-                         MobInfo=MobDefault,
-                         SpecSet=SpecDefault, 
-                         Job="WindBreaker",
-                         CoreData=WindBreakerCore, 
-                         BuffDurationNeeded=0, 
-                         AbilList=c("BDR", "DisorderBDR"), 
-                         LinkList=c("Mikhail", "CygnusKnights", "DemonAvenger", "Phantom"), 
-                         MonsterLife=MLTypeD21, 
-                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", SpecDefault$WeaponType)[, 1:16],
-                         WeaponType=SpecDefault$WeaponType, 
-                         SubWeapon=SubWeapon[19, ], 
-                         Emblem=Emblem[3, ])
+                           MobInfo=get(DPMCalcOption$MobSet),
+                           SpecSet=get(DPMCalcOption$SpecSet), 
+                           Job="WindBreaker",
+                           CoreData=WindBreakerCore, 
+                           BuffDurationNeeded=0, 
+                           AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "WindBreaker"), 
+                           LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "WindBreaker"), 
+                           MonsterLife=get(FindJob(MonsterLifePreSet, "WindBreaker")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                           Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Bow", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                           WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                           SubWeapon=SubWeapon[rownames(SubWeapon)=="CygnusKnightsJewel", ], 
+                           Emblem=Emblem[rownames(Emblem)=="Cygnus", ], 
+                           CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "WindBreaker")))
 
 
 ## WindBreaker - Passive
@@ -78,7 +77,7 @@ value <- c(50 + WindBreakerBase$SkillLv, 25 + 2 * floor(WindBreakerBase$SkillLv/
 AlbatrossMaximum <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(WindBreakerCore[[2]][10, 2])
+value <- c(GetCoreLv(WindBreakerCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 WindBreakerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementStorm=ElementStorm, WhisperoftheWind=WhisperoftheWind, 
@@ -136,12 +135,11 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 StormBringer <- rbind(data.frame(option, value), info)
 
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * WindBreakerCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(WindBreakerCore)
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(1)
@@ -164,11 +162,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-## PetBuff : SharpEyes(900ms), SylphsAid(270ms), UsefulCombatOrders(1500ms)
-WindBreakerBuff <- Buff(list(SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, 
-                             SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, GloryofGardians=GloryofGardians, StormBringer=StormBringer, UsefulCombatOrders=UsefulCombatOrders, 
-                             WindWallBuff=WindWallBuff, CriticalReinforce=CriticalReinforce, BlessofCygnus=BlessofCygnus,
-                             Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+## PetBuff : SharpEyes(900ms), MapleSoldier(0ms), SylphsAid(270ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+WindBreakerBuff <- list(SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, 
+                        SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, GloryofGardians=GloryofGardians, StormBringer=StormBringer, UsefulCombatOrders=UsefulCombatOrders, 
+                        WindWallBuff=WindWallBuff, CriticalReinforce=CriticalReinforce, BlessofCygnus=BlessofCygnus,
+                        Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  WindBreakerBuff[[length(WindBreakerBuff)+1]] <- UsefulAdvancedBless
+  names(WindBreakerBuff)[[length(WindBreakerBuff)]] <- "UsefulAdvancedBless"
+}
+WindBreakerBuff <- Buff(WindBreakerBuff)
 WindBreakerAllTimeBuff <- AllTimeBuff(WindBreakerBuff)
 
 
@@ -176,8 +179,8 @@ WindBreakerAllTimeBuff <- AllTimeBuff(WindBreakerBuff)
 WindBreakerSpec <- JobSpec(JobBase=WindBreakerBase, 
                            Passive=WindBreakerPassive, 
                            AllTimeBuff=WindBreakerAllTimeBuff, 
-                           MobInfo=MobDefault, 
-                           SpecSet=SpecDefault, 
+                           MobInfo=get(DPMCalcOption$MobSet), 
+                           SpecSet=get(DPMCalcOption$SpecSet), 
                            WeaponName="Bow", 
                            UnionStance=0)
 
@@ -189,107 +192,65 @@ WindBreakerSpec <- WindBreakerSpec$Spec
 
 ## WindBreaker - CriticalReinforce(RE)
 {option <- factor("CDMR", levels=BSkill)
-value <- c(WindBreakerSpec$CRR * (0.2 + 0.01 * WindBreakerCore[[2]][6, 2]))
+value <- c(WindBreakerSpec$CRR * (0.2 + 0.01 * GetCoreLv(WindBreakerCore, "CriticalReinforce")))
 info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-
-WindBreakerBuff <- Buff(list(SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, 
-                             SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, GloryofGardians=GloryofGardians, StormBringer=StormBringer, UsefulCombatOrders=UsefulCombatOrders, 
-                             WindWallBuff=WindWallBuff, CriticalReinforce=CriticalReinforce, BlessofCygnus=BlessofCygnus,
-                             Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+WindBreakerBuff <- list(SylphsAid=SylphsAid, PinpointPierceBuff=PinpointPierceBuff, 
+                        SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, GloryofGardians=GloryofGardians, StormBringer=StormBringer, UsefulCombatOrders=UsefulCombatOrders, 
+                        WindWallBuff=WindWallBuff, CriticalReinforce=CriticalReinforce, BlessofCygnus=BlessofCygnus,
+                        Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  WindBreakerBuff[[length(WindBreakerBuff)+1]] <- UsefulAdvancedBless
+  names(WindBreakerBuff)[[length(WindBreakerBuff)]] <- "UsefulAdvancedBless"
+}
+WindBreakerBuff <- Buff(WindBreakerBuff)
 
 
 ## WindBreaker - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * WindBreakerCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * WindBreakerCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * WindBreakerCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * WindBreakerCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * WindBreakerCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * WindBreakerCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(WindBreakerCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## WindBreaker - Attacks
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(WindBreakerCore[[1]][5, 2]>=40, 20, 0), 3 * WindBreakerCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(WindBreakerCore, "PinpointPierce")>=40, 20, 0), 3 * GetCoreLv(WindBreakerCore, "PinpointPierce"))
 info <- c(340, 2, 900, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PinpointPierce <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(WindBreakerCore[[1]][1, 2]>=40, 20, 0), ((1.2 + 0.01 * floor(WindBreakerSpec$SkillLv/2))^3) * 100 - 100 + 50, 2 * WindBreakerCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(WindBreakerCore, "SongofSky")>=40, 20, 0), ((1.2 + 0.01 * floor(WindBreakerSpec$SkillLv/2))^3) * 100 - 100 + 50, 2 * GetCoreLv(WindBreakerCore, "SongofSky"))
 info <- c(345, 1, 120, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SongofSky <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(WindBreakerCore[[1]][2, 2]>=40, 20, 0), 20, 2 * WindBreakerCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(WindBreakerCore, "TriflingWhim")>=40, 20, 0), 20, 2 * GetCoreLv(WindBreakerCore, "TriflingWhim"))
 info <- c(290 + 3 * WindBreakerSpec$PSkillLv, 2 * (0.6 + 0.01 * floor(WindBreakerSpec$PSkillLv/2)) * 0.8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TriflingWhim <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(WindBreakerCore[[1]][2, 2]>=40, 20, 0), 20, 2 * WindBreakerCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(WindBreakerCore, "TriflingWhim")>=40, 20, 0), 20, 2 * GetCoreLv(WindBreakerCore, "TriflingWhim"))
 info <- c(390 + 3 * WindBreakerSpec$PSkillLv, 2 * (0.6 + 0.01 * floor(WindBreakerSpec$PSkillLv/2)) * 0.2, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TriflingWhimEnhanced <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(WindBreakerCore[[1]][3, 2]>=40, 20, 0), 2 * WindBreakerCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(WindBreakerCore, "StormBringer")>=40, 20, 0), 2 * GetCoreLv(WindBreakerCore, "StormBringer"))
 info <- c(500, 0.3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -297,42 +258,42 @@ StormBringer <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * WindBreakerCore[[2]][2, 2], 3, 0, NA, 10, T, F, F)
+info <- c(500 + 20 * GetCoreLv(WindBreakerCore, "IdleWhim"), 3, 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IdleWhimFirst <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c((500 + 20 * WindBreakerCore[[2]][2, 2]) * 0.75, 27, 600, NA, 10, T, F, F)
+info <- c((500 + 20 * GetCoreLv(WindBreakerCore, "IdleWhim")) * 0.75, 27, 600, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IdleWhimRemain <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(250 + 10 * WindBreakerCore[[2]][1, 2], 3, 840, 150, 20, F, F, F)
+info <- c(250 + 10 * GetCoreLv(WindBreakerCore, "HowlingGale"), 3, 840, 150, 20, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HowlingGaleSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * WindBreakerCore[[2]][1, 2], 3, 840, 150, 40, F, F, F)
+info <- c(600 + 24 * GetCoreLv(WindBreakerCore, "HowlingGale"), 3, 840, 150, 40, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HowlingGaleBig <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c((550 + 22 * WindBreakerCore[[2]][3, 2]) * 0.5, 15, 0, 2000, NA, NA, NA, F)
+info <- c((550 + 22 * GetCoreLv(WindBreakerCore, "WindWall")) * 0.5, 15, 0, 2000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WindWall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * WindBreakerCore[[2]][4, 2], 8, 960, 180, 30, T, F, F)
+info <- c(400 + 16 * GetCoreLv(WindBreakerCore, "VortexSphere"), 8, 960, 180, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 VortexSphere <- rbind(data.frame(option, value), info)
@@ -352,14 +313,14 @@ WindBreakerATK <- Attack(list(PinpointPierce=PinpointPierce, SongofSky=SongofSky
 ## WindBreaker - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * WindBreakerCore[[2]][5, 2], 1, 720, 500, 0.5*89+0.51, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(WindBreakerCore, "GuidedArrow"), 1, 720, 500, 0.5*89+0.51, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * WindBreakerCore[[2]][7, 2], 1, 780, 240, 0.24*(39 + WindBreakerCore[[2]][6, 2])+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * GetCoreLv(WindBreakerCore, "CygnusPhalanx"), 1, 780, 240, 0.24 * (39 + GetCoreLv(WindBreakerCore, "CygnusPhalanx")) + 0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -377,7 +338,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, W
 BuffFinal <- data.frame(WindBreakerBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, WindBreakerSpec$CoolReduceP, WindBreakerSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, WindBreakerSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(WindBreakerSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, WindBreakerSpec$CoolReduceP, WindBreakerSpec$CoolReduce)
@@ -389,11 +350,15 @@ colnames(WindBreakerDealCycle) <- DealCycle
 
 WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                           Period=c(120), CycleTime=240) {
-  BuffSummonedPrior <- c("SharpEyes", "StormBringer", "SylphsAid", "MapleSoldier", "UsefulCombatOrders", "GloryofGardians", 
+  BuffSummonedPrior <- c("SharpEyes", "StormBringer", "SylphsAid", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "GloryofGardians", 
                          "GuidedArrow", "CygnusPhalanx", "PinpointPierceBuff", "BlessofCygnus", "WindWallBuff", "SoulContractLink", "CriticalReinforce", "Restraint4")
-  Times120 <- c(0.5, 0, 0.5, 0.5, 0, 0, 2, 4, 2, 0.5, 1, 1, 1, 0.5)
+  Times120 <- c(0, 0, 0, 0, 0, 0, 0, 2, 4, 2, 0.5, 1, 1, 1, 0.5)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce / (CycleTime/Period), length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
@@ -621,32 +586,51 @@ WindBreakerDealCycle <- RepATKCycle(WindBreakerDealCycle, "WindWall", 25, 0, ATK
 WindBreakerDealCycle <- DCSummonedATKs(WindBreakerDealCycle, Skill=c("GuidedArrow", "CygnusPhalanx"), SummonedFinal)
 WindBreakerDealCycle <- AddATKsCycleWB(WindBreakerDealCycle)
 WindBreakerDealCycle <- DCSpiderInMirror(WindBreakerDealCycle, SummonedFinal)
-WindBreakerDealCycle <- BlessofCygnusCycle(WindBreakerDealCycle, 4000, General$General$Serverlag, WindBreakerCore[[2]][8, 2])
+WindBreakerDealCycle <- BlessofCygnusCycle(WindBreakerDealCycle, 4000, General$General$Serverlag, GetCoreLv(WindBreakerCore, "BlessofCygnus"))
 WindBreakerDealCycleReduction <- DealCycleReduction(WindBreakerDealCycle, "BlessofCygnusBDR")
 
-sum(na.omit(WindBreakerDealCalc(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec)))
 
-WindBreakerSpecOpt1 <- WindBreakerOptimization1(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec, WindBreakerUnionRemained)
-WindBreakerSpecOpt <- WindBreakerSpec
-WindBreakerSpecOpt$ATKP <- WindBreakerSpecOpt$ATKP + WindBreakerSpecOpt1$ATKP
-WindBreakerSpecOpt$BDR <- WindBreakerSpecOpt$BDR + WindBreakerSpecOpt1$BDR
-WindBreakerSpecOpt$IGR <- IGRCalc(c(WindBreakerSpecOpt$IGR, WindBreakerSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="WindBreaker") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  WindBreakerSpecOpt1 <- Optimization1(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpec, WindBreakerUnionRemained, 
+                                       NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- WindBreakerSpecOpt1[1, 1:3]
+} else {
+  WindBreakerSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+WindBreakerSpecOpt <- OptDataAdd(WindBreakerSpec, WindBreakerSpecOpt1, "Potential", WindBreakerBase$CRROver, DemonAvenger=F)
 
-WindBreakerSpecOpt2 <- WindBreakerOptimization2(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, WindBreakerHyperStatBase, WindBreakerBase$ChrLv, WindBreakerBase$CRROver)
+if(DPMCalcOption$Optimization==T) {
+  WindBreakerSpecOpt2 <- Optimization2(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, WindBreakerHyperStatBase, WindBreakerBase$ChrLv, WindBreakerBase$CRROver, 
+                                       NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- WindBreakerSpecOpt2[1, ]
+} else {
+  WindBreakerSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+WindBreakerSpecOpt <- OptDataAdd(WindBreakerSpecOpt, WindBreakerSpecOpt2, "HyperStat", WindBreakerBase$CRROver, DemonAvenger=F)
+BuffFinal <- CriReinAdj(WindBreakerSpec, WindBreakerSpecOpt, BuffFinal, GetCoreLv(WindBreakerCore, "CriticalReinforce"))
 
-WindBreakerFinalDPM <- WindBreakerDealCalc(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
-WindBreakerFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt2)
+WindBreakerFinalDPM <- DealCalc(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, Collapse=F, 
+                                NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+WindBreakerFinalDPMwithMax <- DealCalcWithMaxDMR(WindBreakerDealCycle, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, 
+                                                 NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
 
-DPM12349$WindBreaker[1] <- sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000)
-DPM12349$WindBreaker[2] <- sum(na.omit(WindBreakerFinalDPM)) / (max(WindBreakerDealCycle$Time) / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "WindBreaker", sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "WindBreaker", sum(na.omit(WindBreakerFinalDPM)) / (max(WindBreakerDealCycle$Time) / 60000) - sum(na.omit(WindBreakerFinalDPMwithMax)) / (max(WindBreakerDealCycle$Time) / 60000))
+
+WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)
 
 WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCycle$Time, WindBreakerDealCycle$Restraint4, WindBreakerFinalDPMwithMax)
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
-
-WindBreakerRR <- WindBreakerDealData[111:1148, ]
-DPM12349$WindBreaker[3] <- sum((WindBreakerRR$Deal))
-
-WindBreaker40s <- WindBreakerDealData[111:2552, ]
-DPM12349$WindBreaker[4] <- sum((WindBreaker40s$Deal))
-
-WindBreakerDealRatio <- DealRatio(WindBreakerDealCycle, WindBreakerFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "WindBreaker", Deal_RR(WindBreakerDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "WindBreaker", Deal_40s(WindBreakerDealData))

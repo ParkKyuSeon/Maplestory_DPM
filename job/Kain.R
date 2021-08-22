@@ -1,39 +1,44 @@
 ## Kain - Data
 ## Kain - Core
-KainCore <- MatrixSet(PasSkills=c("StrikeArrow_ChasingShot", "ScatteringShot", "DragonFang_RemainIncense", 
-                                  "ShaftBreak", "DeathBlessing_SneakySniping", "FallingDust", 
-                                  "ChainSickle_PoisonNeedle", "PhantomBlade_TearingKnife"), 
-                      PasLvs=c(50, 50, 50, 50, 50, 50, 50, 50), 
-                      PasMP=c(10, 10, 10, 10, 10, 10, 10, 5), 
-                      ActSkills=c("DargonBurst", "FatalBlitz", "ThanatosDescent", "GripofAgony", 
-                                  CommonV("Bowman", "Nova")[c(1, 2, 4, 5)]), 
-                      ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25),
-                      ActMP=c(5, 5, 5, 5, 5, 5, 0, 0), 
-                      BlinkLv=1, 
-                      BlinkMP=0, 
-                      UsefulSkills=c("SharpEyes", "CombatOrders"), 
+KainCoreBase <- CoreBuilder(ActSkills=c("DargonBurst", "FatalBlitz", "ThanatosDescent", "GripofAgony", 
+                                        CommonV("Bowman", "Nova")[c(1, 2, 4, 5)]), 
+                            ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25), 
+                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            VPassiveList=KainVPassive, 
+                            VPassivePrior=KainVPrior, 
+                            SelfBind=F)
+
+
+KainCore <- MatrixSet(PasSkills=KainCoreBase$PasSkills$Skills, 
+                      PasLvs=KainCoreBase$PasSkills$Lv, 
+                      PasMP=KainCoreBase$PasSkills$MP, 
+                      ActSkills=KainCoreBase$ActSkills$Skills, 
+                      ActLvs=KainCoreBase$ActSkills$Lv, 
+                      ActMP=KainCoreBase$ActSkills$MP, 
+                      UsefulSkills=KainCoreBase$UsefulSkills, 
                       UsefulLvs=20, 
                       UsefulMP=0, 
-                      SpecSet=SpecDefault, 
-                      SelfBind=F)
+                      SpecSet=get(DPMCalcOption$SpecSet), 
+                      SpecialCore=KainCoreBase$SpecialCoreUse)
 
 
 ## Kain - Basic Info
 ## Link Check Needed
 KainBase <- JobBase(ChrInfo=ChrInfo, 
-                    MobInfo=MobDefault,
-                    SpecSet=SpecDefault, 
+                    MobInfo=get(DPMCalcOption$MobSet),
+                    SpecSet=get(DPMCalcOption$SpecSet), 
                     Job="Kain",
                     CoreData=KainCore, 
                     BuffDurationNeeded=0, 
-                    AbilList=c("PassiveLv", "DisorderBDR"), 
-                    LinkList=c("Kain", "Mikhail", "DemonAvenger", "Xenon"), 
-                    MonsterLife=MLTypeD21, 
-                    Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "BreathShooter", SpecDefault$WeaponType)[, 1:16],
-                    WeaponType=SpecDefault$WeaponType, 
+                    AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Kain"), 
+                    LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Kain"), 
+                    MonsterLife=get(FindJob(MonsterLifePreSet, "Kain")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                    Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "BreathShooter", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                    WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
                     SubWeapon=SubWeapon[rownames(SubWeapon)=="WeaponBelt", ], 
                     Emblem=Emblem[rownames(Emblem)=="Hitman", ], 
-                    CoolReduceHat=F)
+                    CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Kain")))
 
 
 ## Kain - Passive
@@ -70,7 +75,7 @@ value <- c(20 + ceiling(KainBase$PSkillLv/2))
 AdaptToDeath <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(KainCore[[2]][10, 2])
+value <- c(GetCoreLv(KainCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 KainPassive <- Passive(list(Hitman, BreathShooterMastery, PhysicalTraining, NaturalBornInstinct, GrindingII, Dogma, BreathShooterExpert, AdaptToDeath, 
@@ -197,19 +202,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Incanation <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * KainCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * KainCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(KainCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -219,26 +217,31 @@ colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(5 + KainCore[[2]][8, 2])
+value <- c(5 + GetCoreLv(KainCore, "BlessofGrandisGoddess"))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(15 + KainCore[[2]][3, 2])
+value <- c(15 + GetCoreLv(KainCore, "ThanatosDescent"))
 info <- c(35, 180, Delay(540, 2), F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ThanatosDescent <- rbind(data.frame(option, value), info)}
 
-KainBuff <- Buff(list(MaliceGauge=MaliceGauge, MaliceGaugeDummy=MaliceGaugeDummy, Possession=Possession, DeathBlessingStack=DeathBlessingStack, ContributionBuff=ContributionBuff, 
-                      ScatteringShotDummy=ScatteringShotDummy, ScatteringShotStack=ScatteringShotStack, ShaftBreakDummy=ShaftBreakDummy, ShaftBreakStack=ShaftBreakStack, 
-                      FallingDustDummy=FallingDustDummy, FallingDustStack=FallingDustStack, PriorPreperationStack=PriorPreperationStack, PriorPreperation=PriorPreperation, AgonyStack=AgonyStack, 
-                      BreathShooterBooster=BreathShooterBooster, MapleSoldier=MapleSoldier, Incanation=Incanation, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                      CriticalReinforce=CriticalReinforce, BlessofGrandisGoddess=BlessofGrandisGoddess, ThanatosDescent=ThanatosDescent, 
-                      Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : Breath Shooter Booster, Useful Combat Orders, Useful Sharp Eyes
+KainBuff <- list(MaliceGauge=MaliceGauge, MaliceGaugeDummy=MaliceGaugeDummy, Possession=Possession, DeathBlessingStack=DeathBlessingStack, ContributionBuff=ContributionBuff, 
+                 ScatteringShotDummy=ScatteringShotDummy, ScatteringShotStack=ScatteringShotStack, ShaftBreakDummy=ShaftBreakDummy, ShaftBreakStack=ShaftBreakStack, 
+                 FallingDustDummy=FallingDustDummy, FallingDustStack=FallingDustStack, PriorPreperationStack=PriorPreperationStack, PriorPreperation=PriorPreperation, AgonyStack=AgonyStack, 
+                 BreathShooterBooster=BreathShooterBooster, MapleSoldier=MapleSoldier, Incanation=Incanation, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                 CriticalReinforce=CriticalReinforce, BlessofGrandisGoddess=BlessofGrandisGoddess, ThanatosDescent=ThanatosDescent, 
+                 Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  KainBuff[[length(KainBuff)+1]] <- UsefulAdvancedBless
+  names(KainBuff)[[length(KainBuff)]] <- "UsefulAdvancedBless"
+}
+KainBuff <- Buff(KainBuff)
+## Petbuff : Breath Shooter Booster, Maple Soldier, Useful Combat Orders, Useful Sharp Eyes, (Useful Advanced Bless)
 KainAllTimeBuff <- AllTimeBuff(KainBuff)
 
 
@@ -246,8 +249,8 @@ KainAllTimeBuff <- AllTimeBuff(KainBuff)
 KainSpec <- JobSpec(JobBase=KainBase, 
                     Passive=KainPassive, 
                     AllTimeBuff=KainAllTimeBuff, 
-                    MobInfo=MobDefault, 
-                    SpecSet=SpecDefault, 
+                    MobInfo=get(DPMCalcOption$MobSet), 
+                    SpecSet=get(DPMCalcOption$SpecSet), 
                     WeaponName="BreathShooter", 
                     UnionStance=0)
 
@@ -258,235 +261,189 @@ KainSpec <- KainSpec$Spec
 
 
 ## Kain - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * KainCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KainCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KainCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KainCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KainCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KainCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(KainCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Kain - Attacks
 ## Hyper : Breath Shooter - Reinforce, Breath Shooter - Boss Killer, Execute - Enhance, Execute - Reinforce, Remain Incense - Reinforce
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][1, 2]>=40, 20, 0))), 2 * KainCore[[1]][1, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "StrikeArrow_ChasingShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "StrikeArrow_ChasingShot"))
 info <- c(70 + 89 + 79 + 100 + 1 * KainSpec$PSkillLv, 5, 570, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 StrikeArrow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][1, 2]>=40, 20, 0))), 2 * KainCore[[1]][1, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "StrikeArrow_ChasingShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "StrikeArrow_ChasingShot"))
 info <- c(160 + 79 + 100 + 1 * KainSpec$PSkillLv, 5, 570, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 StrikeArrow2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][1, 2]>=40, 20, 0))), 2 * KainCore[[1]][1, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "StrikeArrow_ChasingShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "StrikeArrow_ChasingShot"))
 info <- c(240 + 100 + 1 * KainSpec$PSkillLv, 5, 570, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 StrikeArrow3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][1, 2]>=40, 20, 0))), 2 * KainCore[[1]][1, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "StrikeArrow_ChasingShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "StrikeArrow_ChasingShot"))
 info <- c(200 + 80 + 85 + 1 * KainSpec$PSkillLv, 8, 570, NA, 1, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessStrikeArrow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][2, 2]>=40, 20, 0))), 2 * KainCore[[1]][2, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ScatteringShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ScatteringShot"))
 info <- c(120 + 75 + 75 + 1 * KainSpec$PSkillLv, 4, 630, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ScatteringShot <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][2, 2]>=40, 20, 0))), 2 * KainCore[[1]][2, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ScatteringShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ScatteringShot"))
 info <- c((120 + 75 + 75 + 1 * KainSpec$PSkillLv) * 0.5, 4 * 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ScatteringShotAfter <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][2, 2]>=40, 20, 0))), 2 * KainCore[[1]][2, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ScatteringShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ScatteringShot"))
 info <- c(135 + 80 + 80 + 1 * KainSpec$PSkillLv, 4, 630, NA, 6, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessScatteringShot <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][2, 2]>=40, 20, 0))), 2 * KainCore[[1]][2, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ScatteringShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ScatteringShot"))
 info <- c((135 + 80 + 80 + 1 * KainSpec$PSkillLv) * 0.5, 4 * 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessScatteringShotAfter <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][4, 2]>=40, 20, 0))), 2 * KainCore[[1]][4, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ShaftBreak")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ShaftBreak"))
 info <- c(180 + 60 + 1 * KainSpec$PSkillLv, 3, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShaftBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][4, 2]>=40, 20, 0))), 2 * KainCore[[1]][4, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ShaftBreak")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ShaftBreak"))
 info <- c(140 + 60 + 1 * KainSpec$PSkillLv, 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShaftBreakExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][4, 2]>=40, 20, 0))), 2 * KainCore[[1]][4, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ShaftBreak")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ShaftBreak"))
 info <- c(180 + 90 + 1 * KainSpec$PSkillLv, 3, 660, NA, 11, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessShaftBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][4, 2]>=40, 20, 0))), 2 * KainCore[[1]][4, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ShaftBreak")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ShaftBreak"))
 info <- c(220 + 90 + 1 * KainSpec$PSkillLv, 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessShaftBreakExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][4, 2]>=40, 20, 0))), 2 * KainCore[[1]][4, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ShaftBreak")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ShaftBreak"))
 info <- c(40 + 15 + floor(KainSpec$PSkillLv/3), 3, 0, 120, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessShaftBreakTornado <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][6, 2]>=40, 20, 0))), 2 * KainCore[[1]][6, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "FallingDust")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "FallingDust"))
 info <- c(410 + 5 * KainSpec$SkillLv, 8, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FallingDust <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][6, 2]>=40, 20, 0))), 2 * KainCore[[1]][6, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "FallingDust")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "FallingDust"))
 info <- c(420 + 5 * KainSpec$SkillLv, 8, 660, NA, 14, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessFallingDust <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][6, 2]>=40, 20, 0))), 2 * KainCore[[1]][6, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "FallingDust")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "FallingDust"))
 info <- c(240 + 5 * KainSpec$SkillLv, 15, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessFallingDustAdd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][1, 2]>=40, 20, 0))), 2 * KainCore[[1]][1, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "StrikeArrow_ChasingShot")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "StrikeArrow_ChasingShot"))
 info <- c(320, 6 * 3, Delay(960, 4), NA, 25, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ChasingShot <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, IGRCalc(c(0, ifelse(KainCore[[1]][5, 2]>=40, 20, 0))), 2 * KainCore[[1]][5, 2])
+value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "DeathBlessing_SneakySniping")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "DeathBlessing_SneakySniping"))
 info <- c(175, 10 * 5, 30 + 270, NA, 40, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SneakySniping <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(45, IGRCalc(c(0, ifelse(KainCore[[1]][5, 2]>=40, 20, 0))), 2 * KainCore[[1]][5, 2])
+value <- c(45, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "DeathBlessing_SneakySniping")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "DeathBlessing_SneakySniping"))
 info <- c(200, 12 * 5, 30 + 270, NA, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessExecuteSneakySniping <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KainCore[[1]][8, 2]>=40, 20, 0), 2 * KainCore[[1]][8, 2])
+value <- c(20, ifelse(GetCoreLv(KainCore, "PhantomBlade_TearingKnife")>=40, 20, 0), 2 * GetCoreLv(KainCore, "PhantomBlade_TearingKnife"))
 info <- c(155 + 115 + 1 * KainSpec$PSkillLv, 6, 660, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExecutePhantomBlade <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KainCore[[1]][8, 2]>=40, 20, 0), 2 * KainCore[[1]][8, 2])
+value <- c(20, ifelse(GetCoreLv(KainCore, "PhantomBlade_TearingKnife")>=40, 20, 0), 2 * GetCoreLv(KainCore, "PhantomBlade_TearingKnife"))
 info <- c(210 + 115 + 1 * KainSpec$PSkillLv, 7, 660, NA, 4.5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExecuteTearingKnife <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KainCore[[1]][7, 2]>=40, 20, 0), 2 * KainCore[[1]][7, 2])
+value <- c(20, ifelse(GetCoreLv(KainCore, "ChainSickle_PoisonNeedle")>=40, 20, 0), 2 * GetCoreLv(KainCore, "ChainSickle_PoisonNeedle"))
 info <- c(200 + 2 * KainSpec$SkillLv, 6, 300, NA, 7, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExecuteChainSickle <- rbind(data.frame(option, value), info) ## Original Delay : 300
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KainCore[[1]][7, 2]>=40, 20, 0), 2 * KainCore[[1]][7, 2])
+value <- c(20, ifelse(GetCoreLv(KainCore, "ChainSickle_PoisonNeedle")>=40, 20, 0), 2 * GetCoreLv(KainCore, "ChainSickle_PoisonNeedle"))
 info <- c(220 + 2 * KainSpec$SkillLv, 12, 510, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExecuteChainSickleAdd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KainCore[[1]][7, 2]>=40, 20, 0), 2 * KainCore[[1]][7, 2])
+value <- c(20, ifelse(GetCoreLv(KainCore, "ChainSickle_PoisonNeedle")>=40, 20, 0), 2 * GetCoreLv(KainCore, "ChainSickle_PoisonNeedle"))
 info <- c(250 + 3 * KainSpec$SkillLv, 8, 330, NA, 15, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExecutePoisonNeedlePre <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KainCore[[1]][7, 2]>=40, 20, 0), 2 * KainCore[[1]][7, 2])
+value <- c(20, ifelse(GetCoreLv(KainCore, "ChainSickle_PoisonNeedle")>=40, 20, 0), 2 * GetCoreLv(KainCore, "ChainSickle_PoisonNeedle"))
 info <- c(190 + 1 * KainSpec$SkillLv, 8, 390, 120, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -500,28 +457,28 @@ colnames(info) <- c("option", "value")
 ExecutePoisonNeedleEnd <- rbind(data.frame(option, value), info) ## ATKSpeed Not Applied
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KainCore[[1]][3, 2]>=40, 20, 0), 2 * KainCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(KainCore, "DragonFang_RemainIncense")>=40, 20, 0), 2 * GetCoreLv(KainCore, "DragonFang_RemainIncense"))
 info <- c(100 + 60 + 70 + 2 * KainSpec$PSkillLv, 4 * 3, 0, 1350, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DragonFang <- rbind(data.frame(option, value), info) ## StartATK : 750ms
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KainCore[[1]][5, 2]>=40, 20, 0), 2 * KainCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(KainCore, "DeathBlessing_SneakySniping")>=40, 20, 0), 2 * GetCoreLv(KainCore, "DeathBlessing_SneakySniping"))
 info <- c(140 + 135 + 3 * KainSpec$PSkillLv, 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DeathBlessing <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KainCore[[1]][5, 2]>=40, 20, 0), 2 * KainCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(KainCore, "DeathBlessing_SneakySniping")>=40, 20, 0), 2 * GetCoreLv(KainCore, "DeathBlessing_SneakySniping"))
 info <- c(140 + 135 + 3 * KainSpec$PSkillLv, 13, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DeathBlessingIncanation <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(50, ifelse(KainCore[[1]][3, 2]>=40, 20, 0), 2 * KainCore[[1]][3, 2])
+value <- c(50, ifelse(GetCoreLv(KainCore, "DragonFang_RemainIncense")>=40, 20, 0), 2 * GetCoreLv(KainCore, "DragonFang_RemainIncense"))
 info <- c(90 + 60 + 1 * KainSpec$PSkillLv, 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -536,7 +493,7 @@ PossessDragonBurstPre <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * KainCore[[2]][1, 2], 12, 180, NA, NA, NA, NA, F)
+info <- c(400 + 16 * GetCoreLv(KainCore, "DargonBurst"), 12, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessDragonBurstTick <- rbind(data.frame(option, value), info) ## 15 Times
@@ -557,7 +514,7 @@ ExecuteFatalBlitzPre <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(300 + 12 * KainCore[[2]][2, 2], 12, 120, NA, NA, NA, NA, F)
+info <- c(300 + 12 * GetCoreLv(KainCore, "FatalBlitz"), 12, 120, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ExecuteFatalBlitzTick <- rbind(data.frame(option, value), info) ## 14 Times
@@ -571,7 +528,7 @@ ExecuteFatalBlitzEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(325 + 13 * KainCore[[2]][3, 2], 3 * 6, 0, NA, NA, NA, NA, F)
+info <- c(325 + 13 * GetCoreLv(KainCore, "ThanatosDescent"), 3 * 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThanatosDescentAddATK <- rbind(data.frame(option, value), info)
@@ -585,7 +542,7 @@ ThanatosDescentEndPre <- rbind(data.frame(option, value), info) ## StartATK : 26
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(650 + 26 * KainCore[[2]][3, 2], 15, 180, NA, NA, NA, NA, F)
+info <- c(650 + 26 * GetCoreLv(KainCore, "ThanatosDescent"), 15, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThanatosDescentEndTick <- rbind(data.frame(option, value), info)
@@ -599,7 +556,7 @@ ThanatosDescentEndEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * KainCore[[2]][4, 2], 6, 660, 330, 90, T, F, F)
+info <- c(600 + 24 * GetCoreLv(KainCore, "GripofAgony"), 6, 660, 330, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GripofAgony <- rbind(data.frame(option, value), info)}
@@ -624,7 +581,7 @@ KainATK <- Attack(list(StrikeArrow=StrikeArrow, StrikeArrow2=StrikeArrow2, Strik
 ## Kain - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * KainCore[[2]][5, 2], 1, 720, 500, 0.5*89+0.72+0.01, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(KainCore, "GuidedArrow"), 1, 720, 500, 0.5*89+0.72+0.01, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)}
@@ -636,18 +593,22 @@ KainSummoned <- Summoned(list(GuidedArrow=GuidedArrow,
 
 ## Kain - Critical Reinforce (RE)
 {option <- factor("CDMR", levels=BSkill)
-value <- c(KainSpec$CRR * (0.2 + 0.01 * KainCore[[2]][6, 2]))
+value <- c(KainSpec$CRR * (0.2 + 0.01 * GetCoreLv(KainCore, "CriticalReinforce")))
 info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-
-KainBuff <- Buff(list(MaliceGauge=MaliceGauge, MaliceGaugeDummy=MaliceGaugeDummy, Possession=Possession, DeathBlessingStack=DeathBlessingStack, ContributionBuff=ContributionBuff, 
-                      ScatteringShotDummy=ScatteringShotDummy, ScatteringShotStack=ScatteringShotStack, ShaftBreakDummy=ShaftBreakDummy, ShaftBreakStack=ShaftBreakStack, 
-                      FallingDustDummy=FallingDustDummy, FallingDustStack=FallingDustStack, PriorPreperationStack=PriorPreperationStack, PriorPreperation=PriorPreperation, AgonyStack=AgonyStack, 
-                      BreathShooterBooster=BreathShooterBooster, MapleSoldier=MapleSoldier, Incanation=Incanation, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                      CriticalReinforce=CriticalReinforce, BlessofGrandisGoddess=BlessofGrandisGoddess, ThanatosDescent=ThanatosDescent, 
-                      Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+KainBuff <- list(MaliceGauge=MaliceGauge, MaliceGaugeDummy=MaliceGaugeDummy, Possession=Possession, DeathBlessingStack=DeathBlessingStack, ContributionBuff=ContributionBuff, 
+                 ScatteringShotDummy=ScatteringShotDummy, ScatteringShotStack=ScatteringShotStack, ShaftBreakDummy=ShaftBreakDummy, ShaftBreakStack=ShaftBreakStack, 
+                 FallingDustDummy=FallingDustDummy, FallingDustStack=FallingDustStack, PriorPreperationStack=PriorPreperationStack, PriorPreperation=PriorPreperation, AgonyStack=AgonyStack, 
+                 BreathShooterBooster=BreathShooterBooster, MapleSoldier=MapleSoldier, Incanation=Incanation, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                 CriticalReinforce=CriticalReinforce, BlessofGrandisGoddess=BlessofGrandisGoddess, ThanatosDescent=ThanatosDescent, 
+                 Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  KainBuff[[length(KainBuff)+1]] <- UsefulAdvancedBless
+  names(KainBuff)[[length(KainBuff)]] <- "UsefulAdvancedBless"
+}
+KainBuff <- Buff(KainBuff)
 
 
 ## Kain - DealCycle
@@ -658,7 +619,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, K
 BuffFinal <- data.frame(KainBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, KainSpec$CoolReduceP, KainSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, KainSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(KainSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, KainSpec$CoolReduceP, KainSpec$CoolReduce)
@@ -672,11 +633,16 @@ KainDealCycle <- data.frame(KainDealCycle)
 
 KainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=c(180), CycleTime=c(360)) {
-  BuffSummonedPrior <- c("BreathShooterBooster", "UsefulSharpEyes", "UsefulCombatOrders", 
+  BuffSummonedPrior <- c("BreathShooterBooster", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "GuidedArrow", "BlessofGrandisGoddess", "ThanatosDescent", "Incanation", "CriticalReinforce")
   
-  Times180 <- c(0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 
                 3, 0.5, 1, 1, 1)
+  
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
@@ -1830,27 +1796,43 @@ KainDealCycle <- KainAddATK(KainDealCycle,
 KainDealCycleReduction <- DealCycleReduction(KainDealCycle)
 
 
-KainSpecOpt1 <- Optimization1(KainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KainSpec, KainUnionRemained)
-KainSpecOpt <- KainSpec
-KainSpecOpt$ATKP <- KainSpecOpt$ATKP + KainSpecOpt1$ATKP
-KainSpecOpt$BDR <- KainSpecOpt$BDR + KainSpecOpt1$BDR
-KainSpecOpt$IGR <- IGRCalc(c(KainSpecOpt$IGR, KainSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Kain") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  KainSpecOpt1 <- Optimization1(KainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KainSpec, KainUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- KainSpecOpt1[1, 1:3]
+} else {
+  KainSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+KainSpecOpt <- OptDataAdd(KainSpec, KainSpecOpt1, "Potential", KainBase$CRROver, DemonAvenger=F)
 
-KainSpecOpt2 <- Optimization2(KainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, KainHyperStatBase, KainBase$ChrLv, KainBase$CRROver)
-KainFinalDPM <- DealCalc(KainDealCycle, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt2)
-KainFinalDPMwithMax <- DealCalcWithMaxDMR(KainDealCycle, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt2)
+if(DPMCalcOption$Optimization==T) {
+  KainSpecOpt2 <- Optimization2(KainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, KainHyperStatBase, KainBase$ChrLv, KainBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- KainSpecOpt2[1, ]
+} else {
+  KainSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+KainSpecOpt <- OptDataAdd(KainSpecOpt, KainSpecOpt2, "HyperStat", KainBase$CRROver, DemonAvenger=F)
+BuffFinal <- CriReinAdj(KainSpec, KainSpecOpt, BuffFinal, GetCoreLv(KainCore, "CriticalReinforce"))
 
-DPM12349$Kain[1] <- sum(na.omit(KainFinalDPMwithMax)) / (max(KainDealCycle$Time)/ 60000)
-DPM12349$Kain[2] <- sum(na.omit(KainFinalDPM)) / (max(KainDealCycle$Time) / 60000) - sum(na.omit(KainFinalDPMwithMax)) / (max(KainDealCycle$Time) / 60000)
+KainFinalDPM <- DealCalc(KainDealCycle, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, Collapse=F)
+KainFinalDPMwithMax <- DealCalcWithMaxDMR(KainDealCycle, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt)
+
+set(get(DPMCalcOption$DataName), as.integer(1), "Kain", sum(na.omit(KainFinalDPMwithMax)) / (max(KainDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Kain", sum(na.omit(KainFinalDPM)) / (max(KainDealCycle$Time) / 60000) - sum(na.omit(KainFinalDPMwithMax)) / (max(KainDealCycle$Time) / 60000))
+
+KainDealRatio <- DealRatio(KainDealCycle, KainFinalDPMwithMax)
 
 KainDealData <- data.frame(KainDealCycle$Skills, KainDealCycle$Time, KainDealCycle$Restraint4, KainFinalDPMwithMax)
 colnames(KainDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(KainDealData, KainDealData$R4>0)
-
-KainRR <- KainDealData[185:404, ]
-DPM12349$Kain[3] <- sum((KainRR$Deal))
-
-Kain40s <- KainDealData[24:497, ]
-DPM12349$Kain[4] <- sum((Kain40s$Deal))
-
-KainDealRatio <- DealRatio(KainDealCycle, KainFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Kain", Deal_RR(KainDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Kain", Deal_40s(KainDealData, F, StartTime=subset(KainDealData, KainDealData$Skills=="ChasingShot")$Time[1]))

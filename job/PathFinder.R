@@ -1,37 +1,42 @@
 ## PathFinder - Data
 ## PathFinder - VMatrix
-PathFinderCore <- MatrixSet(PasSkills=c("CardinalDischarge", "CardinalBlast", "CradinalTransition", "TripleImpact", "EdgeofResonance", 
-                                        "ComboAssault", "Raven", "SplitMistel"), 
-                            PasLvs=c(50, 50, 50, 50, 50, 50, 50, 25), 
-                            PasMP=c(10, 10, 10, 10, 10, 5, 5, 0), 
-                            ActSkills=c("UltimateBlast", "RavenTempest", "ObisdianBarrier", "RelicUnbound", 
-                                        CommonV("Bowman", "Adventure")), 
-                            ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                            ActMP=c(5, 5, 5, 5, 5, 5, 0, 5, 0), 
-                            BlinkLv=1, 
-                            BlinkMP=0, 
-                            UsefulSkills=c("CombatOrders"), 
+PathFinderCoreBase <- CoreBuilder(ActSkills=c("UltimateBlast", "RavenTempest", "ObisdianBarrier", "RelicUnbound", 
+                                              CommonV("Bowman", "Adventure")), 
+                                  ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                                  UsefulSkills=c("CombatOrders"), 
+                                  SpecSet=get(DPMCalcOption$SpecSet), 
+                                  VPassiveList=PathFinderVPassive, 
+                                  VPassivePrior=PathFinderVPrior, 
+                                  SelfBind=F)
+
+PathFinderCore <- MatrixSet(PasSkills=PathFinderCoreBase$PasSkills$Skills, 
+                            PasLvs=PathFinderCoreBase$PasSkills$Lv, 
+                            PasMP=PathFinderCoreBase$PasSkills$MP, 
+                            ActSkills=PathFinderCoreBase$ActSkills$Skills, 
+                            ActLvs=PathFinderCoreBase$ActSkills$Lv, 
+                            ActMP=PathFinderCoreBase$ActSkills$MP, 
+                            UsefulSkills=PathFinderCoreBase$UsefulSkills, 
                             UsefulLvs=20, 
                             UsefulMP=0, 
-                            SpecSet=SpecDefault, 
-                            SelfBind=F)
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            SpecialCore=PathFinderCoreBase$SpecialCoreUse)
 
 
 ## PathFinder - Basic Info
 PathFinderBase <- JobBase(ChrInfo=ChrInfo, 
-                          MobInfo=MobDefault,
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet),
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           Job="PathFinder",
                           CoreData=PathFinderCore, 
                           BuffDurationNeeded=0, 
-                          AbilList=c("BDR", "DisorderBDR"), 
-                          LinkList=c("AdventureBowman", "Phantom", "DemonAvenger", "Mikhail"), 
-                          MonsterLife=MLTypeD21, 
-                          Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "AncientBow", SpecDefault$WeaponType)[, 1:16],
-                          WeaponType=SpecDefault$WeaponType, 
-                          SubWeapon=SubWeapon[9, ], 
-                          Emblem=Emblem[1, ], 
-                          CoolReduceHat=T)
+                          AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "PathFinder"), 
+                          LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "PathFinder"), 
+                          MonsterLife=get(FindJob(MonsterLifePreSet, "PathFinder")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                          Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "AncientBow", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                          WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                          SubWeapon=SubWeapon[rownames(SubWeapon)=="Thimble", ], 
+                          Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                          CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "PathFinder")))
 
 
 ## PathFinder - Passive
@@ -68,7 +73,7 @@ value <- c(80 + 2 * PathFinderBase$PSkillLv)
 IllusionStep <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(PathFinderCore[[2]][10, 2])
+value <- c(GetCoreLv(PathFinderCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 PathFinderPassive <- Passive(list(ArcherMastery=ArcherMastery, CriticalShot=CriticalShot, AncientBowMastery=AncientBowMastery, PhysicalTraining=PhysicalTraining, EssenceofArcher=EssenceofArcher, 
@@ -85,7 +90,7 @@ AncientBowBooster <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(300, NA, 900, T, NA, NA, T)
+info <- c(300, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CurseTolerance <- rbind(data.frame(option, value), info)
@@ -132,12 +137,11 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RelicEvolution <- rbind(data.frame(option, value), info)
 
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * PathFinderCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(PathFinderCore)
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -154,7 +158,7 @@ colnames(info) <- c("option", "value")
 RavenTempestBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * PathFinderCore[[2]][8, 2]) * MapleSoldier[1, 2]) * PathFinderBase$MainStatP), 5 + floor(PathFinderCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(PathFinderCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * PathFinderBase$MainStatP), 5 + floor(GetCoreLv(PathFinderCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -181,20 +185,25 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RelicChange <- rbind(data.frame(option, value), info)}
 
-PathFinderBuff <- Buff(list(AncientBowBooster=AncientBowBooster, CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
-                         CurseTransitionDebuff=CurseTransitionDebuff, EpicAdventure=EpicAdventure, RelicEvolution=RelicEvolution, UsefulCombatOrders=UsefulCombatOrders, 
-                         CriticalReinforce=CriticalReinforce, RavenTempestBuff=RavenTempestBuff, MapleWarriors2=MapleWarriors2, 
-                         RelicGauge=RelicGauge, GuidanceGauge=GuidanceGauge, RelicChange=RelicChange, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+PathFinderBuff <- list(AncientBowBooster=AncientBowBooster, CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
+                       CurseTransitionDebuff=CurseTransitionDebuff, EpicAdventure=EpicAdventure, RelicEvolution=RelicEvolution, UsefulCombatOrders=UsefulCombatOrders, 
+                       CriticalReinforce=CriticalReinforce, RavenTempestBuff=RavenTempestBuff, MapleWarriors2=MapleWarriors2, 
+                       RelicGauge=RelicGauge, GuidanceGauge=GuidanceGauge, RelicChange=RelicChange, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  PathFinderBuff[[length(PathFinderBuff)+1]] <- UsefulAdvancedBless
+  names(PathFinderBuff)[[length(PathFinderBuff)]] <- "UsefulAdvancedBless"
+}
+PathFinderBuff <- Buff(PathFinderBuff)
 PathFinderAllTimeBuff <- AllTimeBuff(PathFinderBuff)
-## PetBuff : AincientBowBooster(990ms), UsefulCombatOrders(1500ms), SharpEyes(900ms)
+## PetBuff : AincientBowBooster(990ms), CurseTolerance(900ms), SharpEyes(900ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
 
 
 ## PathFinder - Union & HyperStat & SoulWeapon
 PathFinderSpec <- JobSpec(JobBase=PathFinderBase, 
                           Passive=PathFinderPassive, 
                           AllTimeBuff=PathFinderAllTimeBuff, 
-                          MobInfo=MobDefault, 
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet), 
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           WeaponName="AncientBow", 
                           UnionStance=0)
 
@@ -206,136 +215,94 @@ PathFinderSpec <- PathFinderSpec$Spec
 
 ## PathFinder - Critical Reinforce(RE)
 {option <- factor("CDMR", levels=BSkill)
-value <- c(PathFinderSpec$CRR * (0.2 + 0.01 * PathFinderCore[[2]][6, 2]))
+value <- c(PathFinderSpec$CRR * (0.2 + 0.01 * GetCoreLv(PathFinderCore, "CriticalReinforce")))
 info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-PathFinderBuff <- Buff(list(AncientBowBooster=AncientBowBooster, CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
-                            CurseTransitionDebuff=CurseTransitionDebuff, EpicAdventure=EpicAdventure, RelicEvolution=RelicEvolution, UsefulCombatOrders=UsefulCombatOrders, 
-                            CriticalReinforce=CriticalReinforce, RavenTempestBuff=RavenTempestBuff, MapleWarriors2=MapleWarriors2, 
-                            RelicGauge=RelicGauge, GuidanceGauge=GuidanceGauge, RelicChange=RelicChange, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-PathFinderAllTimeBuff <- AllTimeBuff(PathFinderBuff)
+PathFinderBuff <- list(AncientBowBooster=AncientBowBooster, CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
+                       CurseTransitionDebuff=CurseTransitionDebuff, EpicAdventure=EpicAdventure, RelicEvolution=RelicEvolution, UsefulCombatOrders=UsefulCombatOrders, 
+                       CriticalReinforce=CriticalReinforce, RavenTempestBuff=RavenTempestBuff, MapleWarriors2=MapleWarriors2, 
+                       RelicGauge=RelicGauge, GuidanceGauge=GuidanceGauge, RelicChange=RelicChange, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  PathFinderBuff[[length(PathFinderBuff)+1]] <- UsefulAdvancedBless
+  names(PathFinderBuff)[[length(PathFinderBuff)]] <- "UsefulAdvancedBless"
+}
+PathFinderBuff <- Buff(PathFinderBuff)
 
 
 ## PathFinder - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * PathFinderCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PathFinderCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PathFinderCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PathFinderCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PathFinderCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PathFinderCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(PathFinderCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## PathFinder - Attacks
 ## HyperSkill - Ancient Force Ignore Guard
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(PathFinderCore[[1]][1, 2]>=40, 20, 0), 20, 2 * PathFinderCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(PathFinderCore, "CardinalDischarge")>=40, 20, 0), 20, 2 * GetCoreLv(PathFinderCore, "CardinalDischarge"))
 info <- c(300 + 5 * PathFinderSpec$PSkillLv, 10, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CardinalDischarge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(PathFinderCore[[1]][2, 2]>=40, 20, 0), 20, FDRCalc(c(2 * PathFinderCore[[1]][2, 2], 50)))
+value <- c(ifelse(GetCoreLv(PathFinderCore, "CardinalBlast")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(PathFinderCore, "CardinalBlast"), 50)))
 info <- c(400 + 5 * PathFinderSpec$PSkillLv, 5, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CardinalBlast <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(PathFinderCore[[1]][3, 2]>=40, 20, 0), 20, 2 * PathFinderCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(PathFinderCore, "CradinalTransition")>=40, 20, 0), 20, 2 * GetCoreLv(PathFinderCore, "CradinalTransition"))
 info <- c(540 + 7 * PathFinderSpec$PSkillLv, 6, 420, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CardinalTransition <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PathFinderCore[[1]][1, 2]>=40, 20, 0), 2 * PathFinderCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(PathFinderCore, "CardinalDischarge")>=40, 20, 0), 2 * GetCoreLv(PathFinderCore, "CardinalDischarge"))
 info <- c(150 + PathFinderSpec$PSkillLv, 3 * 0.5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AdditionalDischarge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PathFinderCore[[1]][2, 2]>=40, 20, 0), 2 * PathFinderCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(PathFinderCore, "CardinalBlast")>=40, 20, 0), 2 * GetCoreLv(PathFinderCore, "CardinalBlast"))
 info <- c(200 + 1 * PathFinderSpec$PSkillLv, 3 * 0.5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AdditionalBlast <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(PathFinderCore[[1]][4, 2]>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * PathFinderCore[[1]][4, 2], 10)))
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(PathFinderCore, "TripleImpact")>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * GetCoreLv(PathFinderCore, "TripleImpact"), 10)))
 info <- c(600 + 5 * PathFinderSpec$PSkillLv, 15, 540, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TripleImpact <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(PathFinderCore[[1]][5, 2]>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * PathFinderCore[[1]][5, 2], 10, 50))) ## Debuff FDR Check Needed
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(PathFinderCore, "EdgeofResonance")>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * GetCoreLv(PathFinderCore, "EdgeofResonance"), 10, 50))) ## Debuff FDR Check Needed
 info <- c(800 + 15 * PathFinderSpec$SkillLv, 6, 0, NA, 15, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 EdgeofResonance <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(PathFinderCore[[1]][6, 2]>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * PathFinderCore[[1]][6, 2], 10)))
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(PathFinderCore, "ComboAssault")>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * GetCoreLv(PathFinderCore, "ComboAssault"), 10)))
 info <- c(600 + 10 * PathFinderSpec$SkillLv, 8, 780, NA, 20, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ComboAssaultBlast1 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(PathFinderCore[[1]][6, 2]>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * PathFinderCore[[1]][6, 2], 10)))
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(PathFinderCore, "ComboAssault")>=40, 20, 0))), 70 + PathFinderSpec$PSkillLv, FDRCalc(c(2 * GetCoreLv(PathFinderCore, "ComboAssault"), 10)))
 info <- c(600 + 10 * PathFinderSpec$SkillLv, 5, 180, NA, 20, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -343,28 +310,28 @@ ComboAssaultBlast2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR", "BDR"), levels=ASkill)
 value <- c(FDRCalc(c(10, 100)), 100, 70 + PathFinderSpec$PSkillLv)
-info <- c(400 + 20 * PathFinderCore[[2]][1, 2], 15, 1800, 60, 120, T, F, F)
+info <- c(400 + 20 * GetCoreLv(PathFinderCore, "UltimateBlast"), 15, 1800, 60, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UltimateBlast <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("FDR", "IGR", "BDR"), levels=ASkill)
 value <- c(10, 20, 70 + PathFinderSpec$PSkillLv)
-info <- c(400 + 20 * PathFinderCore[[2]][2, 2], 5, 720, 270, 120, T, F, F)
+info <- c(400 + 20 * GetCoreLv(PathFinderCore, "RavenTempest"), 5, 720, 270, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RavenTempest <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(10, 70 + PathFinderSpec$PSkillLv, 20)
-info <- c(500 + 18 * PathFinderCore[[2]][3, 2], 4, 60, 510, 120, T, F, F)
+info <- c(500 + 18 * GetCoreLv(PathFinderCore, "ObisdianBarrier"), 4, 60, 510, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ObsidianBarrier <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(10, 70 + PathFinderSpec$PSkillLv, 20)
-info <- c(500 + 20 * PathFinderCore[[2]][4, 2], 3, 720, 360, 120, T, F, F) ## Logic
+info <- c(500 + 20 * GetCoreLv(PathFinderCore, "RelicUnbound"), 3, 720, 360, 120, T, F, F) ## Logic
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RelicUnboundDischarge <- rbind(data.frame(option, value), info)}
@@ -377,13 +344,13 @@ PathFinderATK <- Attack(list(CardinalDischarge=CardinalDischarge, CardinalBlast=
 ## PathFinder - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 15 * PathFinderCore[[2]][7, 2], 7, 600, 3030, 40, 105, F, T, F, F)
+info <- c(450 + 15 * GetCoreLv(PathFinderCore, "Evolve"), 7, 600, 3030, 40, 105, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Evolve <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("FDR", "IGR"), levels=SSkill)
-value <- c(3 * PathFinderCore[[1]][7, 2], ifelse(PathFinderCore[[1]][7, 2]>=40, 20, 0))
+value <- c(3 * GetCoreLv(PathFinderCore, "Raven"), ifelse(GetCoreLv(PathFinderCore, "Raven")>=40, 20, 0))
 info <- c(390, 1, 0, 1800, 220, 105, T, T, F, F) 
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -391,7 +358,7 @@ Raven <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * PathFinderCore[[2]][5, 2], 1, 720, 500, 0.5 * 89 + 0.72 + 0.01, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(PathFinderCore, "GuidedArrow"), 1, 720, 500, 0.5 * 89 + 0.72 + 0.01, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)}
@@ -409,7 +376,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, P
 BuffFinal <- data.frame(PathFinderBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, PathFinderSpec$CoolReduceP, PathFinderSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, PathFinderSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(PathFinderSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, PathFinderSpec$CoolReduceP, PathFinderSpec$CoolReduce)
@@ -440,15 +407,18 @@ PathFinderDealCycle <- t(rep(0, length(DealCycle)))
 colnames(PathFinderDealCycle) <- DealCycle
 PathFinderDealCycle <- data.frame(PathFinderDealCycle)
 
-
 PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure,
                             Period=120, CycleTime=240, SkipAddDelay=30) {
   SkipStructure$SkippedDelay <- SkipStructure$SkippedDelay + SkipAddDelay
-  BuffSummonedPrior <- c("AncientBowBooster", "CurseTolerance", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "EpicAdventure", 
+  BuffSummonedPrior <- c("AncientBowBooster", "CurseTolerance", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
                          "GuidedArrow", "MapleWarriors2", "CriticalReinforce", "SoulContractLink", "RavenTempestBuff", "Restraint4", "RelicEvolution")
-  
-  Times120 <- c(0, 0.5, 0, 0, 0, 0, 
+  Times120 <- c(0, 0.5, 0, 0, 0, 0, 0, 
                 2, 0.5, 1, 1, 1, 0.5, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
@@ -512,7 +482,6 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
       RTATKTimes2 <- floor((subset(BuffFinal, rownames(BuffFinal)=="RavenTempestBuff")$Duration * 1000 - DealCycle$RavenTempestBuff[nrow(DealCycle)] - 721) / 270) + 1
       if(RTATKTimes >= 0 & RTATKTimes2 > 0 & RTATKTimes2 - RTATKTimes > 0) {
         RavenDummy <- c((RTATKTimes+1):RTATKTimes2)
-        print(RavenDummy)
         for(i in 1:length(RavenDummy)) {
           DC2 <- DealCycle[nrow(DealCycle), ]
           DC2$Time <- max(subset(DealCycle, DealCycle$Skills=="RavenTempest")$Time) + 720 + 270 * (RavenDummy[i] - 1)
@@ -542,7 +511,6 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         RavenATKTimes2 <- floor((RavenPersist2 - 41801) / 1800) + 1
         if(RavenATKTimes >= 0 & RavenATKTimes2 > 0 & RavenATKTimes2 - RavenATKTimes > 0) {
           RavenDummy <- c((RavenATKTimes+1):RavenATKTimes2)
-          print(RavenDummy)
           for(i in 1:length(RavenDummy)) {
             DC2 <- DealCycle[nrow(DealCycle), ]
             DC2$Time <- max(subset(DealCycle, DealCycle$Skills=="EvolveSummoned")$Time) + 41800 + 1800 * (RavenDummy[i] - 1)
@@ -762,7 +730,6 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     BuffEndTime <- max(BuffEndTime)
     BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
     BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
-    print(BuffStartTime)
     while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
@@ -826,7 +793,6 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         DealCycle <- RelicShape(DealCycle, Shape)
         Shape <- "Discharge"
       }
-      print(c(DealCycle$Time[nrow(DealCycle)], DealCycle$Skills[nrow(DealCycle)]))
     }
     
     if(k != length(BuffList)) {
@@ -928,7 +894,6 @@ PathFinderAddATK <- function(DealCycle, ATKFinal, SummonedFinal, BarrierDuration
   return(DealCycle)
 }
 
-
 PathFinderDealCycle <- PathFinderCycle(PreDealCycle=PathFinderDealCycle, 
                                        ATKFinal=ATKFinal,
                                        BuffFinal=BuffFinal,
@@ -939,40 +904,49 @@ PathFinderDealCycle <- PathFinderCycle(PreDealCycle=PathFinderDealCycle,
 PathFinderDealCycle <- PathFinderAddATK(DealCycle=PathFinderDealCycle, 
                                         ATKFinal=ATKFinal,
                                         SummonedFinal=SummonedFinal,
-                                        BarrierDuration=10 + floor(PathFinderCore[[2]][3, 2])/5)
+                                        BarrierDuration=10 + floor(GetCoreLv(PathFinderCore, "ObisdianBarrier")/5))
 PathFinderDealCycleReduction <- DealCycleReduction(PathFinderDealCycle)
 
-DealCalc(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpec)
-PathFinderDealData <- data.frame(PathFinderDealCycle$Skills, DealCalc(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpec))
-colnames(PathFinderDealData) <- c("Skills", "Deal")
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="PathFinder") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  PathFinderSpecOpt1 <- Optimization1(PathFinderDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpec, PathFinderUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- PathFinderSpecOpt1[1, 1:3]
+} else {
+  PathFinderSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+PathFinderSpecOpt <- OptDataAdd(PathFinderSpec, PathFinderSpecOpt1, "Potential", PathFinderBase$CRROver, DemonAvenger=F)
 
-## Damage Optimization
-PathFinderSpecOpt1 <- Optimization1(PathFinderDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpec, PathFinderUnionRemained)
-PathFinderSpecOpt <- PathFinderSpec
-PathFinderSpecOpt$ATKP <- PathFinderSpecOpt$ATKP + PathFinderSpecOpt1$ATKP
-PathFinderSpecOpt$BDR <- PathFinderSpecOpt$BDR + PathFinderSpecOpt1$BDR
-PathFinderSpecOpt$IGR <- IGRCalc(c(PathFinderSpecOpt$IGR, PathFinderSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  PathFinderSpecOpt2 <- Optimization2(PathFinderDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt, PathFinderHyperStatBase, PathFinderBase$ChrLv, PathFinderBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- PathFinderSpecOpt2[1, ]
+} else {
+  PathFinderSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+PathFinderSpecOpt <- OptDataAdd(PathFinderSpecOpt, PathFinderSpecOpt2, "HyperStat", PathFinderBase$CRROver, DemonAvenger=F)
+BuffFinal <- CriReinAdj(PathFinderSpec, PathFinderSpecOpt, BuffFinal, GetCoreLv(PathFinderCore, "CriticalReinforce"))
 
-PathFinderSpecOpt2 <- Optimization2(PathFinderDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt, PathFinderHyperStatBase, PathFinderBase$ChrLv, PathFinderBase$CRROver)
-PathFinderFinalDPM <- DealCalc(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
-PathFinderFinalDPMwithMax <- DealCalcWithMaxDMR(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
+PathFinderFinalDPM <- DealCalc(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt, Collapse=F)
+PathFinderFinalDPMwithMax <- DealCalcWithMaxDMR(PathFinderDealCycle, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt)
 
-DPM12349$PathFinder[1] <- sum(na.omit(PathFinderFinalDPMwithMax)) / (max(PathFinderDealCycle$Time) / 60000)
-DPM12349$PathFinder[2] <- sum(na.omit(PathFinderFinalDPM)) / (max(PathFinderDealCycle$Time) / 60000) - sum(na.omit(PathFinderFinalDPMwithMax)) / (max(PathFinderDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "PathFinder", sum(na.omit(PathFinderFinalDPMwithMax)) / (max(PathFinderDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "PathFinder", sum(na.omit(PathFinderFinalDPM)) / (max(PathFinderDealCycle$Time) / 60000) - sum(na.omit(PathFinderFinalDPMwithMax)) / (max(PathFinderDealCycle$Time) / 60000))
 
 PathFinderDealRatio <- DealRatio(PathFinderDealCycle, PathFinderFinalDPMwithMax)
 
-PathFinderDealData <- data.frame(PathFinderDealCycle$Skills, PathFinderDealCycle$Time, PathFinderDealCycle$Restraint4, PathFinderFinalDPMwithMax, PathFinderFinalDPM-PathFinderFinalDPMwithMax)
-colnames(PathFinderDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(PathFinderDealData, PathFinderDealData$R4>0)
-
-PathFinderRR <- PathFinderDealData[58:462, ]
-DPM12349$PathFinder[3] <- sum((PathFinderRR$Deal))
-
-PathFinder40s <- PathFinderDealData[26:951, ]
-DPM12349$PathFinder[4] <- sum((PathFinder40s$Deal))
-
+PathFinderDealData <- data.frame(PathFinderDealCycle$Skills, PathFinderDealCycle$Time, PathFinderDealCycle$Restraint4, PathFinderFinalDPMwithMax)
+colnames(PathFinderDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "PathFinder", Deal_RR(PathFinderDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "PathFinder", Deal_40s(PathFinderDealData, F, StartTime=subset(PathFinderDealData, PathFinderDealData$Skills=="RelicUnboundDischargeStart")$Time[1]))
 
 
 ## Skip Add Delay 60ms
@@ -982,30 +956,25 @@ colnames(PathFinderDealCycle60) <- DealCycle
 PathFinderDealCycle60 <- data.frame(PathFinderDealCycle60)
 
 PathFinderDealCycle60 <- PathFinderCycle(PreDealCycle=PathFinderDealCycle60, 
-                                       ATKFinal=ATKFinal,
-                                       BuffFinal=BuffFinal,
-                                       SummonedFinal=SummonedFinal, 
-                                       Spec=PathFinderSpec,
-                                       SkipStructure=PathFinderSkipATK,
-                                       Period=120, CycleTime=240, SkipAddDelay=60)
+                                         ATKFinal=ATKFinal,
+                                         BuffFinal=BuffFinal,
+                                         SummonedFinal=SummonedFinal, 
+                                         Spec=PathFinderSpec,
+                                         SkipStructure=PathFinderSkipATK,
+                                         Period=120, CycleTime=240, SkipAddDelay=60)
 PathFinderDealCycle60 <- PathFinderAddATK(DealCycle=PathFinderDealCycle60, 
-                                        ATKFinal=ATKFinal,
-                                        SummonedFinal=SummonedFinal,
-                                        BarrierDuration=10 + floor(PathFinderCore[[2]][3, 2])/5)
+                                          ATKFinal=ATKFinal,
+                                          SummonedFinal=SummonedFinal,
+                                          BarrierDuration=10 + floor(GetCoreLv(PathFinderCore, "ObisdianBarrier")/5))
 PathFinderDealCycle60Reduction <- DealCycleReduction(PathFinderDealCycle60)
 
-PathFinder60ms <- DealCalc(PathFinderDealCycle60, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
-PathFinder60ms <- DealCalcWithMaxDMR(PathFinderDealCycle60, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt2)
-
+PathFinder60ms <- DealCalcWithMaxDMR(PathFinderDealCycle60, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt)
 PathFinder60msDPM <- sum(na.omit(PathFinder60ms)) / (max(PathFinderDealCycle60$Time) / 60000)
 
 PathFinderDealData60ms <- data.frame(PathFinderDealCycle60$Skills, PathFinderDealCycle60$Time, PathFinderDealCycle60$Restraint4, PathFinder60ms)
 colnames(PathFinderDealData60ms) <- c("Skills", "Time", "R4", "Deal")
 
-subset(PathFinderDealData60ms, PathFinderDealData60ms$R4>0)
+PathFinder60msRR <- Deal_RR(PathFinderDealData60ms)
+PathFinder60ms40s <- Deal_40s(PathFinderDealData60ms, F, StartTime=subset(PathFinderDealData60ms, PathFinderDealData60ms$Skills=="RelicUnboundDischargeStart")$Time[1])
 
-PathFinder60msRR <- PathFinderDealData60ms[58:457, ]
-PathFinder60msRR <- sum((PathFinder60msRR$Deal))
-
-PathFinder60ms40s <- PathFinderDealData60ms[26:942, ]
-PathFinder60ms40s <- sum((PathFinder60ms40s$Deal))
+print(data.frame(PathFinder60msDPM=PathFinder60msDPM, PathFinder60msRR=PathFinder60msRR, PathFinder60ms40s=PathFinder60ms40s))

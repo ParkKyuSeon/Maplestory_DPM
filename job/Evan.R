@@ -1,43 +1,46 @@
+## Option Setting
+EvanWeaponType <- "Staff"
+EvanDealCycleType <- "DoE-DB-BoW"  ## "DoE-DB-BoW", "SoT-DoE-DB"
+
 ## Evan - Data
 ## Evan - Core
-EvanCore <- MatrixSet(PasSkills=c("CircleofMana", "DragonSparking", "MagicFragment", 
-                                  "CircleofWind_SwiftofWind_BreathofWind", "CircleofThunder_SwiftofThunder_DiveofThunder", "CircleofEarth_BrethofEarth_DiveofEarth", 
-                                  "DragonBreath_BreathReturn", "DragonSwift", "SummonOnixDragon"), 
-                      PasLvs=c(50, 50, 50, 50, 50, 50, 50, 50, 50), 
-                      PasMP=c(10, 10, 0, 10, 10, 10, 10, 0, 0), 
-                      ActSkills=c("ElemantalBlast", "DragonBreak", "JodiacRay", "SpiralofMana",
-                                  CommonV("Wizard", "Heroes")[c(1, 2, 4, 5)]), 
-                      ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
-                      ActMP=c(5, 5, 5, 5, 5, 0, 5, 0), 
-                      BlinkLv=1, 
-                      BlinkMP=5, 
-                      UsefulSkills=c("SharpEyes", "CombatOrders"), 
+EvanCoreBase <- CoreBuilder(ActSkills=c("ElementalBlast", "DragonBreak", "JodiacRay", "SpiralofMana",
+                                        CommonV("Wizard", "Heroes")[c(1, 2, 4, 5)]), 
+                            ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
+                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            VPassiveList=EvanVPassive, 
+                            VPassivePrior=EvanVPrior, 
+                            SelfBind=F)
+
+EvanCore <- MatrixSet(PasSkills=EvanCoreBase$PasSkills$Skills, 
+                      PasLvs=EvanCoreBase$PasSkills$Lv, 
+                      PasMP=EvanCoreBase$PasSkills$MP, 
+                      ActSkills=EvanCoreBase$ActSkills$Skills, 
+                      ActLvs=EvanCoreBase$ActSkills$Lv, 
+                      ActMP=EvanCoreBase$ActSkills$MP, 
+                      UsefulSkills=EvanCoreBase$UsefulSkills, 
                       UsefulLvs=20, 
                       UsefulMP=0, 
-                      SpecSet=SpecDefault, 
-                      SelfBind=F)
+                      SpecSet=get(DPMCalcOption$SpecSet), 
+                      SpecialCore=EvanCoreBase$SpecialCoreUse)
 
 
 ## Evan - Basic Info
 EvanBase <- JobBase(ChrInfo=ChrInfo, 
-                    MobInfo=MobDefault,
-                    SpecSet=SpecDefault, 
+                    MobInfo=get(DPMCalcOption$MobSet),
+                    SpecSet=get(DPMCalcOption$SpecSet), 
                     Job="Evan",
                     CoreData=EvanCore, 
                     BuffDurationNeeded=0, 
-                    AbilList=c("BDR", "DisorderBDR"), 
-                    LinkList=c("Xenon", "DemonAvenger", "Evan", "CygnusKnights"), 
-                    MonsterLife=MLTypeI21, 
-                    Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", SpecDefault$WeaponType)[, 1:16],
-                    WeaponType=SpecDefault$WeaponType, 
+                    AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Evan"), 
+                    LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Evan"), 
+                    MonsterLife=get(FindJob(MonsterLifePreSet, "Evan")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                    Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, EvanWeaponType, get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                    WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
                     SubWeapon=SubWeapon[rownames(SubWeapon)=="EvanDocument", ], 
                     Emblem=Emblem[rownames(Emblem)=="Heroes", ], 
-                    CoolReduceHat=F)
-
-
-## Option Setting
-EvanWeaponType <- "Staff"
-EvanDealCycleType <- "DoE-DB-BoW"  ## "DoE-DB-BoW", "SoT-DoE-DB"
+                    CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Evan")))
 
 
 ## Evan - Passive
@@ -94,11 +97,11 @@ value <- c(20 + EvanBase$PSkillLv)
 HighDragonPotential <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(5 + EvanCore[[2]][4, 2])
+value <- c(5 + GetCoreLv(EvanCore, "SpiralofMana"))
 SpiralofManaPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(EvanCore[[2]][9, 2])
+value <- c(GetCoreLv(EvanCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 EvanPassive <- Passive(list(DragonEquip, InheritedWill, LinkedMagic, HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential, MagicMastery, DragonFury, HighDragonPotential, 
@@ -185,14 +188,14 @@ MagicBooster <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ImmuneIgnore"), levels=BSkill)
 value <- c(10)
-info <- c(180, 0, 630, T, F, F, T)
+info <- c(180, 0, 0, T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ElementalReset <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(80 + 2 * EvanBase$SkillLv)
-info <- c(180, 0, 600, T, F, F, T)
+info <- c(180, 0, 0, T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofOnix <- rbind(data.frame(option, value), info)
@@ -232,43 +235,41 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HeroesOath <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * EvanCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * EvanCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(EvanCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(8 + floor(EvanCore[[2]][5, 2]/10))
+value <- c(8 + floor(GetCoreLv(EvanCore, "OverloadMana")/10))
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverloadMana <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * EvanCore[[2]][7, 2]) * MapleSoldier[1, 2]) * EvanBase$MainStatP), 5 + floor(EvanCore[[2]][7, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(EvanCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * EvanBase$MainStatP), 5 + floor(GetCoreLv(EvanCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-EvanBuff <- Buff(list(MagicFragmentStack=MagicFragmentStack, Communion=Communion, ElementalBlastBuff=ElementalBlastBuff, ElementalBlastFDR=ElementalBlastFDR, MirSkill=MirSkill, FusionSkill=FusionSkill, Return=Return, 
-                      JodiacRayStack=JodiacRayStack, JodiacRayRemained=JodiacRayRemained, SpiralofManaRedBuff=SpiralofManaRedBuff,
-                      MagicBooster=MagicBooster, ElementalReset=ElementalReset, BlessofOnix=BlessofOnix, MapleSoldier=MapleSoldier, 
-                      SwiftReturnDebuff=SwiftReturnDebuff, DiveReturnBuff=DiveReturnBuff, DarkFogBuff=DarkFogBuff, 
-                      HeroesOath=HeroesOath, 
-                      UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                      OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, 
-                      Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : MagicBooster(1020ms), UsefulSharpEyes, UsefulCombatOrders
+EvanBuff <- list(MagicFragmentStack=MagicFragmentStack, Communion=Communion, ElementalBlastBuff=ElementalBlastBuff, ElementalBlastFDR=ElementalBlastFDR, MirSkill=MirSkill, FusionSkill=FusionSkill, Return=Return, 
+                 JodiacRayStack=JodiacRayStack, JodiacRayRemained=JodiacRayRemained, SpiralofManaRedBuff=SpiralofManaRedBuff,
+                 MagicBooster=MagicBooster, ElementalReset=ElementalReset, BlessofOnix=BlessofOnix, MapleSoldier=MapleSoldier, 
+                 SwiftReturnDebuff=SwiftReturnDebuff, DiveReturnBuff=DiveReturnBuff, DarkFogBuff=DarkFogBuff, 
+                 HeroesOath=HeroesOath, 
+                 UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                 OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, 
+                 Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : MagicBooster(1020ms), ElementalReset(630ms), BlessofOnix(600ms), UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  EvanBuff[[length(EvanBuff)+1]] <- UsefulAdvancedBless
+  names(EvanBuff)[[length(EvanBuff)]] <- "UsefulAdvancedBless"
+}
+EvanBuff <- Buff(EvanBuff)
 EvanAllTimeBuff <- AllTimeBuff(EvanBuff)
 
 
@@ -276,9 +277,9 @@ EvanAllTimeBuff <- AllTimeBuff(EvanBuff)
 EvanSpec <- JobSpec(JobBase=EvanBase, 
                     Passive=EvanPassive, 
                     AllTimeBuff=EvanAllTimeBuff, 
-                    MobInfo=MobDefault, 
-                    SpecSet=SpecDefault, 
-                    WeaponName="Staff", 
+                    MobInfo=get(DPMCalcOption$MobSet), 
+                    SpecSet=get(DPMCalcOption$SpecSet), 
+                    WeaponName=EvanWeaponType, 
                     UnionStance=0,
                     JobConstant=1.2)
 
@@ -289,137 +290,91 @@ EvanSpec <- EvanSpec$Spec
 
 
 ## Evan - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * EvanCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EvanCore[[2]][8, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EvanCore[[2]][8, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EvanCore[[2]][8, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EvanCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * EvanCore[[2]][8, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(EvanCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Evan - Attacks
 ## Hyper : Dragon Swift - CoolTime Reduce / Drgon Dive - CoolTime Reduce / Dragon Dive - Earth Enhance / Dragon Breath - CoolTime Reduce / Dragon Breath - Wind Bonus Chance or Dragon Swift - Thunder Bonus ATK (Vary By DealCycle)
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][1, 2]>=40, 20, 0), 2 * EvanCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofMana")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofMana"))
 info <- c(290 + EvanSpec$SkillLv, 4, 240, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CircleofMana1 <- rbind(data.frame(option, value), info) ## Cancel Delay : 240ms
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][1, 2]>=40, 20, 0), 2 * EvanCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofMana")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofMana"))
 info <- c(330 + EvanSpec$SkillLv, 4, 510, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CircleofMana2 <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][2, 2]>=40, 20, 0), 3 * EvanCore[[1]][2, 2])
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(EvanCore, "DragonSparking")>=40, 20, 0), EvanBase$MonsterLife$FinalATKDMR, 3 * GetCoreLv(EvanCore, "DragonSparking"))
 info <- c(150, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedDragonSparking <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][3, 2]>=40, 20, 0), 2 * EvanCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "MagicFragment")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "MagicFragment"))
 info <- c(110 + 2 * EvanSpec$SkillLv, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicFragment1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][3, 2]>=40, 20, 0), 2 * EvanCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "MagicFragment")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "MagicFragment"))
 info <- c(110 + 2 * EvanSpec$SkillLv + (100 + EvanSpec$SkillLv) * 1, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicFragment2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][3, 2]>=40, 20, 0), 2 * EvanCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "MagicFragment")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "MagicFragment"))
 info <- c(110 + 2 * EvanSpec$SkillLv + (100 + EvanSpec$SkillLv) * 2, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicFragment3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][3, 2]>=40, 20, 0), 2 * EvanCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "MagicFragment")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "MagicFragment"))
 info <- c(110 + 2 * EvanSpec$SkillLv + (100 + EvanSpec$SkillLv) * 3, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagicFragment4 <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(EvanCore, "DarkFog")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "DarkFog"))
 info <- c(400 + 2 * EvanSpec$SkillLv, 6, 0, NA, 40, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DarkFog <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][4, 2]>=40, 20, 0), 2 * EvanCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind"))
 info <- c(108 + 212 + EvanSpec$SkillLv, 5, 870, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CircleofWind <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][5, 2]>=40, 20, 0), 2 * EvanCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofThunder_SwiftofThunder_DiveofThunder")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofThunder_SwiftofThunder_DiveofThunder"))
 info <- c(170 + 150 + EvanSpec$SkillLv, 5, 870, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CircleofThunder <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][6, 2]>=40, 20, 0), 2 * EvanCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofEarth_BrethofEarth_DiveofEarth")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofEarth_BrethofEarth_DiveofEarth"))
 info <- c(320 + EvanSpec$SkillLv, 5, 870, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -447,70 +402,70 @@ colnames(info) <- c("option", "value")
 CircleofEarthCancel <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][8, 2]>=40, 20, 0), 2 * EvanCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "DragonSwift")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "DragonSwift"))
 info <- c(95 + 320 + 2 * EvanSpec$SkillLv, 4, 0, 540, Cooldown(8, T, 25 + EvanSpec$CoolReduceP, EvanSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DragonSwift <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=ASkill)
-value <- c()
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(EvanCore, "DragonDive")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "DragonDive"))
 info <- c(130 + 195 + EvanSpec$SkillLv, 3, 0, 390, Cooldown(8, T, 25 + EvanSpec$CoolReduceP, EvanSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DragonDive <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][7, 2]>=40, 20, 0), 2 * EvanCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "DragonBreath_BreathReturn")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "DragonBreath_BreathReturn"))
 info <- c(240 + EvanSpec$SkillLv, 5, 0, 390, Cooldown(10, T, 25 + EvanSpec$CoolReduceP, EvanSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DragonBreath <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][7, 2]>=40, 20, 0), 2 * EvanCore[[1]][7, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "DragonBreath_BreathReturn")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "DragonBreath_BreathReturn"))
 info <- c(150 + EvanSpec$SkillLv, 1, 0, 450, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathReturn <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][4, 2]>=40, 20, 0), 2 * EvanCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind"))
 info <- c((55 + 160 + EvanSpec$SkillLv) * 0.65, 2 * 3, 0, 480, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SwiftofWind <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][5, 2]>=40, 20, 0), 2 * EvanCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofThunder_SwiftofThunder_DiveofThunder")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofThunder_SwiftofThunder_DiveofThunder"))
 info <- c(150 + 300 + EvanSpec$SkillLv, 6 + ifelse(EvanDealCycleType=="SoT-DoE-DB", 1, 0), 0, 390, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SwiftofThunder <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][4, 2]>=40, 20, 0), 2 * EvanCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind"))
 info <- c(215 + EvanSpec$SkillLv, 5, 0, 390, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathofWind <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][4, 2]>=40, 20, 0), 2 * EvanCore[[1]][4, 2])
-info <- c(215 + EvanSpec$SkillLv + 65 + EvanSpec$SkillLv + 85, 5, 0, NA, NA, NA, NA, F)
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofWind_SwiftofWind_BreathofWind"))
+info <- c(215 + EvanSpec$SkillLv + 65 + EvanSpec$SkillLv + ifelse(EvanDealCycleType=="SoT-DoE-DB", 0, 85), 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathofWindBonus <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][6, 2]>=40, 20, 0), 2 * EvanCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofEarth_BrethofEarth_DiveofEarth")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofEarth_BrethofEarth_DiveofEarth"))
 info <- c(280 + EvanSpec$SkillLv, 5, 0, 450, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreathofEarth <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(EvanCore[[1]][6, 2]>=40, 20, 0), 2 * EvanCore[[1]][6, 2])
+value <- c(20, ifelse(GetCoreLv(EvanCore, "CircleofEarth_BrethofEarth_DiveofEarth")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofEarth_BrethofEarth_DiveofEarth"))
 info <- c(190 + EvanSpec$SkillLv + 420 + 2 * EvanSpec$SkillLv, 6, 0, 480, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -518,49 +473,49 @@ DiveofEarth <- rbind(data.frame(option, value), info) ## 0ms, 900ms, 1380ms, 186
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(750 + 30 * EvanCore[[2]][1, 2], 6, 780, NA, 60, T, F, F)
+info <- c(750 + 30 * GetCoreLv(EvanCore, "ElementalBlast"), 6, 780, NA, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ElementalBlast <- rbind(data.frame(option, value), info) ## ATKs : 0ms, 660ms, 1230ms, 2070ms
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(450 + 18 * EvanCore[[2]][2, 2], 7, 0, 360, 20, T, F, F)
+info <- c(450 + 18 * GetCoreLv(EvanCore, "DragonBreak"), 7, 0, 360, 20, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DragonBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * EvanCore[[2]][2, 2], 7, 0, 240, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(EvanCore, "DragonBreak"), 7, 0, 240, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ImperialBreath <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(150 + 6 * EvanCore[[2]][2, 2], 3, 0, 510, NA, NA, NA, F)
+info <- c(150 + 6 * GetCoreLv(EvanCore, "DragonBreak"), 3, 0, 510, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BreakReturn <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(400 + 16 * EvanCore[[2]][3, 2], 6, 780, 180, 180, T, F, F)
+info <- c(400 + 16 * GetCoreLv(EvanCore, "JodiacRay"), 6, 780, 180, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JodiacRay <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][1, 2]>=40, 20, 0), 2 * EvanCore[[1]][1, 2])
-info <- c(235 + EvanCore[[2]][4, 2], 6, 360, 450, 5 - 0.05 * EvanCore[[2]][4, 2], T, F, F)
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofMana")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofMana"))
+info <- c(235 + GetCoreLv(EvanCore, "SpiralofMana"), 6, 360, 450, 5 - 0.05 * GetCoreLv(EvanCore, "SpiralofMana"), T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpiralofMana <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(EvanCore[[1]][1, 2]>=40, 20, 0), 2 * EvanCore[[1]][1, 2])
-info <- c(235 + EvanCore[[2]][4, 2], 3, 0, NA, NA, NA, NA, F)
+value <- c(ifelse(GetCoreLv(EvanCore, "CircleofMana")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "CircleofMana"))
+info <- c(235 + GetCoreLv(EvanCore, "SpiralofMana"), 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpiralofManaRed <- rbind(data.frame(option, value), info)
@@ -585,7 +540,7 @@ EvanATK <- Attack(list(CircleofMana1=CircleofMana1, CircleofMana2=CircleofMana2,
 
 ## Evan - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(KinesisCore[[1]][9, 2]>=40, 20, 0), 2 * KinesisCore[[1]][9, 2])
+value <- c(ifelse(GetCoreLv(EvanCore, "SummonOnixDragon")>=40, 20, 0), 2 * GetCoreLv(EvanCore, "SummonOnixDragon"))
 info <- c(550, 2, 900, 3030, 40, 80, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -604,27 +559,26 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, E
 BuffFinal <- data.frame(EvanBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, EvanSpec$CoolReduceP, EvanSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, EvanSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(EvanSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, EvanSpec$CoolReduceP, EvanSpec$CoolReduce)
 SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$SummonedDurationAvailable==T, SummonedFinal$Duration * EvanSpec$SummonedDuration / 100, 0)
 
 
-DealCycle <- c("Skills", "Time", rownames(EvanBuff))
-EvanDealCycle <- t(rep(0, length(DealCycle)))
-colnames(EvanDealCycle) <- DealCycle
-EvanDealCycle <- data.frame(EvanDealCycle)
-
 EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=c(180), CycleTime=c(360), DealCycleType=c("DoE-DB-BoW", "SoT-DoE-DB"), ActiveCoreData=EvanCore[[2]]) {
-  BuffSummonedPrior <- c("MagicBooster", "ElementalReset", "BlessofOnix", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath", 
+  BuffSummonedPrior <- c("MagicBooster", "ElementalReset", "BlessofOnix", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
                          "SummonOnixDragon", "MapleWarriors2")
-  
-  Times180 <- c(0, 1, 1, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
                 2, 1)
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime/Period)
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -1740,116 +1694,162 @@ EvanAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   return(DealCycle)
 }
 
-EvanDealCycle <- EvanCycle(EvanDealCycle, 
-                           ATKFinal, 
-                           BuffFinal, 
-                           SummonedFinal,
-                           EvanSpec, 
-                           180, 360, "DoE-DB-BoW", EvanCore[[2]])
-EvanDealCycle <- DealCycleFinal(EvanDealCycle)
-EvanDealCycle <- EvanAddATK(EvanDealCycle, 
+
+## DoE-DB-BoW Cycle
+if(EvanDealCycleType=="DoE-DB-BoW") {
+  ## DoE(4) - DB - BoW
+  DealCycle <- c("Skills", "Time", rownames(EvanBuff))
+  EvanDealCycle <- t(rep(0, length(DealCycle)))
+  colnames(EvanDealCycle) <- DealCycle
+  EvanDealCycle <- data.frame(EvanDealCycle)
+  
+  EvanDealCycle <- EvanCycle(EvanDealCycle, 
                              ATKFinal, 
                              BuffFinal, 
-                             SummonedFinal, 
-                             Spec, 
-                             "DoE-DB-BoW", 4, 3, F)
-EvanDealCycleReduction <- DealCycleReduction(EvanDealCycle, c("ElementalBlastFDR"))
+                             SummonedFinal,
+                             EvanSpec, 
+                             180, 360, "DoE-DB-BoW", EvanCore[[2]])
+  EvanDealCycle <- DealCycleFinal(EvanDealCycle)
+  EvanDealCycle <- EvanAddATK(EvanDealCycle, 
+                              ATKFinal, 
+                              BuffFinal, 
+                              SummonedFinal, 
+                              Spec, 
+                              "DoE-DB-BoW", 4, 3, F)
+  EvanDealCycleReduction <- DealCycleReduction(EvanDealCycle, c("ElementalBlastFDR"))
+  
+  Idx1 <- c() ; Idx2 <- c()
+  for(i in 1:length(PotentialOpt)) {
+    if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+      Idx1 <- i
+    }
+  }
+  for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+    if(rownames(PotentialOpt[[Idx1]])[i]=="Evan") {
+      Idx2 <- i
+    }
+  }
+  if(DPMCalcOption$Optimization==T) {
+    EvanSpecOpt1 <- EvanOptimization1(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpec, EvanUnionRemained, 
+                                      NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+    PotentialOpt[[Idx1]][Idx2, ] <- EvanSpecOpt1[1, 1:3]
+  } else {
+    EvanSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+  }
+  EvanSpecOpt <- OptDataAdd(EvanSpec, EvanSpecOpt1, "Potential", EvanBase$CRROver, DemonAvenger=F)
+  
+  if(DPMCalcOption$Optimization==T) {
+    EvanSpecOpt2 <- EvanOptimization2(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, EvanHyperStatBase, EvanBase$ChrLv, EvanBase$CRROver, 
+                                      NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+    HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- EvanSpecOpt2[1, ]
+  } else {
+    EvanSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+  }
+  EvanSpecOpt <- OptDataAdd(EvanSpecOpt, EvanSpecOpt2, "HyperStat", EvanBase$CRROver, DemonAvenger=F)
+  
+  EvanFinalDPMwithMax <- EvanBoW(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
+                                 NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+  
+  set(get(DPMCalcOption$DataName), as.integer(1), "Evan", sum(na.omit(EvanFinalDPMwithMax)) / (max(EvanDealCycle$Time) / 60000))
 
-EvanBoW(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpec)
-
-## Damage Optimization
-EvanSpecOpt1 <- EvanOptimization1(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpec, EvanUnionRemained)
-EvanSpecOpt <- EvanSpec
-EvanSpecOpt$ATKP <- EvanSpecOpt$ATKP + EvanSpecOpt1$ATKP
-EvanSpecOpt$BDR <- EvanSpecOpt$BDR + EvanSpecOpt1$BDR
-EvanSpecOpt$IGR <- IGRCalc(c(EvanSpecOpt$IGR, EvanSpecOpt1$IGR))
-
-EvanSpecOpt2 <- EvanOptimization2(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, EvanHyperStatBase, EvanBase$ChrLv, EvanBase$CRROver)
-EvanFinalDPMwithMax <- EvanBoW(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2)
-DPM12349$Evan[1] <- sum(na.omit(EvanFinalDPMwithMax)) / (max(EvanDealCycle$Time) / 60000)
-
-EvanDealData <- data.frame(EvanDealCycle$Skills, EvanDealCycle$Time, EvanDealCycle$Restraint4, EvanDealCalc(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2))
-colnames(EvanDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(EvanDealData, EvanDealData$R4>0)
-
-EvanRR <- EvanDealData[55:357, ]
-DPM12349$Evan[3] <- sum((EvanRR$Deal))
-
-Evan40s <- EvanDealData[55:690, ]
-DPM12349$Evan[4] <- sum((Evan40s$Deal))
-
-EvanDealCycle2 <- EvanDealCycle
-EvanDealCycle2[EvanDealCycle2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
-EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycle2), 
-                                list(EvanDealData$Deal, EvanDealCalc(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2)), 
-                                rep(max(EvanDealCycle$Time), 2), c(0.6524, 0.3476))
-
-
-## DoE(3) - DB - BoW
-DealCycle <- c("Skills", "Time", rownames(EvanBuff))
-EvanDealCycle2 <- t(rep(0, length(DealCycle)))
-colnames(EvanDealCycle2) <- DealCycle
-EvanDealCycle2 <- data.frame(EvanDealCycle2)
-
-EvanDealCycle2 <- EvanCycle(EvanDealCycle2, 
-                            ATKFinal, 
-                            BuffFinal, 
-                            SummonedFinal,
-                            EvanSpec, 
-                            180, 360, "DoE-DB-BoW", EvanCore[[2]])
-EvanDealCycle2 <- DealCycleFinal(EvanDealCycle2)
-EvanDealCycle2 <- EvanAddATK(EvanDealCycle2, 
-                             ATKFinal, 
-                             BuffFinal, 
-                             SummonedFinal, 
-                             Spec, 
-                             "DoE-DB-BoW", 3, 3, F)
-
-EvanDoE3HitsDPM <- EvanBoW(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2)
-EvanDoE3HitsDPM <- sum(na.omit(EvanDoE3HitsDPM)) / (max(EvanDealCycle2$Time) / 60000)
-
-EvanDealData2 <- data.frame(EvanDealCycle2$Skills, EvanDealCycle2$Time, EvanDealCycle2$Restraint4, EvanDealCalc(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2))
-colnames(EvanDealData2) <- c("Skills", "Time", "R4", "Deal")
-subset(EvanDealData2, EvanDealData2$R4>0)
-
-EvanDoE3HitsRR <- EvanDealData2[55:345, ]
-EvanDoE3HitsRR <- sum((EvanDoE3HitsRR$Deal))
-
-EvanDoE3Hits40s <- EvanDealData2[55:683, ]
-EvanDoE3Hits40s <- sum((EvanDoE3Hits40s$Deal))
-
-
-## SoT - DoE - DB
-DealCycle <- c("Skills", "Time", rownames(EvanBuff))
-EvanDealCycle3 <- t(rep(0, length(DealCycle)))
-colnames(EvanDealCycle3) <- DealCycle
-EvanDealCycle3 <- data.frame(EvanDealCycle3)
-
-EvanDealCycle3 <- EvanCycle(EvanDealCycle3, 
-                            ATKFinal, 
-                            BuffFinal, 
-                            SummonedFinal,
-                            EvanSpec, 
-                            180, 360, "SoT-DoE-DB", EvanCore[[2]])
-EvanDealCycle3 <- DealCycleFinal(EvanDealCycle3)
-EvanDealCycle3 <- EvanAddATK(EvanDealCycle3, 
-                             ATKFinal, 
-                             BuffFinal, 
-                             SummonedFinal, 
-                             Spec, 
-                             "SoT-DoE-DB", 4, 4, F)
-
-EvanSoT4HitsDPM <- EvanBoW(EvanDealCycle3, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2)
-EvanSoT4HitsDPM <- sum(na.omit(EvanSoT4HitsDPM)) / (max(EvanDealCycle3$Time) / 60000)
-
-EvanDealData3 <- data.frame(EvanDealCycle3$Skills, EvanDealCycle3$Time, EvanDealCycle3$Restraint4, EvanDealCalc(EvanDealCycle3, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt2))
-colnames(EvanDealData3) <- c("Skills", "Time", "R4", "Deal")
-subset(EvanDealData3, EvanDealData3$R4>0)
-
-EvanSoT4HitsRR <- EvanDealData3[54:345, ]
-EvanSoT4HitsRR <- sum((EvanSoT4HitsRR$Deal))
-
-EvanSoT4Hits40s <- EvanDealData3[54:725, ]
-EvanSoT4Hits40s <- sum((EvanSoT4Hits40s$Deal))
-
-print(c(EvanDoE3HitsDPM, EvanDoE3HitsRR, EvanDoE3Hits40s, EvanSoT4HitsDPM, EvanSoT4HitsRR, EvanSoT4Hits40s))
+  EvanDealData <- data.frame(EvanDealCycle$Skills, EvanDealCycle$Time, EvanDealCycle$Restraint4, 
+                             DealCalc(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+                                      NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR")))
+  colnames(EvanDealData) <- c("Skills", "Time", "R4", "Deal")
+  
+  EvanDealCycle2 <- EvanDealCycle
+  EvanDealCycle2[EvanDealCycle2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
+  EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycle2), 
+                                  list(EvanDealData$Deal, DealCalc(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+                                                                   NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))), 
+                                  rep(max(EvanDealCycle$Time), 2), c(0.6518, 0.3482))
+  
+  set(get(DPMCalcOption$DataName), as.integer(3), "Evan", Deal_RR(EvanDealData))
+  set(get(DPMCalcOption$DataName), as.integer(4), "Evan", Deal_40s(EvanDealData))
+  
+  
+  ## DoE(3) - DB - BoW
+  DealCycle <- c("Skills", "Time", rownames(EvanBuff))
+  EvanDealCycle2 <- t(rep(0, length(DealCycle)))
+  colnames(EvanDealCycle2) <- DealCycle
+  EvanDealCycle2 <- data.frame(EvanDealCycle2)
+  
+  EvanDealCycle2 <- EvanCycle(EvanDealCycle2, 
+                              ATKFinal, 
+                              BuffFinal, 
+                              SummonedFinal,
+                              EvanSpec, 
+                              180, 360, "DoE-DB-BoW", EvanCore[[2]])
+  EvanDealCycle2 <- DealCycleFinal(EvanDealCycle2)
+  EvanDealCycle2 <- EvanAddATK(EvanDealCycle2, 
+                               ATKFinal, 
+                               BuffFinal, 
+                               SummonedFinal, 
+                               Spec, 
+                               "DoE-DB-BoW", 3, 3, F)
+  
+  EvanDoE3HitsDPM <- EvanBoW(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
+                             NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+  EvanDoE3HitsDPM <- sum(na.omit(EvanDoE3HitsDPM)) / (max(EvanDealCycle2$Time) / 60000)
+  
+  EvanDealData2 <- data.frame(EvanDealCycle2$Skills, EvanDealCycle2$Time, EvanDealCycle2$Restraint4, 
+                              DealCalc(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+                                       NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR")))
+  colnames(EvanDealData2) <- c("Skills", "Time", "R4", "Deal")
+  
+  EvanDoE3HitsRR <- Deal_RR(EvanDealData2)
+  EvanDoE3Hits40s <- Deal_40s(EvanDealData2)
+  
+  print(data.frame(EvanDoE3HitsDPM=EvanDoE3HitsDPM, EvanDoE3HitsRR=EvanDoE3HitsRR, EvanDoE3Hits40s=EvanDoE3Hits40s))
+} else {
+  Idx1 <- c() ; Idx2 <- c()
+  for(i in 1:length(PotentialOpt)) {
+    if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+      Idx1 <- i
+    }
+  }
+  for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+    if(rownames(PotentialOpt[[Idx1]])[i]=="Evan") {
+      Idx2 <- i
+    }
+  }
+  EvanSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+  EvanSpecOpt <- OptDataAdd(EvanSpec, EvanSpecOpt1, "Potential", EvanBase$CRROver, DemonAvenger=F)
+  
+  EvanSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+  EvanSpecOpt <- OptDataAdd(EvanSpecOpt, EvanSpecOpt2, "HyperStat", EvanBase$CRROver, DemonAvenger=F)
+  
+  ## SoT - DoE - DB
+  DealCycle <- c("Skills", "Time", rownames(EvanBuff))
+  EvanDealCycle3 <- t(rep(0, length(DealCycle)))
+  colnames(EvanDealCycle3) <- DealCycle
+  EvanDealCycle3 <- data.frame(EvanDealCycle3)
+  
+  EvanDealCycle3 <- EvanCycle(EvanDealCycle3, 
+                              ATKFinal, 
+                              BuffFinal, 
+                              SummonedFinal,
+                              EvanSpec, 
+                              180, 360, "SoT-DoE-DB", EvanCore[[2]])
+  EvanDealCycle3 <- DealCycleFinal(EvanDealCycle3)
+  EvanDealCycle3 <- EvanAddATK(EvanDealCycle3, 
+                               ATKFinal, 
+                               BuffFinal, 
+                               SummonedFinal, 
+                               Spec, 
+                               "SoT-DoE-DB", 4, 4, F)
+  
+  EvanSoT4HitsDPM <- EvanBoW(EvanDealCycle3, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
+                             NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+  EvanSoT4HitsDPM <- sum(na.omit(EvanSoT4HitsDPM)) / (max(EvanDealCycle3$Time) / 60000)
+  
+  EvanDealData3 <- data.frame(EvanDealCycle3$Skills, EvanDealCycle3$Time, EvanDealCycle3$Restraint4, 
+                              DealCalc(EvanDealCycle3, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+                                       NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR")))
+  colnames(EvanDealData3) <- c("Skills", "Time", "R4", "Deal")
+  
+  EvanSoT4HitsRR <- Deal_RR(EvanDealData3)
+  EvanSoT4Hits40s <- Deal_40s(EvanDealData3)
+  
+  print(data.frame(EvanSoT4HitsDPM=EvanSoT4HitsDPM, EvanSoT4HitsRR=EvanSoT4HitsRR, EvanSoT4Hits40s=EvanSoT4Hits40s))
+}

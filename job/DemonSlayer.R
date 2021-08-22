@@ -1,35 +1,41 @@
 ## DemonSlayer - VMatrix
-DemonSlayerCore <- MatrixSet(PasSkills=c("DemonImpact", "DemonSlash", "Cerberus", "DevilCry", "Metamorphosis", "DemonExplosion"), 
-                             PasLvs=c(50, 50, 50, 50, 50, 50), 
-                             PasMP=c(10, 10, 10, 10, 10, 10), 
-                             ActSkills=c("DemonAwakening", "Jormungand", "Orthros", "DemonBane",
-                                         CommonV("Warrior", "Demon")), 
-                             ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                             ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 0), 
-                             BlinkLv=1, 
-                             BlinkMP=5, 
-                             UsefulSkills=c("CombatOrders", "SharpEyes"), 
+DemonSlayerCoreBase <- CoreBuilder(ActSkills=c("DemonAwakening", "Jormungand", "Orthros", "DemonBane",
+                                               CommonV("Warrior", "Demon")), 
+                                   ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                                   UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                   SpecSet=get(DPMCalcOption$SpecSet), 
+                                   VPassiveList=DemonSlayerVPassive, 
+                                   VPassivePrior=DemonSlayerVPrior, 
+                                   SelfBind=T)
+
+DemonSlayerCore <- MatrixSet(PasSkills=DemonSlayerCoreBase$PasSkills$Skills, 
+                             PasLvs=DemonSlayerCoreBase$PasSkills$Lv, 
+                             PasMP=DemonSlayerCoreBase$PasSkills$MP, 
+                             ActSkills=DemonSlayerCoreBase$ActSkills$Skills, 
+                             ActLvs=DemonSlayerCoreBase$ActSkills$Lv, 
+                             ActMP=DemonSlayerCoreBase$ActSkills$MP, 
+                             UsefulSkills=DemonSlayerCoreBase$UsefulSkills, 
                              UsefulLvs=20, 
                              UsefulMP=0, 
-                             SpecSet=SpecDefault, 
-                             SelfBind=T)
+                             SpecSet=get(DPMCalcOption$SpecSet), 
+                             SpecialCore=DemonSlayerCoreBase$SpecialCoreUse)
 
 
 ## DemonSlayer - Basic Info
 DemonSlayerBase <- JobBase(ChrInfo=ChrInfo, 
-                           MobInfo=MobDefault,
-                           SpecSet=SpecDefault, 
+                           MobInfo=get(DPMCalcOption$MobSet),
+                           SpecSet=get(DPMCalcOption$SpecSet), 
                            Job="DemonSlayer",
                            CoreData=DemonSlayerCore, 
                            BuffDurationNeeded=0, 
-                           AbilList=c("BDR", "DisorderBDR"), 
-                           LinkList=c("Xenon", "DemonAvenger", "CygnusKnights", "Zero"), 
-                           MonsterLife=MLTypeS21, 
-                           Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Hammer", SpecDefault$WeaponType)[, 1:16],
-                           WeaponType=SpecDefault$WeaponType, 
-                           SubWeapon=SubWeapon[31, ], 
-                           Emblem=Emblem[5, ], 
-                           CoolReduceHat=F)
+                           AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "DemonSlayer"), 
+                           LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "DemonSlayer"), 
+                           MonsterLife=get(FindJob(MonsterLifePreSet, "DemonSlayer")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                           Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Hammer", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                           WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                           SubWeapon=SubWeapon[rownames(SubWeapon)=="DemonSlayerForceShield", ], 
+                           Emblem=Emblem[rownames(Emblem)=="Demon", ], 
+                           CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "DemonSlayer")))
 
 
 ## DemonSlayer - Passive
@@ -62,15 +68,15 @@ value <- c(70 + ceiling(DemonSlayerBase$PSkillLv/2), 50 + DemonSlayerBase$PSkill
 AdvancedWeaponMastery <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(DemonSlayerCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(DemonSlayerCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(DemonSlayerCore[[2]][10, 2])
+value <- c(GetCoreLv(DemonSlayerCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 DemonSlayerPassive <- Passive(list(DeathCurse, PhysicalTraining, Outrage, EvilTorture, Concentration, DarkBindPassive, AdvancedWeaponMastery, 
-                                   BodyofStealPassive, BlinkPassive))
+                                   BodyofSteelPassive, BlinkPassive))
 
 
 ## DemonSlayer - Buff
@@ -172,23 +178,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DemonicFortitude <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * DemonSlayerCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * DemonSlayerCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(DemonSlayerCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(c("CRR"), levels=BSkill)
-value <- c(50 + floor(DemonSlayerCore[[2]][1, 2]/2))
-info <- c(35 + DemonSlayerCore[[2]][1, 2], 120, 870, F, T, F, T)
+value <- c(50 + floor(GetCoreLv(DemonSlayerCore, "DemonAwakening")/2))
+info <- c(35 + GetCoreLv(DemonSlayerCore, "DemonAwakening"), 120, 870, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DemonAwakening <- rbind(data.frame(option, value), info)
@@ -201,32 +200,38 @@ colnames(info) <- c("option", "value")
 OrthrosBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(DemonSlayerCore[[2]][5, 2]/5), ceiling(DemonSlayerCore[[2]][5, 2]/5))
-info <- c(80 + 2 * DemonSlayerCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(DemonSlayerCore, "AuraWeapon")/5), ceiling(GetCoreLv(DemonSlayerCore, "AuraWeapon")/5))
+info <- c(80 + 2 * GetCoreLv(DemonSlayerCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30 + DemonSlayerCore[[2]][7, 2], 150, 690, F, T, F, F)
+info <- c(30 + GetCoreLv(DemonSlayerCore, "CallMastema"), 150, 690, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CallMastema <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(5 + ceiling(DemonSlayerCore[[2]][8, 2]/5))
+value <- c(5 + ceiling(GetCoreLv(DemonSlayerCore, "BlessofIsekaiGoddess")/5))
 info <- c(40, 120, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofIsekaiGoddess <- rbind(data.frame(option, value), info)}
 
-DemonSlayerBuff <- Buff(list(DF=DF, DFAbsorb=DFAbsorb, DFMaxForce=DFMaxForce, DemonBooster=DemonBooster, VampiricTouch=VampiricTouch, MapleSoldier=MapleSoldier, Metamorphosis=Metamorphosis, 
-                             InfinityForce=InfinityForce, InfinityForceCoolReduce=InfinityForceCoolReduce, 
-                             DevilCryDebuff=DevilCryDebuff, RemainTimeReinforce=RemainTimeReinforce, BlueBlood=BlueBlood, BlueBloodCooldown=BlueBloodCooldown, DemonicFortitude=DemonicFortitude, 
-                             UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, DemonAwakening=DemonAwakening, OrthrosBuff=OrthrosBuff, AuraWeaponBuff=AuraWeaponBuff, 
-                             CallMastema=CallMastema, BlessofIsekaiGoddess=BlessofIsekaiGoddess, SoulContractLink=SoulContractLink, Restraint4=Restraint4))
-## Petbuff : DemonBooster(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms)
+DemonSlayerBuff <- list(DF=DF, DFAbsorb=DFAbsorb, DFMaxForce=DFMaxForce, DemonBooster=DemonBooster, VampiricTouch=VampiricTouch, MapleSoldier=MapleSoldier, Metamorphosis=Metamorphosis, 
+                        InfinityForce=InfinityForce, InfinityForceCoolReduce=InfinityForceCoolReduce, 
+                        DevilCryDebuff=DevilCryDebuff, RemainTimeReinforce=RemainTimeReinforce, BlueBlood=BlueBlood, BlueBloodCooldown=BlueBloodCooldown, DemonicFortitude=DemonicFortitude, 
+                        UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, DemonAwakening=DemonAwakening, OrthrosBuff=OrthrosBuff, AuraWeaponBuff=AuraWeaponBuff, 
+                        CallMastema=CallMastema, BlessofIsekaiGoddess=BlessofIsekaiGoddess, SoulContractLink=SoulContractLink, Restraint4=Restraint4)
+## Petbuff : DemonBooster(990ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+## Metamorphosis Pet Buff Unavailable
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  DemonSlayerBuff[[length(DemonSlayerBuff)+1]] <- UsefulAdvancedBless
+  names(DemonSlayerBuff)[[length(DemonSlayerBuff)]] <- "UsefulAdvancedBless"
+}
+DemonSlayerBuff <- Buff(DemonSlayerBuff)
 DemonSlayerAllTimeBuff <- AllTimeBuff(DemonSlayerBuff)
 
 
@@ -234,8 +239,8 @@ DemonSlayerAllTimeBuff <- AllTimeBuff(DemonSlayerBuff)
 DemonSlayerSpec <- JobSpec(JobBase=DemonSlayerBase, 
                            Passive=DemonSlayerPassive, 
                            AllTimeBuff=DemonSlayerAllTimeBuff, 
-                           MobInfo=MobDefault, 
-                           SpecSet=SpecDefault, 
+                           MobInfo=get(DPMCalcOption$MobSet), 
+                           SpecSet=get(DPMCalcOption$SpecSet), 
                            WeaponName="Hammer", 
                            UnionStance=0,
                            NotCRR100=T)
@@ -247,116 +252,70 @@ DemonSlayerSpec <- DemonSlayerSpec$Spec
 
 
 ## DemonSlayer - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * DemonSlayerCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DemonSlayerCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DemonSlayerCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DemonSlayerCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DemonSlayerCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DemonSlayerCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(DemonSlayerCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## DemonSlayer - Attacks
 ## Hyper : Demon Impact - Reinforce / Bonus Attack, Demon Slash - Reduce Force / Reinforce / RemainTime Reinforce
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(60, ifelse(DemonSlayerCore[[1]][2, 2]>=40, 20, 0), FDRCalc(c(30, 10, 2 * DemonSlayerCore[[1]][2, 2])))
+value <- c(60, ifelse(GetCoreLv(DemonSlayerCore, "DemonSlash")>=40, 20, 0), FDRCalc(c(30, 10, 2 * GetCoreLv(DemonSlayerCore, "DemonSlash"))))
 info <- c(190, 2, 510, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonSlash <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(110, IGRCalc(c(50, ifelse(DemonSlayerCore[[1]][2, 2]>=40, 20, 0))), FDRCalc(c(30, 10, 2 * DemonSlayerCore[[1]][2, 2])))
+value <- c(110, IGRCalc(c(50, ifelse(GetCoreLv(DemonSlayerCore, "DemonSlash")>=40, 20, 0))), FDRCalc(c(30, 10, 2 * GetCoreLv(DemonSlayerCore, "DemonSlash"))))
 info <- c(680, 3, 510, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AwakeningSlash1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(110, IGRCalc(c(50, ifelse(DemonSlayerCore[[1]][2, 2]>=40, 20, 0))), FDRCalc(c(30, 10, 2 * DemonSlayerCore[[1]][2, 2])))
+value <- c(110, IGRCalc(c(50, ifelse(GetCoreLv(DemonSlayerCore, "DemonSlash")>=40, 20, 0))), FDRCalc(c(30, 10, 2 * GetCoreLv(DemonSlayerCore, "DemonSlash"))))
 info <- c(680, 3, 510, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AwakeningSlash2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(110, IGRCalc(c(50, ifelse(DemonSlayerCore[[1]][2, 2]>=40, 20, 0))), FDRCalc(c(30, 10, 2 * DemonSlayerCore[[1]][2, 2])))
+value <- c(110, IGRCalc(c(50, ifelse(GetCoreLv(DemonSlayerCore, "DemonSlash")>=40, 20, 0))), FDRCalc(c(30, 10, 2 * GetCoreLv(DemonSlayerCore, "DemonSlash"))))
 info <- c(780, 3, 450, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AwakeningSlash3 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(110, IGRCalc(c(50, ifelse(DemonSlayerCore[[1]][2, 2]>=40, 20, 0))), FDRCalc(c(30, 10, 2 * DemonSlayerCore[[1]][2, 2])))
+value <- c(110, IGRCalc(c(50, ifelse(GetCoreLv(DemonSlayerCore, "DemonSlash")>=40, 20, 0))), FDRCalc(c(30, 10, 2 * GetCoreLv(DemonSlayerCore, "DemonSlash"))))
 info <- c(880, 3, 450, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AwakeningSlash4 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(100, 60 + DemonSlayerSpec$SkillLv, IGRCalc(c(30 + ceiling(DemonSlayerSpec$SkillLv/3), ifelse(DemonSlayerCore[[1]][1, 2]>=40, 20, 0))), 2 * DemonSlayerCore[[1]][1, 2])
+value <- c(100, 60 + DemonSlayerSpec$SkillLv, IGRCalc(c(30 + ceiling(DemonSlayerSpec$SkillLv/3), ifelse(GetCoreLv(DemonSlayerCore, "DemonImpact")>=40, 20, 0))), 2 * GetCoreLv(DemonSlayerCore, "DemonImpact"))
 info <- c(460 + 4 * DemonSlayerSpec$SkillLv, 7, 870, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonImpact <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(DemonSlayerCore[[1]][4, 2]>=20, 5, 0), ifelse(DemonSlayerCore[[1]][4, 2]>=40, 20, 0), 2 * DemonSlayerCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(DemonSlayerCore, "DevilCry")>=20, 5, 0), ifelse(GetCoreLv(DemonSlayerCore, "DevilCry")>=40, 20, 0), 2 * GetCoreLv(DemonSlayerCore, "DevilCry"))
 info <- c(515 + 5 * DemonSlayerSpec$SkillLv, 7, 990, NA, 14, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DevilCry <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(50, IGRCalc(c(50, ifelse(DemonSlayerCore[[1]][3, 2]>=40, 20, 0))), 2 * DemonSlayerCore[[1]][3, 2])
+value <- c(50, IGRCalc(c(50, ifelse(GetCoreLv(DemonSlayerCore, "Cerberus")>=40, 20, 0))), 2 * GetCoreLv(DemonSlayerCore, "Cerberus"))
 info <- c(450, 6, 900, NA, 5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -364,28 +323,28 @@ Cerberus <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 50)
-info <- c(850 + 34 * DemonSlayerCore[[2]][2, 2], 12, 810, 1080, 120 - floor(DemonSlayerCore[[2]][2, 2]/2), T, F, F) ## StartATK : 1980ms, Hits : Vary by Level
+info <- c(850 + 34 * GetCoreLv(DemonSlayerCore, "Jormungand"), 12, 810, 1080, 120 - floor(GetCoreLv(DemonSlayerCore, "Jormungand")/2), T, F, F) ## StartATK : 1980ms, Hits : Vary by Level
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Jormungand <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 50)
-info <- c(900 + 36 * DemonSlayerCore[[2]][2, 2], 15, 0, NA, 120 - floor(DemonSlayerCore[[2]][2, 2]/2), T, F, F)
+info <- c(900 + 36 * GetCoreLv(DemonSlayerCore, "Jormungand"), 15, 0, NA, 120 - floor(GetCoreLv(DemonSlayerCore, "Jormungand")/2), T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JormungandLast <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 50)
-info <- c(400 + 16 * DemonSlayerCore[[2]][3, 2], 12, 0, NA, 0, T, F, F) 
+info <- c(400 + 16 * GetCoreLv(DemonSlayerCore, "Orthros"), 12, 0, NA, 0, T, F, F) 
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 OrthrosNemea <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 50)
-info <- c(900 + 36 * DemonSlayerCore[[2]][3, 2], 10, 0, NA, 0, T, F, F) 
+info <- c(900 + 36 * GetCoreLv(DemonSlayerCore, "Orthros"), 10, 0, NA, 0, T, F, F) 
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 OrthrosGeryon <- rbind(data.frame(option, value), info)
@@ -399,14 +358,14 @@ DemonBanePre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(50, 30)
-info <- c(325 + 13 * DemonSlayerCore[[2]][4, 2], 6, 240, NA, 240, T, F, F)
+info <- c(325 + 13 * GetCoreLv(DemonSlayerCore, "DemonBane"), 6, 240, NA, 240, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonBaneTick <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(50, 30)
-info <- c(325 + 13 * DemonSlayerCore[[2]][4, 2], 6, 4000 - 240 * 16, NA, 240, T, F, F)
+info <- c(325 + 13 * GetCoreLv(DemonSlayerCore, "DemonBane"), 6, 4000 - 240 * 16, NA, 240, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonBaneEnd <- rbind(data.frame(option, value), info)
@@ -420,35 +379,35 @@ DemonBaneLastPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(50, 30)
-info <- c(650 + 26 * DemonSlayerCore[[2]][4, 2], 7, 120, NA, 240, T, F, F)
+info <- c(650 + 26 * GetCoreLv(DemonSlayerCore, "DemonBane"), 7, 120, NA, 240, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonBaneLastTick <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(50, 30)
-info <- c(650 + 26 * DemonSlayerCore[[2]][4, 2], 7, 0, NA, 240, T, F, F)
+info <- c(650 + 26 * GetCoreLv(DemonSlayerCore, "DemonBane"), 7, 0, NA, 240, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonBaneLastEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * DemonSlayerCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(DemonSlayerCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * DemonSlayerCore[[2]][7, 2], 8, 0, 5280, NA, NA, NA, F) ## FirstATK : 1080ms, ATK Times : Vary by Level
+info <- c(500 + 20 * GetCoreLv(DemonSlayerCore, "CallMastema"), 8, 0, 5280, NA, NA, NA, F) ## FirstATK : 1080ms, ATK Times : Vary by Level
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MastemaClaw <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(1200 + 48 * DemonSlayerCore[[2]][8, 2], 3, 0, 4000, NA, NA, NA, F)
+info <- c(1200 + 48 * GetCoreLv(DemonSlayerCore, "BlessofIsekaiGoddess"), 3, 0, 4000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 OtherworldEmptiness <- rbind(data.frame(option, value), info)}
@@ -461,7 +420,7 @@ DemonSlayerATK <- Attack(list(DemonSlash=DemonSlash, AwakeningSlash1=AwakeningSl
 
 ## DemonSlayer - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(DemonSlayerCore[[1]][5, 2]>=40, 20, 0), 2 * DemonSlayerCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(DemonSlayerCore, "Metamorphosis")>=40, 20, 0), 2 * GetCoreLv(DemonSlayerCore, "Metamorphosis"))
 info <- c(250 + 5 * DemonSlayerSpec$SkillLv, 1, 0, 500, (180 + 4 * DemonSlayerBase$SkillLv) * (100 + DemonSlayerSpec$BuffDuration) / 100, 0, F, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -479,7 +438,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, D
 BuffFinal <- data.frame(DemonSlayerBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, DemonSlayerSpec$CoolReduceP, DemonSlayerSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, DemonSlayerSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(DemonSlayerSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, DemonSlayerSpec$CoolReduceP, DemonSlayerSpec$CoolReduce)
@@ -507,11 +466,15 @@ DemonSlayerDealCycle <- data.frame(DemonSlayerDealCycle)
 
 DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
                              Period=240, CycleTime=240, AwakeningOffSlash=T) {
-  BuffSummonedPrior <- c("DemonBooster", "UsefulSharpEyes", "UsefulCombatOrders", "DemonicFortitude", 
+  BuffSummonedPrior <- c("DemonBooster", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "DemonicFortitude", 
                          "CallMastema", "InfinityForce", "VampiricTouch", "Metamorphosis", "BlueBlood", "AuraWeaponBuff", "BlessofIsekaiGoddess", "DemonAwakening", "OrthrosBuff", "SoulContractLink", "Restraint4")
-  
-  Times240 <- c(0, 0, 0, 0, 
+  Times240 <- c(0, 0, 0, 0, 0, 
                 1, 1, 1, 1, 4, 1, 2, 2, 2, 2, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times240 <- Times240[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
@@ -1253,34 +1216,49 @@ DemonSlayerDealCycle <- DemonSlayerAddATK(DealCycle=DemonSlayerDealCycle,
                                           BuffFinal, 
                                           SummonedFinal, 
                                           Spec=DemonSlayerSpec, 
-                                          JormungandLevel=DemonSlayerCore[[2]][2, 2], 
-                                          CallMastemaLevel=DemonSlayerCore[[2]][7, 2])
+                                          JormungandLevel=GetCoreLv(DemonSlayerCore, "Jormungand"), 
+                                          CallMastemaLevel=GetCoreLv(DemonSlayerCore, "CallMastema"))
 DemonSlayerDealCycleReduction <- DealCycleReduction(DemonSlayerDealCycle)
 
-DemonSlayerSpecOpt1 <- Optimization1(DemonSlayerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpec, DemonSlayerUnionRemained)
-DemonSlayerSpecOpt <- DemonSlayerSpec
-DemonSlayerSpecOpt$ATKP <- DemonSlayerSpecOpt$ATKP + DemonSlayerSpecOpt1$ATKP
-DemonSlayerSpecOpt$BDR <- DemonSlayerSpecOpt$BDR + DemonSlayerSpecOpt1$BDR
-DemonSlayerSpecOpt$IGR <- IGRCalc(c(DemonSlayerSpecOpt$IGR, DemonSlayerSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="DemonSlayer") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  DemonSlayerSpecOpt1 <- Optimization1(DemonSlayerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpec, DemonSlayerUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- DemonSlayerSpecOpt1[1, 1:3]
+} else {
+  DemonSlayerSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+DemonSlayerSpecOpt <- OptDataAdd(DemonSlayerSpec, DemonSlayerSpecOpt1, "Potential", DemonSlayerBase$CRROver, DemonAvenger=F)
 
-DemonSlayerSpecOpt2 <- Optimization2(DemonSlayerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt, DemonSlayerHyperStatBase, DemonSlayerBase$ChrLv, DemonSlayerBase$CRROver, HyperStanceLv=5)
-DemonSlayerFinalDPM <- DealCalc(DemonSlayerDealCycle, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt2)
-DemonSlayerFinalDPMwithMax <- DealCalcWithMaxDMR(DemonSlayerDealCycle, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt2)
+if(DPMCalcOption$Optimization==T) {
+  DemonSlayerSpecOpt2 <- Optimization2(DemonSlayerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt, DemonSlayerHyperStatBase, DemonSlayerBase$ChrLv, DemonSlayerBase$CRROver, HyperStanceLv=5)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- DemonSlayerSpecOpt2[1, ]
+} else {
+  DemonSlayerSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+DemonSlayerSpecOpt <- OptDataAdd(DemonSlayerSpecOpt, DemonSlayerSpecOpt2, "HyperStat", DemonSlayerBase$CRROver, DemonAvenger=F)
 
-DPM12349$DemonSlayer[1] <- sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time)/ 60000)
-DPM12349$DemonSlayer[2] <- sum(na.omit(DemonSlayerFinalDPM)) / (max(DemonSlayerDealCycle$Time) / 60000) - sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time) / 60000)
+DemonSlayerFinalDPM <- DealCalc(DemonSlayerDealCycle, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt, Collapse=F)
+DemonSlayerFinalDPMwithMax <- DealCalcWithMaxDMR(DemonSlayerDealCycle, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt)
+
+set(get(DPMCalcOption$DataName), as.integer(1), "DemonSlayer", sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "DemonSlayer", sum(na.omit(DemonSlayerFinalDPM)) / (max(DemonSlayerDealCycle$Time) / 60000) - sum(na.omit(DemonSlayerFinalDPMwithMax)) / (max(DemonSlayerDealCycle$Time) / 60000))
+
+DemonSlayerDealRatio <- DealRatio(DemonSlayerDealCycle, DemonSlayerFinalDPMwithMax)
 
 DemonSlayerDealData <- data.frame(DemonSlayerDealCycle$Skills, DemonSlayerDealCycle$Time, DemonSlayerDealCycle$Restraint4, DemonSlayerFinalDPMwithMax)
 colnames(DemonSlayerDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(DemonSlayerDealData, DemonSlayerDealData$R4>0)
-
-DemonSlayerRR <- DemonSlayerDealData[56:295, ]
-DPM12349$DemonSlayer[3] <- sum((DemonSlayerRR$Deal))
-
-DemonSlayer40s <- DemonSlayerDealData[56:613, ]
-DPM12349$DemonSlayer[4] <- sum((DemonSlayer40s$Deal))
-
-DemonSlayerDealRatio <- DealRatio(DemonSlayerDealCycle, DemonSlayerFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "DemonSlayer", Deal_RR(DemonSlayerDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "DemonSlayer", Deal_40s(DemonSlayerDealData))
 
 
 ## DemonSlayer - Demon Slash Not Used When Demon Awakening is off
@@ -1302,9 +1280,8 @@ DemonSlayerDealCycle2 <- DemonSlayerAddATK(DealCycle=DemonSlayerDealCycle2,
                                            BuffFinal, 
                                            SummonedFinal, 
                                            Spec=DemonSlayerSpec, 
-                                           JormungandLevel=DemonSlayerCore[[2]][2, 2], 
-                                           CallMastemaLevel=DemonSlayerCore[[2]][7, 2])
-DemonSlayerDealCycleReduction2 <- DealCycleReduction(DemonSlayerDealCycle2)
+                                           JormungandLevel=GetCoreLv(DemonSlayerCore, "Jormungand"), 
+                                           CallMastemaLevel=GetCoreLv(DemonSlayerCore, "CallMastema"))
 
-DemonSlayerFinalDPMwithMax2 <- DealCalcWithMaxDMR(DemonSlayerDealCycle2, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt2)
+DemonSlayerFinalDPMwithMax2 <- DealCalcWithMaxDMR(DemonSlayerDealCycle2, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt)
 NonAwakeningSlashoffDPM <- sum(na.omit(DemonSlayerFinalDPMwithMax2)) / (max(DemonSlayerDealCycle2$Time)/ 60000)

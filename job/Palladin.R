@@ -1,36 +1,43 @@
 ## Palladin - Data
 ## Palladin - VMatrix
-PalladinCore <- MatrixSet(PasSkills=c("Blast", "FinalAttack", "Sanctuary", "LinghtningCharge", "DevineCharge"), 
-                          PasLvs=c(50, 50, 50, 50, 50), 
-                          PasMP=c(10, 10, 10, 5, 5), 
-                          ActSkills=c("HolyUnity", "BlessedHammer", "GrandCross", "MightyMjolnir", 
-                                      CommonV("Warrior", "Adventure")), 
-                          ActLvs=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
-                          ActMP=c(5, 5, 5, 5, 5, 0, 0, 5, 5), 
-                          BlinkLv=1, 
-                          BlinkMP=5, 
-                          UsefulSkills=c("SharpEyes"), 
-                          UsefulLvs=20, 
-                          UsefulMP=0, 
-                          SpecSet=SpecDefault, 
-                          SelfBind=T)
+PalladinCoreBase <- CoreBuilder(ActSkills=c("HolyUnity", "BlessedHammer", "GrandCross", "MightyMjolnir", 
+                                            CommonV("Warrior", "Adventure")), 
+                                ActSkillsLv=c(25, 25, 25, 25, 25, 1, 1, 25, 25), 
+                                UsefulSkills=c("SharpEyes"), 
+                                SpecSet=get(DPMCalcOption$SpecSet), 
+                                VPassiveList=PalladinVPassive, 
+                                VPassivePrior=PalladinVPrior, 
+                                SelfBind=T)
+
+PalladinCore <- MatrixSet(PasSkills=PalladinCoreBase$PasSkills$Skills, 
+                            PasLvs=PalladinCoreBase$PasSkills$Lv, 
+                            PasMP=PalladinCoreBase$PasSkills$MP, 
+                            ActSkills=PalladinCoreBase$ActSkills$Skills, 
+                            ActLvs=PalladinCoreBase$ActSkills$Lv, 
+                            ActMP=PalladinCoreBase$ActSkills$MP, 
+                            UsefulSkills=PalladinCoreBase$UsefulSkills, 
+                            UsefulLvs=20, 
+                            UsefulMP=0, 
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            SpecialCore=PalladinCoreBase$SpecialCoreUse)
 
 
 
 ## Palladin - Basic Info
 PalladinBase <- JobBase(ChrInfo=ChrInfo, 
-                        MobInfo=MobDefault,
-                        SpecSet=SpecDefault, 
+                        MobInfo=get(DPMCalcOption$MobSet),
+                        SpecSet=get(DPMCalcOption$SpecSet), 
                         Job="Palladin",
                         CoreData=PalladinCore, 
                         BuffDurationNeeded=0, 
-                        AbilList=c("BDR", "DisorderBDR"), 
-                        LinkList=c("AdventureWarrior", "Xenon", "DemonAvenger", "CygnusKnights"), 
-                        MonsterLife=MLTypeS21, 
-                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandHammer", SpecDefault$WeaponType)[, 1:16],
-                        WeaponType=SpecDefault$WeaponType, 
-                        SubWeapon=SubWeapon[2, ], 
-                        Emblem=Emblem[1, ])
+                        AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Palladin"), 
+                        LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Palladin"), 
+                        MonsterLife=get(FindJob(MonsterLifePreSet, "Palladin")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                        Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandHammer", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                        WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                        SubWeapon=SubWeapon[rownames(SubWeapon)=="Rosario", ], 
+                        Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                        CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Palladin")))
 
 
 
@@ -64,14 +71,14 @@ value <- c(71, 42, 20, 37.9, 42)
 PalladinExpert <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(PalladinCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(PalladinCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(PalladinCore[[2]][10, 2])
+value <- c(GetCoreLv(PalladinCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
-PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofStealPassive, BlinkPassive))
+PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofSteelPassive, BlinkPassive))
 
 
 ## Palladin - Buff
@@ -98,7 +105,7 @@ Threat <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(21)
-info <- c(206, NA, 810, T, NA, NA, T)
+info <- c(206, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ElementalForce <- rbind(data.frame(option, value), info)
@@ -110,12 +117,11 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * PalladinCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(PalladinCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -125,31 +131,36 @@ colnames(info) <- c("option", "value")
 EpicAdventure <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR", "ATKSkill"), levels=BSkill)
-value <- c(10 + floor(PalladinCore[[2]][5, 2]/5), ceiling(PalladinCore[[2]][5, 2]/5), 1)
-info <- c(80 + 2 * PalladinCore[[2]][5, 2], 180, 720, F, T, NA, T)
+value <- c(10 + floor(GetCoreLv(PalladinCore, "AuraWeapon")/5), ceiling(GetCoreLv(PalladinCore, "AuraWeapon")/5), 1)
+info <- c(80 + 2 * GetCoreLv(PalladinCore, "AuraWeapon"), 180, 720, F, T, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(35 + floor(PalladinCore[[2]][5, 2]/2))
-info <- c(40 + PalladinCore[[2]][1, 2], 120, 600, F, T, NA, T)
+value <- c(35 + floor(GetCoreLv(PalladinCore, "HolyUnity")/2))
+info <- c(40 + GetCoreLv(PalladinCore, "HolyUnity"), 120, 600, F, T, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HolyUnity <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * PalladinCore[[2]][8, 2]) * MapleSoldier[1, 2]) * PalladinBase$MainStatP), 5 + floor(PalladinCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(PalladinCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * PalladinBase$MainStatP), 5 + floor(GetCoreLv(PalladinCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-PalladinBuff <- Buff(list(WeaponBooster=WeaponBooster, CombatOrders=CombatOrders, Threat=Threat, ElementalForce=ElementalForce, MapleSoldier=MapleSoldier, 
-                          UsefulSharpEyes=UsefulSharpEyes, EpicAdventure=EpicAdventure, 
-                          AuraWeaponBuff=AuraWeaponBuff, HolyUnity=HolyUnity, MapleWarriors2=MapleWarriors2, 
-                          Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : WeaponBooster(990ms), UsefulSharpEyes(900ms), CombatOrders(990ms)
+PalladinBuff <- list(WeaponBooster=WeaponBooster, CombatOrders=CombatOrders, Threat=Threat, ElementalForce=ElementalForce, MapleSoldier=MapleSoldier, 
+                     UsefulSharpEyes=UsefulSharpEyes, EpicAdventure=EpicAdventure, 
+                     AuraWeaponBuff=AuraWeaponBuff, HolyUnity=HolyUnity, MapleWarriors2=MapleWarriors2, 
+                     Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : WeaponBooster(990ms), CombatOrders(990ms), ElementalForce(810ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  PalladinBuff[[length(PalladinBuff)+1]] <- UsefulAdvancedBless
+  names(PalladinBuff)[[length(PalladinBuff)]] <- "UsefulAdvancedBless"
+}
+PalladinBuff <- Buff(PalladinBuff)
 PalladinAllTimeBuff <- AllTimeBuff(PalladinBuff)
 
 
@@ -157,8 +168,8 @@ PalladinAllTimeBuff <- AllTimeBuff(PalladinBuff)
 PalladinSpec <- JobSpec(JobBase=PalladinBase, 
                       Passive=PalladinPassive, 
                       AllTimeBuff=PalladinAllTimeBuff, 
-                      MobInfo=MobDefault, 
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet), 
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       WeaponName="TwohandHammer", 
                       UnionStance=0)
 
@@ -169,95 +180,49 @@ PalladinSpec <- PalladinSpec$Spec
 
 
 ## Palladin - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * PalladinCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PalladinCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(PalladinCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Palladin - Attacks
-{option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PalladinCore[[1]][2, 2]>=40, 20, 0), 4 * PalladinCore[[1]][2, 2])
+{option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(PalladinCore, "FinalAttack")>=40, 20, 0), PalladinBase$MonsterLife$FinalATKDMR, 4 * GetCoreLv(PalladinCore, "FinalAttack"))
 info <- c(80, 0.8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PalladinCore[[1]][4, 2]>=40, 20, 0), 2 * PalladinCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(PalladinCore, "LightningCharge")>=40, 20, 0), 2 * GetCoreLv(PalladinCore, "LightningCharge"))
 info <- c(462, 5, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningCharge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PalladinCore[[1]][5, 2]>=40, 20, 0), 2 * PalladinCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(PalladinCore, "DivineCharge")>=40, 20, 0), 2 * GetCoreLv(PalladinCore, "DivineCharge"))
 info <- c(462, 5, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivineCharge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(PalladinCore[[1]][1, 2]>=40, 20, 0), 20, 2 * PalladinCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(PalladinCore, "Blast")>=40, 20, 0), 20, 2 * GetCoreLv(PalladinCore, "Blast"))
 info <- c(291, 12, 840, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Blast <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(PalladinCore[[1]][3, 2]>=40, 20, 0), 30, 2 * PalladinCore[[1]][3, 2])
-info <- c(580, 8, 990, NA, 9.75, F, T, F)
+value <- c(ifelse(GetCoreLv(PalladinCore, "Sanctuary")>=40, 20, 0), 30, 2 * GetCoreLv(PalladinCore, "Sanctuary"))
+info <- c(580, 8, 990, NA, Cooldown(15, T, PalladinBase$UnionChrs$CoolReduceP + 30, PalladinBase$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Sanctuary <- rbind(data.frame(option, value), info)
@@ -271,14 +236,14 @@ GrandCrossPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(175 + 7 * PalladinCore[[2]][3, 2], 12, 2600, 210, 150, T, F, F)
+info <- c(175 + 7 * GetCoreLv(PalladinCore, "GrandCross"), 12, 2600, 210, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(300 + 12 * PalladinCore[[2]][3, 2], 12, 6500, 150, 150, T, F, F)
+info <- c(300 + 12 * GetCoreLv(PalladinCore, "GrandCross"), 12, 6500, 150, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossBig <- rbind(data.frame(option, value), info)
@@ -292,21 +257,21 @@ GrandCrossEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(225 + 9 * PalladinCore[[2]][4, 2], 6, 0, 630, 15, F, F, F)
+info <- c(225 + 9 * GetCoreLv(PalladinCore, "MightyMjolnir"), 6, 0, 630, 15, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MightyMjolnir <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(250 + 10 * PalladinCore[[2]][4, 2], 9, 840, 630, 15, F, F, F)
+info <- c(250 + 10 * GetCoreLv(PalladinCore, "MightyMjolnir"), 9, 840, 630, 15, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MightyMjolnirExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * PalladinCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(PalladinCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
@@ -320,14 +285,14 @@ PalladinATK <- Attack(list(FinalAttack=FinalAttack, LightningCharge=LightningCha
 ## Palladin - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(250 + 10 * PalladinCore[[2]][2, 2], 2, 0, 600, 60, 60, F, T, F, F)
+info <- c(250 + 10 * GetCoreLv(PalladinCore, "BlessedHammer"), 2, 0, 600, 60, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BlessedHammerSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(525 + 21 * PalladinCore[[2]][2, 2], 3, 360, 600, 30 + General$General$Serverlag, 60, F, T, F, F)
+info <- c(525 + 21 * GetCoreLv(PalladinCore, "BlessedHammer"), 3, 360, 600, 30 + General$General$Serverlag, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BlessedHammerBig <- rbind(data.frame(option, value), info)}
@@ -345,7 +310,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, P
 BuffFinal <- data.frame(PalladinBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, PalladinSpec$CoolReduceP, PalladinSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, PalladinSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(PalladinSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, PalladinSpec$CoolReduceP, PalladinSpec$CoolReduce)
@@ -355,16 +320,20 @@ DealCycle <- c("Skills", "Time", rownames(PalladinBuff))
 PalladinDealCycle <- t(rep(0, length(DealCycle)))
 colnames(PalladinDealCycle) <- DealCycle
 
-
 PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                           Period=c(150, 180), CycleTime=360) {
-  BuffSummonedPrior <- c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", "UsefulSharpEyes", "EpicAdventure", 
+  BuffSummonedPrior <- c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", "UsefulSharpEyes", "UsefulAdvancedBless", "EpicAdventure", 
                          "Threat", "AuraWeaponBuff", "MapleWarriors2", "BlessedHammerBig", "SoulContractLink", "HolyUnity", "Restraint4")
   Times150 <- c()
-  Times180 <- c(0, 0, 1, 0, 0, 0, 2.5, 1, 1, 3, 2, 1.5, 1)
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
+                2.5, 1, 1, 3, 2, 1.5, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
   for(i in 1:length(BuffSummonedPrior)) {
     if(Period==150) {
       SubTime[i] <- SubTime[i] / ifelse(Times150[i]==0, Inf, Times150[i])
@@ -582,8 +551,6 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   
   return(DealCycle)
 }
-  
-
 
 PalladinDealCycle <- PalladinCycle(PreDealCycle=PalladinDealCycle, 
                                    ATKFinal=ATKFinal,
@@ -604,31 +571,42 @@ PalladinDealCycle <- AuraWeaponCycle(PalladinDealCycle)
 PalladinDealCycle <- DCSpiderInMirror(PalladinDealCycle, SummonedFinal)
 PalladinDealCycleReduction <- DealCycleReduction(PalladinDealCycle)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Palladin") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  PalladinSpecOpt1 <- Optimization1(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpec, PalladinUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- PalladinSpecOpt1[1, 1:3]
+} else {
+  PalladinSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+PalladinSpecOpt <- OptDataAdd(PalladinSpec, PalladinSpecOpt1, "Potential", PalladinBase$CRROver, DemonAvenger=F)
 
-## Palladin - Deal Calc
-DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpec)
+if(DPMCalcOption$Optimization==T) {
+  PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt, PalladinHyperStatBase, PalladinBase$ChrLv, PalladinBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- PalladinSpecOpt2[1, ]
+} else {
+  PalladinSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+PalladinSpecOpt <- OptDataAdd(PalladinSpecOpt, PalladinSpecOpt2, "HyperStat", PalladinBase$CRROver, DemonAvenger=F)
 
-PalladinSpecOpt1 <- Optimization1(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpec, PalladinUnionRemained)
-PalladinSpecOpt <- PalladinSpec
-PalladinSpecOpt$ATKP <- PalladinSpecOpt$ATKP + PalladinSpecOpt1$ATKP
-PalladinSpecOpt$BDR <- PalladinSpecOpt$BDR + PalladinSpecOpt1$BDR
-PalladinSpecOpt$IGR <- IGRCalc(c(PalladinSpecOpt$IGR, PalladinSpecOpt1$IGR))
+PalladinFinalDPM <- DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt, Collapse=F)
+PalladinFinalDPMwithMax <- DealCalcWithMaxDMR(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt)
 
-PalladinSpecOpt2 <- Optimization2(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt, PalladinHyperStatBase, PalladinBase$ChrLv, PalladinBase$CRROver)
-PalladinFinalDPM <- DealCalc(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
-PalladinFinalDPMwithMax <- DealCalcWithMaxDMR(PalladinDealCycle, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt2)
+set(get(DPMCalcOption$DataName), as.integer(1), "Palladin", sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Palladin", sum(na.omit(PalladinFinalDPM)) / (max(PalladinDealCycle$Time) / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time) / 60000))
 
-DPM12349$Palladin[1] <- sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time)/ 60000)
-DPM12349$Palladin[2] <- sum(na.omit(PalladinFinalDPM)) / (max(PalladinDealCycle$Time) / 60000) - sum(na.omit(PalladinFinalDPMwithMax)) / (max(PalladinDealCycle$Time) / 60000)
+PalladinDealRatio <- DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)
 
 PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time, PalladinDealCycle$Restraint4, PalladinFinalDPMwithMax)
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(PalladinDealData, PalladinDealData$R4>0)
-
-PalladinRR <- PalladinDealData[25:208, ]
-DPM12349$Palladin[3] <- sum((PalladinRR$Deal))
-
-Palladin40s <- PalladinDealData[25:372, ]
-DPM12349$Palladin[4] <- sum((Palladin40s$Deal))
-
-PalladinDealRatio <- DealRatio(PalladinDealCycle, PalladinFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Palladin", Deal_RR(PalladinDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Palladin", Deal_40s(PalladinDealData))

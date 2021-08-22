@@ -1,37 +1,43 @@
 ## NightLord - Data
 ## NightLord - VMatrix
-NightLordCore <- MatrixSet(PasSkills=c("QuadrapleThrow", "SuddenRaid", "MarkofNightLord", "DarkFlare", "Showdown", "FourSeasons"), 
-                           PasLvs=c(50, 50, 50, 50, 50, 50), 
-                           PasMP=c(10, 10, 10, 5, 5, 5), 
-                           ActSkills=c("SpreadThrow", "ThrowingKnife", "SecretBook", "ThrowBlasting", 
-                                       CommonV("Thief", "Adventure")), 
-                           ActLvs=c(25, 25, 25, 25, 1, 25, 25, 25, 25), 
-                           ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 0), 
-                           BlinkLv=1, 
-                           BlinkMP=5, 
-                           UsefulSkills=c("CombatOrders", "SharpEyes"), 
+NightLordCoreBase <- CoreBuilder(ActSkills=c("SpreadThrow", "ThrowingKnife", "SecretBook", "ThrowBlasting", 
+                                             CommonV("Thief", "Adventure")), 
+                                 ActSkillsLv=c(25, 25, 25, 25, 1, 25, 25, 25, 25), 
+                                 UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                 SpecSet=get(DPMCalcOption$SpecSet), 
+                                 VPassiveList=NightLordVPassive, 
+                                 VPassivePrior=NightLordVPrior, 
+                                 SelfBind=F)
+
+NightLordCore <- MatrixSet(PasSkills=NightLordCoreBase$PasSkills$Skills, 
+                           PasLvs=NightLordCoreBase$PasSkills$Lv, 
+                           PasMP=NightLordCoreBase$PasSkills$MP, 
+                           ActSkills=NightLordCoreBase$ActSkills$Skills, 
+                           ActLvs=NightLordCoreBase$ActSkills$Lv, 
+                           ActMP=NightLordCoreBase$ActSkills$MP, 
+                           UsefulSkills=NightLordCoreBase$UsefulSkills, 
                            UsefulLvs=20, 
                            UsefulMP=0, 
-                           SpecSet=SpecDefault, 
-                           SelfBind=F)
-
+                           SpecSet=get(DPMCalcOption$SpecSet), 
+                           SpecialCore=NightLordCoreBase$SpecialCoreUse)
 
 
 ## NightLord - Basic Info
 ## Link Check Needed
 NightLordBase <- JobBase(ChrInfo=ChrInfo, 
-                         MobInfo=MobDefault,
-                         SpecSet=SpecDefault, 
+                         MobInfo=get(DPMCalcOption$MobSet),
+                         SpecSet=get(DPMCalcOption$SpecSet), 
                          Job="NightLord",
                          CoreData=NightLordCore, 
                          BuffDurationNeeded=0, 
-                         AbilList=c("BDR", "DisorderBDR"), 
-                         LinkList=c("Mikhail", "Xenon", "DemonAvenger", "CygnusKnights"), 
-                         MonsterLife=MLTypeL21, 
-                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Wristband", SpecDefault$WeaponType)[, 1:16],
-                         WeaponType=SpecDefault$WeaponType, 
-                         SubWeapon=SubWeapon[11, ], 
-                         Emblem=Emblem[1, ])
+                         AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "NightLord"), 
+                         LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "NightLord"), 
+                         MonsterLife=get(FindJob(MonsterLifePreSet, "NightLord")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                         Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Wristband", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                         WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                         SubWeapon=SubWeapon[rownames(SubWeapon)=="Talisman", ], 
+                         Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                         CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "NightLord")))
 
 
 ## NightLord - Passive
@@ -72,11 +78,11 @@ value <- c(10 + ceiling(NightLordBase$PSkillLv/3))
 PurgeArea <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
-value <- c(NightLordCore[[2]][6, 2])
+value <- c(GetCoreLv(NightLordCore, "ReadyToDie"))
 ReadyToDie <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
-value <- c(NightLordCore[[2]][10, 2])
+value <- c(GetCoreLv(NightLordCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 NightLordPassive <- Passive(list(FlameJavelin, NimbleBody, CriticalThrow, PhysicalTraining, ExpertJavelin, Adrenaline, 
@@ -126,19 +132,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * NightLordCore[[3]][2, 2], NA, 900, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * NightLordCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(NightLordCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -156,7 +155,7 @@ BleedingToxin <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(1)
-info <- c(20 + NightLordCore[[2]][1, 2], 180, 540, F, T, F, T)
+info <- c(20 + GetCoreLv(NightLordCore, "SpreadThrow"), 180, 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SpreadThrow <- rbind(data.frame(option, value), info)
@@ -169,38 +168,39 @@ colnames(info) <- c("option", "value")
 ThrowBlastingBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(NightLordCore[[2]][7, 2]/5))
-info <- c(30, 220 - NightLordCore[[2]][7, 2], 750, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(NightLordCore, "UltimateDarkSight")/5))
+info <- c(30, 220 - GetCoreLv(NightLordCore, "UltimateDarkSight"), 750, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UltimateDarkSight <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(NightLordCore[[2]][6, 2]/10))
-info <- c(30, 90 - floor(NightLordCore[[2]][6, 2]/2), 780, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(NightLordCore, "ReadyToDie")/10))
+info <- c(30, 90 - floor(GetCoreLv(NightLordCore, "ReadyToDie")/2), 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(NightLordCore[[2]][6, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(NightLordCore[[2]][6, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(NightLordCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(NightLordCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * NightLordCore[[2]][8, 2]) * MapleSoldier[1, 2]) * NightLordBase$MainStatP), 5 + floor(NightLordCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(NightLordCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * NightLordBase$MainStatP), 5 + floor(GetCoreLv(NightLordCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-NightLordBuff <- Buff(list(JavelinBooster=JavelinBooster, ShadowPartner=ShadowPartner, SpiritJavelin=SpiritJavelin, PurgeArea=PurgeArea, MapleSoldier=MapleSoldier, 
-                           UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, BleedingToxin=BleedingToxin, 
-                           SpreadThrow=SpreadThrow, ThrowBlastingBuff=ThrowBlastingBuff, UltimateDarkSight=UltimateDarkSight, ReadyToDie1Stack=ReadyToDie1Stack, 
-                           ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : NA
+NightLordBuff <- list(JavelinBooster=JavelinBooster, ShadowPartner=ShadowPartner, SpiritJavelin=SpiritJavelin, PurgeArea=PurgeArea, MapleSoldier=MapleSoldier, 
+                      UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, BleedingToxin=BleedingToxin, 
+                      SpreadThrow=SpreadThrow, ThrowBlastingBuff=ThrowBlastingBuff, UltimateDarkSight=UltimateDarkSight, ReadyToDie1Stack=ReadyToDie1Stack, 
+                      ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : NA -> Not Use Useful Advanced Bless
+NightLordBuff <- Buff(NightLordBuff)
 NightLordAllTimeBuff <- AllTimeBuff(NightLordBuff)
 
 
@@ -208,8 +208,8 @@ NightLordAllTimeBuff <- AllTimeBuff(NightLordBuff)
 NightLordSpec <- JobSpec(JobBase=NightLordBase, 
                          Passive=NightLordPassive, 
                          AllTimeBuff=NightLordAllTimeBuff, 
-                         MobInfo=MobDefault, 
-                         SpecSet=SpecDefault, 
+                         MobInfo=get(DPMCalcOption$MobSet), 
+                         SpecSet=get(DPMCalcOption$SpecSet), 
                          WeaponName="Wristband", 
                          UnionStance=0)
 
@@ -217,98 +217,52 @@ NightLordUnionRemained <- NightLordSpec$UnionRemained
 NightLordHyperStatBase <- NightLordSpec$HyperStatBase
 NightLordCoolReduceType <- NightLordSpec$CoolReduceType
 NightLordSpec <- NightLordSpec$Spec
-SpreadThrowStems <- 3
 
 
 ## NightLord - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * NightLordCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * NightLordCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * NightLordCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * NightLordCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * NightLordCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * NightLordCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(NightLordCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## NightLord - Attacks
+SpreadThrowStems <- 3
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(NightLordCore[[1]][1, 2]>=40, 20, 0), 40, 2 * NightLordCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(NightLordCore, "QuadrapleThrow")>=40, 20, 0), 40, 2 * GetCoreLv(NightLordCore, "QuadrapleThrow"))
 info <- c(420 + NightLordSpec$SkillLv * 4, 5, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 QuadrapleThrow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(NightLordCore[[1]][1, 2]>=40, 20, 0), 40, 2 * NightLordCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(NightLordCore, "QuadrapleThrow")>=40, 20, 0), 40, 2 * GetCoreLv(NightLordCore, "QuadrapleThrow"))
 info <- c((420 + NightLordSpec$SkillLv * 4) * 0.8, 5 * SpreadThrowStems, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 QuadrapleThrowSpread <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(NightLordCore[[1]][2, 2]>=40, 20, 0), 2 * NightLordCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(NightLordCore, "SuddenRaid")>=40, 20, 0), 2 * GetCoreLv(NightLordCore, "SuddenRaid"))
 info <- c(1150 + NightLordSpec$SkillLv * 15, 3, 900, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SuddenRaid <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(NightLordCore[[1]][3, 2]>=40, 20, 0), 2 * NightLordCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(NightLordCore, "MarkofNightLord")>=40, 20, 0), 2 * GetCoreLv(NightLordCore, "MarkofNightLord"))
 info <- c(60 + NightLordSpec$PSkillLv * 3 + NightLordBase$ChrLv, 3 / (1/(0.6 + 0.02 * NightLordSpec$PSkillLv) + 1), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MarkofNightLord <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(NightLordCore[[1]][3, 2]>=40, 20, 0), 2 * NightLordCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(NightLordCore, "MarkofNightLord")>=40, 20, 0), 2 * GetCoreLv(NightLordCore, "MarkofNightLord"))
 info <- c(60 + NightLordSpec$PSkillLv * 3 + NightLordBase$ChrLv, 45 / (1/(0.6 + 0.02 * NightLordSpec$PSkillLv) + 1), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -316,21 +270,21 @@ MarkofNightLordSpread <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(250 + 10 * NightLordCore[[2]][2, 2], 5, 480, 180, 25, T, F, F)
+info <- c(250 + 10 * GetCoreLv(NightLordCore, "ThrowingKnife"), 5, 480, 180, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThrowingKnife <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=ASkill)
 value <- c(30)
-info <- c(900 + 36 * NightLordCore[[2]][3, 2], 10, 0, NA, 60, T, F, F)
+info <- c(900 + 36 * GetCoreLv(NightLordCore, "SecretBook"), 10, 0, NA, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SecretBookExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(475 + 19 * NightLordCore[[2]][4, 2], 5, 0, NA, NA, NA, NA, F)
+info <- c(475 + 19 * GetCoreLv(NightLordCore, "ThrowBlasting"), 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ThrowBlasting <- rbind(data.frame(option, value), info)}
@@ -342,7 +296,7 @@ NightLordATK <- Attack(list(QuadrapleThrow=QuadrapleThrow, QuadrapleThrowSpread=
 
 ## NightLord - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(NightLordCore[[1]][4, 2]>=40, 20, 0), NightLordCore[[1]][4, 2] * 3)
+value <- c(ifelse(GetCoreLv(NightLordCore, "DarkFlare")>=40, 20, 0), GetCoreLv(NightLordCore, "DarkFlare") * 3)
 info <- c(280, 1, 600, 900, 60, 60, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -350,7 +304,7 @@ DarkFlare <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=SSkill)
 value <- c(30)
-info <- c(350 + 14 * NightLordCore[[2]][3, 2], 12, 360, 990, 12, 60, F, T, F, F)
+info <- c(350 + 14 * GetCoreLv(NightLordCore, "SecretBook"), 12, 360, 990, 12, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 SecretBook <- rbind(data.frame(option, value), info)}
@@ -368,7 +322,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, N
 BuffFinal <- data.frame(NightLordBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, NightLordSpec$CoolReduceP, NightLordSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, NightLordSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 ATKFinal <- AddATKRateSkills("ShadowPartner", BuffFinal, ATKFinal, c("QuadrapleThrow", "SuddenRaid", "ThrowingKnife", "ThrowBlasting"))
 
 SummonedFinal <- data.frame(NightLordSummoned)
@@ -379,8 +333,6 @@ DealCycle <- c("Skills", "Time", rownames(NightLordBuff))
 NightLordDealCycle <- t(rep(0, length(DealCycle)))
 colnames(NightLordDealCycle) <- DealCycle
 
-
-
 NightLordCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Period=180.5, CycleTime=361) {
   BuffSummonedPrior <- c("JavelinBooster", "ShadowPartner", "SpiritJavelin", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "DarkFlare", 
                          "BleedingToxin", "ThrowBlastingBuff", "MapleWarriors2", "SpreadThrow",
@@ -388,8 +340,8 @@ NightLordCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
   
   Times180 <- c(1, 1, 1, 1, 1, 1, 0, -180.5/57, 1, 1, 1, 1, 2, 1, -180.5/71.25, 1, 4, -180.5/57)
   
-  SubTime <- rep(Period, length(Times180))
-  TotalTime <- CycleTime
+  SubTime <- rep(Period - Spec$CoolReduce, length(Times180))
+  TotalTime <- CycleTime - (CycleTime/Period) * Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -577,29 +529,42 @@ NightLordDealCycle <- DCSummonedATKs(NightLordDealCycle, Skill=c("DarkFlare"), S
 NightLordDealCycle <- DCSpiderInMirror(NightLordDealCycle, SummonedFinal)
 NightLordDealCycleReduction <- DealCycleReduction(NightLordDealCycle)
 
-DealCalc(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpec)
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="NightLord") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  NightLordSpecOpt1 <- Optimization1(NightLordDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightLordSpec, NightLordUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- NightLordSpecOpt1[1, 1:3]
+} else {
+  NightLordSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+NightLordSpecOpt <- OptDataAdd(NightLordSpec, NightLordSpecOpt1, "Potential", NightLordBase$CRROver, DemonAvenger=F)
 
-NightLordSpecOpt1 <- Optimization1(NightLordDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightLordSpec, NightLordUnionRemained)
-NightLordSpecOpt <- NightLordSpec
-NightLordSpecOpt$ATKP <- NightLordSpecOpt$ATKP + NightLordSpecOpt1$ATKP
-NightLordSpecOpt$BDR <- NightLordSpecOpt$BDR + NightLordSpecOpt1$BDR
-NightLordSpecOpt$IGR <- IGRCalc(c(NightLordSpecOpt$IGR, NightLordSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  NightLordSpecOpt2 <- Optimization2(NightLordDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt, NightLordHyperStatBase, NightLordBase$ChrLv, NightLordBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- NightLordSpecOpt2[1, ]
+} else {
+  NightLordSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+NightLordSpecOpt <- OptDataAdd(NightLordSpecOpt, NightLordSpecOpt2, "HyperStat", NightLordBase$CRROver, DemonAvenger=F)
 
-NightLordSpecOpt2 <- Optimization2(NightLordDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt, NightLordHyperStatBase, NightLordBase$ChrLv, NightLordBase$CRROver)
-NightLordFinalDPM <- DealCalc(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt2)
-NightLordFinalDPMwithMax <- DealCalcWithMaxDMR(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt2)
+NightLordFinalDPM <- DealCalc(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt, Collapse=F)
+NightLordFinalDPMwithMax <- DealCalcWithMaxDMR(NightLordDealCycle, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt)
 
-DPM12349$NightLord[1] <- sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000)
-DPM12349$NightLord[2] <- sum(na.omit(NightLordFinalDPM)) / (max(NightLordDealCycle$Time) / 60000) - sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "NightLord", sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "NightLord", sum(na.omit(NightLordFinalDPM)) / (max(NightLordDealCycle$Time) / 60000) - sum(na.omit(NightLordFinalDPMwithMax)) / (max(NightLordDealCycle$Time) / 60000))
+
+NightLordDealRatio <- DealRatio(NightLordDealCycle, NightLordFinalDPMwithMax)
 
 NightLordDealData <- data.frame(NightLordDealCycle$Skills, NightLordDealCycle$Time, NightLordDealCycle$Restraint4, NightLordFinalDPMwithMax)
 colnames(NightLordDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(NightLordDealData, NightLordDealData$R4>0)
-
-NightLordRR <- NightLordDealData[31:434, ]
-DPM12349$NightLord[3] <- sum((NightLordRR$Deal))
-
-NightLord40s <- NightLordDealData[31:726, ]
-DPM12349$NightLord[4] <- sum((NightLord40s$Deal))
-
-NightLordDealRatio <- DealRatio(NightLordDealCycle, NightLordFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "NightLord", Deal_RR(NightLordDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "NightLord", Deal_40s(NightLordDealData))

@@ -1,36 +1,42 @@
 ## Shadower - Data
 ## Shadower - Core
-ShadowerCore <- MatrixSet(PasSkills=c("Assassination", "MesoExplosion", "BoomerangStab", "VeilofShadow", "DarkFlare", "SuddenRaid"), 
-                          PasLvs=c(50, 50, 50, 50, 50, 50), 
-                          PasMP=c(10, 10, 5, 10, 5, 5), 
-                          ActSkills=c("ShadowAssault", "Eviscerate", "SonicBlow", "Myeolgwichamyeongjin",
-                                      CommonV("Thief", "Adventure")), 
-                          ActLvs=c(25, 25, 25, 25, 1, 25, 25, 25, 25),
-                          ActMP=c(0, 5, 5, 5, 0, 5, 5, 5, 0), 
-                          BlinkLv=1, 
-                          BlinkMP=5, 
-                          UsefulSkills=c("SharpEyes", "CombatOrders"), 
+ShadowerCoreBase <- CoreBuilder(ActSkills=c("ShadowAssault", "Eviscerate", "SonicBlow", "Myeolgwichamyeongjin",
+                                            CommonV("Thief", "Adventure")), 
+                                ActSkillsLv=c(25, 25, 25, 25, 1, 25, 25, 25, 25), 
+                                UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                SpecSet=get(DPMCalcOption$SpecSet), 
+                                VPassiveList=ShadowerVPassive, 
+                                VPassivePrior=ShadowerVPrior, 
+                                SelfBind=F)
+
+ShadowerCore <- MatrixSet(PasSkills=ShadowerCoreBase$PasSkills$Skills, 
+                          PasLvs=ShadowerCoreBase$PasSkills$Lv, 
+                          PasMP=ShadowerCoreBase$PasSkills$MP, 
+                          ActSkills=ShadowerCoreBase$ActSkills$Skills, 
+                          ActLvs=ShadowerCoreBase$ActSkills$Lv, 
+                          ActMP=ShadowerCoreBase$ActSkills$MP, 
+                          UsefulSkills=ShadowerCoreBase$UsefulSkills, 
                           UsefulLvs=20, 
                           UsefulMP=0, 
-                          SpecSet=SpecDefault, 
-                          SelfBind=F)
+                          SpecSet=get(DPMCalcOption$SpecSet), 
+                          SpecialCore=ShadowerCoreBase$SpecialCoreUse)
 
 
 ## Shadower - Basic Info
 ShadowerBase <- JobBase(ChrInfo=ChrInfo, 
-                        MobInfo=MobDefault,
-                        SpecSet=SpecDefault, 
+                        MobInfo=get(DPMCalcOption$MobSet),
+                        SpecSet=get(DPMCalcOption$SpecSet), 
                         Job="Shadower",
                         CoreData=ShadowerCore, 
                         BuffDurationNeeded=0, 
-                        AbilList=c("BDR", "DisorderBDR"), 
-                        LinkList=c("CygnusKnights", "Mikhail", "DemonAvenger", "Xenon"), 
-                        MonsterLife=MLTypeL21, 
-                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Dagger", SpecDefault$WeaponType)[, 1:16],
-                        WeaponType=SpecDefault$WeaponType, 
-                        SubWeapon=SubWeapon[10, ], 
-                        Emblem=Emblem[1, ], 
-                        CoolReduceHat=F)
+                        AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Shadower"), 
+                        LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Shadower"), 
+                        MonsterLife=get(FindJob(MonsterLifePreSet, "Shadower")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                        Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Dagger", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                        WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                        SubWeapon=SubWeapon[rownames(SubWeapon)=="DaggerSheath", ], 
+                        Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                        CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Shadower")))
 
 
 ## Shadower - Passive
@@ -75,11 +81,11 @@ value <- c(70 + ceiling(ShadowerBase$SkillLv/2), 40 + ShadowerBase$SkillLv, 15 +
 DaggerExpert <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(ShadowerCore[[2]][6, 2])
+value <- c(GetCoreLv(ShadowerCore, "ReadyToDie"))
 ReadyToDie <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(ShadowerCore[[2]][10, 2])
+value <- c(GetCoreLv(ShadowerCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 ShadowerPassive <- Passive(list(NimbleBody, CriticalGrowing, Karma, PhysicalTraining, ShieldMastery, Grid, BoomerangStabPassive, PrimaCritical, ShadowerInstinctPassive, DaggerExpert, 
@@ -188,56 +194,50 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 FlipTheCoin <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * ShadowerCore[[3]][1, 2], NA, 900, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * ShadowerCore[[3]][2, 2], NA, 1500, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(ShadowerCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(ShadowerCore[[2]][6, 2]/10))
-info <- c(30, 90 - floor(ShadowerCore[[2]][6, 2]/2), 780, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(ShadowerCore, "ReadyToDie")/10))
+info <- c(30, 90 - floor(GetCoreLv(ShadowerCore, "ReadyToDie")/2), 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(ShadowerCore[[2]][6, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(ShadowerCore[[2]][6, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(ShadowerCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(ShadowerCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(((115 + floor(ShadowerCore[[2]][7, 2]/5)) / 105 - 1) * 100)
-info <- c(30, 220 - ShadowerCore[[2]][7, 2], 750, F, T, F, T)
+value <- c(((115 + floor(GetCoreLv(ShadowerCore, "UltimateDarkSight")/5)) / 105 - 1) * 100)
+info <- c(30, 220 - GetCoreLv(ShadowerCore, "UltimateDarkSight"), 750, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UltimateDarkSight <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * ShadowerCore[[2]][8, 2]) * MapleSoldier[1, 2]) * ShadowerBase$MainStatP), 5 + floor(ShadowerCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(ShadowerCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * ShadowerBase$MainStatP), 5 + floor(GetCoreLv(ShadowerCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-ShadowerBuff <- Buff(list(MesoStack=MesoStack, AdvancedDarkSightDummy=AdvancedDarkSightDummy, Assassination1KP=Assassination1KP, Assassination2KP=Assassination2KP, AssassinationADS=AssassinationADS, 
-                          DaggerBooster=DaggerBooster, ShadowPartner=ShadowPartner, MapleSoldier=MapleSoldier, ShadowerInstinct=ShadowerInstinct, 
-                          SmokeShell=SmokeShell, VeilofShadowBuff=VeilofShadowBuff, 
-                          EpicAdventure=EpicAdventure, FlipTheCoin=FlipTheCoin, 
-                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                          ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, UltimateDarkSight=UltimateDarkSight, MapleWarriors2=MapleWarriors2, 
-                          Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : NA
+ShadowerBuff <- list(MesoStack=MesoStack, AdvancedDarkSightDummy=AdvancedDarkSightDummy, Assassination1KP=Assassination1KP, Assassination2KP=Assassination2KP, AssassinationADS=AssassinationADS, 
+                     DaggerBooster=DaggerBooster, ShadowPartner=ShadowPartner, MapleSoldier=MapleSoldier, ShadowerInstinct=ShadowerInstinct, 
+                     SmokeShell=SmokeShell, VeilofShadowBuff=VeilofShadowBuff, 
+                     EpicAdventure=EpicAdventure, FlipTheCoin=FlipTheCoin, 
+                     UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                     ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, UltimateDarkSight=UltimateDarkSight, MapleWarriors2=MapleWarriors2, 
+                     Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## Petbuff : NA -> Not Use Useful Advanced Bless
+ShadowerBuff <- Buff(ShadowerBuff)
 ShadowerAllTimeBuff <- AllTimeBuff(ShadowerBuff)
 
 
@@ -245,8 +245,8 @@ ShadowerAllTimeBuff <- AllTimeBuff(ShadowerBuff)
 ShadowerSpec <- JobSpec(JobBase=ShadowerBase, 
                         Passive=ShadowerPassive, 
                         AllTimeBuff=ShadowerAllTimeBuff, 
-                        MobInfo=MobDefault, 
-                        SpecSet=SpecDefault, 
+                        MobInfo=get(DPMCalcOption$MobSet), 
+                        SpecSet=get(DPMCalcOption$SpecSet), 
                         WeaponName="Dagger", 
                         UnionStance=0)
 
@@ -257,88 +257,42 @@ ShadowerSpec <- ShadowerSpec$Spec
 
 
 ## Shadower - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * ShadowerCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ShadowerCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ShadowerCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ShadowerCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ShadowerCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * ShadowerCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(ShadowerCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Shadower - Attacks
 ## Hyper : Meso Explosion - Reinforce / Enhance, Assassination - Reinforce / Boss Killer / Ignore Guard
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, IGRCalc(c(10, ifelse(ShadowerCore[[1]][1, 2]>=40, 20, 0))), 2 * ShadowerCore[[1]][1, 2])
+value <- c(40, IGRCalc(c(10, ifelse(GetCoreLv(ShadowerCore, "Assassination")>=40, 20, 0))), 2 * GetCoreLv(ShadowerCore, "Assassination"))
 info <- c(275 + 4 * ShadowerSpec$SkillLv, 6, 840, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Assassination1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(ShadowerCore[[1]][1, 2]>=40, 20, 0), 2 * ShadowerCore[[1]][1, 2])
+value <- c(40, ifelse(GetCoreLv(ShadowerCore, "Assassination")>=40, 20, 0), 2 * GetCoreLv(ShadowerCore, "Assassination"))
 info <- c(350 + 5 * ShadowerSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Assassination2 <- rbind(data.frame(option, value), info) ## Delay Skipped By Jeolgae : 480ms
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(10, ifelse(ShadowerCore[[1]][2, 2]>=40, 20, 0))), 3 * ShadowerCore[[1]][2, 2])
+value <- c(20, IGRCalc(c(10, ifelse(GetCoreLv(ShadowerCore, "MesoExplosion")>=40, 20, 0))), 3 * GetCoreLv(ShadowerCore, "MesoExplosion"))
 info <- c(120, 2 * 0.4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MesoExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(ShadowerCore[[1]][4, 2]>=40, 20, 0), 2 * ShadowerCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(ShadowerCore, "VeilofShadow")>=40, 20, 0), 2 * GetCoreLv(ShadowerCore, "VeilofShadow"))
 info <- c(800, 1, 0, 900, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -346,21 +300,21 @@ VeilofShadow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(720 + 20 * ShadowerCore[[2]][1, 2], 6, 570 * 4, 570, 60, T, F, F)
+info <- c(720 + 20 * GetCoreLv(ShadowerCore, "ShadowAssault"), 6, 570 * 4, 570, 60, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShadowAssault <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(475 + 19 * ShadowerCore[[2]][2, 2], 7, 570, 60, 14, T, F, F)
+info <- c(475 + 19 * GetCoreLv(ShadowerCore, "Eviscerate"), 7, 570, 60, 14, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Eviscerate <- rbind(data.frame(option, value), info) ## StartATK : 150ms
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(500 + 20 * ShadowerCore[[2]][3, 2], 7, 2550, 120, 80, T, F, F)
+info <- c(500 + 20 * GetCoreLv(ShadowerCore, "SonicBlow"), 7, 2550, 120, 80, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SonicBlow <- rbind(data.frame(option, value), info) ## StartATK : 780ms
@@ -374,14 +328,14 @@ SonicBlowEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(20)
-info <- c(425 + 17 * ShadowerCore[[2]][4, 2], 8, 0, 0, 90, T, F, F)
+info <- c(425 + 17 * GetCoreLv(ShadowerCore, "Myeolgwichamyeongjin"), 8, 0, 0, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Myeolgwichamyeongjin <- rbind(data.frame(option, value), info) ## 150ms, 900ms, 1680ms, 2460ms, 3120ms, 3600ms, 3960ms, 4200ms, 4440ms, 4620ms, 4800ms, 4920ms (11 Times)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(20)
-info <- c(625 + 25 * ShadowerCore[[2]][4, 2], 15, 0, 90, 90, T, F, F)
+info <- c(625 + 25 * GetCoreLv(ShadowerCore, "Myeolgwichamyeongjin"), 15, 0, 90, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MyeolgwichamyeongjinLast <- rbind(data.frame(option, value), info) ## StartATK : 5370 + 900
@@ -401,7 +355,7 @@ ShadowerATK <- Attack(list(Assassination1=Assassination1, Assassination2=Assassi
 
 ## Shadower - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(ShadowerCore[[1]][5, 2]>=40, 20, 0), ShadowerCore[[1]][5, 2] * 3)
+value <- c(ifelse(GetCoreLv(ShadowerCore, "DarkFlare")>=40, 20, 0), GetCoreLv(ShadowerCore, "DarkFlare") * 3)
 info <- c(360, 1, 600, 900, 60, 60, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -420,7 +374,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, S
 BuffFinal <- data.frame(ShadowerBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, ShadowerSpec$CoolReduceP, ShadowerSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, ShadowerSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(ShadowerSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, ShadowerSpec$CoolReduceP, ShadowerSpec$CoolReduce)
@@ -454,8 +408,8 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
   
   Times180 <- c(1, 1, 1, 1, 1, 1, 0, 3, 
                 1, 2, 1, 2)
-  SubTime <- rep(Period, length(BuffSummonedPrior))
-  TotalTime <- CycleTime
+  SubTime <- rep(Period - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime - (CycleTime/Period) * Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -971,28 +925,42 @@ ShadowerDealCycle <- ShadowerAddATK(ShadowerDealCycle,
                                     ShadowerSpec)
 ShadowerDealCycleReduction <- DealCycleReduction(ShadowerDealCycle)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Shadower") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  ShadowerSpecOpt1 <- Optimization1(ShadowerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpec, ShadowerUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- ShadowerSpecOpt1[1, 1:3]
+} else {
+  ShadowerSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+ShadowerSpecOpt <- OptDataAdd(ShadowerSpec, ShadowerSpecOpt1, "Potential", ShadowerBase$CRROver, DemonAvenger=F)
 
-ShadowerSpecOpt1 <- Optimization1(ShadowerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpec, ShadowerUnionRemained)
-ShadowerSpecOpt <- ShadowerSpec
-ShadowerSpecOpt$ATKP <- ShadowerSpecOpt$ATKP + ShadowerSpecOpt1$ATKP
-ShadowerSpecOpt$BDR <- ShadowerSpecOpt$BDR + ShadowerSpecOpt1$BDR
-ShadowerSpecOpt$IGR <- IGRCalc(c(ShadowerSpecOpt$IGR, ShadowerSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  ShadowerSpecOpt2 <- Optimization2(ShadowerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt, ShadowerHyperStatBase, ShadowerBase$ChrLv, ShadowerBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- ShadowerSpecOpt2[1, ]
+} else {
+  ShadowerSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+ShadowerSpecOpt <- OptDataAdd(ShadowerSpecOpt, ShadowerSpecOpt2, "HyperStat", ShadowerBase$CRROver, DemonAvenger=F)
 
-ShadowerSpecOpt2 <- Optimization2(ShadowerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt, ShadowerHyperStatBase, ShadowerBase$ChrLv, ShadowerBase$CRROver)
-ShadowerFinalDPM <- DealCalc(ShadowerDealCycle, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt2)
-ShadowerFinalDPMwithMax <- DealCalcWithMaxDMR(ShadowerDealCycle, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt2)
+ShadowerFinalDPM <- DealCalc(ShadowerDealCycle, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt, Collapse=F)
+ShadowerFinalDPMwithMax <- DealCalcWithMaxDMR(ShadowerDealCycle, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt)
 
-DPM12349$Shadower[1] <- sum(na.omit(ShadowerFinalDPMwithMax)) / (max(ShadowerDealCycle$Time)/ 60000)
-DPM12349$Shadower[2] <- sum(na.omit(ShadowerFinalDPM)) / (max(ShadowerDealCycle$Time) / 60000) - sum(na.omit(ShadowerFinalDPMwithMax)) / (max(ShadowerDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Shadower", sum(na.omit(ShadowerFinalDPMwithMax)) / (max(ShadowerDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Shadower", sum(na.omit(ShadowerFinalDPM)) / (max(ShadowerDealCycle$Time) / 60000) - sum(na.omit(ShadowerFinalDPMwithMax)) / (max(ShadowerDealCycle$Time) / 60000))
+
+ShadowerDealRatio <- DealRatio(ShadowerDealCycle, ShadowerFinalDPMwithMax)
 
 ShadowerDealData <- data.frame(ShadowerDealCycle$Skills, ShadowerDealCycle$Time, ShadowerDealCycle$Restraint4, ShadowerFinalDPMwithMax)
 colnames(ShadowerDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(ShadowerDealData, ShadowerDealData$R4>0)
-
-ShadowerRR <- ShadowerDealData[42:462, ]
-DPM12349$Shadower[3] <- sum((ShadowerRR$Deal))
-
-Shadower40s <- ShadowerDealData[42:1184, ]
-DPM12349$Shadower[4] <- sum((Shadower40s$Deal))
-
-ShadowerDealRatio <- DealRatio(ShadowerDealCycle, ShadowerFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Shadower", Deal_RR(ShadowerDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Shadower", Deal_40s(ShadowerDealData))

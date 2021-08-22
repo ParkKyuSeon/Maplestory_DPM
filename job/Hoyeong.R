@@ -1,36 +1,42 @@
 ## Hoyeong - Data
 ## Hoyeong - VMatrix
-HoyeongCore <- MatrixSet(PasSkills=c("Yeouiseon_Geumgobong", "Toparyu_Jijinswae", "Gwihwabu", "Hojeopjimong", "Heupseongwaryu", "Bunsinbu", 
-                                     "MabongHorobu", "MisaengGangbyeon", "Myeolhwayeom_Pachopung"), 
-                         PasLvs=c(50, 50, 50, 50, 50, 50, 50, 50, 50), 
-                         PasMP=c(10, 10, 10, 10, 10, 10, 10, 10, 10), 
-                         ActSkills=c("Bunsinnanmu", "Sanryeongsohwan", "Goeryeoknansin", "CheonjiinHwanyeong",
-                                      CommonV("Thief", "Anima")[c(2, 3, 4, 5)]), 
-                         ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
-                         ActMP=c(5, 5, 5, 5, 5, 0, 0, 0), 
-                         BlinkLv=1, 
-                         BlinkMP=0, 
-                         UsefulSkills=c("CombatOrders", "SharpEyes"), 
-                         UsefulLvs=c(20, 20), 
-                         UsefulMP=c(0, 0), 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
+HoyeongCoreBase <- CoreBuilder(ActSkills=c("Bunsinnanmu", "Sanryeongsohwan", "Goeryeoknansin", "CheonjiinHwanyeong",
+                                           CommonV("Thief", "Anima")[c(2, 3, 4, 5)]), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=HoyeongVPassive, 
+                               VPassivePrior=HoyeongVPrior, 
+                               SelfBind=F)
+
+HoyeongCore <- MatrixSet(PasSkills=HoyeongCoreBase$PasSkills$Skills, 
+                         PasLvs=HoyeongCoreBase$PasSkills$Lv, 
+                         PasMP=HoyeongCoreBase$PasSkills$MP, 
+                         ActSkills=HoyeongCoreBase$ActSkills$Skills, 
+                         ActLvs=HoyeongCoreBase$ActSkills$Lv, 
+                         ActMP=HoyeongCoreBase$ActSkills$MP, 
+                         UsefulSkills=HoyeongCoreBase$UsefulSkills, 
+                         UsefulLvs=20, 
+                         UsefulMP=0, 
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=HoyeongCoreBase$SpecialCoreUse)
 
 
 ## Hoyeong - Basic Info
 HoyeongBase <- JobBase(ChrInfo=ChrInfo, 
-                       MobInfo=MobDefault,
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        Job="Hoyeong",
                        CoreData=HoyeongCore, 
                        BuffDurationNeeded=0, 
-                       AbilList=c("PassiveLv", "DisorderBDR"), 
-                       LinkList=c("Mikhail", "Hoyeong", "DemonAvenger", "CygnusKnights"), 
-                       MonsterLife=MLTypeL22, 
-                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Fan", SpecDefault$WeaponType)[, 1:16],
-                       WeaponType=SpecDefault$WeaponType, 
-                       SubWeapon=SubWeapon[40, ], 
-                       Emblem=Emblem[12, ])
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Hoyeong"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Hoyeong"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Hoyeong")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Fan", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                       SubWeapon=SubWeapon[rownames(SubWeapon)=="Seonchu", ], 
+                       Emblem=Emblem[rownames(Emblem)=="Cheonjiin", ], 
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Hoyeong")))
 
 
 ## Hoyeong - Passive
@@ -71,11 +77,11 @@ value <- c(rep(10 + HoyeongBase$PSkillLv, 5))
 Jeomjeong <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(HoyeongCore[[2]][5, 2])
+value <- c(GetCoreLv(HoyeongCore, "ReadyToDie"))
 ReadyToDie <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(HoyeongCore[[2]][8, 2])
+value <- c(GetCoreLv(HoyeongCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 HoyeongPassive <- Passive(list(SpiritIntimacy=SpiritIntimacy, GoeiBongin=GoeiBongin, FanMastery=FanMastery, Siman=Siman, 
@@ -155,7 +161,7 @@ BunsinnanmuBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(45 + ceiling(HoyeongCore[[2]][2, 2]/2), 200, 900, F, T, F, T)
+info <- c(45 + ceiling(GetCoreLv(HoyeongCore, "Sanryeongsohwan")/2), 200, 900, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SanryeongSohwan <- rbind(data.frame(option, value), info)
@@ -168,7 +174,7 @@ colnames(info) <- c("option", "value")
 ElemComplete <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(20 + 2 * HoyeongCore[[2]][3, 2])
+value <- c(20 + 2 * GetCoreLv(HoyeongCore, "Goeryeoknansin"))
 info <- c(30, 200, 900, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -195,58 +201,56 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CheonjiinHwanyeongBuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * HoyeongCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * HoyeongCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(HoyeongCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(HoyeongCore[[2]][5, 2]/10))
-info <- c(30, 90 - floor(HoyeongCore[[2]][5, 2]/2), 780, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(HoyeongCore, "ReadyToDie")/10))
+info <- c(30, 90 - floor(GetCoreLv(HoyeongCore, "ReadyToDie")/2), 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(HoyeongCore[[2]][5, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(HoyeongCore[[2]][5, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(HoyeongCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(HoyeongCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(10 + HoyeongCore[[2]][6, 2])
+value <- c(10 + GetCoreLv(HoyeongCore, "BlessofGrandisGoddess"))
 info <- c(40, 240, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess <- rbind(data.frame(option, value), info)}
 
-HoyeongBuff <- Buff(list(BujeokDoryeok=BujeokDoryeok, DurumariDoryeok=DurumariDoryeok, Horobu1=Horobu1, BunsinbuBuff=BunsinbuBuff, FanBooster=FanBooster, MisaengGangbyeonDebuff=MisaengGangbyeonDebuff, 
-                         HojeopJimongBuff=HojeopJimongBuff, MapleSoldier=MapleSoldier, TaeeulSeondan=TaeeulSeondan, BunsinnanmuBuff=BunsinnanmuBuff, SanryeongSohwan=SanryeongSohwan, ElemComplete=ElemComplete, 
-                         Goeryeoknansin=Goeryeoknansin, GoeryeoknansinAfter=GoeryeoknansinAfter, GoeryeoknansinStack=GoeryeoknansinStack, CheonjiinHwanyeongBuff=CheonjiinHwanyeongBuff, 
-                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, 
-                         BlessofGrandisGoddess=BlessofGrandisGoddess, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## Petbuff : FanBooster, UsefulSharpEyes, UsefulCombatOrders
+HoyeongBuff <- list(BujeokDoryeok=BujeokDoryeok, DurumariDoryeok=DurumariDoryeok, Horobu1=Horobu1, BunsinbuBuff=BunsinbuBuff, FanBooster=FanBooster, MisaengGangbyeonDebuff=MisaengGangbyeonDebuff, 
+                    HojeopJimongBuff=HojeopJimongBuff, MapleSoldier=MapleSoldier, TaeeulSeondan=TaeeulSeondan, BunsinnanmuBuff=BunsinnanmuBuff, SanryeongSohwan=SanryeongSohwan, ElemComplete=ElemComplete, 
+                    Goeryeoknansin=Goeryeoknansin, GoeryeoknansinAfter=GoeryeoknansinAfter, GoeryeoknansinStack=GoeryeoknansinStack, CheonjiinHwanyeongBuff=CheonjiinHwanyeongBuff, 
+                    UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, 
+                    BlessofGrandisGoddess=BlessofGrandisGoddess, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## Petbuff : FanBooster, UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  HoyeongBuff[[length(HoyeongBuff)+1]] <- UsefulAdvancedBless
+  names(HoyeongBuff)[[length(HoyeongBuff)]] <- "UsefulAdvancedBless"
+}
+HoyeongBuff <- Buff(HoyeongBuff)
 HoyeongAllTimeBuff <- AllTimeBuff(HoyeongBuff)
 
 
 ## Hoyeong - Union & HyperStat & SoulWeapon
 HoyeongSpec <- JobSpec(JobBase=HoyeongBase, 
-                        Passive=HoyeongPassive, 
-                        AllTimeBuff=HoyeongAllTimeBuff, 
-                        MobInfo=MobDefault, 
-                        SpecSet=SpecDefault, 
-                        WeaponName="Fan", 
-                        UnionStance=0)
+                       Passive=HoyeongPassive, 
+                       AllTimeBuff=HoyeongAllTimeBuff, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
+                       WeaponName="Fan", 
+                       UnionStance=0)
 
 HoyeongUnionRemained <- HoyeongSpec$UnionRemained
 HoyeongHyperStatBase <- HoyeongSpec$HyperStatBase
@@ -255,187 +259,141 @@ HoyeongSpec <- HoyeongSpec$Spec
 
 
 ## Hoyeong - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * HoyeongCore[[2]][7, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * HoyeongCore[[2]][7, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * HoyeongCore[[2]][7, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * HoyeongCore[[2]][7, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * HoyeongCore[[2]][7, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * HoyeongCore[[2]][7, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(HoyeongCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Hoyeong - Attacks
 ## Hyper : Cheonjiin - Reinforce / Boss Killer, Hyeupseongwaryu - Heist / Gwihwabu - Heist / Bunsinbu - Ignore Guard
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, ifelse(HoyeongCore[[1]][2, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][2, 2])
+value <- c(25, ifelse(GetCoreLv(HoyeongCore, "Toparyu_Jijinswae")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Toparyu_Jijinswae"))
 info <- c(385 + 5 * HoyeongSpec$PSkillLv, 4, 570, NA, NA, NA, NA, F) ## ATKSpeed Not Applied
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Toparyu <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, ifelse(HoyeongCore[[1]][2, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][2, 2])
+value <- c(25, ifelse(GetCoreLv(HoyeongCore, "Toparyu_Jijinswae")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Toparyu_Jijinswae"))
 info <- c(385 + 5 * HoyeongSpec$PSkillLv, 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ToparyuHeo <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(HoyeongCore[[1]][7, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][7, 2])
+value <- c(20, ifelse(GetCoreLv(HoyeongCore, "MabongHorobu")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "MabongHorobu"))
 info <- c(1000 + 10 * HoyeongSpec$PSkillLv, 6, 270, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Horobu2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(25, ifelse(HoyeongCore[[1]][6, 2]>=40, 20, 0))), 2 * HoyeongCore[[1]][6, 2])
+value <- c(IGRCalc(c(25, ifelse(GetCoreLv(HoyeongCore, "Bunsinbu")>=40, 20, 0))), 2 *GetCoreLv(HoyeongCore, "Bunsinbu"))
 info <- c(230 + 2 * HoyeongSpec$PSkillLv, 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Bunsinbu <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, ifelse(HoyeongCore[[1]][2, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][2, 2])
+value <- c(25, ifelse(GetCoreLv(HoyeongCore, "Toparyu_Jijinswae")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Toparyu_Jijinswae"))
 info <- c(390 + 5 * HoyeongSpec$PSkillLv, 6, 540, NA, 6, T, T, F) ## ATKSpeed Not Applied
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Jijinswae <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(25, ifelse(HoyeongCore[[1]][2, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][2, 2])
+value <- c(25, ifelse(GetCoreLv(HoyeongCore, "Toparyu_Jijinswae")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Toparyu_Jijinswae"))
 info <- c(390 + 5 * HoyeongSpec$PSkillLv, 6, 0, NA, 6, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JijinswaeHeo <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(HoyeongCore[[1]][8, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][8, 2])
+value <- c(20, ifelse(GetCoreLv(HoyeongCore, "MisaengGangbyeon")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "MisaengGangbyeon"))
 info <- c(850 + 4 * HoyeongSpec$SkillLv, 8, 0, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MisaengGangbyeon <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(55, ifelse(HoyeongCore[[1]][1, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][1, 2])
+value <- c(55, ifelse(GetCoreLv(HoyeongCore, "Yeouiseon_Geumgobong")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Yeouiseon_Geumgobong"))
 info <- c(260 + 3 * HoyeongSpec$SkillLv, 10, 360, NA, 11, T, T, F) ## ATKSpeed Not Applied
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Geumgobong1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(55, ifelse(HoyeongCore[[1]][1, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][1, 2])
+value <- c(55, ifelse(GetCoreLv(HoyeongCore, "Yeouiseon_Geumgobong")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Yeouiseon_Geumgobong"))
 info <- c(420 + 1 * HoyeongSpec$SkillLv, 8, 330, NA, 11, T, T, F) ## ATKSpeed Not Applied
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Geumgobong2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(HoyeongCore[[1]][4, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(HoyeongCore, "Hojeopjimong")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Hojeopjimong"))
 info <- c(275 + 3 * HoyeongSpec$SkillLv, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HojeopJimong <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(25, ifelse(HoyeongCore[[1]][6, 2]>=40, 20, 0))), 2 * HoyeongCore[[1]][6, 2])
-info <- c(430 + 2 * HoyeongSpec$PSkillLv + 8 * HoyeongCore[[2]][1, 2], 40, 0, NA, NA, NA, NA, F)
+value <- c(IGRCalc(c(25, ifelse(GetCoreLv(HoyeongCore, "Bunsinbu")>=40, 20, 0))), 2 * GetCoreLv(HoyeongCore, "Bunsinbu"))
+info <- c(430 + 2 * HoyeongSpec$PSkillLv + 8 * GetCoreLv(HoyeongCore, "Bunsinnanmu"), 40, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Bunsinnanmu <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(900 + 36 * HoyeongCore[[2]][2, 2], 8, 0, 3000, NA, NA, NA, F)
+info <- c(900 + 36 * GetCoreLv(HoyeongCore, "Sanryeongsohwan"), 8, 0, 3000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SanryeongSohwanGeneral <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(350 + 14 * HoyeongCore[[2]][2, 2], 4, 0, 120, NA, NA, NA, F) ## 7 Hits
+info <- c(350 + 14 * GetCoreLv(HoyeongCore, "Sanryeongsohwan"), 4, 0, 120, NA, NA, NA, F) ## 7 Hits
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SanryeongSohwanWrath <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(850 + 34 * HoyeongCore[[2]][3, 2], 8, 0, 0, NA, NA, NA, F)
+info <- c(850 + 34 * GetCoreLv(HoyeongCore, "Goeryeoknansin"), 8, 0, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GoeryeoknansinAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(1000 + 40 * HoyeongCore[[2]][3, 2], 15, 3780, 300, NA, NA, NA, F) ## ATKSpeed Not Applied, 6 hits, StartDelay : 0
+info <- c(1000 + 40 * GetCoreLv(HoyeongCore, "Goeryeoknansin"), 15, 3780, 300, NA, NA, NA, F) ## ATKSpeed Not Applied, 6 hits, StartDelay : 0
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GoeryeoknansinFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(625 + 25 * HoyeongCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(625 + 25 * GetCoreLv(HoyeongCore, "CheonjiinHwanyeong"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CheonjiinHwanyeongCheon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(625 + 25 * HoyeongCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(625 + 25 * GetCoreLv(HoyeongCore, "CheonjiinHwanyeong"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CheonjiinHwanyeongJi <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(625 + 25 * HoyeongCore[[2]][4, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(625 + 25 * GetCoreLv(HoyeongCore, "CheonjiinHwanyeong"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CheonjiinHwanyeongIn <- rbind(data.frame(option, value), info)
@@ -456,14 +414,14 @@ HoyeongATK <- Attack(list(Toparyu=Toparyu, ToparyuHeo=ToparyuHeo, Horobu2=Horobu
 
 ## Summoned - Gwihwabu, Waryu
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(HoyeongCore[[1]][3, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(HoyeongCore, "Gwihwabu")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Gwihwabu"))
 info <- c(390 + 5 * HoyeongSpec$PSkillLv, 5, 630, 1350, 40, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Gwihwabu <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(HoyeongCore[[1]][5, 2]>=40, 20, 0), 2 * HoyeongCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(HoyeongCore, "Heupseongwaryu")>=40, 20, 0), 2 * GetCoreLv(HoyeongCore, "Heupseongwaryu"))
 info <- c(240 + 4 * HoyeongSpec$SkillLv, 6, 990, 800, 40, 47.5, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -482,7 +440,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, H
 BuffFinal <- data.frame(HoyeongBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, HoyeongSpec$CoolReduceP, HoyeongSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, HoyeongSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(HoyeongSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, HoyeongSpec$CoolReduceP, HoyeongSpec$CoolReduce)
@@ -494,12 +452,16 @@ colnames(HoyeongDealCycle) <- DealCycle
 
 HoyeongCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, BlessofGrandisLv=25, 
                          Period=c(100, 190), CycleTime=c(400, 380)) {
-  BuffSummonedPrior <- c("FanBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders",
+  BuffSummonedPrior <- c("FanBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "TaeeulSeondan", "BlessofGrandisGoddess", "Heupseongwaryu", "BunsinbuBuff", "SanryeongSohwan", "CheonjiinHwanyeongBuff", "Gwihwabu", "HojeopJimongBuff", 
                          "SoulContractLink", "MisaengGangbyeonDebuff", "BunsinnanmuBuff", "ReadyToDie2Stack", "Goeryeoknansin", "Restraint4")
-  Times190 <- c(0, 0, 0, 0, 
+  Times190 <- c(0, 0, 0, 0, 0, 
                 1, 0.5, 4, 1, 1, 2, 4, 2, 
                 2, 4, 1, 2, 1, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times190 <- Times190[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
@@ -1859,7 +1821,7 @@ HoyeongDealCycle <- HoyeongCycle(HoyeongDealCycle,
                                  BuffFinal, 
                                  SummonedFinal, 
                                  Spec=HoyeongSpec, 
-                                 BlessofGrandisLv=HoyeongCore[[2]][6, 2],
+                                 BlessofGrandisLv=GetCoreLv(HoyeongCore, "BlessofGrandisGoddess"),
                                  Period=190, 
                                  CycleTime=380)
 HoyeongDealCycle <- DealCycleFinal(HoyeongDealCycle)
@@ -1870,28 +1832,42 @@ HoyeongDealCycle <- HoyeongAddATK(HoyeongDealCycle,
                                   Spec=HoyeongSpec)
 HoyeongDealCycleReduction <- DealCycleReduction(HoyeongDealCycle)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Hoyeong") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  HoyeongSpecOpt1 <- Optimization1(HoyeongDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpec, HoyeongUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- HoyeongSpecOpt1[1, 1:3]
+} else {
+  HoyeongSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+HoyeongSpecOpt <- OptDataAdd(HoyeongSpec, HoyeongSpecOpt1, "Potential", HoyeongBase$CRROver, DemonAvenger=F)
 
-HoyeongSpecOpt1 <- Optimization1(HoyeongDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpec, HoyeongUnionRemained)
-HoyeongSpecOpt <- HoyeongSpec
-HoyeongSpecOpt$ATKP <- HoyeongSpecOpt$ATKP + HoyeongSpecOpt1$ATKP
-HoyeongSpecOpt$BDR <- HoyeongSpecOpt$BDR + HoyeongSpecOpt1$BDR
-HoyeongSpecOpt$IGR <- IGRCalc(c(HoyeongSpecOpt$IGR, HoyeongSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  HoyeongSpecOpt2 <- Optimization2(HoyeongDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt, HoyeongHyperStatBase, HoyeongBase$ChrLv, HoyeongBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- HoyeongSpecOpt2[1, ]
+} else {
+  HoyeongSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+HoyeongSpecOpt <- OptDataAdd(HoyeongSpecOpt, HoyeongSpecOpt2, "HyperStat", HoyeongBase$CRROver, DemonAvenger=F)
 
-HoyeongSpecOpt2 <- Optimization2(HoyeongDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt, HoyeongHyperStatBase, HoyeongBase$ChrLv, HoyeongBase$CRROver)
-HoyeongFinalDPM <- DealCalc(HoyeongDealCycle, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt2)
-HoyeongFinalDPMwithMax <- DealCalcWithMaxDMR(HoyeongDealCycle, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt2)
+HoyeongFinalDPM <- DealCalc(HoyeongDealCycle, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt, Collapse=F)
+HoyeongFinalDPMwithMax <- DealCalcWithMaxDMR(HoyeongDealCycle, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt)
 
-DPM12349$Hoyeong[1] <- sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time)/ 60000)
-DPM12349$Hoyeong[2] <- sum(na.omit(HoyeongFinalDPM)) / (max(HoyeongDealCycle$Time) / 60000) - sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Hoyeong", sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Hoyeong", sum(na.omit(HoyeongFinalDPM)) / (max(HoyeongDealCycle$Time) / 60000) - sum(na.omit(HoyeongFinalDPMwithMax)) / (max(HoyeongDealCycle$Time) / 60000))
+
+HoyeongDealRatio <- DealRatio(HoyeongDealCycle, HoyeongFinalDPMwithMax)
 
 HoyeongDealData <- data.frame(HoyeongDealCycle$Skills, HoyeongDealCycle$Time, HoyeongDealCycle$Restraint4, HoyeongFinalDPMwithMax)
 colnames(HoyeongDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(HoyeongDealData, HoyeongDealData$R4>0)
-
-HoyeongRR <- HoyeongDealData[67:231, ]
-DPM12349$Hoyeong[3] <- sum((HoyeongRR$Deal))
-
-Hoyeong40s <- HoyeongDealData[67:476, ]
-DPM12349$Hoyeong[4] <- sum((Hoyeong40s$Deal))
-
-HoyeongDealRatio <- DealRatio(HoyeongDealCycle, HoyeongFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Hoyeong", Deal_RR(HoyeongDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Hoyeong", Deal_40s(HoyeongDealData))

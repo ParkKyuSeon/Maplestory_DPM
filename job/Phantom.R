@@ -1,36 +1,42 @@
 ## Phantom - Data
 ## Phantom - VMatrix
-PhantomCore <- MatrixSet(PasSkills=c("UltimateDrive", "TempestofCard", "RoseCarteFinale", "NoirCarte", "Twilight", "TalentofPhantomThief4"), 
-                         PasLvs=c(50, 50, 50, 50, 50, 50), 
-                         PasMP=c(10, 10, 10, 10, 10, 10), 
-                         ActSkills=c("Joker", "BlackJack", "MarkofPhantom", "LiftBreak", 
-                                     CommonV("Thief", "Heroes")), 
-                         ActLvs=c(25, 25, 25, 25, 0, 25, 1, 25, 25), 
-                         ActMP=c(5, 5, 5, 5, 0, 5, 0, 5, 5), 
-                         BlinkLv=1, 
-                         BlinkMP=0, 
-                         UsefulSkills=c("SharpEyes", "CombatOrders"), 
+PhantomCoreBase <- CoreBuilder(ActSkills=c("Joker", "BlackJack", "MarkofPhantom", "LiftBreak", 
+                                           CommonV("Thief", "Heroes")[2:5]), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=PhantomVPassive, 
+                               VPassivePrior=PhantomVPrior, 
+                               SelfBind=F)
+
+PhantomCore <- MatrixSet(PasSkills=PhantomCoreBase$PasSkills$Skills, 
+                         PasLvs=PhantomCoreBase$PasSkills$Lv, 
+                         PasMP=PhantomCoreBase$PasSkills$MP, 
+                         ActSkills=PhantomCoreBase$ActSkills$Skills, 
+                         ActLvs=PhantomCoreBase$ActSkills$Lv, 
+                         ActMP=PhantomCoreBase$ActSkills$MP, 
+                         UsefulSkills=PhantomCoreBase$UsefulSkills, 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=PhantomCoreBase$SpecialCoreUse)
 
 
 ## Phantom - Basic Info
 PhantomBase <- JobBase(ChrInfo=ChrInfo, 
-                       MobInfo=MobDefault,
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        Job="Phantom",
                        CoreData=PhantomCore, 
                        BuffDurationNeeded=57, 
-                       AbilList=c("BDR", "BuffDuration"), 
-                       LinkList=c("Phantom", "DemonAvenger", "Mikhail", "Xenon"), 
-                       MonsterLife=MLTypeL21, 
-                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Cane", SpecDefault$WeaponType)[, 1:16],
-                       WeaponType=SpecDefault$WeaponType, 
-                       SubWeapon=SubWeapon[24, ], 
-                       Emblem=Emblem[2, ], 
-                       CoolReduceHat=T)
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Phantom"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Phantom"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Phantom")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Cane", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                       SubWeapon=SubWeapon[rownames(SubWeapon)=="Card", ], 
+                       Emblem=Emblem[rownames(Emblem)=="Heroes", ], 
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Phantom")))
 
 
 ## Phantom - Passive
@@ -67,11 +73,11 @@ value <- c(70 + ceiling(PhantomBase$PSkillLv/2), 40 + PhantomBase$PSkillLv, 15, 
 CaneExpert <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(PhantomCore[[2]][6, 2])
+value <- c(GetCoreLv(PhantomCore, "ReadyToDie"))
 ReadytoDiePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(PhantomCore[[2]][10, 2])
+value <- c(GetCoreLv(PhantomCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 PhantomPassive <- Passive(list(HighDexterity=HighDexterity, LuckMonopoly=LuckMonopoly, CaneAcceleration=CaneAcceleration, LuckofPhantomThief=LuckofPhantomThief, MoonLight=MoonLight, AcuteSense=AcuteSense, 
@@ -88,10 +94,17 @@ Fury <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(20)
-info <- c(200 * (100 + PhantomBase$BuffDurationNeeded + 10) / 100, NA, 720, F, NA, NA, T)
+info <- c(200 * (100 + PhantomBase$BuffDurationNeeded + 10) / 100, NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CrossOverChain <- rbind(data.frame(option, value), info)
+
+option <- factor("MainStat", levels=BSkill)
+value <- c(floor((PhantomBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(PhantomBase$SkillLv/2))))
+info <- c(900 + 30 * PhantomBase$SkillLv, NA, 0, T, NA, NA, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(40 + PhantomBase$SkillLv)
@@ -121,22 +134,15 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Bullseye <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * PhantomCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * PhantomCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(PhantomCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(ceiling(PhantomCore[[2]][1, 2]/5))
+value <- c(ceiling(GetCoreLv(PhantomCore, "Joker")/5))
 info <- c(30, 150, 1620, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -150,21 +156,21 @@ colnames(info) <- c("option", "value")
 JokerBuffFail <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(PhantomCore[[2]][6, 2]/10))
-info <- c(30, 90 - floor(PhantomCore[[2]][6, 2]/2), 780, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(PhantomCore, "ReadyToDie")/10))
+info <- c(30, 90 - floor(GetCoreLv(PhantomCore, "ReadyToDie")/2), 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(PhantomCore[[2]][6, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(PhantomCore[[2]][6, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(PhantomCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(PhantomCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * PhantomCore[[2]][8, 2]) * MapleSoldier[1, 2]) * PhantomBase$MainStatP), 5 + floor(PhantomCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(PhantomCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * PhantomBase$MainStatP), 5 + floor(GetCoreLv(PhantomCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -177,20 +183,25 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 NoirCarteStack <- rbind(data.frame(option, value), info)}
 
-PhantomBuff <- Buff(list(Fury=Fury, CrossOverChain=CrossOverChain, FinalCutBuff=FinalCutBuff, 
-                         TwilightDebuff=TwilightDebuff, HeroesOath=HeroesOath, Bullseye=Bullseye, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                         JokerBuff=JokerBuff, JokerBuffFail=JokerBuffFail, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, 
-                         NoirCarteStack=NoirCarteStack, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+PhantomBuff <- list(Fury=Fury, CrossOverChain=CrossOverChain, MapleSoldier=MapleSoldier, FinalCutBuff=FinalCutBuff, 
+                    TwilightDebuff=TwilightDebuff, HeroesOath=HeroesOath, Bullseye=Bullseye, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                    JokerBuff=JokerBuff, JokerBuffFail=JokerBuffFail, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, 
+                    NoirCarteStack=NoirCarteStack, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  PhantomBuff[[length(PhantomBuff)+1]] <- UsefulAdvancedBless
+  names(PhantomBuff)[[length(PhantomBuff)]] <- "UsefulAdvancedBless"
+}
+PhantomBuff <- Buff(PhantomBuff)
 PhantomAllTimeBuff <- AllTimeBuff(PhantomBuff)
-## PetBuff : Fury(1080ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
+## PetBuff : Fury(1080ms), CrossOverChain(720ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
 
 
 ## Phantom - Union & HyperStat & SoulWeapon
 PhantomSpec <- JobSpec(JobBase=PhantomBase, 
                        Passive=PhantomPassive, 
                        AllTimeBuff=PhantomAllTimeBuff, 
-                       MobInfo=MobDefault, 
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        WeaponName="Cane", 
                        UnionStance=0)
 
@@ -201,94 +212,48 @@ PhantomSpec <- PhantomSpec$Spec
 
 
 ## Phantom - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * PhantomCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PhantomCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PhantomCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PhantomCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PhantomCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * PhantomCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(PhantomCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Phantom - Attacks
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(20, ifelse(PhantomCore[[1]][1, 2]>=40, 20, 0))), 20, 2 * PhantomCore[[1]][1, 2])
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(PhantomCore, "UltimateDrive")>=40, 20, 0))), 20, 2 * GetCoreLv(PhantomCore, "UltimateDrive"))
 info <- c(140 + PhantomSpec$SkillLv, 3, 150, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UltimateDrive <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][2, 2]>=40, 20, 0), 20, 2 * PhantomCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "TempestofCard")>=40, 20, 0), 20, 2 * GetCoreLv(PhantomCore, "TempestofCard"))
 info <- c(200 + 2 * PhantomSpec$SkillLv, 3, 10000, 180, 10 + Cooldown(18, T, 20 + PhantomSpec$CoolReduceP, PhantomSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TempestofCard <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][4, 2]>=40, 20, 0), 2 * PhantomCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "NoirCarte")>=40, 20, 0), 2 * GetCoreLv(PhantomCore, "NoirCarte"))
 info <- c(270, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 NoirCarte <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][4, 2]>=40, 20, 0), 2 * PhantomCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "NoirCarte")>=40, 20, 0), 2 * GetCoreLv(PhantomCore, "NoirCarte"))
 info <- c(270, 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 NoirCarteJudgement <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][5, 2]>=40, 20, 0), 2 * PhantomCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "Twilight")>=40, 20, 0), 2 * GetCoreLv(PhantomCore, "Twilight"))
 info <- c(450 + 3 * PhantomBase$SkillLv, 3, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -302,14 +267,14 @@ colnames(info) <- c("option", "value")
 Twilight2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][3, 2]>=40, 20, 0), 2 * PhantomCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "RoseCarteFinale")>=40, 20, 0), 2 * GetCoreLv(PhantomCore, "RoseCarteFinale"))
 info <- c(700, 6, 1200, NA, 30, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RoseCarteFinale <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][3, 2]>=40, 20, 0), 2 * PhantomCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "RoseCarteFinale")>=40, 20, 0), 2 * GetCoreLv(PhantomCore, "RoseCarteFinale"))
 info <- c(200, 2, 0, 930, 30, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -323,7 +288,7 @@ colnames(info) <- c("option", "value")
 FinalCutPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(PhantomCore[[1]][6, 2]>=40, 20, 0), 2 * PhantomCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(PhantomCore, "TalentofPhantomThief4")>=40, 20, 0), 2 * GetCoreLv(PhantomCore, "TalentofPhantomThief4"))
 info <- c((2000 + 20 * PhantomSpec$SkillLv)/ 1.3 * 1.2, 1, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -331,42 +296,42 @@ FinalCut <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(240 + 9 * PhantomCore[[2]][1, 2], 3, 6000 + floor(PhantomCore[[2]][1, 2]/25) * 1000, 50, 150, T, F, F)
+info <- c(240 + 9 * GetCoreLv(PhantomCore, "Joker"), 3, 6000 + floor(GetCoreLv(PhantomCore, "Joker")/25) * 1000, 50, 150, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Joker <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * PhantomCore[[2]][2, 2], 3, 760, 450, 15, T, F, F)
+info <- c(600 + 24 * GetCoreLv(PhantomCore, "BlackJack"), 3, 760, 450, 15, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlackJack <- rbind(data.frame(option, value), info) ## FirstATK : 1200
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(800 + 32 * PhantomCore[[2]][2, 2], 18, 0, 0, 15, T, F, F)
+info <- c(800 + 32 * GetCoreLv(PhantomCore, "BlackJack"), 18, 0, 0, 15, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BlackJackLast <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(300 + 12 * PhantomCore[[2]][3, 2], 6, 900, 75, 30, T, F, F)
+info <- c(300 + 12 * GetCoreLv(PhantomCore, "MarkofPhantom"), 6, 900, 75, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MarkofPhantom <- rbind(data.frame(option, value), info) ## FirstATK : 660
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(485 + 19 * PhantomCore[[2]][3, 2], 15, 0, 30, 30, T, F, F)
+info <- c(485 + 19 * GetCoreLv(PhantomCore, "MarkofPhantom"), 15, 0, 30, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MarkofPhantomFinal <- rbind(data.frame(option, value), info) ## FirstATK : 1440
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * PhantomCore[[2]][4, 2], 7, 990, 0, 30, T, F, F)
+info <- c(400 + 16 * GetCoreLv(PhantomCore, "LiftBreak"), 7, 990, 0, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LiftBreak <- rbind(data.frame(option, value), info) ## FirstATK : 0, Delays : 270, 270, 1230, 30, 30, 30
@@ -390,7 +355,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, P
 BuffFinal <- data.frame(PhantomBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, PhantomSpec$CoolReduceP, PhantomSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, PhantomSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(PhantomSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, PhantomSpec$CoolReduceP, PhantomSpec$CoolReduce)
@@ -405,11 +370,15 @@ PhantomDealCycle <- data.frame(PhantomDealCycle)
 
 PhantomCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
                          Period=180, CycleTime=360) {
-  BuffSummonedPrior <- c("Fury", "CrossOverChain", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath", 
+  BuffSummonedPrior <- c("Fury", "CrossOverChain", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
                          "FinalCutBuff", "MapleWarriors2", "Bullseye", "ReadyToDie2Stack", "SoulContractLink", "Restraint4")
-  
-  Times180 <- c(0, 1, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 
                 2, 1, 1, 2, 2, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
@@ -752,7 +721,6 @@ PhantomAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   DealCycle$NoirCarteStack <- 0
   return(DealCycle)
 }
-
   
 PhantomDealCycle <- PhantomCycle(PreDealCycle=PhantomDealCycle, 
                                    ATKFinal=ATKFinal, 
@@ -765,45 +733,55 @@ PhantomDealCycle <- DealCycleFinal(PhantomDealCycle)
 PhantomDealCycle <- PhantomAddATK(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpec)
 PhantomDealCycleReduction1 <- DealCycleReduction(PhantomDealCycle)
 
-PhantomDealData <- data.frame(PhantomDealCycle$Skills, DealCalc(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpec))
-colnames(PhantomDealData) <- c("Skills", "Deal")
-
 PhantomDealCycle2 <- PhantomDealCycle
 PhantomDealCycle2$JokerBuff <- PhantomDealCycle2$JokerBuffFail
 PhantomDealCycle2$JokerBuffFail <- 0
 PhantomDealCycleReduction2 <- DealCycleReduction(PhantomDealCycle2)
 
-## Damage Optimization
-PhantomSpecOpt1 <- ResetOptimization1(DealCycles=list(PhantomDealCycleReduction1, PhantomDealCycleReduction2), 
-                                      ATKFinal, BuffFinal, SummonedFinal, PhantomSpec, PhantomUnionRemained, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
-PhantomSpecOpt <- PhantomSpec
-PhantomSpecOpt$ATKP <- PhantomSpecOpt$ATKP + PhantomSpecOpt1$ATKP
-PhantomSpecOpt$BDR <- PhantomSpecOpt$BDR + PhantomSpecOpt1$BDR
-PhantomSpecOpt$IGR <- IGRCalc(c(PhantomSpecOpt$IGR, PhantomSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Phantom") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  PhantomSpecOpt1 <- ResetOptimization1(list(PhantomDealCycleReduction1, PhantomDealCycleReduction2), ATKFinal, BuffFinal, SummonedFinal, PhantomSpec, PhantomUnionRemained, 
+                                        rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
+  PotentialOpt[[Idx1]][Idx2, ] <- PhantomSpecOpt1[1, 1:3]
+} else {
+  PhantomSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+PhantomSpecOpt <- OptDataAdd(PhantomSpec, PhantomSpecOpt1, "Potential", PhantomBase$CRROver, DemonAvenger=F)
 
-PhantomSpecOpt2 <- ResetOptimization2(DealCycles=list(PhantomDealCycleReduction1, PhantomDealCycleReduction2),
-                                      ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt, PhantomHyperStatBase, PhantomBase$ChrLv, PhantomBase$CRROver, 0, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
+if(DPMCalcOption$Optimization==T) {
+  PhantomSpecOpt2 <- ResetOptimization2(list(PhantomDealCycleReduction1, PhantomDealCycleReduction2), ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt, PhantomHyperStatBase, PhantomBase$ChrLv, PhantomBase$CRROver, 
+                                        HyperStanceLv=0, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- PhantomSpecOpt2[1, ]
+} else {
+  PhantomSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+PhantomSpecOpt <- OptDataAdd(PhantomSpecOpt, PhantomSpecOpt2, "HyperStat", PhantomBase$CRROver, DemonAvenger=F)
+
 PhantomFinalDPM <- ResetDealCalc(DealCycles=list(PhantomDealCycleReduction1, PhantomDealCycleReduction2), 
-                                 ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
+                                 ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
 PhantomFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(PhantomDealCycleReduction1, PhantomDealCycleReduction2), 
-                                                  ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
+                                                  ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
 
-PhantomDeal1 <- DealCalcWithMaxDMR(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2)
-PhantomDeal2 <- DealCalcWithMaxDMR(PhantomDealCycle2, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt2)
+PhantomDeal1 <- DealCalcWithMaxDMR(PhantomDealCycle, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt)
+PhantomDeal2 <- DealCalcWithMaxDMR(PhantomDealCycle2, ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt)
 
-DPM12349$Phantom[1] <- sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
-DPM12349$Phantom[2] <- sum(na.omit(PhantomFinalDPM)) / (max(PhantomDealCycle$Time) / 60000) - sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Phantom", sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Phantom", sum(na.omit(PhantomFinalDPM)) / (max(PhantomDealCycle$Time) / 60000) - sum(na.omit(PhantomFinalDPMwithMax)) / (max(PhantomDealCycle$Time) / 60000))
 
 PhantomDealRatio <- ResetDealRatio(DealCycles=list(PhantomDealCycle, PhantomDealCycle2), DealDatas=list(PhantomDeal1, PhantomDeal2), 
                                    rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
 
 PhantomDealData <- data.frame(PhantomDealCycle$Skills, PhantomDealCycle$Time, PhantomDealCycle$Restraint4, PhantomDeal1)
 colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
-
-subset(PhantomDealData, PhantomDealData$R4>0)
-
-PhantomRR <- PhantomDealData[23:427, ]
-DPM12349$Phantom[3] <- sum((PhantomRR$Deal))
-
-Phantom40s <- PhantomDealData[23:825, ]
-DPM12349$Phantom[4] <- sum((Phantom40s$Deal))
+set(get(DPMCalcOption$DataName), as.integer(3), "Phantom", Deal_RR(PhantomDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Phantom", Deal_40s(PhantomDealData))

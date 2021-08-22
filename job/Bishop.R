@@ -1,36 +1,42 @@
 ## Bishop - Data
 ## Bishop - VMatrix
-BishopCore <- MatrixSet(PasSkills=c("AngelRay", "HeavensDoor", "Bahamut", "Bigbang", "Genesis"), 
-                        PasLvs=c(50, 50, 50, 50, 50), 
-                        PasMP=c(10, 10, 10, 10, 5), 
-                        ActSkills=c("Pray", "AngelofLibra", "PeaceMaker", "DivinePunishment", 
-                                    CommonV("Wizard", "Adventure")), 
-                        ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                        ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 5), 
-                        BlinkLv=1, 
-                        BlinkMP=0, 
-                        UsefulSkills=c("CombatOrders", "SharpEyes"), 
-                        UsefulLvs=c(20, 20), 
-                        UsefulMP=c(0, 0), 
-                        SpecSet=SpecDefault, 
-                        SelfBind=F)
+BishopCoreBase <- CoreBuilder(ActSkills=c("Pray", "AngelofLibra", "PeaceMaker", "DivinePunishment", 
+                                          CommonV("Wizard", "Adventure")), 
+                              ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                              UsefulSkills=c("CombatOrders", "SharpEyes"), 
+                              SpecSet=get(DPMCalcOption$SpecSet), 
+                              VPassiveList=BishopVPassive, 
+                              VPassivePrior=BishopVPrior, 
+                              SelfBind=F)
+
+BishopCore <- MatrixSet(PasSkills=BishopCoreBase$PasSkills$Skills, 
+                        PasLvs=BishopCoreBase$PasSkills$Lv, 
+                        PasMP=BishopCoreBase$PasSkills$MP, 
+                        ActSkills=BishopCoreBase$ActSkills$Skills, 
+                        ActLvs=BishopCoreBase$ActSkills$Lv, 
+                        ActMP=BishopCoreBase$ActSkills$MP, 
+                        UsefulSkills=BishopCoreBase$UsefulSkills, 
+                        UsefulLvs=20, 
+                        UsefulMP=0, 
+                        SpecSet=get(DPMCalcOption$SpecSet), 
+                        SpecialCore=BishopCoreBase$SpecialCoreUse)
 
 
 ## Bishop - Basic Info
 BishopBase <- JobBase(ChrInfo=ChrInfo, 
-                      MobInfo=MobDefault,
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       Job="Bishop",
                       CoreData=BishopCore, 
                       BuffDurationNeeded=310, 
-                      AbilList=c("BuffDuration", "DisorderBDR"), 
-                      LinkList=c("Zero", "Mikhail", "DemonAvenger", "CygnusKnights"), 
-                      MonsterLife=MLTypeI21, 
-                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", SpecDefault$WeaponType)[, 1:16],
-                      WeaponType=SpecDefault$WeaponType, 
-                      SubWeapon=SubWeapon[6, ], 
-                      Emblem=Emblem[1, ],
-                      CoolReduceHat=F)
+                      AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Bishop"), 
+                      LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Bishop"), 
+                      MonsterLife=get(FindJob(MonsterLifePreSet, "Bishop")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                      Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Staff", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                      WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                      SubWeapon=SubWeapon[rownames(SubWeapon)=="BishopGrimoire", ], 
+                      Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                      CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Bishop")))
 
 ## Bishop - Passive
 {option <- factor(c("ATKSpeed"), levels=PSkill)
@@ -69,16 +75,12 @@ option <- factor(c("IGR", "BDR"), levels=PSkill)
 value <- c(20 + ceiling(BishopBase$SkillLv/2), 40)
 ArcaneAim <- data.frame(option, value)
 
-option <- factor(c("FDR"), levels=PSkill)
-value <- c(8 + floor(BishopCore[[2]][5, 2]/10))
-OverloadMana <- data.frame(option, value) ## ATK Skills Only
-
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(BishopCore[[2]][7, 2])
+value <- c(GetCoreLv(BishopCore, "UnstableMemorize"))
 UnstableMemorizePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(BishopCore[[2]][10, 2])
+value <- c(GetCoreLv(BishopCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 BishopPassive <- Passive(list(MPIncrease=MPIncrease, SpellMastery=SpellMastery, HighWisdom=HighWisdom, MagicCritical=MagicCritical, HolyFocus=HolyFocus, BigbangDebuff=BigbangDebuff, 
@@ -102,7 +104,7 @@ Infinity <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", "BDR", levels=BSkill)
 value <- c(50 + BishopBase$SkillLv, 10)
-info <- c(240, NA, 600, T, NA, NA, T)
+info <- c(240, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedBless <- rbind(data.frame(option, value), info)
@@ -121,36 +123,26 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 EpicAdventure <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * BishopCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * BishopCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(BishopCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
 
 option <- factor("FDR", levels=BSkill)
-value <- c(20)
-info <- c(30 + floor(BishopCore[[2]][1, 2]/2), 180, 360, F, T, F, T)
+value <- c(0)
+info <- c(30 + floor(GetCoreLv(BishopCore, "Pray")/2), 180, 360, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Pray <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(14 + floor(BishopCore[[2]][3, 2]/5))
+value <- c(14 + floor(GetCoreLv(BishopCore, "PeaceMaker")/5))
 info <- c(8, 10, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * BishopCore[[2]][7, 2]) * MapleSoldier[1, 2]) * BishopBase$MainStatP), 5 + floor(BishopCore[[2]][7, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(BishopCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * BishopBase$MainStatP), 5 + floor(GetCoreLv(BishopCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -181,7 +173,7 @@ BishopBuff <- Buff(list(MagicBooster=MagicBooster, Infinity=Infinity, AdvancedBl
                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, Pray=Pray, PeaceMakerBuff=PeaceMakerBuff, VengenceofAngel=VengenceofAngel,
                         BahamutDebuff=BahamutDebuff, AngelofLibraDebuff=AngelofLibraDebuff,
                         MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : MagicBooster(990ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
+## PetBuff : MagicBooster(990ms), AdvancedBless(600ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
 BishopAllTimeBuff <- AllTimeBuff(BishopBuff)
 
 
@@ -189,8 +181,8 @@ BishopAllTimeBuff <- AllTimeBuff(BishopBuff)
 BishopSpec <- JobSpec(JobBase=BishopBase, 
                       Passive=BishopPassive, 
                       AllTimeBuff=BishopAllTimeBuff, 
-                      MobInfo=MobDefault, 
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet), 
+                      SpecSet=get(DPMCalcOption$SpecSet), 
                       WeaponName="Staff", 
                       UnionStance=0, 
                       JobConstant=1.2)
@@ -201,62 +193,29 @@ BishopCoolReduceType <- BishopSpec$CoolReduceType
 BishopSpec <- BishopSpec$Spec
 
 
+## Bishop - Pray (RE)
+{option <- factor("FDR", levels=BSkill)
+value <- c(5 + floor((BishopSpec$MainStat + BishopBuff[rownames(BishopBuff)=="MapleWarriors2", 1]) / 2500))
+info <- c(30 + floor(GetCoreLv(BishopCore, "Pray")/2), 180, 360, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+Pray <- rbind(data.frame(option, value), info)}
+BishopBuff <- Buff(list(MagicBooster=MagicBooster, Infinity=Infinity, AdvancedBless=AdvancedBless, MapleSoldier=MapleSoldier, EpicAdventure=EpicAdventure,
+                        UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, Pray=Pray, PeaceMakerBuff=PeaceMakerBuff, VengenceofAngel=VengenceofAngel,
+                        BahamutDebuff=BahamutDebuff, AngelofLibraDebuff=AngelofLibraDebuff,
+                        MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+
+
 ## Bishop - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * BishopCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BishopCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BishopCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BishopCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BishopCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * BishopCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(BishopCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Bishop - Unstable Memorize Data
@@ -272,78 +231,78 @@ BishopUnsHolyATKProb <- sum(BishopUnstable$Prob[c(2, 4, 8, 9, 10)])
 
 ## Bishop - Attacks
 {option <- factor(c("BDR", "FDR"), levels=ASkill)
-value <- c(40, floor(BishopCore[[2]][5, 2] / 10) + 8)
+value <- c(40, floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
 info <- c(309, BishopUnstable[1, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 EnergyBoltUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "FDR"), levels=ASkill)
-value <- c(40, floor(BishopCore[[2]][5, 2] / 10) + 8)
+value <- c(40, floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
 info <- c(518, BishopUnstable[2, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HolyArrowUnstable <- rbind(data.frame(option, value), info)
 
-option <- factor(c("BDR", "FDR"), levels=ASkill)
-value <- c(40, floor(BishopCore[[2]][5, 2] / 10) + 8)
+option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
+value <- c(40, ifelse(GetCoreLv(BishopCore, "ShiningRay")>=40, 20, 0), FDRCalc(c(3 * GetCoreLv(BishopCore, "ShiningRay"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)))
 info <- c(254, 4 * BishopUnstable[4, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShiningRayUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][1, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), 40, ifelse(BishopCore[[1]][1, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "AngelRay"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), 40, ifelse(GetCoreLv(BishopCore, "AngelRay")>=40, 20, 0))
 info <- c(225 + 5 * BishopSpec$SkillLv, 7 * BishopUnstable[8, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AngelRayUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][5, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), 40, ifelse(BishopCore[[1]][5, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "Genesis"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), 40, ifelse(GetCoreLv(BishopCore, "Genesis")>=40, 20, 0))
 info <- c(405 + 5 * BishopSpec$SkillLv, 12 * BishopUnstable[9, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GenesisUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][4, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), 40, ifelse(BishopCore[[1]][4, 2]>=40, 20, 0))
-info <- c(480 + 6 * BishopSpec$SkillLv, 4 * BishopUnstable[9, 3], 0, NA, NA, NA, NA, F)
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "Bigbang"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), 40, ifelse(GetCoreLv(BishopCore, "Bigbang")>=40, 20, 0))
+info <- c(480 + 6 * BishopSpec$SkillLv, 4 * BishopUnstable[10, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BigbangUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][2, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), 40, ifelse(BishopCore[[1]][2, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "HeavensDoor"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), 40, ifelse(GetCoreLv(BishopCore, "HeavensDoor")>=40, 20, 0))
 info <- c(1000, 8 * BishopUnstable[14, 3], 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeavensDoorUnstable <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][1, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), ifelse(BishopCore[[1]][1, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "AngelRay"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(BishopCore, "AngelRay")>=40, 20, 0))
 info <- c(225 + 5 * BishopSpec$SkillLv, 14, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AngelRay <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][2, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), ifelse(BishopCore[[1]][2, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "HeavensDoor"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(BishopCore, "HeavensDoor")>=40, 20, 0))
 info <- c(1000, 8, 360, NA, 90, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeavensDoor <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(350 + 14 * BishopCore[[2]][3, 2], 4, 750, 350, 10, T, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(350 + 14 * GetCoreLv(BishopCore, "PeaceMaker"), 4, 750, 350, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMaker <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(500 + 20 * BishopCore[[2]][3, 2], 8, 0, NA, 10, T, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(500 + 20 * GetCoreLv(BishopCore, "PeaceMaker"), 8, 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerExplosion <- rbind(data.frame(option, value), info)
@@ -356,15 +315,15 @@ colnames(info) <- c("option", "value")
 DivinePunishmentPre <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * BishopCore[[2]][4, 2], 10, 240, NA, 8.5, F, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(BishopCore, "DivinePunishment"), 10, 240, NA, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishment <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * BishopCore[[2]][4, 2], 10, 120, NA, 8.5, F, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(BishopCore, "DivinePunishment"), 10, 120, NA, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishmentEnd <- rbind(data.frame(option, value), info)
@@ -384,71 +343,71 @@ colnames(info) <- c("option", "value")
 UnstableMemorizeEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][1, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), ifelse(BishopCore[[1]][1, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "AngelRay"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(BishopCore, "AngelRay")>=40, 20, 0))
 info <- c(225 + 5 * BishopSpec$SkillLv, 14 * BishopUnsHolyATKProb, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AngelRayAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(FDRCalc(c(2 * BishopCore[[1]][1, 2], floor(BishopCore[[2]][5, 2] / 10) + 8)), ifelse(BishopCore[[1]][1, 2]>=40, 20, 0))
+value <- c(FDRCalc(c(2 * GetCoreLv(BishopCore, "AngelRay"), floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)), ifelse(GetCoreLv(BishopCore, "AngelRay")>=40, 20, 0))
 info <- c(225 + 5 * BishopSpec$SkillLv, 14 * (1-BishopUnsHolyATKProb), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AngelRayAfterUns2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(350 + 14 * BishopCore[[2]][3, 2], 4 * BishopUnsHolyATKProb, 750, 350, 10, T, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(350 + 14 * GetCoreLv(BishopCore, "PeaceMaker"), 4 * BishopUnsHolyATKProb, 750, 350, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(350 + 14 * BishopCore[[2]][3, 2], 4 * (1-BishopUnsHolyATKProb), 0, 350, 10, T, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(350 + 14 * GetCoreLv(BishopCore, "PeaceMaker"), 4 * (1-BishopUnsHolyATKProb), 0, 350, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerAfterUns2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(500 + 20 * BishopCore[[2]][3, 2], 8 * BishopUnsHolyATKProb, 0, NA, 10, T, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(500 + 20 * GetCoreLv(BishopCore, "PeaceMaker"), 8 * BishopUnsHolyATKProb, 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerExplosionAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(500 + 20 * BishopCore[[2]][3, 2], 8 * (1-BishopUnsHolyATKProb), 0, NA, 10, T, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(500 + 20 * GetCoreLv(BishopCore, "PeaceMaker"), 8 * (1-BishopUnsHolyATKProb), 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerExplosionAfterUns2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(BishopCore, "DivinePunishment"), 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishmentAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(BishopCore, "DivinePunishment"), 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishmentAfterUns2 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(BishopCore, "DivinePunishment"), 10 * BishopUnsHolyATKProb, 1000, 240, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishmentEndAfterUns1 <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
-value <- c(floor(BishopCore[[2]][5, 2] / 10) + 8)
-info <- c(225 + 9 * BishopCore[[2]][4, 2], 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
+value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
+info <- c(225 + 9 * GetCoreLv(BishopCore, "DivinePunishment"), 10 * (1-BishopUnsHolyATKProb), 0, 240, 8.5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DivinePunishmentEndAfterUns2 <- rbind(data.frame(option, value), info)}
@@ -464,7 +423,7 @@ BishopATK <- Attack(list(EnergyBoltUnstable=EnergyBoltUnstable, HolyArrowUnstabl
 
 ## Bishop - Summoned
 {option <- factor(c("FDR", "IGR"), levels=SSkill)
-value <- c(2 * BishopCore[[1]][3, 2], ifelse(BishopCore[[1]][3, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(BishopCore, "Bahamut"), ifelse(GetCoreLv(BishopCore, "Bahamut")>=40, 20, 0))
 info <- c(170 + 2 * BishopSpec$SkillLv, 3, 0, 3030, 260, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -472,7 +431,7 @@ Bahamut <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(500 + 20 * BishopCore[[2]][2, 2], 12, 540, 3030, 30, 120, F, T, T, F)
+info <- c(500 + 20 * GetCoreLv(BishopCore, "AngelofLibra"), 12, 540, 3030, 30, 120, F, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AngelofLibra <- rbind(data.frame(option, value), info)}
@@ -490,7 +449,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, B
 BuffFinal <- data.frame(BishopBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, BishopSpec$CoolReduceP, BishopSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, BishopSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(BishopSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, BishopSpec$CoolReduceP, BishopSpec$CoolReduce)
@@ -841,7 +800,7 @@ BishopDealCycle2 <- BishopUnsCycle(BishopDealCycle2, ATKFinal, BuffFinal, Summon
 BishopDealCycle2 <- DealCycleFinal(BishopDealCycle2)
 
 ## Bishop Unstable
-BIUnsdata <- UnstableData(BishopDealCycle, BishopDealCycle2, BishopUnstable[12, 3], BuffFinal$Duration[2], BuffFinal$CoolTime[2])
+BIUnsdata <- UnstableData(BishopDealCycle, BishopDealCycle2, BishopUnstable[12, 3], BuffFinal[rownames(BuffFinal)=="Infinity", ]$Duration, BuffFinal[rownames(BuffFinal)=="Infinity", ]$CoolTime)
 
 BishopDealCycle <- PeaceMakerCycle(BishopDealCycle, 3, ATKFinal, 8 + General$General$Serverlag)
 BishopDealCycle <- DCSpiderInMirror(BishopDealCycle, SummonedFinal)
@@ -854,36 +813,53 @@ BishopDealCycle2 <- LibraCycle(BishopDealCycle2)
 BishopDealCycle2 <- BishopUnstableCycle(BishopDealCycle2, ATKFinal)
 BishopDealCycle2 <- BishopInfinity(BishopDealCycle2, 6000, 70 + BishopSpec$SkillLv, General$General$Serverlag)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Bishop") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  BishopSpecOpt1 <- InfinityOptimization1(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BishopUnionRemained, BIUnsdata,
+                                          NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- BishopSpecOpt1[1, 1:3]
+} else {
+  BishopSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+BishopSpecOpt <- OptDataAdd(BishopSpec, BishopSpecOpt1, "Potential", BishopBase$CRROver, DemonAvenger=F)
 
-## Bishop Deal Calc
-BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BIUnsdata)
-BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BIUnsdata)
+if(DPMCalcOption$Optimization==T) {
+  BishopSpecOpt2 <- InfinityOptimization2(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BishopHyperStatBase, BishopBase$ChrLv, BishopBase$CRROver, BIUnsdata, 
+                                          NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- BishopSpecOpt2[1, ]
+} else {
+  BishopSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+BishopSpecOpt <- OptDataAdd(BishopSpecOpt, BishopSpecOpt2, "HyperStat", BishopBase$CRROver, DemonAvenger=F)
+BuffFinal <- PrayFDRAdj(BishopSpec, BishopSpecOpt, BuffFinal)
 
-BishopSpecOpt1 <- BishopOptimization1(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpec, BishopUnionRemained, BIUnsdata)
-BishopSpecOpt <- BishopSpec
-BishopSpecOpt$ATKP <- BishopSpecOpt$ATKP + BishopSpecOpt1$ATKP
-BishopSpecOpt$BDR <- BishopSpecOpt$BDR + BishopSpecOpt1$BDR
-BishopSpecOpt$IGR <- IGRCalc(c(BishopSpecOpt$IGR, BishopSpecOpt1$IGR))
+BishopFinalDPM <- InfinityDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BIUnsdata, 
+                                   NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+BishopFinalDPMwithMax <- InfinityDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BIUnsdata, 
+                                                    NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
 
-BishopSpecOpt2 <- BishopOptimization2(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, BishopHyperStatBase, BishopBase$ChrLv, BishopBase$CRROver, BIUnsdata)
-BishopFinalDPM <- BishopDealCalc(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, BIUnsdata)
-BishopFinalDPMwithMax <- BishopDealCalcWithMaxDMR(BishopDealCycle, BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2, BIUnsdata)
+set(get(DPMCalcOption$DataName), as.integer(1), "Bishop", sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Bishop", sum(na.omit(BishopFinalDPM)) / (BIUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000))
 
-DPM12349$Bishop[1] <- sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
-DPM12349$Bishop[2] <- sum(na.omit(BishopFinalDPM)) / (BIUnsdata$DealCycleTime * 1000 / 60000) - sum(na.omit(BishopFinalDPMwithMax)) / (BIUnsdata$DealCycleTime * 1000 / 60000)
+BishopDealData <- data.frame(BishopDealCycle$Skills, BishopDealCycle$Time, BishopDealCycle$Restraint4, 
+                             DealCalcWithMaxDMR(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
+                                                NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")))
+colnames(BishopDealData) <- c("Skills", "Time", "R4", "Deal")
+BishopDealRatio <- InfinityDealRatio(BishopDealCycle, BishopDealCycle2, 
+                                     DealCalcWithMaxDMR(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
+                                                        NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), 
+                                     DealCalcWithMaxDMR(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
+                                                        NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), BIUnsdata)
 
-## PrayFDR Logic Needed
-## Divine Puninshment Stack Logic Needed
-
-BishopDamage <- BishopDealCalcGeneral(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
-Bishop40s <- data.frame(BishopDealCycle$Skills, BishopDealCycle$Time, BishopDealCycle$Restraint4, BishopDealCycle$Infinity, BishopDealCycle$InfinityFDR, BishopDamage)
-colnames(Bishop40s) <- c("Skills", "Time", "RR4", "Infinity", "InfinityFDR", "Damage")
-
-subset(Bishop40s, Bishop40s$RR4>0)
-
-DPM12349$Bishop[3] <- sum(Bishop40s$Damage[341:424]) 
-DPM12349$Bishop[4] <- sum(Bishop40s$Damage[257:424])
-
-BishopDamage2 <- BishopDealCalcGeneral(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt2)
-
-BSDealRatio <- BishopDealRatio(BishopDealCycle, BishopDealCycle2, BishopDamage, BishopDamage2, BIUnsdata)
+set(get(DPMCalcOption$DataName), as.integer(3), "Bishop", Deal_RR(BishopDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Bishop", Deal_40s(BishopDealData, F, NA, FinishTime=subset(BishopDealData, BishopDealData$Skills=="Restraint4")$Time[1] + 15000))

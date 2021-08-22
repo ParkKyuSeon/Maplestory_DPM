@@ -1,35 +1,42 @@
 ## SoulMaster - Data
 ## SoulMaster - VMatrix
-SoulMasterCore <- MatrixSet(PasSkills=c("DanceofMoon_SpeedingSunset", "CrosstheStyx", "SolarPierce_CrescentDivide", "SolunarSlash", "SunCross_MoonCross", "MoonShadow_LightFlux"), 
-                            PasLvs=c(50, 50, 50, 50, 50, 50), 
-                            PasMP=c(10, 10, 10, 0, 0, 0), 
-                            ActSkills=c("CelestialDance", "Elysion", "SoulEclipse", "FlareSlash",
-                                        CommonV("Warrior", "CygnusKnights")), 
-                            ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                            ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 5), 
-                            BlinkLv=1, 
-                            BlinkMP=5, 
-                            UsefulSkills=c("SharpEyes", "CombatOrders"), 
+SoulMasterCoreBase <- CoreBuilder(ActSkills=c("CelestialDance", "Elysion", "SoulEclipse", "FlareSlash",
+                                              CommonV("Warrior", "CygnusKnights")), 
+                                  ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                                  UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                  SpecSet=get(DPMCalcOption$SpecSet), 
+                                  VPassiveList=SoulMasterVPassive, 
+                                  VPassivePrior=SoulMasterVPrior, 
+                                  SelfBind=T)
+
+SoulMasterCore <- MatrixSet(PasSkills=SoulMasterCoreBase$PasSkills$Skills, 
+                            PasLvs=SoulMasterCoreBase$PasSkills$Lv, 
+                            PasMP=SoulMasterCoreBase$PasSkills$MP, 
+                            ActSkills=SoulMasterCoreBase$ActSkills$Skills, 
+                            ActLvs=SoulMasterCoreBase$ActSkills$Lv, 
+                            ActMP=SoulMasterCoreBase$ActSkills$MP, 
+                            UsefulSkills=SoulMasterCoreBase$UsefulSkills, 
                             UsefulLvs=20, 
                             UsefulMP=0, 
-                            SpecSet=SpecDefault, 
-                            SelfBind=T)
+                            SpecSet=get(DPMCalcOption$SpecSet), 
+                            SpecialCore=SoulMasterCoreBase$SpecialCoreUse)
 
 
 ## SoulMaster - Basic Info
 SoulMasterBase <- JobBase(ChrInfo=ChrInfo, 
-                          MobInfo=MobDefault,
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet),
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           Job="SoulMaster",
                           CoreData=SoulMasterCore, 
                           BuffDurationNeeded=0, 
-                          AbilList=c("BDR", "DisorderBDR"), 
-                          LinkList=c("CygnusKnights", "Zero", "DemonAvenger", "Xenon"), 
-                          MonsterLife=MLTypeS21, 
-                          Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandSword", SpecDefault$WeaponType)[, 1:16],
-                          WeaponType=SpecDefault$WeaponType, 
-                          SubWeapon=SubWeapon[19, ], 
-                          Emblem=Emblem[3, ])
+                          AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "SoulMaster"), 
+                          LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "SoulMaster"), 
+                          MonsterLife=get(FindJob(MonsterLifePreSet, "SoulMaster")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                          Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "TwohandSword", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                          WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                          SubWeapon=SubWeapon[rownames(SubWeapon)=="CygnusKnightsJewel", ], 
+                          Emblem=Emblem[rownames(Emblem)=="Cygnus", ], 
+                          CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "SoulMaster")))
 
 
 ## SoulMaster - Passive
@@ -74,11 +81,11 @@ value <- c(30 + 2 * SoulMasterBase$PSkillLv, 15 + SoulMasterBase$PSkillLv)
 Unforeseeable <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(SoulMasterCore[[2]][6, 2])
+value <- c(GetCoreLv(SoulMasterCore, "BodyofSteel"))
 BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(SoulMasterCore[[2]][10, 2])
+value <- c(GetCoreLv(SoulMasterCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 SoulMasterPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementSoul=ElementSoul, SwordofLight=SwordofLight, 
@@ -89,7 +96,7 @@ SoulMasterPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalEx
 ## SoulMaster - Buff
 {option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 600, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 NimbleFinger <- rbind(data.frame(option, value), info)
@@ -136,23 +143,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 GloryofGardians <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * SoulMasterCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * SoulMasterCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(SoulMasterCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(40 + SoulMasterCore[[2]][1, 2], 150, 570, F, T, F, T)
+info <- c(40 + GetCoreLv(SoulMasterCore, "CelestialDance"), 150, 570, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CelestialDance <- rbind(data.frame(option, value), info)
@@ -172,8 +172,8 @@ colnames(info) <- c("option", "value")
 SoulEclipse <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=BSkill)
-value <- c(10 + floor(SoulMasterCore[[2]][5, 2]/5), ceiling(SoulMasterCore[[2]][5, 2]/5))
-info <- c(80 + 2 * SoulMasterCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(SoulMasterCore, "AuraWeapon")/5), ceiling(GetCoreLv(SoulMasterCore, "AuraWeapon")/5))
+info <- c(80 + 2 * GetCoreLv(SoulMasterCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
@@ -185,11 +185,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-SoulMasterBuff <- Buff(list(NimbleFinger=NimbleFinger, TrueSight=TrueSight, SolunarTime=SolunarTime, SoulForge=SoulForge, MapleSoldier=MapleSoldier, 
-                            SolunarSlashDummy=SolunarSlashDummy, GloryofGardians=GloryofGardians, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, CelestialDance=CelestialDance, 
-                            Elysion=Elysion, SoulEclipse=SoulEclipse, AuraWeaponBuff=AuraWeaponBuff, BlessofCygnus=BlessofCygnus, 
-                            Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : SoulForge(810ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms)
+SoulMasterBuff <- list(NimbleFinger=NimbleFinger, TrueSight=TrueSight, SolunarTime=SolunarTime, SoulForge=SoulForge, MapleSoldier=MapleSoldier, 
+                       SolunarSlashDummy=SolunarSlashDummy, GloryofGardians=GloryofGardians, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, CelestialDance=CelestialDance, 
+                       Elysion=Elysion, SoulEclipse=SoulEclipse, AuraWeaponBuff=AuraWeaponBuff, BlessofCygnus=BlessofCygnus, 
+                       Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : NimbleFinger(600ms), SoulForge(810ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  SoulMasterBuff[[length(SoulMasterBuff)+1]] <- UsefulAdvancedBless
+  names(SoulMasterBuff)[[length(SoulMasterBuff)]] <- "UsefulAdvancedBless"
+}
+SoulMasterBuff <- Buff(SoulMasterBuff)
 SoulMasterAllTimeBuff <- AllTimeBuff(SoulMasterBuff)
 
 
@@ -197,8 +202,8 @@ SoulMasterAllTimeBuff <- AllTimeBuff(SoulMasterBuff)
 SoulMasterSpec <- JobSpec(JobBase=SoulMasterBase, 
                           Passive=SoulMasterPassive, 
                           AllTimeBuff=SoulMasterAllTimeBuff, 
-                          MobInfo=MobDefault, 
-                          SpecSet=SpecDefault, 
+                          MobInfo=get(DPMCalcOption$MobSet), 
+                          SpecSet=get(DPMCalcOption$SpecSet), 
                           WeaponName="TwohandSword", 
                           UnionStance=0)
 
@@ -209,101 +214,55 @@ SoulMasterSpec <- SoulMasterSpec$Spec
 
 
 ## SoulMaster - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * SoulMasterCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SoulMasterCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SoulMasterCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SoulMasterCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SoulMasterCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SoulMasterCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(SoulMasterCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## SoulMaster - Attacks
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
 info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9, 8, 480, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DanceofMoon <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
 info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9, 8, 420, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DanceofMoonAir <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
 info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9, 8, 360, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpeedingSunset <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
 info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9, 8, 360, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpeedingSunsetAir <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(SoulMasterCore[[1]][4, 2]>=40, 20, 0), 2 * SoulMasterCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(SoulMasterCore, "SolunarSlash")>=40, 20, 0), 2 * GetCoreLv(SoulMasterCore, "SolunarSlash"))
 info <- c((240 + 3 * SoulMasterSpec$SkillLv) * 0.9, 12, 450, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SolunarSlashATK <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
-value <- c(ifelse(SoulMasterCore[[1]][2, 2]>=40, 20, 0), 2 * SoulMasterCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(SoulMasterCore, "CrosstheStyx")>=40, 20, 0), 2 * GetCoreLv(SoulMasterCore, "CrosstheStyx"))
 info <- c(580 * 0.9 * 0.5, 10, 990, 30, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -311,98 +270,98 @@ CrosstheStyx <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c((500 + 20 * SoulMasterCore[[2]][5, 2]) * 0.9, 12, 0, NA, NA, NA, NA, F)
+info <- c((500 + 20 * GetCoreLv(SoulMasterCore, "AuraWeapon")) * 0.9, 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(1200 + 40 * SoulMasterCore[[2]][1, 2], 3, 0, NA, NA, NA, NA, F)
+info <- c(1200 + 40 * GetCoreLv(SoulMasterCore, "CelestialDance"), 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CDAfterimageRS <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(600 + 20 * SoulMasterCore[[2]][1, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(600 + 20 * GetCoreLv(SoulMasterCore, "CelestialDance"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 CDAfterimageFM <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
-info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * SoulMasterCore[[2]][1, 2]), 8, 0, NA, NA, NA, NA, F)
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
+info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * GetCoreLv(SoulMasterCore, "CelestialDance")), 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DanceofMoonCD <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
-info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * SoulMasterCore[[2]][1, 2]), 8, 0, NA, NA, NA, NA, F)
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
+info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * GetCoreLv(SoulMasterCore, "CelestialDance")), 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DanceofMoonAirCD <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
-info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * SoulMasterCore[[2]][1, 2]), 8, 0, NA, NA, NA, NA, F)
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
+info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * GetCoreLv(SoulMasterCore, "CelestialDance")), 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpeedingSunsetCD <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, IGRCalc(c(ifelse(SoulMasterCore[[1]][1, 2]>=40, 20, 0), 20)), 2 * SoulMasterCore[[1]][1, 2])
-info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * SoulMasterCore[[2]][1, 2]), 8, 0, NA, NA, NA, NA, F)
+value <- c(40, IGRCalc(c(ifelse(GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset")>=40, 20, 0), 20)), 2 * GetCoreLv(SoulMasterCore, "DanceofMoon_SpeedingSunset"))
+info <- c((400 + 4 * SoulMasterSpec$SkillLv) * 0.9 * (0.3 + 0.01 * GetCoreLv(SoulMasterCore, "CelestialDance")), 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SpeedingSunsetAirCD <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(520 + 21 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- c(520 + 21 * GetCoreLv(SoulMasterCore, "Elysion"), 6, 0, 125, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ElysionCrack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(150 + 6 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- c(150 + 6 * GetCoreLv(SoulMasterCore, "Elysion"), 6, 0, 125, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ElysionCrack1 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(225 + 9 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- c(225 + 9 * GetCoreLv(SoulMasterCore, "Elysion"), 6, 0, 125, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ElysionCrack2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(350 + 14 * SoulMasterCore[[2]][2, 2], 6, 0, 125, NA, NA, NA, F)
+info <- c(350 + 14 * GetCoreLv(SoulMasterCore, "Elysion"), 6, 0, 125, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ElysionCrack3 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(450 + 18 * SoulMasterCore[[2]][3, 2], 7, 0, 1000, NA, NA, NA, F)
+info <- c(450 + 18 * GetCoreLv(SoulMasterCore, "SoulEclipse"), 7, 0, 1000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SoulEclipseEC <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(1250 + 50 * SoulMasterCore[[2]][3, 2], 15, 990, 120, NA, NA, NA, F)
+info <- c(1250 + 50 * GetCoreLv(SoulMasterCore, "SoulEclipse"), 15, 990, 120, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SoulEclipseSD <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(550 + 22 * SoulMasterCore[[2]][4, 2] * 0.9, 14, 0, NA, 12, F, F, F)
+info <- c((550 + 22 * GetCoreLv(SoulMasterCore, "FlareSlash")) * 0.9, 14, 0, NA, 12, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FlareSlash <- rbind(data.frame(option, value), info)}
@@ -417,7 +376,7 @@ SoulMasterATK <- Attack(list(DanceofMoon=DanceofMoon, DanceofMoonAir=DanceofMoon
 ## SoulMaster - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * SoulMasterCore[[2]][7, 2], 1, 780, 240, 0.24*(39 + SoulMasterCore[[2]][7, 2])+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * GetCoreLv(SoulMasterCore, "CygnusPhalanx"), 1, 780, 240, 0.24 * (39 + GetCoreLv(SoulMasterCore, "CygnusPhalanx")) + 0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -434,7 +393,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, S
 BuffFinal <- data.frame(SoulMasterBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, SoulMasterSpec$CoolReduceP, SoulMasterSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, SoulMasterSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(SoulMasterSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, SoulMasterSpec$CoolReduceP, SoulMasterSpec$CoolReduce)
@@ -453,7 +412,7 @@ SoulMasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
                          "SoulContractLink", "Restraint4")
 
   Time0 <- c(0, 180, 240)
-  Time0 <- Time0 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  Time0 <- Time0 * ((100 - Spec$CoolReduceP) / 100)
   
   BuffIdx <- list()
   BuffIdx[[1]] <- c(9, 1, 2, 4, 8, 10, 11, 12, 13, 14)
@@ -925,38 +884,49 @@ SoulMasterDealCycle <- SoulMasterAddATK(DealCycle=SoulMasterDealCycle,
                                         ATKFinal=ATKFinal,
                                         BuffFinal=BuffFinal, 
                                         SummonedFinal=SummonedFinal)
-SoulMasterDealCycle <- BlessofCygnusCycle(SoulMasterDealCycle, 4000, General$General$Serverlag, SoulMasterCore[[2]][8, 2])
+SoulMasterDealCycle <- BlessofCygnusCycle(SoulMasterDealCycle, 4000, General$General$Serverlag, GetCoreLv(SoulMasterCore, "BlessofCygnus"))
 SoulMasterDealCycleReduction <- DealCycleReduction(SoulMasterDealCycle, "BlessofCygnusBDR")
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="SoulMaster") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  SoulMasterSpecOpt1 <- Optimization1(SoulMasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpec, SoulMasterUnionRemained, 
+                                       NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- SoulMasterSpecOpt1[1, 1:3]
+} else {
+  SoulMasterSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+SoulMasterSpecOpt <- OptDataAdd(SoulMasterSpec, SoulMasterSpecOpt1, "Potential", SoulMasterBase$CRROver, DemonAvenger=F)
 
-WindBreakerDealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpec)
-SoulMasterDealData <- data.frame(SoulMasterDealCycle$Skills, DealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpec))
-colnames(SoulMasterDealData) <- c("Skills", "Deal")
+if(DPMCalcOption$Optimization==T) {
+  SoulMasterSpecOpt2 <- Optimization2(SoulMasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt, SoulMasterHyperStatBase, SoulMasterBase$ChrLv, SoulMasterBase$CRROver, 
+                                       NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- SoulMasterSpecOpt2[1, ]
+} else {
+  SoulMasterSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+SoulMasterSpecOpt <- OptDataAdd(SoulMasterSpecOpt, SoulMasterSpecOpt2, "HyperStat", SoulMasterBase$CRROver, DemonAvenger=F)
 
+SoulMasterFinalDPM <- DealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt, Collapse=F, 
+                                NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+SoulMasterFinalDPMwithMax <- DealCalcWithMaxDMR(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt, 
+                                                 NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
 
-## Damage Optimization
-SoulMasterSpecOpt1 <- WindBreakerOptimization1(SoulMasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpec, SoulMasterUnionRemained)
-SoulMasterSpecOpt <- SoulMasterSpec
-SoulMasterSpecOpt$ATKP <- SoulMasterSpecOpt$ATKP + SoulMasterSpecOpt1$ATKP
-SoulMasterSpecOpt$BDR <- SoulMasterSpecOpt$BDR + SoulMasterSpecOpt1$BDR
-SoulMasterSpecOpt$IGR <- IGRCalc(c(SoulMasterSpecOpt$IGR, SoulMasterSpecOpt1$IGR))
-
-SoulMasterSpecOpt2 <- WindBreakerOptimization2(SoulMasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt, SoulMasterHyperStatBase, SoulMasterBase$ChrLv, SoulMasterBase$CRROver)
-SoulMasterFinalDPM <- WindBreakerDealCalc(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
-SoulMasterFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(SoulMasterDealCycle, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt2)
-
-DPM12349$SoulMaster[1] <- sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
-DPM12349$SoulMaster[2] <- sum(na.omit(SoulMasterFinalDPM)) / (max(SoulMasterDealCycle$Time) / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "SoulMaster", sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "SoulMaster", sum(na.omit(SoulMasterFinalDPM)) / (max(SoulMasterDealCycle$Time) / 60000) - sum(na.omit(SoulMasterFinalDPMwithMax)) / (max(SoulMasterDealCycle$Time) / 60000))
 
 SoulMasterDealRatio <- DealRatio(SoulMasterDealCycle, SoulMasterFinalDPMwithMax)
 
-SoulMasterDealData <- data.frame(SoulMasterDealCycle$Skills, SoulMasterDealCycle$Time, SoulMasterDealCycle$Restraint4, SoulMasterFinalDPMwithMax, SoulMasterFinalDPM-SoulMasterFinalDPMwithMax)
-colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-
-subset(SoulMasterDealData, SoulMasterDealData$R4>0)
-
-SoulMasterRR <- SoulMasterDealData[359:576, ]
-DPM12349$SoulMaster[3] <- sum((SoulMasterRR$Deal))
-
-SoulMaster40s <-  SoulMasterDealData[43:574, ]
-DPM12349$SoulMaster[4] <- sum((SoulMaster40s$Deal))
+SoulMasterDealData <- data.frame(SoulMasterDealCycle$Skills, SoulMasterDealCycle$Time, SoulMasterDealCycle$Restraint4, SoulMasterFinalDPMwithMax)
+colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "SoulMaster", Deal_RR(SoulMasterDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "SoulMaster", Deal_40s(SoulMasterDealData, F, NA, FinishTime=subset(SoulMasterDealData, SoulMasterDealData$Skills=="Restraint4")$Time[1] + 15000))

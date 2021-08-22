@@ -165,6 +165,8 @@ rownames(StandardSpecDemonAvenger) <- Items
 rownames(EndSpecs) <- Items
 
 
+
+
 ## Fafnir
 weaponoption <- c("reqlv", "MainStat", "SubStat1", "SubStat2", "MaxHP", "ATK", "ATKSub", 
                   "AllstatP", "Upgrade", "AddOption", "BossItem", "Set", "IGR", "BDR", "CRR", "CDMR", 

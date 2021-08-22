@@ -1,50 +1,56 @@
 ## Xenon - Data
 ## Xenon - Core
-XenonCore <- MatrixSet(PasSkills=c("PinpointRocket", "AegisSystem", "TriangleFormation", "FuzzylopMasquerade", "HologramGrafity", "MeltdownExplosion"), 
-                       PasLvs=c(50, 50, 50, 50, 50, 50), 
-                       PasMP=c(10, 5, 5, 10, 10, 5), 
-                       ActSkills=c("MegaSmasher", "OverloadMode", "HologramGrafityFusion", "PhotonRay",
-                                   unique(c(CommonV("Thief", "Resistance"), CommonV("Pirate", "Resistance")))[2:7]), 
-                       ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                       ActMP=c(5, 5, 5, 5, 5, 5, 5, 0, 0, 5), 
-                       BlinkLv=1, 
-                       BlinkMP=0, 
-                       UsefulSkills=c("SharpEyes", "CombatOrders"), 
+XenonCoreBase <- CoreBuilder(ActSkills=c("MegaSmasher", "OverloadMode", "HologramGrafityFusion", "PhotonRay",
+                                         unique(c(CommonV("Thief", "Resistance"), CommonV("Pirate", "Resistance")))[2:7]), 
+                             ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                             UsefulSkills=c("SharpEyes", "CombatOrders", "HyperBody"), 
+                             SpecSet=get(DPMCalcOption$SpecSet), 
+                             VPassiveList=XenonVPassive, 
+                             VPassivePrior=XenonVPrior, 
+                             SelfBind=T)
+
+XenonCore <- MatrixSet(PasSkills=XenonCoreBase$PasSkills$Skills, 
+                       PasLvs=XenonCoreBase$PasSkills$Lv, 
+                       PasMP=XenonCoreBase$PasSkills$MP, 
+                       ActSkills=XenonCoreBase$ActSkills$Skills, 
+                       ActLvs=XenonCoreBase$ActSkills$Lv, 
+                       ActMP=XenonCoreBase$ActSkills$MP, 
+                       UsefulSkills=XenonCoreBase$UsefulSkills, 
                        UsefulLvs=20, 
                        UsefulMP=0, 
-                       SpecSet=SpecDefault, 
-                       SelfBind=F)
+                       SpecSet=get(DPMCalcOption$SpecSet), 
+                       SpecialCore=XenonCoreBase$SpecialCoreUse)
 
 
 ## Xenon - Basic Info
 XenonBase <- JobBase(ChrInfo=ChrInfo, 
-                     MobInfo=MobDefault,
-                     SpecSet=SpecDefaultXenon_A6S6, 
+                     MobInfo=get(DPMCalcOption$MobSet),
+                     SpecSet=get(DPMCalcOption$XenonSpecSet), 
                      Job="Xenon",
                      CoreData=XenonCore, 
                      BuffDurationNeeded=0, 
-                     AbilList=c("BDR", "DisorderBDR"), 
-                     LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom"), 
-                     MonsterLife=MLTypeA21, 
-                     Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", SpecDefaultXenon_A6S6$WeaponType, Xenon=T)[, 1:16],
-                     WeaponType=SpecDefault$WeaponType, 
+                     AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Xenon"), 
+                     LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Xenon"), 
+                     MonsterLife=get(FindJob(MonsterLifePreSet, "Xenon")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                     Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", get(DPMCalcOption$XenonSpecSet)$WeaponType, Xenon=T)[, 1:16],
+                     WeaponType=get(DPMCalcOption$XenonSpecSet)$WeaponType, 
                      SubWeapon=SubWeapon[rownames(SubWeapon)=="Controller", ], 
                      Emblem=Emblem[rownames(Emblem)=="Resistance", ], 
-                     CoolReduceHat=T)
+                     CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Xenon")))
 XenonBase2 <- JobBase(ChrInfo=ChrInfo, 
-                      MobInfo=MobDefault,
-                      SpecSet=SpecDefaultXenon_A6A3, 
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$XenonSpecSetAlt), 
                       Job="Xenon",
                       CoreData=XenonCore, 
                       BuffDurationNeeded=0, 
-                      AbilList=c("BDR", "DisorderBDR"), 
-                      LinkList=c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom"), 
-                      MonsterLife=MLTypeA21, 
-                      Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", SpecDefaultXenon_A6A3$WeaponType)[, 1:16],
-                      WeaponType=SpecDefault$WeaponType, 
+                      AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Xenon"), 
+                      LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Xenon"), 
+                      MonsterLife=get(FindJob(MonsterLifePreSet, "Xenon")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                      Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "EnergySword", get(DPMCalcOption$XenonSpecSetAlt)$WeaponType, Xenon=T)[, 1:16],
+                      WeaponType=get(DPMCalcOption$XenonSpecSetAlt)$WeaponType, 
                       SubWeapon=SubWeapon[rownames(SubWeapon)=="Controller", ], 
                       Emblem=Emblem[rownames(Emblem)=="Resistance", ], 
-                      CoolReduceHat=T)
+                      CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Xenon")))
 
 ## Xenon - Passive
 {option <- factor(c("BDR"), levels=PSkill)
@@ -100,15 +106,15 @@ value <- c(30 + XenonBase$PSkillLv)
 OffensiveMatrix <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(XenonCore[[2]][5, 2])
+value <- c(GetCoreLv(XenonCore, "ReadyToDie"))
 ReadyToDiePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + XenonCore[[2]][9, 2])
+value <- c(10 + GetCoreLv(XenonCore, "LoadedDice"))
 LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(XenonCore[[2]][11, 2])
+value <- c(GetCoreLv(XenonCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 XenonPassive <- Passive(list(MultiLateralI, MultiLateralII, MultiLateralIII, MultiLateralVI, MultiLateralV, MultiLateralVI, 
@@ -209,19 +215,13 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MeltdownExplosionDebuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * XenonCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * XenonCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(XenonCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+UsefulHyperBody <- Useful$UsefulHyperBody
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -231,24 +231,24 @@ colnames(info) <- c("option", "value")
 OverloadMode <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
-value <- c(5 + floor(XenonCore[[2]][3, 2]/2))
+value <- c(5 + floor(GetCoreLv(XenonCore, "HologramGrafityFusion")/2))
 info <- c(30 + 10, 100, Delay(930, 2), F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HologramGrafityFusionBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(XenonCore[[2]][5, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(XenonCore[[2]][5, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(XenonCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(XenonCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "SubStat1", "SubStat2", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * XenonCore[[2]][7, 2]) * MapleSoldier[1, 2]) * XenonBase$MainStatP), 
-           floor(((1 + 0.1 * XenonCore[[2]][7, 2]) * MapleSoldier[2, 2]) * XenonBase$AllStatP), 
-           floor(((1 + 0.1 * XenonCore[[2]][7, 2]) * MapleSoldier[3, 2]) * XenonBase$AllStatP), 
-           5 + floor(XenonCore[[2]][7, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(XenonCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * XenonBase$MainStatP), 
+           floor(((1 + 0.1 * GetCoreLv(XenonCore, "MapleWarriors2")) * MapleSoldier[2, 2]) * XenonBase$AllStatP), 
+           floor(((1 + 0.1 * GetCoreLv(XenonCore, "MapleWarriors2")) * MapleSoldier[3, 2]) * XenonBase$AllStatP), 
+           5 + floor(GetCoreLv(XenonCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -262,29 +262,34 @@ colnames(info) <- c("option", "value")
 LuckyDice5 <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * XenonCore[[2]][10, 2]) * ArcaneShade[rownames(ArcaneShade)=="EnergySword", 6]))
-info <- c(30, 70 - floor(XenonCore[[2]][10, 2]/5), 540, F, T, F, T)
+value <- c(floor((0.2 + 0.02 * GetCoreLv(XenonCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="EnergySword", 6]))
+info <- c(30, 70 - floor(GetCoreLv(XenonCore, "OverDrive")/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="EnergySword", 6]))
-info <- c(Cooldown(70 - floor(XenonCore[[2]][10, 2]/5), T, XenonBase$UnionChrs$CoolReduceP, XenonBase$CoolReduce) - 30 - General$General$Serverlag, 
-          70 - floor(XenonCore[[2]][10, 2]/5), 0, F, T, F, F)
+info <- c(Cooldown(70 - floor(GetCoreLv(XenonCore, "OverDrive")/5), T, XenonBase$UnionChrs$CoolReduceP, XenonBase$CoolReduce) - 30 - General$General$Serverlag, 
+          70 - floor(GetCoreLv(XenonCore, "OverDrive")/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info)}
 
-XenonBuff <- Buff(list(SurplusSupplyDummy=SurplusSupplyDummy, SurplusSupplyStack=SurplusSupplyStack, OverloadModeFDR=OverloadModeFDR, TriangleFormationStack=TriangleFormationStack, 
-                       MegaSmasherCharge=MegaSmasherCharge, PhotonRayStack=PhotonRayStack, 
-                       VirtualProjection=VirtualProjection, InclinePower=InclinePower, OOPArtCode=OOPArtCode, MapleSoldier=MapleSoldier, 
-                       AmaranthGenerator=AmaranthGenerator, MeltdownExplosionBuff=MeltdownExplosionBuff, MeltdownExplosionDebuff=MeltdownExplosionDebuff, 
-                       UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                       OverloadMode=OverloadMode, HologramGrafityFusionBuff=HologramGrafityFusionBuff, 
-                       ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
-                       Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders
+XenonBuff <- list(SurplusSupplyDummy=SurplusSupplyDummy, SurplusSupplyStack=SurplusSupplyStack, OverloadModeFDR=OverloadModeFDR, TriangleFormationStack=TriangleFormationStack, 
+                  MegaSmasherCharge=MegaSmasherCharge, PhotonRayStack=PhotonRayStack, 
+                  VirtualProjection=VirtualProjection, InclinePower=InclinePower, OOPArtCode=OOPArtCode, MapleSoldier=MapleSoldier, 
+                  AmaranthGenerator=AmaranthGenerator, MeltdownExplosionBuff=MeltdownExplosionBuff, MeltdownExplosionDebuff=MeltdownExplosionDebuff, 
+                  UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulHyperBody=UsefulHyperBody, 
+                  OverloadMode=OverloadMode, HologramGrafityFusionBuff=HologramGrafityFusionBuff, 
+                  ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, 
+                  Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : MapleSoldier, UsefulSharpEyes, UsefulCombatOrders, UsefulHyperBody, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  XenonBuff[[length(XenonBuff)+1]] <- UsefulAdvancedBless
+  names(XenonBuff)[[length(XenonBuff)]] <- "UsefulAdvancedBless"
+}
+XenonBuff <- Buff(XenonBuff)
 XenonAllTimeBuff <- AllTimeBuff(XenonBuff)
 
 
@@ -292,16 +297,16 @@ XenonAllTimeBuff <- AllTimeBuff(XenonBuff)
 XenonSpec <- JobSpec(JobBase=XenonBase, 
                      Passive=XenonPassive, 
                      AllTimeBuff=XenonAllTimeBuff, 
-                     MobInfo=MobDefault, 
-                     SpecSet=SpecDefault, 
+                     MobInfo=get(DPMCalcOption$MobSet),
+                     SpecSet=get(DPMCalcOption$XenonSpecSet), 
                      WeaponName="EnergySword", 
                      UnionStance=0,
                      JobConstant=0.875)
 XenonSpec2 <- JobSpec(JobBase=XenonBase2, 
                       Passive=XenonPassive, 
                       AllTimeBuff=XenonAllTimeBuff, 
-                      MobInfo=MobDefault, 
-                      SpecSet=SpecDefault, 
+                      MobInfo=get(DPMCalcOption$MobSet),
+                      SpecSet=get(DPMCalcOption$XenonSpecSetAlt), 
                       WeaponName="EnergySword", 
                       UnionStance=0,
                       JobConstant=0.875)
@@ -316,103 +321,58 @@ XenonHyperStatBase2 <- XenonSpec2$HyperStatBase
 XenonCoolReduceType2 <- XenonSpec2$CoolReduceType
 XenonSpec2 <- XenonSpec2$Spec
 
+
 ## Xenon - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * XenonCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * XenonCore[[2]][8, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * XenonCore[[2]][8, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * XenonCore[[2]][8, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * XenonCore[[2]][8, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * XenonCore[[2]][8, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(XenonCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Xenon - Attacks
 ## Hyper : Fuzzylop Masquerade - Reinforce, Fuzzylop Masquerade - Ignore Guard, Hologram Grafity - Reinforce, Hologram Grafity - Speed, Hologram Grafity - Persist
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(XenonCore[[1]][1, 2]>=40, 20, 0), 2 * XenonCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(XenonCore, "PinpointRocket")>=40, 20, 0), 2 * GetCoreLv(XenonCore, "PinpointRocket"))
 info <- c(50 + 40 + 40 + 100, 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PinpointRocket <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + floor(XenonSpec$PSkillLv/3), ifelse(XenonCore[[1]][2, 2]>=40, 20, 0), 2 * XenonCore[[1]][2, 2])
+value <- c(20 + floor(XenonSpec$PSkillLv/3), ifelse(GetCoreLv(XenonCore, "AegisSystem")>=40, 20, 0), 2 * GetCoreLv(XenonCore, "AegisSystem"))
 info <- c(120, 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AegisSystem <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20 + floor(XenonSpec$PSkillLv/3), ifelse(XenonCore[[1]][2, 2]>=40, 20, 0), 2 * XenonCore[[1]][2, 2])
+value <- c(20 + floor(XenonSpec$PSkillLv/3), ifelse(GetCoreLv(XenonCore, "AegisSystem")>=40, 20, 0), 2 * GetCoreLv(XenonCore, "AegisSystem"))
 info <- c(120, 7, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AegisSystemGrafityFusion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(XenonCore[[1]][3, 2]>=40, 20, 0), 3 * XenonCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(XenonCore, "TriangleFormation")>=40, 20, 0), 3 * GetCoreLv(XenonCore, "TriangleFormation"))
 info <- c(340, 3, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 TriangleFormation <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(30 + XenonSpec$SkillLv, 10, ifelse(XenonCore[[1]][4, 2]>=40, 20, 0))), 2 * XenonCore[[1]][4, 2])
+value <- c(20, IGRCalc(c(30 + XenonSpec$SkillLv, 10, ifelse(GetCoreLv(XenonCore, "FuzzylopMasquerade")>=40, 20, 0))), 2 * GetCoreLv(XenonCore, "FuzzylopMasquerade"))
 info <- c(345 + 2 * XenonSpec$SkillLv, 7, 870, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FuzzylopMasquerade <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(XenonCore[[1]][6, 2]>=40, 20, 0), 2 * XenonCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(XenonCore, "MeltdownExplosion")>=40, 20, 0), 2 * GetCoreLv(XenonCore, "MeltdownExplosion"))
 info <- c(1500, 6, 0, NA, 50, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -427,7 +387,7 @@ ExtraSupply <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(275 + 10 * XenonCore[[2]][1, 2], 6, 1000, 150, 165, T, F, F)
+info <- c(275 + 10 * GetCoreLv(XenonCore, "MegaSmasher"), 6, 1000, 150, 165, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MegaSmasher <- rbind(data.frame(option, value), info)
@@ -455,14 +415,14 @@ OverloadModeATKDummy <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(180 + 7 * XenonCore[[2]][2, 2], 6, 0, 30, 0, NA, NA, F)
+info <- c(180 + 7 * GetCoreLv(XenonCore, "OverloadMode"), 6, 0, 30, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 OverloadModeATK <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=ASkill)
 value <- c(10)
-info <- c(250 + 10 * XenonCore[[2]][3, 2], 5, 0, 285, 0, NA, NA, F)
+info <- c(250 + 10 * GetCoreLv(XenonCore, "HologramGrafityFusion"), 5, 0, 285, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HologramGrafityFusion <- rbind(data.frame(option, value), info)
@@ -476,7 +436,7 @@ PhotonRayPrep <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(350 + 14 * XenonCore[[2]][4, 2], 4, 0, 0, 0, NA, NA, F)
+info <- c(350 + 14 * GetCoreLv(XenonCore, "PhotonRay"), 4, 0, 0, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PhotonRay <- rbind(data.frame(option, value), info)}
@@ -490,7 +450,7 @@ XenonATK <- Attack(list(PinpointRocket=PinpointRocket, AegisSystem=AegisSystem, 
 
 ## Xenon - Summoned
 {option <- factor(c("BDR", "IGR", "FDR"), levels=SSkill)
-value <- c(10, ifelse(XenonCore[[1]][5, 2]>=40, 20, 0), 2 * XenonCore[[1]][5, 2])
+value <- c(10, ifelse(GetCoreLv(XenonCore, "HologramGrafity")>=40, 20, 0), 2 * GetCoreLv(XenonCore, "HologramGrafity"))
 info <- c(400 + 5 * XenonSpec$SkillLv, 1, 930, 420, 20 + 10 + floor(XenonSpec$SkillLv/3), 30 - ceiling(XenonSpec$SkillLv/3), F, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -498,7 +458,7 @@ HologramGrafity <- rbind(data.frame(option, value), info) ## SubTime Check Neede
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(215 + 8 * XenonCore[[2]][6, 2], 9, 360, 990, 10, 25, F, T, F, F)
+info <- c(215 + 8 * GetCoreLv(XenonCore, "ResistanceLineInfantry"), 9, 360, 990, 10, 25, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 ResistanceLineInfantry <- rbind(data.frame(option, value), info)}
@@ -517,7 +477,7 @@ ATKFinal <- AddATKRateSkills("VirtualProjection", BuffFinal, ATKFinal, c("Fuzzyl
 BuffFinal <- data.frame(XenonBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, XenonSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(XenonSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
@@ -530,11 +490,15 @@ XenonDealCycle <- data.frame(XenonDealCycle)
 
 XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=c(190), CycleTime=c(380)) {
-  BuffSummonedPrior <- c("UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5", 
+  BuffSummonedPrior <- c("UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "UsefulAdvancedBless", "LuckyDice5", 
                          "AmaranthGenerator", "OOPArtCode", "InclinePower", "OverloadMode")
-  
-  Times190 <- c(0, 0, 0, 
+  Times190 <- c(0, 0, 0, 0, 0, 
                 2, 4, 1, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times190 <- Times190[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
   SubTime <- rep(Period, length(BuffSummonedPrior))
   TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
@@ -917,7 +881,7 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
       }
       ## Photon Ray
-      else if(PRRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="PhotonRayPrep")) < ceiling(nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * ifelse(Spec$CoolReduce==2, 5, 5))) {
+      else if(PRRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="PhotonRayPrep")) < ceiling(nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * ifelse(Spec$CoolReduce>=2, 5, 5))) {
         DealCycle <- DCATK(DealCycle, "PhotonRayPrep", ATKFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
@@ -945,7 +909,7 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
       }
       ## Resistance Line Infantry
-      else if(RIRemain == 0 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= ifelse(Spec$CoolReduce==2, 28, 27)) {
+      else if(RIRemain == 0 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= ifelse(Spec$CoolReduce>=2, 28, 27)) {
         DealCycle <- DCSummoned(DealCycle, "ResistanceLineInfantry", SummonedFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
@@ -1290,51 +1254,58 @@ XenonDealCycle <- XenonAddATK(XenonDealCycle,
                               OverloadModeTime)
 XenonDealCycleReduction <- DealCycleReduction(XenonDealCycle, c("SurplusSupplyStack", "OverloadModeFDR"))
 
-XenonSpecOpt1 <- XenonOptimization1(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpec, XenonUnionRemained)
-XenonSpecOpt <- XenonSpec
-XenonSpecOpt$ATKP <- XenonSpecOpt$ATKP + XenonSpecOpt1$ATKP
-XenonSpecOpt$BDR <- XenonSpecOpt$BDR + XenonSpecOpt1$BDR
-XenonSpecOpt$IGR <- IGRCalc(c(XenonSpecOpt$IGR, XenonSpecOpt1$IGR))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Xenon") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  XenonSpecOpt1 <- XenonOptimization1(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpec, XenonUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- XenonSpecOpt1[1, 1:3]
+} else {
+  XenonSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+XenonSpecOpt <- OptDataAdd(XenonSpec, XenonSpecOpt1, "Potential", XenonBase$CRROver, DemonAvenger=F)
 
-XenonSpecOpt2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver, HyperStanceLv=5)
-XenonFinalDPM <- XenonDealCalc(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt2)
-XenonFinalDPMwithMax <- XenonDealCalcWithMaxDMR(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt2)
+if(DPMCalcOption$Optimization==T) {
+  XenonSpecOpt2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver, HyperStanceLv=5)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- XenonSpecOpt2[1, ]
+} else {
+  XenonSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+XenonSpecOpt <- OptDataAdd(XenonSpecOpt, XenonSpecOpt2, "HyperStat", XenonBase$CRROver, DemonAvenger=F)
 
-DPM12349$Xenon[1] <- sum(na.omit(XenonFinalDPMwithMax)) / (max(XenonDealCycle$Time)/ 60000)
-DPM12349$Xenon[2] <- sum(na.omit(XenonFinalDPM)) / (max(XenonDealCycle$Time) / 60000) - sum(na.omit(XenonFinalDPMwithMax)) / (max(XenonDealCycle$Time) / 60000)
+XenonFinalDPM <- XenonDealCalc(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt)
+XenonFinalDPMwithMax <- XenonDealCalcWithMaxDMR(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt)
 
-XenonDealData <- data.frame(XenonDealCycle$Skills, XenonDealCycle$Time, XenonDealCycle$Restraint4, XenonFinalDPMwithMax)
-colnames(XenonDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(XenonDealData, XenonDealData$R4>0)
-
-XenonRR <- XenonDealData[321:637, ]
-DPM12349$Xenon[3] <- sum((XenonRR$Deal))
-
-Xenon40s <- XenonDealData[274:813, ]
-DPM12349$Xenon[4] <- sum((Xenon40s$Deal))
+set(get(DPMCalcOption$DataName), as.integer(1), "Xenon", sum(na.omit(XenonFinalDPMwithMax)) / (max(XenonDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Xenon", sum(na.omit(XenonFinalDPM)) / (max(XenonDealCycle$Time) / 60000) - sum(na.omit(XenonFinalDPMwithMax)) / (max(XenonDealCycle$Time) / 60000))
 
 XenonDealRatio <- DealRatio(XenonDealCycle, XenonFinalDPMwithMax)
 
+XenonDealData <- data.frame(XenonDealCycle$Skills, XenonDealCycle$Time, XenonDealCycle$Restraint4, XenonFinalDPMwithMax)
+colnames(XenonDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Xenon", Deal_RR(XenonDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Xenon", Deal_40s(XenonDealData, F, StartTime=subset(XenonDealData, XenonDealData$Skills=="HologramGrafityFusionBuff")$Time[1]))
+
 
 ## Potential - AllStat 9%
-XenonSpecOpt1_2 <- XenonOptimization1(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpec2, XenonUnionRemained)
-XenonSpecOpt_2 <- XenonSpec2
-XenonSpecOpt_2$ATKP <- XenonSpecOpt_2$ATKP + XenonSpecOpt1_2$ATKP
-XenonSpecOpt_2$BDR <- XenonSpecOpt_2$BDR + XenonSpecOpt1_2$BDR
-XenonSpecOpt_2$IGR <- IGRCalc(c(XenonSpecOpt_2$IGR, XenonSpecOpt1_2$IGR))
+XenonSpecOpt_2 <- OptDataAdd(XenonSpec2, XenonSpecOpt1, "Potential", XenonBase$CRROver, DemonAvenger=F)
+XenonSpecOpt_2 <- OptDataAdd(XenonSpecOpt_2, XenonSpecOpt2, "HyperStat", XenonBase$CRROver, DemonAvenger=F)
 
-XenonSpecOpt2_2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt_2, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver, HyperStanceLv=5)
-XenonFinalDPM_A9 <- XenonDealCalcWithMaxDMR(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt2_2)
-
+XenonFinalDPM_A9 <- XenonDealCalcWithMaxDMR(XenonDealCycle, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt_2)
 XenonDPM_A9 <- sum(na.omit(XenonFinalDPM_A9)) / (max(XenonDealCycle$Time)/ 60000)
 
 XenonDealData_A9 <- data.frame(XenonDealCycle$Skills, XenonDealCycle$Time, XenonDealCycle$Restraint4, XenonFinalDPM_A9)
 colnames(XenonDealData_A9) <- c("Skills", "Time", "R4", "Deal")
 
-XenonRR_A9 <- XenonDealData_A9[321:637, ]
-XenonRR_A9 <- sum((XenonRR_A9$Deal))
+XenonRR_A9 <- Deal_RR(XenonDealData_A9)
+Xenon40s_A9 <- Deal_40s(XenonDealData_A9, F, StartTime=subset(XenonDealData_A9, XenonDealData_A9$Skills=="HologramGrafityFusionBuff")$Time[1])
 
-Xenon40s_A9 <- XenonDealData_A9[274:813, ]
-Xenon40s_A9 <- sum((Xenon40s_A9$Deal))
-
-print(c(XenonDPM_A9, XenonRR_A9, Xenon40s_A9))
+print(data.frame(XenonDPM_A9=XenonDPM_A9, XenonRR_A9=XenonRR_A9, Xenon40s_A9=Xenon40s_A9))

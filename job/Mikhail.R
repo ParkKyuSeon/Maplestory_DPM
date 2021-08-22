@@ -1,37 +1,42 @@
 ## Mikhail - Data
 ## Mikhail - VMatrix
-MikhailCore <- MatrixSet(PasSkills=c("SoulAssault", "ShiningCross", "RoyalGuard", "AdvancedFinalAttack", "DeadlyCharge"), 
-                         PasLvs=c(50, 50, 50, 50, 50), 
-                         PasMP=c(10, 10, 10, 10, 10), 
-                         ActSkills=c("RhoAias", "ClaiomhSolais", "SwordofSoulLight", "LightofCourage", 
-                                     CommonV("Warrior", "CygnusKnights")), 
-                         ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
-                         ActMP=c(5, 5, 5, 5, 5, 0, 5, 5, 0), 
-                         BlinkLv=1, 
-                         BlinkMP=0, 
-                         UsefulSkills=c("CombatOrders", "SharpEyes"), 
+MikhailCoreBase <- CoreBuilder(ActSkills=c("RhoAias", "ClaiomhSolais", "SwordofSoulLight", "LightofCourage", 
+                                           CommonV("Warrior", "CygnusKnights")), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=MikhailVPassive, 
+                               VPassivePrior=MikhailVPrior, 
+                               SelfBind=F)
+
+MikhailCore <- MatrixSet(PasSkills=MikhailCoreBase$PasSkills$Skills, 
+                         PasLvs=MikhailCoreBase$PasSkills$Lv, 
+                         PasMP=MikhailCoreBase$PasSkills$MP, 
+                         ActSkills=MikhailCoreBase$ActSkills$Skills, 
+                         ActLvs=MikhailCoreBase$ActSkills$Lv, 
+                         ActMP=MikhailCoreBase$ActSkills$MP, 
+                         UsefulSkills=MikhailCoreBase$UsefulSkills, 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
-
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=MikhailCoreBase$SpecialCoreUse)
 
 ## Mikhail - Basic Info
 ## Link Check Needed
 MikhailBase <- JobBase(ChrInfo=ChrInfo, 
-                        MobInfo=MobDefault,
-                        SpecSet=SpecDefault, 
-                        Job="Mikhail",
-                        CoreData=MikhailCore, 
-                        BuffDurationNeeded=0, 
-                        AbilList=c("BDR", "DisorderBDR"), 
-                        LinkList=c("Mikhail", "Xenon", "DemonAvenger", "CygnusKnights"), 
-                        MonsterLife=MLTypeS22, 
-                        Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Sword", SpecDefault$WeaponType)[, 1:16],
-                        WeaponType=SpecDefault$WeaponType, 
-                        SubWeapon=SubWeapon[18, ], 
-                        Emblem=Emblem[13, ], 
-                        CoolReduceHat=F)
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
+                       Job="Mikhail",
+                       CoreData=MikhailCore, 
+                       BuffDurationNeeded=0, 
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Mikhail"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Mikhail"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Mikhail")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Sword", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                       SubWeapon=SubWeapon[rownames(SubWeapon)=="SoulShield", ], 
+                       Emblem=Emblem[rownames(Emblem)=="Cygnus", ], 
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Mikhail")))
 
 
 ## Mikhail - Passive
@@ -39,7 +44,6 @@ RoyalGuardStack <- 5
 RoyalGuardATK <- c(0, 10, 15, 20, 30, 45)
 RoyalGuardDamage <- c(0, 275, 340, 440, 480, 565)
 RoyalGuardATKCount <- c(0, 4, 5, 6, 7, 9)
-
 {option <- factor(c("ATKP"), levels=PSkill)
 value <- c(10)
 ElementalExpert <- data.frame(option, value)
@@ -93,17 +97,17 @@ value <- c(40 + 2 * MikhailBase$SkillLv)
 CombatMastery <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(MikhailCore[[2]][6, 2])
-BodyofStealPassive <- data.frame(option, value)
+value <- c(GetCoreLv(MikhailCore, "BodyofSteel"))
+BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(MikhailCore[[2]][10, 2])
+value <- c(GetCoreLv(MikhailCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 MikhailPassive <- Passive(list(ElementalExpert=ElementalExpert, Encourage=Encourage, SwordMastery=SwordMastery, PhysicalTraining=PhysicalTraining, 
                                SoulLink=SoulLink, AdvancedRoyalGuard=AdvancedRoyalGuard, Intention=Intention, SoulAttack=SoulAttack, ShiningCharge=ShiningCharge, 
                                SoulRage=SoulRage, AdvnacedSwordMastery=AdvnacedSwordMastery, AdvancedFinalAttack=AdvancedFinalAttack, CombatMastery=CombatMastery, 
-                               BodyofStealPassive=BodyofStealPassive, BlinkPassive=BlinkPassive))
+                               BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
 
 
 ## Mikhail- Buff
@@ -116,7 +120,7 @@ SwordBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
-info <- c(180, NA, 600, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Encourage <- rbind(data.frame(option, value), info)
@@ -157,8 +161,8 @@ colnames(info) <- c("option", "value")
 QueenofTomorrow <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(21 + floor(MikhailCore[[2]][1, 2]/7) * 3)
-info <- c(39 + 2 * MikhailCore[[2]][1, 2], 180, 1680, F, T, F, T)
+value <- c(21 + floor(GetCoreLv(MikhailCore, "RhoAias")/7) * 3)
+info <- c(39 + 2 * GetCoreLv(MikhailCore, "RhoAias"), 180, 1680, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RhoAias <- rbind(data.frame(option, value), info) ## FDR Buff Delay?
@@ -171,36 +175,29 @@ colnames(info) <- c("option", "value")
 ClaiomhSolaisCool <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATKP", "IGR", "CRR", "ATKSkill"), levels=BSkill)
-value <- c(15 + floor(MikhailCore[[2]][3, 2]/2), 100, 100, 1)
+value <- c(15 + floor(GetCoreLv(MikhailCore, "SwordofSoulLight")/2), 100, 100, 1)
 info <- c(35, 180, 1050, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SwordofSoulLight <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
-value <- c(10 + floor(MikhailCore[[2]][4, 2]/2))
+value <- c(10 + floor(GetCoreLv(MikhailCore, "LightofCourage")/2))
 info <- c(25, 90, 750, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LightofCourageBuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * MikhailCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * MikhailCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(MikhailCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor(c("IGR", "FDR", "ATKSkill"), levels=BSkill)
-value <- c(10 + floor(MikhailCore[[2]][5, 2]/5), ceiling(MikhailCore[[2]][5, 2]/5), 1)
-info <- c(80 + 2 * MikhailCore[[2]][5, 2], 180, 720, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(MikhailCore, "AuraWeapon")/5), ceiling(GetCoreLv(MikhailCore, "AuraWeapon")/5), 1)
+info <- c(80 + 2 * GetCoreLv(MikhailCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
@@ -212,22 +209,27 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-MikhailBuff <- Buff(list(SwordBooster=SwordBooster, Encourage=Encourage, MapleSoldier=MapleSoldier, MikhailLink=MikhailLink, DeadlyChargeBuff=DeadlyChargeBuff, SacredCube=SacredCube,
-                         QueenofTomorrow=QueenofTomorrow, RhoAias=RhoAias, ClaiomhSolaisCool=ClaiomhSolaisCool, SwordofSoulLight=SwordofSoulLight, LightofCourageBuff=LightofCourageBuff, 
-                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders,
-                         AuraWeaponBuff=AuraWeaponBuff, BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+MikhailBuff <- list(SwordBooster=SwordBooster, Encourage=Encourage, MapleSoldier=MapleSoldier, MikhailLink=MikhailLink, DeadlyChargeBuff=DeadlyChargeBuff, SacredCube=SacredCube,
+                    QueenofTomorrow=QueenofTomorrow, RhoAias=RhoAias, ClaiomhSolaisCool=ClaiomhSolaisCool, SwordofSoulLight=SwordofSoulLight, LightofCourageBuff=LightofCourageBuff, 
+                    UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders,
+                    AuraWeaponBuff=AuraWeaponBuff, BlessofCygnus=BlessofCygnus, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : SwordBooster(600ms), Encourage(600ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  MikhailBuff[[length(MikhailBuff)+1]] <- UsefulAdvancedBless
+  names(MikhailBuff)[[length(MikhailBuff)]] <- "UsefulAdvancedBless"
+}
+MikhailBuff <- Buff(MikhailBuff)
 MikhailAllTimeBuff <- AllTimeBuff(MikhailBuff)
-## PetBuff : SwordBooster(600ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms)
 
 
 ## Mikhail - Union & HyperStat & SoulWeapon
 MikhailSpec <- JobSpec(JobBase=MikhailBase, 
-                        Passive=MikhailPassive, 
-                        AllTimeBuff=MikhailAllTimeBuff, 
-                        MobInfo=MobDefault, 
-                        SpecSet=SpecDefault, 
-                        WeaponName="Sword", 
-                        UnionStance=0)
+                       Passive=MikhailPassive, 
+                       AllTimeBuff=MikhailAllTimeBuff, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
+                       WeaponName="Sword", 
+                       UnionStance=0)
 
 MikhailUnionRemained <- MikhailSpec$UnionRemained
 MikhailHyperStatBase <- MikhailSpec$HyperStatBase
@@ -236,101 +238,55 @@ MikhailSpec <- MikhailSpec$Spec
 
 
 ## Mikahil - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * MikhailCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * MikhailCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * MikhailCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * MikhailCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * MikhailCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * MikhailCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(MikhailCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Mikhail - Attacks
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(MikhailCore[[1]][1, 2]>=40, 20, 0), 20, 2 * MikhailCore[[1]][1, 2])
+value <- c(ifelse(GetCoreLv(MikhailCore, "SoulAssault")>=40, 20, 0), 20, 2 * GetCoreLv(MikhailCore, "SoulAssault"))
 info <- c(210 + 3 * MikhailSpec$SkillLv, 12, 720, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SoulAssault <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(MikhailCore[[1]][2, 2]>=40, 20, 0), 20, 2 * MikhailCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(MikhailCore, "ShiningCross")>=40, 20, 0), 20, 2 * GetCoreLv(MikhailCore, "ShiningCross"))
 info <- c(440 + 3 * MikhailSpec$SkillLv, 5, 720, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShiningCross <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(MikhailCore[[1]][3, 2]>=40, 20, 0), 2 * MikhailCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(MikhailCore, "RoyalGuard")>=40, 20, 0), 2 * GetCoreLv(MikhailCore, "RoyalGuard"))
 info <- c(RoyalGuardDamage[RoyalGuardStack+1] + MikhailBase$ChrLv, RoyalGuardATKCount[RoyalGuardStack+1], 600, NA, 6, T, T, T)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RoyalGuard <- rbind(data.frame(option, value), info) ## No ATKSpeed
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(MikhailCore[[1]][4, 2]>=40, 20, 0), 10, 2 * MikhailCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(MikhailCore, "AdvancedFinalAttack")>=40, 20, 0), MikhailBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MikhailCore, "AdvancedFinalAttack"))
 info <- c(95 + MikhailSpec$SkillLv, 4 * (0.75 + 0.01 * MikhailSpec$SkillLv), 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(MikhailCore[[1]][5, 2]>=40, 20, 0), 2 * MikhailCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(MikhailCore, "DeadlyCharge")>=40, 20, 0), 2 * GetCoreLv(MikhailCore, "DeadlyCharge"))
 info <- c(600, 10, 1080, NA, 15, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DeadlyCharge <- rbind(data.frame(option, value), info)
 
-ClaiomhSolaisDamage <- c(350 + 20 * MikhailCore[[2]][2, 2], 350 + 20 * MikhailCore[[2]][2, 2], 420 + 20 * MikhailCore[[2]][2, 2],
-                         510 + 20 * MikhailCore[[2]][2, 2], 600 + 24 * MikhailCore[[2]][2, 2], 700 + 28 * MikhailCore[[2]][2, 2])
+ClaiomhSolaisDamage <- c(350 + 20 * GetCoreLv(MikhailCore, "ClaiomhSolais"), 350 + 20 * GetCoreLv(MikhailCore, "ClaiomhSolais"), 420 + 20 * GetCoreLv(MikhailCore, "ClaiomhSolais"),
+                         510 + 20 * GetCoreLv(MikhailCore, "ClaiomhSolais"), 600 + 24 * GetCoreLv(MikhailCore, "ClaiomhSolais"), 700 + 28 * GetCoreLv(MikhailCore, "ClaiomhSolais"))
 option <- factor(levels=ASkill)
 value <- c()
 info <- c(ClaiomhSolaisDamage[RoyalGuardStack+1], 7, 900, NA, 12, T, F, F)
@@ -347,28 +303,28 @@ ClaiomhSolaisAuto <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * MikhailCore[[2]][3, 2], 12, 810, NA, NA, NA, NA, F)
+info <- c(400 + 16 * GetCoreLv(MikhailCore, "SwordofSoulLight"), 12, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SoulLightSlash <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(450 + 18 * MikhailCore[[2]][3, 2], 5, 0, 1800, NA, NA, NA, F)
+info <- c(450 + 18 * GetCoreLv(MikhailCore, "SwordofSoulLight"), 5, 0, 1800, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SwordofSoulLightAfterimage <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(850 + 34 * MikhailCore[[2]][3, 2], 12, 930, 66, NA, NA, NA, F)
+info <- c(850 + 34 * GetCoreLv(MikhailCore, "SwordofSoulLight"), 12, 930, 66, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightForceRay <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * MikhailCore[[2]][5, 2], 6, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(MikhailCore, "AuraWeapon"), 6, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
@@ -380,7 +336,7 @@ MikhailATK <- Attack(list(SoulAssault=SoulAssault, ShiningCross=ShiningCross, Ro
 
 ## Mikhail - Summoned
 {option <- factor(c("IGR", "BDR", "FDR"), levels=SSkill)
-value <- c(ifelse(MikhailCore[[1]][2, 2]>=40, 20, 0), 20, 2 * MikhailCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(MikhailCore, "ShiningCross")>=40, 20, 0), 20, 2 * GetCoreLv(MikhailCore, "ShiningCross"))
 info <- c(75, 5, 0, 810, 12, NA, F, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -388,7 +344,7 @@ ShiningCrossInstall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * MikhailCore[[2]][7, 2], 1, 780, 240, 0.24*(39 + MikhailCore[[2]][7, 2])+0.25, 30, F, T, F, F)
+info <- c(450 + 18 * GetCoreLv(MikhailCore, "CygnusPhalanx"), 1, 780, 240, 0.24 * (39 + GetCoreLv(MikhailCore, "CygnusPhalanx")) + 0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -406,7 +362,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, M
 BuffFinal <- data.frame(MikhailBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, MikhailSpec$CoolReduceP, MikhailSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, MikhailSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(MikhailSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, MikhailSpec$CoolReduceP, MikhailSpec$CoolReduce)
@@ -420,15 +376,19 @@ colnames(MikhailDealCycle) <- DealCycle
 
 MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360)) {
-  BuffSummonedPrior <- c("SwordBooster", "Encourage", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "QueenofTomorrow", 
+  BuffSummonedPrior <- c("SwordBooster", "Encourage", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "QueenofTomorrow", 
                          "AuraWeaponBuff", "RhoAias", "MikhailLink", "CygnusPhalanx", "BlessofCygnus", "LightofCourageBuff", "SwordofSoulLight", 
                          "SoulContractLink", "SacredCube", "Restraint4")
-  Times180 <- c(0, 0, 0, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
                 1, 1, 1, 6, 0.5, 2, 1,
                 2, 0.5, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - CycleTime/Period * Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -679,33 +639,50 @@ MikhailDealCycle <- DCSummonedATKs(MikhailDealCycle, Skill=c("ShiningCrossInstal
 MikhailDealCycle <- AWCSCycleMikhail(MikhailDealCycle)
 MikhailDealCycle <- AddATKCycleMikhail(MikhailDealCycle)
 MikhailDealCycle <- DCSpiderInMirror(MikhailDealCycle, SummonedFinal)
-MikhailDealCycle <- BlessofCygnusCycle(MikhailDealCycle, 4000, General$General$Serverlag, MikhailCore[[2]][8, 2])
+MikhailDealCycle <- BlessofCygnusCycle(MikhailDealCycle, 4000, General$General$Serverlag, GetCoreLv(MikhailCore, "BlessofCygnus"))
 MikhailDealCycleReduction <- DealCycleReduction(MikhailDealCycle, "BlessofCygnusBDR")
 
 
-sum(na.omit(WindBreakerDealCalc(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpec)))
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Mikhail") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  MikhailSpecOpt1 <- Optimization1(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpec, MikhailUnionRemained, 
+                                       NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- MikhailSpecOpt1[1, 1:3]
+} else {
+  MikhailSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+MikhailSpecOpt <- OptDataAdd(MikhailSpec, MikhailSpecOpt1, "Potential", MikhailBase$CRROver, DemonAvenger=F)
 
-MikhailSpecOpt1 <- WindBreakerOptimization1(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpec, MikhailUnionRemained)
-MikhailSpecOpt <- MikhailSpec
-MikhailSpecOpt$ATKP <- MikhailSpecOpt$ATKP + MikhailSpecOpt1$ATKP
-MikhailSpecOpt$BDR <- MikhailSpecOpt$BDR + MikhailSpecOpt1$BDR
-MikhailSpecOpt$IGR <- IGRCalc(c(MikhailSpecOpt$IGR, MikhailSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  MikhailSpecOpt2 <- Optimization2(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, MikhailHyperStatBase, MikhailBase$ChrLv, MikhailBase$CRROver, 
+                                       NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- MikhailSpecOpt2[1, ]
+} else {
+  MikhailSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+MikhailSpecOpt <- OptDataAdd(MikhailSpecOpt, MikhailSpecOpt2, "HyperStat", MikhailBase$CRROver, DemonAvenger=F)
 
-MikhailSpecOpt2 <- WindBreakerOptimization2(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, MikhailHyperStatBase, MikhailBase$ChrLv, MikhailBase$CRROver)
-MikhailFinalDPM <- WindBreakerDealCalc(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
-MikhailFinalDPMwithMax <- WindBreakerDealCalcWithMaxDMR(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt2)
+MikhailFinalDPM <- DealCalc(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, Collapse=F, 
+                                NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+MikhailFinalDPMwithMax <- DealCalcWithMaxDMR(MikhailDealCycle, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, 
+                                                 NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
 
-DPM12349$Mikhail[1] <- sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000)
-DPM12349$Mikhail[2] <- sum(na.omit(MikhailFinalDPM)) / (max(MikhailDealCycle$Time) / 60000) - sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Mikhail", sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Mikhail", sum(na.omit(MikhailFinalDPM)) / (max(MikhailDealCycle$Time) / 60000) - sum(na.omit(MikhailFinalDPMwithMax)) / (max(MikhailDealCycle$Time) / 60000))
 
-MikhailDealData <- data.frame(MikhailDealCycle$Skills, MikhailDealCycle$Time, MikhailDealCycle$Restraint4, MikhailFinalDPMwithMax, MikhailFinalDPM-MikhailFinalDPMwithMax)
-colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal", "Leakage")
-subset(MikhailDealData, MikhailDealData$R4 > 0)
+MikhailDealRatio <- DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)
 
-MikhailRR <- MikhailDealData[51:205, ]
-DPM12349$Mikhail[3] <- sum((MikhailRR$Deal))
-
-Mikhail40s <-  MikhailDealData[51:420, ]
-DPM12349$Mikhail[4] <- sum((Mikhail40s$Deal))
-
-DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)
+MikhailDealData <- data.frame(MikhailDealCycle$Skills, MikhailDealCycle$Time, MikhailDealCycle$Restraint4, MikhailFinalDPMwithMax)
+colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal")
+set(get(DPMCalcOption$DataName), as.integer(3), "Mikhail", Deal_RR(MikhailDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Mikhail", Deal_40s(MikhailDealData))

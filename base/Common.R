@@ -122,232 +122,6 @@ lvpts <- data.frame(lv, ptsperlv)
 
 
 
-## Monster Life
-MonsterLifeSpecs <- c("BDR", "CRR", "CDMR", "IGR", "SummonedDuration", "BuffDuration", "FinalATKDMR", "CoolTimeReset",
-                      "STR", "DEX", "INT", "LUK", "HP", "ATK", "MAT")
-{### BDR / DMR
-Bigeup <- c(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-VonLeon <- c(5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-VikingCorps <- c(3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## Four Vikings Needed
-Cygnus <- c(3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Rang <- c(8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## Eunwol Needed
-Scarecrow <- c(4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-BlackViking <- c(2, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0)
-PinkBean <- c(2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-### CRR
-RomantistKingSlime <- c(0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-HornTail <- c(0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Lazuli <- c(0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Phantom <- c(0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-### CDMR
-Hilla <- c(0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-### IGR
-Magnus <- c(0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Lapis <- c(0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-### SummonedDuration
-MiniSpider <- c(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-CoupleYeti <- c(0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-GoldYeti <- c(0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-### BuffDuration
-VonBon <- c(0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Will <- c(0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Akairum <- c(0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-### FinalATKDMR
-Puso <- c(0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0)
-Pierre <- c(0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0)
-### CoolTimeReset
-BigBalloon <- c(0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0)
-Eunwol <- c(0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0)
-### STR
-FrankenRoid <- c(0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0)
-Leica <- c(0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0)
-### DEX
-Lilinoch <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0)
-SleepyViking <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## DEX +8 if there is no Birds A+ or S
-TiredViking <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## DEX +8 if there is no Birds A+ or S
-EnoughViking <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## DEX +10 if there is no Birds S
-SeriousViking <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0)
-Taeryun <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0)
-### INT
-Timer <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0)
-MachineMT09 <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0)
-### LUK
-Dunas <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0)
-Hogeol <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0)
-### STR + INT
-ReeperSpector <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0)
-### STR + LUK
-EliteBloodTooth <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 6, 0, 0, 0)
-NineTailedFox <- c(0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0) ## STR + 7, LUK + 7 if there is no Leica
-### DEX + INT
-AkairumPriest <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0)
-### DEX + LUK
-Papulatus <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 6, 0, 0, 0)
-### INT + LUK
-LightSoul <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0)
-### ATK / MAT
-DarkLumi <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5)
-EquilLumi <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) ## ATK/10Lv (Do Not Effected by ATK%)
-### ALLSTAT
-PapulatusClock <- c(0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0)
-Beril <- c(0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0)
-Oberon <- c(0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 0, 0, 0)
-ReinforcedBeril <- c(0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0, 0, 0)
-Lania <- c(0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 20, 20, 0, 0, 0)
-## HP
-Dodo <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 250, 0, 0)
-ModifiedFireBoar <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 300, 0, 0)
-InnerRage <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0)
-GiantDarkSoul <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 500, 0, 0)
-KingCastleGolem <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 750, 0, 0)
-### Others
-Serf <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-YetiPharaoh <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Shinsoo <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-WolmyoThief <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-JuniorBalrog <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Orchid <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-LightLumi <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-ToyKnight <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-Lich <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-IncongruitySoul <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-
-## Monster Life Preset (8 Empty Slots)
-### Farm Level 21(22 Slots) + No Bigeup, Serf, MiniSpider, LightLumi, PinkBean, SS mix monsters
-#### STR Type 1-1 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=F
-MLTypeS11 <- rbind(FrankenRoid, Leica, ReeperSpector, EliteBloodTooth, 
-                   VonLeon, VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, Cygnus, BlackViking, 
-                   Hilla, Akairum, PapulatusClock, Beril, Oberon, ReinforcedBeril, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, Timer
-
-#### STR Type 1-2 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=T
-
-
-### Farm Level 30(26 Slots) + No Bigeup, Serf, MiniSpider, LightLumi, Pierre, VonBon
-#### STR Type 2-1 : STR, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeS21 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   Oberon, Beril, AkairumPriest, PapulatusClock, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeS21) <- MonsterLifeSpecs
-
-#### STR Type 2-2 : STR, SummonedDuration=F, FinalATKDMR=T, CRR=F
-MLTypeS22 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   Oberon, Beril, Puso, AkairumPriest, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeS22) <- MonsterLifeSpecs
-
-#### STR Type 2-3 : STR, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeS23 <- rbind(FrankenRoid, ReeperSpector, Leica, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   Oberon, GoldYeti, CoupleYeti, AkairumPriest, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeS23) <- MonsterLifeSpecs
-
-#### HP Type 2-1 : HP, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeH21 <- rbind(ModifiedFireBoar, Dodo, Leica, NineTailedFox, AkairumPriest,  
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking, 
-                   CoupleYeti, Oberon, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, RomantistKingSlime,
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeH21) <- MonsterLifeSpecs
-
-#### DEX Type 2-1 : DEX, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeD21 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeD21) <- MonsterLifeSpecs
-
-#### DEX Type 2-2 : DEX, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeD22 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeD22) <- MonsterLifeSpecs
-
-#### DEX Type 2-3 : DEX, SummonedDuration=F, FinalATKDMR=T, CRR=F
-MLTypeD23 <- rbind(Lilinoch, Taeryun, AkairumPriest, Papulatus, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, Puso, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli,  
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeD23) <- MonsterLifeSpecs
-
-#### DEX Type 2-4 : DEX, SummonedDuration=T, FinalATKDMR=T, CRR=F
-MLTypeD24 <- rbind(Lilinoch, Taeryun, AkairumPriest, CoupleYeti, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, GoldYeti, Puso, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli,  
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeD24) <- MonsterLifeSpecs
-
-#### INT Type 2-1 : INT, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeI21 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedFox,
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, PapulatusClock, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeI21) <- MonsterLifeSpecs
-
-#### INT Type 2-2 : INT, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeI22 <- rbind(Timer, MachineMT09, ReeperSpector, AkairumPriest, NineTailedFox,
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, GoldYeti, CoupleYeti, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeI22) <- MonsterLifeSpecs
-
-#### LUK Type 2-1 : LUK, SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeL21 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, AkairumPriest, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeL21) <- MonsterLifeSpecs
-
-#### LUK Type 2-2 : LUK, SummonedDuration=T, FinalATKDMR=F, CRR=F
-MLTypeL22 <- rbind(Dunas, Hogeol, Papulatus, LightSoul, AkairumPriest, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   CoupleYeti, GoldYeti, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeL22) <- MonsterLifeSpecs
-
-#### Allstat Type 2-1 : ALLSTAT(Xenon), SummonedDuration=F, FinalATKDMR=F, CRR=F
-MLTypeA21 <- rbind(Hogeol, Leica, Papulatus, Taeryun, AkairumPriest, NineTailedFox, 
-                   VikingCorps, SleepyViking, TiredViking, EnoughViking, SeriousViking,
-                   Oberon, Beril, Phantom, Eunwol, Rang,
-                   VonLeon, Cygnus, BlackViking, Hilla, Akairum, Scarecrow, Lazuli, 
-                   WolmyoThief, ToyKnight, IncongruitySoul, YetiPharaoh)
-#### Shinsoo, EliteBloodTooth, YetiPharaoh
-colnames(MLTypeA21) <- MonsterLifeSpecs
-
-### Farm Level 40(28 Slots)
-#### STR Type 3-1 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=F
-}
-
-
-
 ## LinkSkill
 LinkOption <- c("MainStat", "SubStat1", "SubStat2", "MaxHP", "MaxHPP", "ATK", "ATKSub", 
                 "MainStatP", "AllstatP", "IGR", "BDR", "CRR", "CDMR", "Disorder")
@@ -451,63 +225,119 @@ colnames(CommonSkills) <- CommonSkillOptions
 
 
 
-## Spider in Mirror - Data
-{SIMLv <- 30
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * SIMLv, 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
+## Spider in Mirror Data
+SIMData <- function(SIMLv) {
+  option <- factor(levels=ASkill)
+  value <- c()
+  info <- c(450 + 18 * SIMLv, 15, 960, NA, 250, T, F, F)
+  info <- data.frame(AInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirror <- rbind(data.frame(option, value), info) 
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirrorStart <- rbind(data.frame(option, value), info)
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(175 + 7 * SIMLv, 8, 0, 0, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirror1 <- rbind(data.frame(option, value), info)
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(175 + 7 * SIMLv, 8, 0, 900, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirror2 <- rbind(data.frame(option, value), info)
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(175 + 7 * SIMLv, 8, 0, 850, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirror3 <- rbind(data.frame(option, value), info)
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(175 + 7 * SIMLv, 8, 0, 750, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirror4 <- rbind(data.frame(option, value), info)
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(175 + 7 * SIMLv, 8, 0, 650, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirror5 <- rbind(data.frame(option, value), info)
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  SpiderInMirrorWait <- rbind(data.frame(option, value), info)
+  
+  return(list(SpiderInMirror=SpiderInMirror, 
+              SpiderInMirrorStart=SpiderInMirrorStart, 
+              SpiderInMirror1=SpiderInMirror1, 
+              SpiderInMirror2=SpiderInMirror2, 
+              SpiderInMirror3=SpiderInMirror3, 
+              SpiderInMirror4=SpiderInMirror4, 
+              SpiderInMirror5=SpiderInMirror5, 
+              SpiderInMirrorWait=SpiderInMirrorWait))
+}
 
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SIMLv, 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SIMLv, 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SIMLv, 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SIMLv, 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * SIMLv, 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+## Useful Skills Data
+UsefulSkills <- function(CoreData, DemonAvenger=F) {
+  Useful <- list()
+  for(i in 1:nrow(CoreData[[3]])) {
+    if(CoreData[[3]]$Useful[i]=="SharpEyes") {
+      option <- factor(c("CRR", "CDMR"), levels=BSkill)
+      value <- c(10, 8)
+      info <- c(180 + 3 * CoreData[[3]]$Level[i], NA, 0, F, NA, NA, T)
+      info <- data.frame(BInfo, info)
+      colnames(info) <- c("option", "value")
+      Useful$UsefulSharpEyes <- rbind(data.frame(option, value), info)
+    } else if(CoreData[[3]]$Useful[i]=="CombatOrders") {
+      option <- factor("SkillLv", levels=BSkill)
+      value <- c(1)
+      info <- c(180 + 3 * CoreData[[3]]$Level[i], NA, 0, F, NA, NA, T)
+      info <- data.frame(BInfo, info)
+      colnames(info) <- c("option", "value")
+      Useful$UsefulCombatOrders <- rbind(data.frame(option, value), info)
+    } else if(CoreData[[3]]$Useful[i]=="WindBooster") {
+      option <- factor("ATKSpeed", levels=BSkill)
+      value <- c(1)
+      info <- c(180 + 3 * CoreData[[3]]$Level[i], NA, 0, F, NA, NA, T)
+      info <- data.frame(BInfo, info)
+      colnames(info) <- c("option", "value")
+      Useful$UsefulWindBooster <- rbind(data.frame(option, value), info)
+    } else if(CoreData[[3]]$Useful[i]=="HyperBody") {
+      option <- factor(c("MainStatP"), levels=BSkill)
+      value <- c(ifelse(DemonAvenger==T, 40, 0))
+      info <- c(180 + 3 * CoreData[[3]]$Level[i], NA, 0, F, NA, NA, T)
+      info <- data.frame(BInfo, info)
+      colnames(info) <- c("option", "value")
+      Useful$UsefulHyperBody <- rbind(data.frame(option, value), info)
+    } else if(CoreData[[3]]$Useful[i]=="AdvancedBless") {
+      option <- factor("ATK", levels=BSkill)
+      value <- c(20)
+      info <- c(180 + 3 * CoreData[[3]]$Level[i], NA, 0, F, NA, NA, T)
+      info <- data.frame(BInfo, info)
+      colnames(info) <- c("option", "value")
+      Useful$UsefulAdvancedBless <- rbind(data.frame(option, value), info)
+    }
+  }
+  return(Useful)
+}
 
 
 

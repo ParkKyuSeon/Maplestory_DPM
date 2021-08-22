@@ -57,13 +57,17 @@ rownames(General$General) <- "Default"
 # [[8]] CoolReduceInfo
 ## CoolReduce Types : StatP / CoolReduce
 
+# [[9]] Common V Skills Set
+## Rownames : Blink, ErdaNova, ErdaWill, RopeConnect, SpecialCore, CrestoftheSolar
+## Cols : Use(Logical), Lv(Logical)
+
 # SpecSet - Default
 SpecDefault <- list()
 SpecDefault$Basic <- data.frame(ChrLv=255, 
                                 UnionLv=8000, 
                                 ArcaneForce=1350, 
                                 ArcaneForceStat=13200, 
-                                AuthenticForce=0,
+                                AuthenticForceStat=0,
                                 Charisma=100, 
                                 Insight=100, 
                                 Sensibility=100, 
@@ -76,6 +80,9 @@ SpecDefault$Pets <- c("D", "D", "D")
 SpecDefault$ItemSet <- ItemSum(SpecSet1, SetOption(SpecSet1, SpecDefault$WeaponType), PetSetOption(SpecDefault$Pets))
 SpecDefault$CoolReduceInfo <- data.frame(MainStatP=c(0, -12), 
                                          CoolReduce=c(0, 2))
+SpecDefault$CommonVSet <- data.frame(Use=c(T, T, F, F, F, F), 
+                                     Lv=c(1, 1, 0, 0, 0, 0), 
+                                     row.names=c("Blink", "ErdaNova", "ErdaWill", "RopeConnect", "SpecialCore", "CrestoftheSolar"))
 
 
 ## SpecSet - Default (Zero)
@@ -98,6 +105,31 @@ SpecDefaultXenon_A6A3$CoolReduceInfo <- data.frame(AllStatP=c(0, -9),
 ## SpecSet - Default (DemonAvenger)
 SpecDefaultDemonAvenger <- SpecDefault
 SpecDefaultDemonAvenger$ItemSet <- ItemSum(SpecSetDemonAvenger1, SetOption(SpecSetDemonAvenger1, "AR"), PetSetOption(SpecDefaultDemonAvenger$Pets))
+
+
+## SpecSet - Legendry
+SpecLegendry <- list()
+SpecLegendry$Basic <- data.frame(ChrLv=270, 
+                                 UnionLv=8000, 
+                                 ArcaneForce=1350, 
+                                 ArcaneForceStat=13200, 
+                                 AuthenticForceStat=2600,
+                                 Charisma=100, 
+                                 Insight=100, 
+                                 Sensibility=100, 
+                                 Will=100)
+SpecLegendry$AbilityGrade <- c("L", "U", "U")
+SpecLegendry$WeaponType <- "AR"
+SpecLegendry$WeaponAddPGrade <- c("L", "L", "L")
+SpecLegendry$WeaponAddPOp <- c("A", "A", "O")
+SpecLegendry$Pets <- c("P", "D", "D")
+SpecLegendry$ItemSet <- ItemSum(SpecSet2, SetOption(SpecSet2, SpecLegendry$WeaponType), PetSetOption(SpecLegendry$Pets))
+SpecLegendry$CoolReduceInfo <- data.frame(MainStatP=c(0, -12), 
+                                          CoolReduce=c(0, 2))
+SpecLegendry$CommonVSet <- data.frame(Use=c(T, T, T, T, T, F), 
+                                      Lv=c(25, 1, 1, 20, 1, 0), 
+                                      row.names=c("Blink", "ErdaNova", "ErdaWill", "RopeConnect", "SpecialCore", "CrestoftheSolar"))
+
 
 
 # Union PreSet Structure (WITHOUT CALCULATING CHARACTER)

@@ -1,37 +1,43 @@
 ## Captain - Data
 ## Captain - Core
-CaptainCore <- MatrixSet(PasSkills=c("RapidFire", "OctaQuaterdeck", "BattleShipBomber", "SummonCrew", "HeadShot", "CaptainDignity", "Fusilrade", "Nautilus"), 
-                         PasLvs=c(50, 50, 50, 50, 50, 50, 50, 25), 
-                         PasMP=c(10, 10, 10, 5, 10, 10, 5, 0), 
-                         ActSkills=c("BulletParty", "DeadEye", "NautilusAssault", "DeathTrigger",
-                                     CommonV("Pirate", "Adventure")), 
-                         ActLvs=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
-                         ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 0), 
-                         BlinkLv=1, 
-                         BlinkMP=0, 
-                         UsefulSkills=c("SharpEyes", "CombatOrders"), 
+CaptainCoreBase <- CoreBuilder(ActSkills=c("BulletParty", "DeadEye", "NautilusAssault", "DeathTrigger",
+                                           CommonV("Pirate", "Adventure")), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=CaptainVPassive, 
+                               VPassivePrior=CaptainVPrior, 
+                               SelfBind=F)
+
+CaptainCore <- MatrixSet(PasSkills=CaptainCoreBase$PasSkills$Skills, 
+                         PasLvs=CaptainCoreBase$PasSkills$Lv, 
+                         PasMP=CaptainCoreBase$PasSkills$MP, 
+                         ActSkills=CaptainCoreBase$ActSkills$Skills, 
+                         ActLvs=CaptainCoreBase$ActSkills$Lv, 
+                         ActMP=CaptainCoreBase$ActSkills$MP, 
+                         UsefulSkills=CaptainCoreBase$UsefulSkills, 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=CaptainCoreBase$SpecialCoreUse)
 
 
 ## Captain - Basic Info
 ## Link - Xenon vs CygnusKnights
 CaptainBase <- JobBase(ChrInfo=ChrInfo, 
-                       MobInfo=MobDefault,
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        Job="Captain",
                        CoreData=CaptainCore, 
                        BuffDurationNeeded=0, 
-                       AbilList=c("BDR", "DisorderBDR"), 
-                       LinkList=c("AdventurePirates", "Mikhail", "DemonAvenger", "Xenon"), 
-                       MonsterLife=MLTypeD24, 
-                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Gun", SpecDefault$WeaponType)[, 1:16],
-                       WeaponType=SpecDefault$WeaponType, 
-                       SubWeapon=SubWeapon[16, ], 
-                       Emblem=Emblem[1, ])
-
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Captain"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Captain"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Captain")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Gun", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
+                       SubWeapon=SubWeapon[rownames(SubWeapon)=="Sight", ], 
+                       Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Captain")))
 
 ## Captain - Passive
 {option <- factor(c("CRR", "CDMR"), levels=PSkill)
@@ -71,11 +77,11 @@ value <- c(10)
 UnwearyingNectar <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + CaptainCore[[2]][5, 2])
+value <- c(10 + GetCoreLv(CaptainCore, "LoadedDice"))
 LoadedDice <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(CaptainCore[[2]][10, 2])
+value <- c(GetCoreLv(CaptainCore, "Blink"))
 BlinkPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -89,7 +95,7 @@ CaptainPassive <- Passive(list(CriticalRoar, PhysicalTraining, HollowPointBullet
 ## Captain - Buff
 {option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 600, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 GunBooster <- rbind(data.frame(option, value), info) 
@@ -103,7 +109,7 @@ InfiniteBullet <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATKP"), levels=BSkill)
 value <- c(20 + CaptainBase$SkillLv)
-info <- c(180 + 6 * CaptainBase$SkillLv, NA, 990, T, NA, NA, T)
+info <- c(180 + 6 * CaptainBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PirateStyle <- rbind(data.frame(option, value), info) 
@@ -171,56 +177,54 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 EpicAdventure <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * CaptainCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * CaptainCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(CaptainCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("ATK", levels=BSkill)
-value <- c(floor((0.2 + 0.02 * CaptainCore[[2]][6, 2]) * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
-info <- c(30, 70 - floor(CaptainCore[[2]][6, 2]/5), 540, F, T, F, T)
+value <- c(floor((0.2 + 0.02 * GetCoreLv(CaptainCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
+info <- c(30, 70 - floor(GetCoreLv(CaptainCore, "OverDrive")/5), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDrive <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(-1 * floor(0.15 * ArcaneShade[rownames(ArcaneShade)=="Gun", 6]))
-info <- c(Cooldown(70 - floor(CaptainCore[[2]][6, 2]/5), T, CaptainBase$UnionChrs$CoolReduceP, CaptainBase$CoolReduce) - 30 - General$General$Serverlag, 
-          70 - floor(CaptainCore[[2]][6, 2]/5), 0, F, T, F, F)
+info <- c(Cooldown(70 - floor(GetCoreLv(CaptainCore, "OverDrive")/5), T, CaptainBase$UnionChrs$CoolReduceP, CaptainBase$CoolReduce) - 30 - General$General$Serverlag, 
+          70 - floor(GetCoreLv(CaptainCore, "OverDrive")/5), 0, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverDriveExhaust <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "IGR"), levels=BSkill)
-value <- c(floor((CaptainBase$ChrLv * 5 + 18) * (0.1 + 0.01 * floor(CaptainCore[[2]][7, 2]/2)) * CaptainBase$MainStatP), 10 + floor(CaptainCore[[2]][7, 2]/2))
+value <- c(floor((CaptainBase$ChrLv * 5 + 18) * (0.1 + 0.01 * floor(GetCoreLv(CaptainCore, "PirateFlag")/2)) * CaptainBase$MainStatP), 10 + floor(GetCoreLv(CaptainCore, "PirateFlag")/2))
 info <- c(30, 31, 990, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PirateFlag <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * CaptainCore[[2]][8, 2]) * MapleSoldier[1, 2]) * CaptainBase$MainStatP), 5 + floor(CaptainCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(CaptainCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * CaptainBase$MainStatP), 5 + floor(GetCoreLv(CaptainCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-CaptainBuff <- Buff(list(GunBooster=GunBooster, InfiniteBullet=InfiniteBullet, PirateStyle=PirateStyle, MapleSoldier=MapleSoldier, NautilusBuff=NautilusBuff, 
-                         QuickDraw=QuickDraw, QuickDrawHeadShot=QuickDrawHeadShot, QuickDrawStack=QuickDrawStack, 
-                         LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, LuckyDice555=LuckyDice555, EpicAdventure=EpicAdventure, 
-                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                         OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, PirateFlag=PirateFlag, MapleWarriors2=MapleWarriors2, 
-                         SoulContractLink=SoulContractLink, Restraint4=Restraint4))
-## Petbuff : InfiniteBullet(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms)
+CaptainBuff <- list(GunBooster=GunBooster, InfiniteBullet=InfiniteBullet, PirateStyle=PirateStyle, MapleSoldier=MapleSoldier, NautilusBuff=NautilusBuff, 
+                    QuickDraw=QuickDraw, QuickDrawHeadShot=QuickDrawHeadShot, QuickDrawStack=QuickDrawStack, 
+                    LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, LuckyDice555=LuckyDice555, EpicAdventure=EpicAdventure, 
+                    UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                    OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, PirateFlag=PirateFlag, MapleWarriors2=MapleWarriors2, 
+                    SoulContractLink=SoulContractLink, Restraint4=Restraint4)
+## Petbuff : GunBooster(600ms), InfiniteBullet(990ms), PirateStyle(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  CaptainBuff[[length(CaptainBuff)+1]] <- UsefulAdvancedBless
+  names(CaptainBuff)[[length(CaptainBuff)]] <- "UsefulAdvancedBless"
+}
+CaptainBuff <- Buff(CaptainBuff)
 CaptainAllTimeBuff <- AllTimeBuff(CaptainBuff)
 
 
@@ -228,8 +232,8 @@ CaptainAllTimeBuff <- AllTimeBuff(CaptainBuff)
 CaptainSpec <- JobSpec(JobBase=CaptainBase, 
                        Passive=CaptainPassive, 
                        AllTimeBuff=CaptainAllTimeBuff, 
-                       MobInfo=MobDefault, 
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        WeaponName="Gun", 
                        UnionStance=0)
 
@@ -240,88 +244,42 @@ CaptainSpec <- CaptainSpec$Spec
 
 
 ## Captain - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * CaptainCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CaptainCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CaptainCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CaptainCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CaptainCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * CaptainCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(CaptainCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Captain - Attack
 ## Hyper : Rapid Fire - Boss Killer, Add Range, Reinforce / Head Shot - Bonus Attack, Reinforce
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(50, ifelse(CaptainCore[[1]][1, 2]>=40, 20, 0), 2 * CaptainCore[[1]][1, 2])
+value <- c(50, ifelse(GetCoreLv(CaptainCore, "RapidFire")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "RapidFire"))
 info <- c(325 + 3 * CaptainBase$SkillLv, 1, 120, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RapidFire <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(60, ifelse(CaptainCore[[1]][5, 2]>=40, 20, 0))), 2 * CaptainCore[[1]][5, 2])
+value <- c(20, IGRCalc(c(60, ifelse(GetCoreLv(CaptainCore, "HeadShot")>=40, 20, 0))), 2 * GetCoreLv(CaptainCore, "HeadShot"))
 info <- c(525 + 5 * CaptainBase$SkillLv, 13, 570, NA, 5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeadShot <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(CaptainCore[[1]][8, 2]>=40, 20, 0), 2 * CaptainCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "Nautilus")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "Nautilus"))
 info <- c(440 + 130 + 7 * CaptainBase$SkillLv, 7, 0, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Nautilus <- rbind(data.frame(option, value), info) ## Delay on NautilusBuff
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(CaptainCore[[1]][6, 2]>=40, 20, 0), 10, 2 * CaptainCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "CaptainDignity")>=40, 20, 0), CaptainBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(CaptainCore, "CaptainDignity"))
 info <- c(275 + 3 * CaptainBase$SkillLv, 1, 0, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -329,35 +287,35 @@ CaptainDignity <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(230 + 9 * CaptainCore[[2]][1, 2], 5, 12180 + 1000 * General$General$Serverlag, 180, 75, T, F, F)
+info <- c(230 + 9 * GetCoreLv(CaptainCore, "BulletParty"), 5, 12180 + 1000 * General$General$Serverlag, 180, 75, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulletParty <- rbind(data.frame(option, value), info) ## SubTime : 180ms, Pre : 180ms, End : 180ms
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(FDRCalc(c(200, 44)))
-info <- c(320 + 13 * CaptainCore[[2]][2, 2], 15, 600, NA, Cooldown(30, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) + 5.4 + 3.48, F, F, F)
+info <- c(320 + 13 * GetCoreLv(CaptainCore, "DeadEye"), 15, 600, NA, Cooldown(30, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) + 5.4 + 3.48, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DeadEye <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * CaptainCore[[2]][3, 2], 6, 450, 150, 180, T, F, F)
+info <- c(600 + 24 * GetCoreLv(CaptainCore, "NautilusAssault"), 6, 450, 150, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 NautilusAssaultPre <- rbind(data.frame(option, value), info) ## 7 Times, StartATK : 480ms
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(300 + 12 * CaptainCore[[2]][3, 2], 12, 0, 90, 180, T, F, F)
+info <- c(300 + 12 * GetCoreLv(CaptainCore, "NautilusAssault"), 12, 0, 90, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 NautilusAssaultLast <- rbind(data.frame(option, value), info) ## 36 Times, StartATK : 1500ms
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(325 + 13 * CaptainCore[[2]][3, 2], 7, 990, NA, 45, T, F, F)
+info <- c(325 + 13 * GetCoreLv(CaptainCore, "DeathTrigger"), 7, 990, NA, 45, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DeathTrigger <- rbind(data.frame(option, value), info) ## 7 * 7 * 4 Hits
@@ -370,91 +328,91 @@ CaptainATK <- Attack(list(RapidFire=RapidFire, HeadShot=HeadShot, Nautilus=Nauti
 
 ## Captain - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][2, 2]>=40, 20, 0), 3 * CaptainCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "OctaQuaterdeck")>=40, 20, 0), 3 * GetCoreLv(CaptainCore, "OctaQuaterdeck"))
 info <- c(300, 1, 630, 540, 30, 10, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 OctaQuaterdeck <- rbind(data.frame(option, value), info) ## SubTime Check Needed (540ms?), ATKSpeed Check Needed, StartATK 1260ms (Function Needed)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * CaptainCore[[1]][4, 2])))
+value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
 info <- c(500, 1 * 1/2, 900, 3030, 120, 120, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AssembleCrewMurat <- rbind(data.frame(option, value), info) ## SubTime Check Needed, ATKSpeed/Delay Check Needed
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * CaptainCore[[1]][4, 2])))
+value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
 info <- c(560, 1 * 1/2, 0, 3030, 120, 120, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AssembleCrewValery <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * CaptainCore[[1]][4, 2])))
+value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
 info <- c(320, 1 * 1/2, 0, 600, 120, 120, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AssembleCrewJack <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * CaptainCore[[1]][4, 2])))
+value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
 info <- c(480, 1 * 1/2, 0, 3030, 120, 120, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AssembleCrewStoner <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(330 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 390, 690, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberDauntless1 <- rbind(data.frame(option, value), info) ## SubTime Check Needed, ATKSpeed/Delay Check Needed
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(445 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 930, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberBlackbark1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(200 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 630, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberSchultz1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(320 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 690, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberJonathan1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(330 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 390, 690, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberDauntless2 <- rbind(data.frame(option, value), info) ## SubTime Check Needed, ATKSpeed/Delay Check Needed
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(445 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 930, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberBlackbark2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(200 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 630, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 BattleShipBomberSchultz2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(CaptainCore[[1]][4, 2]>=40, 20, 0), 2 * CaptainCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
 info <- c(320 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 690, 60, 30, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -476,7 +434,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, C
 BuffFinal <- data.frame(CaptainBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, CaptainSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(CaptainSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce)
@@ -490,14 +448,18 @@ CaptainDealCycle <- data.frame(CaptainDealCycle)
 CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360)) {
   BuffSummonedPrior <- c("OctaQuaterdeck", "AssembleCrewMurat", "BattleShipBomberDauntless1",
-                         "GunBooster", "InfiniteBullet", "PirateStyle", "MapleSoldier", "LuckyDice5", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders", 
+                         "GunBooster", "InfiniteBullet", "PirateStyle", "MapleSoldier", "LuckyDice5", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "MapleWarriors2", "OverDrive", "SoulContractLink", "Restraint4")
-  
   Times180 <- c(5.5, 3/2, 5.5, 
-                1, 0, 1, 1, 1, 0, 0, 0, 
+                0, 0, 0, 0, 1, 0, 0, 0, 0, 
                 1, 2, 2, 1)
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime/Period)
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -966,37 +928,48 @@ CaptainDealCycle555$LuckyDice5 <- 0
 
 CaptainDealCycleProbs <- c(0.745340, 0.245185, 0.009475)
 
-CaptainSpecOpt1 <- Optimization1(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpec, CaptainUnionRemained)
-CaptainSpecOpt <- CaptainSpec
-CaptainSpecOpt$ATKP <- CaptainSpecOpt$ATKP + CaptainSpecOpt1$ATKP
-CaptainSpecOpt$BDR <- CaptainSpecOpt$BDR + CaptainSpecOpt1$BDR
-CaptainSpecOpt$IGR <- IGRCalc(c(CaptainSpecOpt$IGR, CaptainSpecOpt1$IGR))
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Captain") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  CaptainSpecOpt1 <- Optimization1(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpec, CaptainUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- CaptainSpecOpt1[1, 1:3]
+} else {
+  CaptainSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+CaptainSpecOpt <- OptDataAdd(CaptainSpec, CaptainSpecOpt1, "Potential", CaptainBase$CRROver, DemonAvenger=F)
 
-CaptainSpecOpt2 <- Optimization2(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, CaptainHyperStatBase, CaptainBase$ChrLv, CaptainBase$CRROver, HyperStanceLv=0)
+if(DPMCalcOption$Optimization==T) {
+  CaptainSpecOpt2 <- Optimization2(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, CaptainHyperStatBase, CaptainBase$ChrLv, CaptainBase$CRROver)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- CaptainSpecOpt2[1, ]
+} else {
+  CaptainSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+CaptainSpecOpt <- OptDataAdd(CaptainSpecOpt, CaptainSpecOpt2, "HyperStat", CaptainBase$CRROver, DemonAvenger=F)
+
 CaptainFinalDPM <- ResetDealCalc(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
-                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
+                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
 CaptainFinalDPMwithMax <- ResetDealCalcWithMaxDMR(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
-                                                  ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
+                                                  ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
 
-DPM12349$Captain[1] <- sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time)/ 60000)
-DPM12349$Captain[2] <- sum(na.omit(CaptainFinalDPM)) / (max(CaptainDealCycle$Time) / 60000) - sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Captain", sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Captain", sum(na.omit(CaptainFinalDPM)) / (max(CaptainDealCycle$Time) / 60000) - sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000))
 
-
-CaptainDeal1 <- DealCalcWithMaxDMR(CaptainDealCycle5, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2)
-CaptainDeal2 <- DealCalcWithMaxDMR(CaptainDealCycle55, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2)
-CaptainDeal3 <- DealCalcWithMaxDMR(CaptainDealCycle555, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt2)
+CaptainDeal1 <- DealCalcWithMaxDMR(CaptainDealCycle5, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt)
+CaptainDeal2 <- DealCalcWithMaxDMR(CaptainDealCycle55, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt)
+CaptainDeal3 <- DealCalcWithMaxDMR(CaptainDealCycle555, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt)
 CaptainDealDatas <- list(CaptainDeal1, CaptainDeal2, CaptainDeal3)
-
 CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
                                    CaptainDealDatas, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
 
 CaptainDealData <- data.frame(CaptainDealCycle$Skills, CaptainDealCycle$Time, CaptainDealCycle$Restraint4, CaptainDeal1)
 colnames(CaptainDealData) <- c("Skills", "Time", "R4", "Deal")
-
-subset(CaptainDealData, CaptainDealData$R4>0)
-
-CaptainRR <- CaptainDealData[125:594, ]
-DPM12349$Captain[3] <- sum((CaptainRR$Deal))
-
-Captain40s <- CaptainDealData[125:1330, ]
-DPM12349$Captain[4] <- sum((Captain40s$Deal))
+set(get(DPMCalcOption$DataName), as.integer(3), "Captain", Deal_RR(CaptainDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Captain", Deal_40s(CaptainDealData))

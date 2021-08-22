@@ -1,36 +1,41 @@
 ## DualBlade - Data
 ## DualBlade - VMatrix
-DualBladeCore <- MatrixSet(PasSkills=c("PhantomBlow", "HiddenBlade", "Asura", "BladeFury", "SuddenRaid", "BladeAscension"), 
-                           PasLvs=c(50, 50, 50, 50, 50, 50), 
-                           PasMP=c(10, 10, 10, 5, 5, 5), 
-                           ActSkills=c("BladeStorm", "KarmaFury", "BladeTornado", "HuntedEdge", 
-                                       CommonV("Thief", "Adventure")), 
-                           ActLvs=c(25, 25, 25, 25, 1, 25, 25, 25, 25), 
-                           ActMP=c(5, 5, 5, 5, 0, 5, 5, 5, 0), 
-                           BlinkLv=1, 
-                           BlinkMP=5, 
-                           UsefulSkills=c("CombatOrders", "SharpEyes"), 
+DualBladeCoreBase <- CoreBuilder(ActSkills=c("BladeStorm", "KarmaFury", "BladeTornado", "HuntedEdge", 
+                                             CommonV("Thief", "Adventure")), 
+                                 ActSkillsLv=c(25, 25, 25, 25, 1, 25, 25, 25, 25), 
+                                 UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                                 SpecSet=get(DPMCalcOption$SpecSet), 
+                                 VPassiveList=DualBladeVPassive, 
+                                 VPassivePrior=DualBladeVPrior, 
+                                 SelfBind=F)
+
+DualBladeCore <- MatrixSet(PasSkills=DualBladeCoreBase$PasSkills$Skills, 
+                           PasLvs=DualBladeCoreBase$PasSkills$Lv, 
+                           PasMP=DualBladeCoreBase$PasSkills$MP, 
+                           ActSkills=DualBladeCoreBase$ActSkills$Skills, 
+                           ActLvs=DualBladeCoreBase$ActSkills$Lv, 
+                           ActMP=DualBladeCoreBase$ActSkills$MP, 
+                           UsefulSkills=DualBladeCoreBase$UsefulSkills, 
                            UsefulLvs=20, 
                            UsefulMP=0, 
-                           SpecSet=SpecDefault, 
-                           SelfBind=F)
-
+                           SpecSet=get(DPMCalcOption$SpecSet), 
+                           SpecialCore=DualBladeCoreBase$SpecialCoreUse)
 
 ## DualBlade - Basic Info
 DualBladeBase <- JobBase(ChrInfo=ChrInfo, 
-                         MobInfo=MobDefault,
-                         SpecSet=SpecDefault, 
+                         MobInfo=get(DPMCalcOption$MobSet),
+                         SpecSet=get(DPMCalcOption$SpecSet), 
                          Job="DualBlader",
                          CoreData=DualBladeCore, 
                          BuffDurationNeeded=0, 
-                         AbilList=c("BDR", "DisorderBDR"), 
-                         LinkList=c("CygnusKnights", "Xenon", "DemonAvenger", "Phantom"), 
-                         MonsterLife=MLTypeL21, 
-                         Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "Dagger", SpecDefault$WeaponType)[, 1:16],
+                         AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "DualBlader"), 
+                         LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "DualBlader"), 
+                         MonsterLife=get(FindJob(MonsterLifePreSet, "DualBlader")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                         Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "Dagger", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
                          WeaponType=SpecDefault$WeaponType, 
-                         SubWeapon=BladeUpgrade(1, 17, "AB"), 
-                         Emblem=Emblem[1, ], 
-                         CoolReduceHat=T)
+                         SubWeapon=BladeUpgrade(1, DPMCalcOption$WeaponSF, DPMCalcOption$DualBladeBladeType), 
+                         Emblem=Emblem[rownames(Emblem)=="MapleLeaf", ], 
+                         CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "DualBlader")))
 
 
 ## DualBlade - Passive
@@ -55,11 +60,11 @@ value <- c(30 + DualBladeBase$PSkillLv, 70 + ceiling(DualBladeBase$PSkillLv/2), 
 DualBladeExpert <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
-value <- c(DualBladeCore[[2]][6, 2])
+value <- c(GetCoreLv(DualBladeCore, "ReadyToDie"))
 ReadyToDie <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
-value <- c(DualBladeCore[[2]][10, 2])
+value <- c(GetCoreLv(DualBladeCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 DualBladePassive <- Passive(list(Karma=Karma, PhysicalTraining=PhysicalTraining, ThornsEffect=ThornsEffect, Sharpness=Sharpness, DualBladeExpert=DualBladeExpert, 
@@ -116,52 +121,46 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HiddenBladeBuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * DualBladeCore[[3]][2, 2], NA, 900, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * DualBladeCore[[3]][1, 2], NA, 1500, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(DualBladeCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(DualBladeCore[[2]][7, 2]/5))
-info <- c(30, 220 - DualBladeCore[[2]][7, 2], 750, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(DualBladeCore, "UltimateDarkSight")/5))
+info <- c(30, 220 - GetCoreLv(DualBladeCore, "UltimateDarkSight"), 750, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 UltimateDarkSight <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(10 + floor(DualBladeCore[[2]][6, 2]/10))
-info <- c(30, 90 - floor(DualBladeCore[[2]][6, 2]/2), 780, F, T, F, T)
+value <- c(10 + floor(GetCoreLv(DualBladeCore, "ReadyToDie")/10))
+info <- c(30, 90 - floor(GetCoreLv(DualBladeCore, "ReadyToDie")/2), 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie1Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(30 + floor(DualBladeCore[[2]][6, 2]/5))
-info <- c((30 - 0.78)/2 + 0.78, 90 - floor(DualBladeCore[[2]][6, 2]/2), 1560, F, T, F, T)
+value <- c(30 + floor(GetCoreLv(DualBladeCore, "ReadyToDie")/5))
+info <- c((30 - 0.78)/2 + 0.78, 90 - floor(GetCoreLv(DualBladeCore, "ReadyToDie")/2), 1560, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * DualBladeCore[[2]][8, 2]) * MapleSoldier[1, 2]) * DualBladeBase$MainStatP), 5 + floor(DualBladeCore[[2]][8, 2]/2))
+value <- c(floor(((1 + 0.1 * GetCoreLv(DualBladeCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * DualBladeBase$MainStatP), 5 + floor(GetCoreLv(DualBladeCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-DualBladeBuff <- Buff(list(DualBladeBooster=DualBladeBooster, MirrorImaging=MirrorImaging, FinalCutBuff=FinalCutBuff, MapleSoldier=MapleSoldier, FlashBangBuff=FlashBangBuff, EpicAdventure=EpicAdventure, 
-                           HiddenBladeBuff=HiddenBladeBuff, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UltimateDarkSight=UltimateDarkSight, 
-                           ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : NA
+DualBladeBuff <- list(DualBladeBooster=DualBladeBooster, MirrorImaging=MirrorImaging, FinalCutBuff=FinalCutBuff, MapleSoldier=MapleSoldier, FlashBangBuff=FlashBangBuff, EpicAdventure=EpicAdventure, 
+                      HiddenBladeBuff=HiddenBladeBuff, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UltimateDarkSight=UltimateDarkSight, 
+                      ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : NA -> Not Use Useful Advanced Bless
+DualBladeBuff <- Buff(DualBladeBuff)
 DualBladeAllTimeBuff <- AllTimeBuff(DualBladeBuff)
 
 
@@ -169,8 +168,8 @@ DualBladeAllTimeBuff <- AllTimeBuff(DualBladeBuff)
 DualBladeSpec <- JobSpec(JobBase=DualBladeBase, 
                          Passive=DualBladePassive, 
                          AllTimeBuff=DualBladeAllTimeBuff, 
-                         MobInfo=MobDefault, 
-                         SpecSet=SpecDefault, 
+                         MobInfo=get(DPMCalcOption$MobSet), 
+                         SpecSet=get(DPMCalcOption$SpecSet), 
                          WeaponName="Dagger", 
                          UnionStance=0)
 
@@ -181,61 +180,15 @@ DualBladeSpec <- DualBladeSpec$Spec
 
 
 ## DualBlade - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * DualBladeCore[[2]][9, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DualBladeCore[[2]][9, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DualBladeCore[[2]][9, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DualBladeCore[[2]][9, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DualBladeCore[[2]][9, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * DualBladeCore[[2]][9, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(DualBladeCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## DualBlade - Attacks
@@ -247,7 +200,7 @@ colnames(info) <- c("option", "value")
 FlashBang <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
-value <- c(2 * DualBladeCore[[1]][1, 2], 20, IGRCalc(c(ifelse(DualBladeCore[[1]][1, 2]>=40, 20, 0), 20, 30 + DualBladeSpec$SkillLv)))
+value <- c(2 * GetCoreLv(DualBladeCore, "PhantomBlow"), 20, IGRCalc(c(ifelse(GetCoreLv(DualBladeCore, "PhantomBlow")>=40, 20, 0), 20, 30 + DualBladeSpec$SkillLv)))
 info <- c(315 + 3 * DualBladeSpec$SkillLv, 7, 720, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -268,14 +221,14 @@ colnames(info) <- c("option", "value")
 FinalCut <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * DualBladeCore[[1]][5, 2], ifelse(DualBladeCore[[1]][5, 2]>=40, 20, 0))
+value <- c(2 * GetCoreLv(DualBladeCore, "SuddenRaid"), ifelse(GetCoreLv(DualBladeCore, "SuddenRaid")>=40, 20, 0))
 info <- c(1150 + 15 * DualBladeSpec$SkillLv, 3, 900, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SuddenRaid <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * DualBladeCore[[1]][2, 2], ifelse(DualBladeCore[[1]][2, 2]>=40, 20, 0))
+option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
+value <- c(2 * GetCoreLv(DualBladeCore, "HiddenBlade"), DualBladeBase$MonsterLife$FinalATKDMR, ifelse(GetCoreLv(DualBladeCore, "HiddenBlade")>=40, 20, 0))
 info <- c(140, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -289,7 +242,7 @@ colnames(info) <- c("option", "value")
 AsuraPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
-value <- c(2 * DualBladeCore[[1]][3, 2], 100)
+value <- c(2 * GetCoreLv(DualBladeCore, "Asura"), 100)
 info <- c(420, 4, 9400, 300, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -304,14 +257,14 @@ AsuraEnd <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(580 + 23 * DualBladeCore[[2]][1, 2], 7, 120, NA, 90, T, F, F)
+info <- c(580 + 23 * GetCoreLv(DualBladeCore, "BladeStorm"), 7, 120, NA, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeStormPre <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(350 + 10 * DualBladeCore[[2]][1, 2], 5, 9880, 210, 90, T, F, F)
+info <- c(350 + 10 * GetCoreLv(DualBladeCore, "BladeStorm"), 5, 9880, 210, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeStorm <- rbind(data.frame(option, value), info)
@@ -325,28 +278,28 @@ BladeStormEnd <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(30)
-info <- c(400 + 16 * DualBladeCore[[2]][2, 2], 7, 990, 180, 10, T, F, F)
+info <- c(400 + 16 * GetCoreLv(DualBladeCore, "KarmaFury"), 7, 990, 180, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 KarmaFury <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(600 + 24 * DualBladeCore[[2]][3, 2], 7, 0, NA, 12, T, F, F)
+info <- c(600 + 24 * GetCoreLv(DualBladeCore, "BladeTornado"), 7, 0, NA, 12, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeTornadoPre <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(400 + 16 * DualBladeCore[[2]][3, 2], 6, 720, 120, 12, T, F, F)
+info <- c(400 + 16 * GetCoreLv(DualBladeCore, "BladeTornado"), 6, 720, 120, 12, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeTornado <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(30)
-info <- c(200 + 8 * DualBladeCore[[2]][4, 2], 4, 0, 90, 14, T, F, F)
+info <- c(200 + 8 * GetCoreLv(DualBladeCore, "HuntedEdge"), 4, 0, 90, 14, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HuntedEdge <- rbind(data.frame(option, value), info)}
@@ -370,7 +323,7 @@ ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, D
 BuffFinal <- data.frame(DualBladeBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, DualBladeSpec$CoolReduceP, DualBladeSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, DualBladeSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 ATKFinal <- AddATKRateSkills("MirrorImaging", BuffFinal, ATKFinal, c("PhantomBlow", "FinalCut", "SuddenRaid", "Asura", "BladeStormPre", "BladeStorm", "KarmaFury", "BladeTornadoPre", "BladeTornado", "HuntedEdge"))
 
 SummonedFinal <- data.frame(DualBladeSummoned)
@@ -381,15 +334,14 @@ DealCycle <- c("Skills", "Time", rownames(DualBladeBuff))
 DualBladeDealCycle <- t(rep(0, length(DealCycle)))
 colnames(DualBladeDealCycle) <- DealCycle
 
-
 DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                           Period=178.5, CycleTime=357) {
+                           Period=180.5, CycleTime=361) {
   BuffSummonedPrior <- c("DualBladeBooster", "MirrorImaging", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "HiddenBladeBuff", "FlashBangBuff", "FinalCutBuff",
                          "MapleWarriors2", "UltimateDarkSight", "SoulContractLink", "ReadyToDie2Stack", "Restraint4")
   Times180 <- c(1, 1, 1, 1, 1, 0, 1, 2, 0, 1, 1, 2, 2, 1)
   
-  SubTime <- rep(Period, length(BuffSummonedPrior))
-  TotalTime <- CycleTime
+  SubTime <- rep(Period - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime - (CycleTime/Period) * Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -659,10 +611,10 @@ DualBladeDealCycle <- DualBladeCycle(PreDealCycle=DualBladeDealCycle,
                                          BuffFinal=BuffFinal, 
                                          SummonedFinal=SummonedFinal, 
                                          Spec=DualBladeSpec, 
-                                         Period=178.5, 
-                                         CycleTime=357)
+                                         Period=180.5, 
+                                         CycleTime=361)
 DualBladeDealCycle <- DealCycleFinal(DualBladeDealCycle)
-DualBladeDealCycle <- HuntedEdgeCycle(DualBladeDealCycle, ATKFinal$CoolTime[16] * 1000)
+DualBladeDealCycle <- HuntedEdgeCycle(DualBladeDealCycle, ATKFinal[rownames(ATKFinal)=="HuntedEdge", ]$CoolTime * 1000)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "HuntedEdge", 5, 30, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "KarmaFury", 5, 0, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "BladeTornado", 5, 0, ATKFinal)
@@ -672,31 +624,42 @@ DualBladeDealCycle <- AddATKCycleDualBlade(DualBladeDealCycle)
 DualBladeDealCycle <- DCSpiderInMirror(DualBladeDealCycle, SummonedFinal)
 DualBladeDealCycleReduction <- DealCycleReduction(DualBladeDealCycle)
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="DualBlader") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  DualBladeSpecOpt1 <- Optimization1(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpec, DualBladeUnionRemained)
+  PotentialOpt[[Idx1]][Idx2, ] <- DualBladeSpecOpt1[1, 1:3]
+} else {
+  DualBladeSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+DualBladeSpecOpt <- OptDataAdd(DualBladeSpec, DualBladeSpecOpt1, "Potential", DualBladeBase$CRROver, DemonAvenger=F)
 
+if(DPMCalcOption$Optimization==T) {
+  DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt, DualBladeHyperStatBase, DualBladeBase$ChrLv, DualBladeBase$CRROver, HyperStanceLv=4)
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- DualBladeSpecOpt2[1, ]
+} else {
+  DualBladeSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+DualBladeSpecOpt <- OptDataAdd(DualBladeSpecOpt, DualBladeSpecOpt2, "HyperStat", DualBladeBase$CRROver, DemonAvenger=F)
 
-sum(na.omit(DealCalc(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpec)))
+DualBladeFinalDPM <- DealCalc(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt, Collapse=F)
+DualBladeFinalDPMwithMax <- DealCalcWithMaxDMR(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt)
 
-DualBladeSpecOpt1 <- Optimization1(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpec, DualBladeUnionRemained)
-DualBladeSpecOpt <- DualBladeSpec
-DualBladeSpecOpt$ATKP <- DualBladeSpecOpt$ATKP + DualBladeSpecOpt1$ATKP
-DualBladeSpecOpt$BDR <- DualBladeSpecOpt$BDR + DualBladeSpecOpt1$BDR
-DualBladeSpecOpt$IGR <- IGRCalc(c(DualBladeSpecOpt$IGR, DualBladeSpecOpt1$IGR))
+set(get(DPMCalcOption$DataName), as.integer(1), "DualBlader", sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "DualBlader", sum(na.omit(DualBladeFinalDPM)) / (max(DualBladeDealCycle$Time) / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000))
 
-DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt, DualBladeHyperStatBase, DualBladeBase$ChrLv, DualBladeBase$CRROver, HyperStanceLv=4)
-DualBladeFinalDPM <- DealCalc(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
-DualBladeFinalDPMwithMax <- DealCalcWithMaxDMR(DualBladeDealCycle, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt2)
-
-DPM12349$DualBlader[1] <- sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000)
-DPM12349$DualBlader[2] <- sum(na.omit(DualBladeFinalDPM)) / (max(DualBladeDealCycle$Time) / 60000) - sum(na.omit(DualBladeFinalDPMwithMax)) / (max(DualBladeDealCycle$Time) / 60000)
+DualBladeDealRatio <- DealRatio(DualBladeDealCycle, DualBladeFinalDPMwithMax)
 
 DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Time, DualBladeDealCycle$Restraint4, DualBladeFinalDPMwithMax)
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(DualBladeDealData, DualBladeDealData$R4>0)
-
-DualBladeRR <- DualBladeDealData[30:279, ]
-DPM12349$DualBlader[3] <- sum((DualBladeRR$Deal))
-
-DualBlade40s <- DualBladeDealData[30:542, ]
-DPM12349$DualBlader[4] <- sum((DualBlade40s$Deal))
-
-DealRatio(DualBladeDealCycle, DualBladeFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "DualBlader", Deal_RR(DualBladeDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "DualBlader", Deal_40s(DualBladeDealData))

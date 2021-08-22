@@ -1,38 +1,43 @@
 ## Kinesis - Data
 ## Kinesis - Core
-KinesisCore <- MatrixSet(PasSkills=c("PsychicGrab_UltimatePsychicShot", "UltimateMaterial", "UltimateBPM", "Telekinesis", "PsychicDrain", "UltimateTrain", 
-                                     "PsychicForce", "PsychoBreak", "EverPsychic"), 
-                         PasLvs=c(50, 50, 50, 50, 50, 50, 0, 50, 25), 
-                         PasMP=c(10, 10, 10, 10, 10, 10, 0, 10, 5), 
-                         ActSkills=c("PsychicTornado", "UltimateMovingMatter", "UltimatePsychicBullet", "LawofGravity",
-                                     na.omit(CommonV("Wizard", "Supernatural"))), 
-                         ActLvs=c(25, 25, 25, 25, 25, 1, 25, 25), 
-                         ActMP=c(5, 5, 0, 5, 5, 0, 5, 0), 
-                         BlinkLv=1, 
-                         BlinkMP=5, 
-                         UsefulSkills=c("SharpEyes", "CombatOrders"), 
+KinesisCoreBase <- CoreBuilder(ActSkills=c("PsychicTornado", "UltimateMovingMatter", "UltimatePsychicBullet", "LawofGravity",
+                                           na.omit(CommonV("Wizard", "Supernatural"))), 
+                               ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
+                               UsefulSkills=c("SharpEyes", "CombatOrders"), 
+                               SpecSet=get(DPMCalcOption$SpecSet), 
+                               VPassiveList=KinesisVPassive, 
+                               VPassivePrior=KinesisVPrior, 
+                               SelfBind=F)
+
+KinesisCore <- MatrixSet(PasSkills=KinesisCoreBase$PasSkills$Skills, 
+                         PasLvs=KinesisCoreBase$PasSkills$Lv, 
+                         PasMP=KinesisCoreBase$PasSkills$MP, 
+                         ActSkills=KinesisCoreBase$ActSkills$Skills, 
+                         ActLvs=KinesisCoreBase$ActSkills$Lv, 
+                         ActMP=KinesisCoreBase$ActSkills$MP, 
+                         UsefulSkills=KinesisCoreBase$UsefulSkills, 
                          UsefulLvs=20, 
                          UsefulMP=0, 
-                         SpecSet=SpecDefault, 
-                         SelfBind=F)
+                         SpecSet=get(DPMCalcOption$SpecSet), 
+                         SpecialCore=KinesisCoreBase$SpecialCoreUse)
 
 
 ## Kinesis - Basic Info
 ## Ability Check Needed
 KinesisBase <- JobBase(ChrInfo=ChrInfo, 
-                       MobInfo=MobDefault,
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet),
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        Job="Kinesis",
                        CoreData=KinesisCore, 
                        BuffDurationNeeded=0, 
-                       AbilList=c("PassiveLv", "DisorderBDR"), 
-                       LinkList=c("Phantom", "CygnusKnights", "DemonAvenger", "Xenon"), 
-                       MonsterLife=MLTypeI21, 
-                       Weapon=WeaponUpgrade(1, 17, 4, 0, 0, 0, 0, 3, 0, 0, "ESPLimiter", SpecDefault$WeaponType)[, 1:16],
-                       WeaponType=SpecDefault$WeaponType, 
+                       AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "Kinesis"), 
+                       LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "Kinesis"), 
+                       MonsterLife=get(FindJob(MonsterLifePreSet, "Kinesis")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
+                       Weapon=WeaponUpgrade(1, DPMCalcOption$WeaponSF, 4, 0, 0, 0, 0, 3, 0, 0, "ESPLimiter", get(DPMCalcOption$SpecSet)$WeaponType)[, 1:16],
+                       WeaponType=get(DPMCalcOption$SpecSet)$WeaponType, 
                        SubWeapon=SubWeapon[rownames(SubWeapon)=="ChessPiece", ], 
                        Emblem=Emblem[rownames(Emblem)=="Kinesis", ], 
-                       CoolReduceHat=F)
+                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Kinesis")))
 
 
 ## Kinesis - Passive
@@ -101,7 +106,7 @@ value <- c(70 + 2 * KinesisBase$PSkillLv, 10 + KinesisBase$PSkillLv)
 Sukdal <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(KinesisCore[[2]][9, 2])
+value <- c(GetCoreLv(KinesisCore, "Blink"))
 BlinkPassive <- data.frame(option, value)}
 
 KinesisPassive <- Passive(list(ESP, PsychicForcePassive, Najae1, PsychicForce2Passive, InnocentPower, Najae2, ESPMastery, PsychicForce3Passive, JeongsinGanghwa, Jeonggyo, 
@@ -195,7 +200,7 @@ LawofGravityFDR <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
-info <- c(180, NA, 900, T, F, F, T)
+info <- c(180, NA, 0, T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ESPBooster <- rbind(data.frame(option, value), info)
@@ -221,41 +226,39 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PsychicOver <- rbind(data.frame(option, value), info)
 
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(10, 8)
-info <- c(180 + 3 * KinesisCore[[3]][1, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulSharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
-value <- c(1)
-info <- c(180 + 3 * KinesisCore[[3]][2, 2], NA, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-UsefulCombatOrders <- rbind(data.frame(option, value), info)
+Useful <- UsefulSkills(KinesisCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
 
 option <- factor("FDR", levels=BSkill)
-value <- c(8 + floor(KinesisCore[[2]][5, 2]/10))
+value <- c(8 + floor(GetCoreLv(KinesisCore, "OverloadMana")/10))
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 OverloadMana <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(5 + ceiling(KinesisCore[[2]][7, 2]/5))
+value <- c(5 + ceiling(GetCoreLv(KinesisCore, "BlessofMasteriaGoddess")/5))
 info <- c(40, 120, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofMasteriaGoddess <- rbind(data.frame(option, value), info)}
 
-KinesisBuff <- Buff(list(PP=PP, UltimateBPMPP=UltimateBPMPP, PsychicOverPP=PsychicOverPP, PsychicDrainPP=PsychicDrainPP, 
-                         GakseongUltimate=GakseongUltimate, PsychicForceDebuff=PsychicForceDebuff, PsychicGroundDebuff=PsychicGroundDebuff, PsychoBreakBuff=PsychoBreakBuff, 
-                         PsychicDrain=PsychicDrain, PsychicShotDebuff=PsychicShotDebuff, LawofGravityDebuff=LawofGravityDebuff, LawofGravityFDR=LawofGravityFDR, 
-                         ESPBooster=ESPBooster, PsychicShield=PsychicShield, MapleSoldier=MapleSoldier, PsychicOver=PsychicOver, 
-                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, OverloadMana=OverloadMana, BlessofMasteriaGoddess=BlessofMasteriaGoddess, 
-                         Restraint4=Restraint4, SoulContractLink=SoulContractLink))
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, PsychicShield
+KinesisBuff <- list(PP=PP, UltimateBPMPP=UltimateBPMPP, PsychicOverPP=PsychicOverPP, PsychicDrainPP=PsychicDrainPP, 
+                    GakseongUltimate=GakseongUltimate, PsychicForceDebuff=PsychicForceDebuff, PsychicGroundDebuff=PsychicGroundDebuff, PsychoBreakBuff=PsychoBreakBuff, 
+                    PsychicDrain=PsychicDrain, PsychicShotDebuff=PsychicShotDebuff, LawofGravityDebuff=LawofGravityDebuff, LawofGravityFDR=LawofGravityFDR, 
+                    ESPBooster=ESPBooster, PsychicShield=PsychicShield, MapleSoldier=MapleSoldier, PsychicOver=PsychicOver, 
+                    UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, OverloadMana=OverloadMana, BlessofMasteriaGoddess=BlessofMasteriaGoddess, 
+                    Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, PsychicShield, ESPBooster, MapleSoldier, (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  KinesisBuff[[length(KinesisBuff)+1]] <- UsefulAdvancedBless
+  names(KinesisBuff)[[length(KinesisBuff)]] <- "UsefulAdvancedBless"
+}
+KinesisBuff <- Buff(KinesisBuff)
 KinesisAllTimeBuff <- AllTimeBuff(KinesisBuff)
 
 
@@ -263,8 +266,8 @@ KinesisAllTimeBuff <- AllTimeBuff(KinesisBuff)
 KinesisSpec <- JobSpec(JobBase=KinesisBase, 
                        Passive=KinesisPassive, 
                        AllTimeBuff=KinesisAllTimeBuff, 
-                       MobInfo=MobDefault, 
-                       SpecSet=SpecDefault, 
+                       MobInfo=get(DPMCalcOption$MobSet), 
+                       SpecSet=get(DPMCalcOption$SpecSet), 
                        WeaponName="ESPLimiter", 
                        UnionStance=0)
 
@@ -275,61 +278,15 @@ KinesisSpec <- KinesisSpec$Spec
 
 
 ## Kinesis - Spider In Mirror
-{option <- factor(levels=ASkill)
-value <- c()
-info <- c(450 + 18 * KinesisCore[[2]][8, 2], 15, 960, NA, 250, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 1800, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorStart <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KinesisCore[[2]][8, 2], 8, 0, 0, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror1 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KinesisCore[[2]][8, 2], 8, 0, 900, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror2 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KinesisCore[[2]][8, 2], 8, 0, 850, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KinesisCore[[2]][8, 2], 8, 0, 750, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror4 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(175 + 7 * KinesisCore[[2]][8, 2], 8, 0, 650, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirror5 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(0, 0, 0, 5700, 50, 250, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-SpiderInMirrorWait <- rbind(data.frame(option, value), info)}
+SIM <- SIMData(GetCoreLv(KinesisCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Kinesis - Attacks
@@ -349,14 +306,14 @@ colnames(info) <- c("option", "value")
 PsychicGrab <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KinesisCore[[1]][1, 2]>=40, 20, 0), 2 * KinesisCore[[1]][1, 2])
+value <- c(20, ifelse(GetCoreLv(KinesisCore, "PsychicGrab_UltimatePsychicShot")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "PsychicGrab_UltimatePsychicShot"))
 info <- c(470 + 4 * KinesisSpec$PSkillLv, 5, 600, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicSmashing <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][4, 2]>=40, 20, 0), 3 * KinesisCore[[1]][4, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "Telekinesis")>=40, 20, 0), 3 * GetCoreLv(KinesisCore, "Telekinesis"))
 info <- c(350, 0.7, 0, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
@@ -377,49 +334,49 @@ colnames(info) <- c("option", "value")
 PsychicCharging <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][8, 2]>=40, 20, 0), 2 * KinesisCore[[1]][8, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "PsychoBreak")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "PsychoBreak"))
 info <- c(1000 + 7 * KinesisSpec$SkillLv, 4, 840, NA, 30, T, T, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychoBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][2, 2]>=40, 20, 0), 2 * KinesisCore[[1]][2, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "UltimateMaterial")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "UltimateMaterial"))
 info <- c(120 + 130 + 140 + 310 + 3 * KinesisSpec$SkillLv, 10, 810, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UltimateMaterial <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][6, 2]>=40, 20, 0), 2 * KinesisCore[[1]][6, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "UltimateTrain")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "UltimateTrain"))
 info <- c(120 + 100 + 3 * KinesisSpec$SkillLv, 6, 810, 660, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UltimateTrain <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, ifelse(KinesisCore[[1]][1, 2]>=40, 20, 0), 2 * KinesisCore[[1]][1, 2])
+value <- c(20, ifelse(GetCoreLv(KinesisCore, "PsychicGrab_UltimatePsychicShot")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "PsychicGrab_UltimatePsychicShot"))
 info <- c(300 + 3 * KinesisSpec$PSkillLv, 3 * 5 * 2 * 0.8, 870, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UltimatePsychicShot <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][3, 2]>=40, 20, 0), 2 * KinesisCore[[1]][3, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "UltimateBPM")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "UltimateBPM"))
 info <- c(175 + 2 * KinesisSpec$SkillLv, 7, 0, 600, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UltimateBPM <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][9, 2]>=40, 20, 0), 2 * KinesisCore[[1]][9, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "EverPsychic")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "EverPsychic"))
 info <- c(400, 1, 60, 360, 120, F, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 EverPsychic <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(KinesisCore[[1]][9, 2]>=40, 20, 0), 2 * KinesisCore[[1]][9, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "EverPsychic")>=40, 20, 0), 2 * GetCoreLv(KinesisCore, "EverPsychic"))
 info <- c(1500, 1, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
@@ -427,63 +384,63 @@ EverPsychicLast <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * KinesisCore[[2]][1, 2], 4, 720, 1000, 120, T, F, F)
+info <- c(500 + 20 * GetCoreLv(KinesisCore, "PsychicTornado"), 4, 720, 1000, 120, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicTornado <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(200)
-info <- c(200 + 3 * KinesisCore[[2]][1, 2], 2, 720, NA, 0, NA, NA, F)
+info <- c(200 + 3 * GetCoreLv(KinesisCore, "PsychicTornado"), 2, 720, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicTornadoObject <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(200)
-info <- c(350 + 10 * KinesisCore[[2]][1, 2], 10, 0, 120, 0, NA, NA, F)
+info <- c(350 + 10 * GetCoreLv(KinesisCore, "PsychicTornado"), 10, 0, 120, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicTornadoExp <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * KinesisCore[[2]][2, 2], 5, 630, 480, 90, T, F, F)
+info <- c(500 + 20 * GetCoreLv(KinesisCore, "UltimateMovingMatter"), 5, 630, 480, 90, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UltimateMovingMatter <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(700 + 28 * KinesisCore[[2]][2, 2], 12, 0, NA, NA, NA, NA, F)
+info <- c(700 + 28 * GetCoreLv(KinesisCore, "UltimateMovingMatter"), 12, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 UltimateMovingMatterExp <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(200 + 8 * KinesisCore[[2]][3, 2], 6, 960, NA, 60, T, F, F)
+info <- c(200 + 8 * GetCoreLv(KinesisCore, "LawofGravity"), 6, 960, NA, 60, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 LawofGravity <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * KinesisCore[[2]][3, 2], 8, 0, NA, NA, NA, NA, F)
+info <- c(500 + 20 * GetCoreLv(KinesisCore, "LawofGravity"), 8, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 LawofGravityPull <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * KinesisCore[[2]][3, 2], 15, 0, NA, NA, NA, NA, F)
+info <- c(600 + 24 * GetCoreLv(KinesisCore, "LawofGravity"), 15, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 LawofGravityExp <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(1200 + 48 * KinesisCore[[2]][7, 2], 3, 0, 4000, NA, NA, NA, F)
+info <- c(1200 + 48 * GetCoreLv(KinesisCore, "BlessofMasteriaGoddess"), 3, 0, 4000, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 OtherworldEmptiness <- rbind(data.frame(option, value), info)
@@ -514,7 +471,7 @@ KinesisATK <- Attack(list(PsychicForce3=PsychicForce3, PsychicGrab=PsychicGrab, 
 
 ## Kinesis - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(KinesisCore[[1]][5, 2]>=40, 20, 0), 5 * KinesisCore[[1]][5, 2])
+value <- c(ifelse(GetCoreLv(KinesisCore, "PsychicDrain")>=40, 20, 0), 5 * GetCoreLv(KinesisCore, "PsychicDrain"))
 info <- c(150, 1, Delay(690, KinesisSpec$ATKSpeed), 500, 14.9, 5, F, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
@@ -546,28 +503,30 @@ ATKFinal <- ATKFinalUltimateTrain(ATKFinal)
 BuffFinal <- data.frame(KinesisBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, KinesisSpec$CoolReduceP, KinesisSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, KinesisSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, 3, 0)
+  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
 
 SummonedFinal <- data.frame(KinesisSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, KinesisSpec$CoolReduceP, KinesisSpec$CoolReduce)
 SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$SummonedDurationAvailable==T, SummonedFinal$Duration * KinesisSpec$SummonedDuration / 100, 0)
-
 
 DealCycle <- c("Skills", "Time", rownames(KinesisBuff))
 KinesisDealCycle <- t(rep(0, length(DealCycle)))
 colnames(KinesisDealCycle) <- DealCycle
 KinesisDealCycle <- data.frame(KinesisDealCycle)
 
-
 KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360), PsychicShotUse=c(T, F)) {
-  BuffSummonedPrior <- c("ESPBooster", "PsychicShield", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", 
+  BuffSummonedPrior <- c("ESPBooster", "PsychicShield", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "BlessofMasteriaGoddess", "SoulContractLink", "PsychicOver")
-  
-  Times180 <- c(1, 0, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 
                 1.5, 2, 0.5)
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime/Period)
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -1373,7 +1332,6 @@ KinesisAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   return(DealCycle)
 }
 
-
 KinesisDealCycle <- KinesisCycle(KinesisDealCycle, 
                                  ATKFinal, 
                                  BuffFinal, 
@@ -1388,28 +1346,46 @@ KinesisDealCycle <- KinesisAddATK(KinesisDealCycle,
                                   KinesisSpec)
 KinesisDealCycleReduction <- DealCycleReduction(KinesisDealCycle, c("LawofGravityFDR"))
 
+Idx1 <- c() ; Idx2 <- c()
+for(i in 1:length(PotentialOpt)) {
+  if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
+    Idx1 <- i
+  }
+}
+for(i in 1:nrow(PotentialOpt[[Idx1]])) {
+  if(rownames(PotentialOpt[[Idx1]])[i]=="Kinesis") {
+    Idx2 <- i
+  }
+}
+if(DPMCalcOption$Optimization==T) {
+  KinesisSpecOpt1 <- Optimization1(KinesisDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KinesisSpec, KinesisUnionRemained, 
+                                   NotBuffCols=c("LawofGravityFDR"), NotBuffColOption=c("FDR"))
+  PotentialOpt[[Idx1]][Idx2, ] <- KinesisSpecOpt1[1, 1:3]
+} else {
+  KinesisSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
+}
+KinesisSpecOpt <- OptDataAdd(KinesisSpec, KinesisSpecOpt1, "Potential", KinesisBase$CRROver, DemonAvenger=F)
 
-KinesisSpecOpt1 <- KinesisOptimization1(KinesisDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KinesisSpec, KinesisUnionRemained)
-KinesisSpecOpt <- KinesisSpec
-KinesisSpecOpt$ATKP <- KinesisSpecOpt$ATKP + KinesisSpecOpt1$ATKP
-KinesisSpecOpt$BDR <- KinesisSpecOpt$BDR + KinesisSpecOpt1$BDR
-KinesisSpecOpt$IGR <- IGRCalc(c(KinesisSpecOpt$IGR, KinesisSpecOpt1$IGR))
+if(DPMCalcOption$Optimization==T) {
+  KinesisSpecOpt2 <- Optimization2(KinesisDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt, KinesisHyperStatBase, KinesisBase$ChrLv, KinesisBase$CRROver, HyperStanceLv=10, 
+                                   NotBuffCols=c("LawofGravityFDR"), NotBuffColOption=c("FDR"))
+  HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- KinesisSpecOpt2[1, ]
+} else {
+  KinesisSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
+}
+KinesisSpecOpt <- OptDataAdd(KinesisSpecOpt, KinesisSpecOpt2, "HyperStat", KinesisBase$CRROver, DemonAvenger=F)
 
-KinesisSpecOpt2 <- KinesisOptimization2(KinesisDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt, KinesisHyperStatBase, KinesisBase$ChrLv, KinesisBase$CRROver, HyperStanceLv=10)
-KinesisFinalDPM <- KinesisDealCalc(KinesisDealCycle, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt2)
-KinesisFinalDPMwithMax <- KinesisDealCalcWithMaxDMR(KinesisDealCycle, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt2)
+KinesisFinalDPM <- DealCalc(KinesisDealCycle, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt, Collapse=F, 
+                            NotBuffCols=c("LawofGravityFDR"), NotBuffColOption=c("FDR"))
+KinesisFinalDPMwithMax <- DealCalcWithMaxDMR(KinesisDealCycle, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt, 
+                                             NotBuffCols=c("LawofGravityFDR"), NotBuffColOption=c("FDR"))
 
-DPM12349$Kinesis[1] <- sum(na.omit(KinesisFinalDPMwithMax)) / (max(KinesisDealCycle$Time)/ 60000)
-DPM12349$Kinesis[2] <- sum(na.omit(KinesisFinalDPM)) / (max(KinesisDealCycle$Time) / 60000) - sum(na.omit(KinesisFinalDPMwithMax)) / (max(KinesisDealCycle$Time) / 60000)
+set(get(DPMCalcOption$DataName), as.integer(1), "Kinesis", sum(na.omit(KinesisFinalDPMwithMax)) / (max(KinesisDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Kinesis", sum(na.omit(KinesisFinalDPM)) / (max(KinesisDealCycle$Time) / 60000) - sum(na.omit(KinesisFinalDPMwithMax)) / (max(KinesisDealCycle$Time) / 60000))
+
+KinesisDealRatio <- DealRatio(KinesisDealCycle, KinesisFinalDPMwithMax)
 
 KinesisDealData <- data.frame(KinesisDealCycle$Skills, KinesisDealCycle$Time, KinesisDealCycle$Restraint4, KinesisFinalDPMwithMax)
 colnames(KinesisDealData) <- c("Skills", "Time", "R4", "Deal")
-subset(KinesisDealData, KinesisDealData$R4>0)
-
-KinesisRR <- KinesisDealData[60:275, ]
-DPM12349$Kinesis[3] <- sum((KinesisRR$Deal))
-
-Kinesis40s <- KinesisDealData[60:565, ]
-DPM12349$Kinesis[4] <- sum((Kinesis40s$Deal))
-
-KinesisDealRatio <- DealRatio(KinesisDealCycle, KinesisFinalDPMwithMax)
+set(get(DPMCalcOption$DataName), as.integer(3), "Kinesis", Deal_RR(KinesisDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Kinesis", Deal_40s(KinesisDealData))
