@@ -1294,7 +1294,7 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
-  DealCycle <- RepATKCycle(DealCycle, "EgoWeaponAlpha", 9, 690, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "EgoWeaponAlpha", 9 + ifelse(DPMCalcOption$MonsterLifeLevel==3, 1, 0), 690, ATKFinal)
   
   
   ## Ego Weapon(Beta)
