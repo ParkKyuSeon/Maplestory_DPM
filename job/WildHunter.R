@@ -98,12 +98,16 @@ JaguarStormPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(WildHunterCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(WildHunterCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 WildHunterPassive <- Passive(list(Jayla=Jayla, SummonJaguar=SummonJaguar, AutomaticShootingDevice=AutomaticShootingDevice, NaturesWrath=NaturesWrath, 
                                   CrossbowMastery=CrossbowMastery, CrossbowAcceleration=CrossbowAcceleration, 
                                   PhysicalTraining=PhysicalTraining, Flurry=Flurry, JaguarLink=JaguarLink, ExtendMagazine=ExtendMagazine, CrossbowExpert=CrossbowExpert, WildInstinct=WildInstinct, 
-                                  AdvancedFinalAttack=AdvancedFinalAttack, JaguarStormPassive=JaguarStormPassive, BlinkPassive=BlinkPassive))
+                                  AdvancedFinalAttack=AdvancedFinalAttack, JaguarStormPassive=JaguarStormPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## WildHunter - Buff

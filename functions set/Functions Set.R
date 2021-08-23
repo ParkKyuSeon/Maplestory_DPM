@@ -235,7 +235,7 @@ Starforce <- function(ReqLv, Superior=F, Stars, ClassOnly=c(T, F), Gloves=c(T, F
     ATK <- ifelse(Stars>5, sum(sfsup[6:Stars, t]), 0)
     ATKSub <- ifelse(Stars>5, sum(sfsup[6:Stars, t]), 0)
     Result <- as.data.frame(t(c(ATK, ATKSub, MainStat, SubStat1, SubStat2)))
-    colnames(Result) <- c("ATK", "ATKSub", "MainStat", "SubStat1", "SubStat2")
+    colnames(Result) <- c("ATK", "ATK(Sub)", "MainStat", "SubStat1", "SubStat2")
     ifelse(sum(as.numeric(is.na(Result)))==0, return(Result), warning("Starforce Maximum Exceed"))
   }
 }
@@ -2670,7 +2670,7 @@ MatrixSet <- function(PasSkills,
   
   if(SpecialCore==T) {
     SpecialCore <- data.frame(SpecialCore="SpecialCore", Levels=1)
-    Cores <- list(PassiveCore, ActiveCore, UsefulCore)
+    Cores <- list(PassiveCore, ActiveCore, UsefulCore, SpecialCore)
   } else {
     Cores <- list(PassiveCore, ActiveCore, UsefulCore)
   }

@@ -76,10 +76,14 @@ AdaptToDeath <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(KainCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(KainCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 KainPassive <- Passive(list(Hitman, BreathShooterMastery, PhysicalTraining, NaturalBornInstinct, GrindingII, Dogma, BreathShooterExpert, AdaptToDeath, 
-                            BlinkPassive))
+                            BlinkPassive, RopeConnectPassive))
 
 
 ## Kain - Buff

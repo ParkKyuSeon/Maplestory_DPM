@@ -81,10 +81,15 @@ UnstableMemorizePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(BishopCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(BishopCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 BishopPassive <- Passive(list(MPIncrease=MPIncrease, SpellMastery=SpellMastery, HighWisdom=HighWisdom, MagicCritical=MagicCritical, HolyFocus=HolyFocus, BigbangDebuff=BigbangDebuff, 
-                              BlessingHarmony=BlessingHarmony, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, UnstableMemorizePassive=UnstableMemorizePassive, BlinkPassive=BlinkPassive))
+                              BlessingHarmony=BlessingHarmony, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, UnstableMemorizePassive=UnstableMemorizePassive, BlinkPassive=BlinkPassive, 
+                              RopeConnectPassive=RopeConnectPassive))
 
 
 ## Bishop - Buff

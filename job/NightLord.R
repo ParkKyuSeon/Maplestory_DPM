@@ -83,10 +83,14 @@ ReadyToDie <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
 value <- c(GetCoreLv(NightLordCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(NightLordCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 NightLordPassive <- Passive(list(FlameJavelin, NimbleBody, CriticalThrow, PhysicalTraining, ExpertJavelin, Adrenaline, 
-                                 DarkSerenity, JavelinExpert, PurgeArea, ReadyToDie, BlinkPassive))
+                                 DarkSerenity, JavelinExpert, PurgeArea, ReadyToDie, BlinkPassive, RopeConnectPassive))
 
 
 ## NightLord - Buff

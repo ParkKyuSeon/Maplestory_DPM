@@ -91,11 +91,15 @@ UnstableMemorize <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(ArchMageFPCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(ArchMageFPCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 ArchMageFPPassive <- Passive(list(MPIncrease=MPIncrease, HighWisdom=HighWisdom, SpellMastery=SpellMastery, ElementalReset=ElementalReset, ElementAmplification=ElementAmplification, 
                                   MagicCritical=MagicCritical, ExtremeMagic=ExtremeMagic, FerventDrain=FerventDrain, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, 
-                                  Ifrit=Ifrit, UnstableMemorize=UnstableMemorize, BlinkPassive=BlinkPassive))
+                                  Ifrit=Ifrit, UnstableMemorize=UnstableMemorize, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## ArchMageFP - Buff

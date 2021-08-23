@@ -74,10 +74,14 @@ IllusionStep <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(PathFinderCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(PathFinderCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 PathFinderPassive <- Passive(list(ArcherMastery=ArcherMastery, CriticalShot=CriticalShot, AncientBowMastery=AncientBowMastery, PhysicalTraining=PhysicalTraining, EssenceofArcher=EssenceofArcher, 
-                                  AdditionalTransition=AdditionalTransition, AncientBowExpert=AncientBowExpert, IllusionStep=IllusionStep, BlinkPassive=BlinkPassive))
+                                  AdditionalTransition=AdditionalTransition, AncientBowExpert=AncientBowExpert, IllusionStep=IllusionStep, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## PathFinder - Buff

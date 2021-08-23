@@ -151,6 +151,22 @@ StandardSpecDemonAvenger <- rbind(item[[1]][1, ], item[[1]][3, ], item[[1]][5, ]
                                   item[[17]][1, ], item[[18]][2, ], item[[18]][2, ], item[[18]][2, ],
                                   item[[19]][3, ], item[[20]][1, ], item[[20]][2, ], item[[20]][3, ],
                                   item[[20]][4, ], item[[20]][5, ])
+LegendrySpecs <- rbind(item[[1]][1, ], item[[1]][3, ], item[[1]][5, ], item[[1]][7, ],
+                       item[[2]][1, ], item[[3]][1, ], item[[3]][4, ], item[[4]][2, ], 
+                       item[[5]][3, ], item[[6]][3, ], item[[7]][1, ], item[[8]][1, ], 
+                       item[[9]][1, ], item[[10]][1, ], item[[11]][2, ], item[[12]][1, ],
+                       item[[13]][1, ], item[[14]][1, ], item[[15]][1, ], item[[16]][1, ],
+                       item[[17]][1, ], item[[18]][1, ], item[[18]][2, ], item[[18]][2, ],
+                       item[[19]][3, ], item[[20]][1, ], item[[20]][2, ], item[[20]][3, ],
+                       item[[20]][4, ], item[[20]][5, ])
+LegendrySpecsZero <- rbind(item[[1]][1, ], item[[1]][3, ], item[[1]][5, ], item[[1]][7, ],
+                           item[[2]][1, ], item[[3]][1, ], item[[3]][4, ], item[[4]][2, ], 
+                           item[[5]][1, ], item[[6]][3, ], item[[7]][1, ], item[[8]][1, ], 
+                           item[[9]][1, ], item[[10]][1, ], item[[11]][2, ], item[[12]][1, ],
+                           item[[13]][1, ], item[[14]][1, ], item[[15]][1, ], item[[16]][1, ],
+                           item[[17]][1, ], item[[18]][1, ], item[[18]][2, ], item[[18]][2, ],
+                           item[[19]][3, ], item[[20]][1, ], item[[20]][2, ], item[[20]][3, ],
+                           item[[20]][4, ], item[[20]][5, ])
 EndSpecs <- rbind(item[[1]][3, ], item[[1]][6, ], item[[1]][8, ], item[[1]][7, ],
                   item[[2]][2, ], item[[3]][1, ], item[[3]][3, ], item[[4]][3, ],
                   item[[5]][4, ], item[[6]][2, ], item[[7]][2, ], item[[8]][1, ], 
@@ -162,6 +178,8 @@ EndSpecs <- rbind(item[[1]][3, ], item[[1]][6, ], item[[1]][8, ], item[[1]][7, ]
 rownames(StandardSpecs) <- Items
 rownames(StandardSpecZero) <- Items
 rownames(StandardSpecDemonAvenger) <- Items
+rownames(LegendrySpecs) <- Items
+rownames(LegendrySpecsZero) <- Items
 rownames(EndSpecs) <- Items
 
 
@@ -1008,5 +1026,220 @@ for(i in PoYes) {
     SpecSetDemonAvenger1[i, 19] <- SpecSetDemonAvenger1[i, 19] + Po[1, 5] + APo[1, 7]
     SpecSetDemonAvenger1[i, 2] <- SpecSetDemonAvenger1[i, 2] + APo[1, 3]
     SpecSetDemonAvenger1[i, 7] <- SpecSetDemonAvenger1[i, 7] + APo[1, 4]
+  }
+}
+
+
+## Final Item Specs (Legendry)
+{SpecSet2 <- LegendrySpecs
+Up <- data.frame()
+Up <- rbind(Up, Upgrade(SpecSet2[1, 1], "Acc", SpecSet2[1, 11], T, c(4, 4, 4), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[2, 1], "Acc", SpecSet2[2, 11], T, c(4, 4), 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, DominatorUpgrade(rep(1, 6)))
+Up <- rbind(Up, Upgrade(SpecSet2[7, 1], "Acc", SpecSet2[7, 11], T, c(4, 4, 4, 4), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[8, 1], "Acc", SpecSet2[8, 11], T, c(4, 4), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[9, 1], "Armor", SpecSet2[9, 11], T, c(rep(1, 12)), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[10, 1], "Acc", SpecSet2[10, 11], T, c(4, 4), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[11, 1], "Acc", SpecSet2[11, 11], T, c(rep(4, 6)), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[12, 1], "Armor", SpecSet2[12, 11], T, c(rep(1, 8)), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[13, 1], "Armor", SpecSet2[13, 11], T, c(rep(1, 8)), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[14, 1], "Armor", SpecSet2[14, 11], T, c(rep(1, 8)), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[15, 1], "Acc", SpecSet2[15, 11], T, c(rep(4, 8)), 0))
+Up <- rbind(Up, Upgrade(SpecSet2[16, 1], "Armor", SpecSet2[16, 11], T, c(6, 6), SpecSet2[16, 7]))
+Up <- rbind(Up, Upgrade(SpecSet2[17, 1], "Gloves", SpecSet2[17, 11], T, c(rep(1, 8)), 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, Upgrade(SpecSet2[20, 1], "Armor", SpecSet2[20, 11], T, c(rep(1, 8)), 0))
+Up <- rbind(Up, HeartUpgrade(SpecSet2[21, 11], rep(1, 10)))
+Up <- rbind(Up, PetEqipUpgrade(SpecSet2[22, 11], rep(2, 8)))
+Up <- rbind(Up, PetEqipUpgrade(SpecSet2[23, 11], rep(2, 9)))
+Up <- rbind(Up, PetEqipUpgrade(SpecSet2[24, 11], rep(2, 9)))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+Up <- rbind(Up, c(0, 0, 0, 0, 0))
+for(i in 1:30) {
+  SpecSet2[i, 2] <- SpecSet2[i, 2] + Up[i, 3]
+  SpecSet2[i, 3] <- SpecSet2[i, 3] + Up[i, 4]
+  SpecSet2[i, 4] <- SpecSet2[i, 4] + Up[i, 5]
+  SpecSet2[i, 7] <- SpecSet2[i, 7] + Up[i, 1]
+  SpecSet2[i, 8] <- SpecSet2[i, 8] + Up[i, 2]
+}
+
+Sf <- data.frame()
+Sf <- rbind(Sf, Starforce(SpecSet2[1, 1], F, 10, F, F, SpecSet2[1, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[2, 1], F, 22, F, F, SpecSet2[2, 4]))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, Starforce(SpecSet2[6, 1], F, 22, F, F, SpecSet2[6, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[7, 1], F, 20, F, F, SpecSet2[7, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[8, 1], T, 12, F, F, SpecSet2[8, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[9, 1], F, 22, T, F, SpecSet2[9, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[10, 1], F, 20, F, F, SpecSet2[10, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[11, 1], F, 22, F, F, SpecSet2[11, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[12, 1], F, 22, T, F, SpecSet2[12, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[13, 1], F, 22, T, F, SpecSet2[13, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[14, 1], F, 22, T, F, SpecSet2[14, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[15, 1], F, 22, F, F, SpecSet2[15, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[16, 1], F, 22, T, F, SpecSet2[16, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[17, 1], F, 22, T, T, SpecSet2[17, 4]))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, Starforce(SpecSet2[20, 1], F, 22, T, F, SpecSet2[20, 4]))
+Sf <- rbind(Sf, Starforce(SpecSet2[21, 1], F, 8, F, F, SpecSet2[21, 4]))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+for(i in 1:30) {
+  SpecSet2[i, 2] <- SpecSet2[i, 2] + Sf[i, 3]
+  SpecSet2[i, 3] <- SpecSet2[i, 3] + Sf[i, 4]
+  SpecSet2[i, 4] <- SpecSet2[i, 4] + Sf[i, 5]
+  SpecSet2[i, 7] <- SpecSet2[i, 7] + Sf[i, 1]
+  SpecSet2[i, 8] <- SpecSet2[i, 8] + Sf[i, 2]
+}
+
+Addop <- data.frame()
+for(i in 1:30) {
+  Addop <- rbind(Addop, Addoption(SpecSet2[i, 1], SpecSet2[i, 12], SpecSet2[i, 13], 4, ifelse(SpecSet2[i, 13]==1, 4, 3), 0, 0, ifelse(SpecSet2[i, 13]==1, 3, 0), 0, 0, 0))
+  SpecSet2[i, 2] <- SpecSet2[i, 2] + Addop[i, 1]
+  SpecSet2[i, 3] <- SpecSet2[i, 3] + Addop[i, 2]
+  SpecSet2[i, 4] <- SpecSet2[i, 4] + Addop[i, 3]
+  SpecSet2[i, 10] <- SpecSet2[i, 10] + Addop[i, 4]
+  SpecSet2[i, 7] <- SpecSet2[i, 7] + Addop[i, 5]
+}
+
+PoYes <- c(1:3, 6:17, 20:21)
+for(i in PoYes) {
+  if(i!=17 & i!=9) {
+    Po <- Potential(c("L", "U", "U"), c("M", "M", "A"))
+  } else if(i==9) {
+    Po <- Potential(c("L", "U", "U"), c("M", "M", "M"))
+  } else {Po <- Potential(c("L", "L", "U"), c("CDR", "CDR", "O"))}
+  APo <- AddPotential(SpecSet2[i, 1], ChrInfo[1, 7], c("U", "E", "E"), c("MP", "ATK", "O"))
+  SpecSet2[i, 9] <- SpecSet2[i, 9] + Po[1, 1] + APo[1, 1]
+  SpecSet2[i, 10] <- SpecSet2[i, 10] + Po[1, 2] + APo[1, 2]
+  SpecSet2[i, 6] <- SpecSet2[i, 6] + Po[1, 3] + APo[1, 5]
+  SpecSet2[i, 19] <- SpecSet2[i, 19] + Po[1, 5] + APo[1, 7]
+  SpecSet2[i, 2] <- SpecSet2[i, 2] + APo[1, 3]
+  SpecSet2[i, 7] <- SpecSet2[i, 7] + APo[1, 4]
+}
+}
+
+## Final Item Specs (Legendry / Zero)
+{SpecSetZero2 <- LegendrySpecsZero
+  Up <- data.frame()
+  Up <- rbind(Up, Upgrade(SpecSetZero2[1, 1], "Acc", SpecSetZero2[1, 11], T, c(4, 4, 4), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[2, 1], "Acc", SpecSetZero2[2, 11], T, c(4, 4), 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, DominatorUpgrade(rep(1, 6)))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[7, 1], "Acc", SpecSetZero2[7, 11], T, c(4, 4, 4, 4), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[8, 1], "Acc", SpecSetZero2[8, 11], T, c(4, 4), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[9, 1], "Armor", SpecSetZero2[9, 11], T, c(rep(1, 12)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[10, 1], "Acc", SpecSetZero2[10, 11], T, c(4, 4), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[11, 1], "Acc", SpecSetZero2[11, 11], T, c(rep(4, 6)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[12, 1], "Armor", SpecSetZero2[12, 11], T, c(rep(1, 8)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[13, 1], "Armor", SpecSetZero2[13, 11], T, c(rep(1, 8)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[14, 1], "Armor", SpecSetZero2[14, 11], T, c(rep(1, 8)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[15, 1], "Acc", SpecSetZero2[15, 11], T, c(rep(4, 8)), 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[16, 1], "Armor", SpecSetZero2[16, 11], T, c(6, 6), SpecSetZero2[16, 7]))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[17, 1], "Gloves", SpecSetZero2[17, 11], T, c(rep(1, 8)), 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, Upgrade(SpecSetZero2[20, 1], "Armor", SpecSetZero2[20, 11], T, c(rep(1, 8)), 0))
+  Up <- rbind(Up, HeartUpgrade(SpecSetZero2[21, 11], rep(1, 10)))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetZero2[22, 11], rep(2, 8)))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetZero2[23, 11], rep(2, 9)))
+  Up <- rbind(Up, PetEqipUpgrade(SpecSetZero2[24, 11], rep(2, 9)))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  Up <- rbind(Up, c(0, 0, 0, 0, 0))
+  for(i in 1:30) {
+    SpecSetZero2[i, 2] <- SpecSetZero2[i, 2] + Up[i, 3]
+    SpecSetZero2[i, 3] <- SpecSetZero2[i, 3] + Up[i, 4]
+    SpecSetZero2[i, 4] <- SpecSetZero2[i, 4] + Up[i, 5]
+    SpecSetZero2[i, 7] <- SpecSetZero2[i, 7] + Up[i, 1]
+    SpecSetZero2[i, 8] <- SpecSetZero2[i, 8] + Up[i, 2]
+  }
+  
+  Sf <- data.frame()
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[1, 1], F, 10, F, F, SpecSetZero2[1, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[2, 1], F, 22, F, F, SpecSetZero2[2, 4]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[6, 1], F, 22, F, F, SpecSetZero2[6, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[7, 1], F, 20, F, F, SpecSetZero2[7, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[8, 1], T, 12, F, F, SpecSetZero2[8, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[9, 1], F, 22, T, F, SpecSetZero2[9, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[10, 1], F, 20, F, F, SpecSetZero2[10, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[11, 1], F, 22, F, F, SpecSetZero2[11, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[12, 1], F, 22, T, F, SpecSetZero2[12, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[13, 1], F, 22, T, F, SpecSetZero2[13, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[14, 1], F, 22, T, F, SpecSetZero2[14, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[15, 1], F, 22, F, F, SpecSetZero2[15, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[16, 1], F, 22, T, F, SpecSetZero2[16, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[17, 1], F, 22, T, T, SpecSetZero2[17, 4]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[20, 1], F, 22, T, F, SpecSetZero2[20, 4]))
+  Sf <- rbind(Sf, Starforce(SpecSetZero2[21, 1], F, 8, F, F, SpecSetZero2[21, 4]))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  Sf <- rbind(Sf, c(0, 0, 0, 0, 0))
+  for(i in 1:30) {
+    SpecSetZero2[i, 2] <- SpecSetZero2[i, 2] + Sf[i, 3]
+    SpecSetZero2[i, 3] <- SpecSetZero2[i, 3] + Sf[i, 4]
+    SpecSetZero2[i, 4] <- SpecSetZero2[i, 4] + Sf[i, 5]
+    SpecSetZero2[i, 7] <- SpecSetZero2[i, 7] + Sf[i, 1]
+    SpecSetZero2[i, 8] <- SpecSetZero2[i, 8] + Sf[i, 2]
+  }
+  
+  Addop <- data.frame()
+  for(i in 1:30) {
+    Addop <- rbind(Addop, Addoption(SpecSetZero2[i, 1], SpecSetZero2[i, 12], SpecSetZero2[i, 13], 4, ifelse(SpecSetZero2[i, 13]==1, 4, 3), 0, 0, ifelse(SpecSetZero2[i, 13]==1, 3, 0), 0, 0, 0))
+    SpecSetZero2[i, 2] <- SpecSetZero2[i, 2] + Addop[i, 1]
+    SpecSetZero2[i, 3] <- SpecSetZero2[i, 3] + Addop[i, 2]
+    SpecSetZero2[i, 4] <- SpecSetZero2[i, 4] + Addop[i, 3]
+    SpecSetZero2[i, 10] <- SpecSetZero2[i, 10] + Addop[i, 4]
+    SpecSetZero2[i, 7] <- SpecSetZero2[i, 7] + Addop[i, 5]
+  }
+  
+  PoYes <- c(1:3, 6:17, 20:21)
+  for(i in PoYes) {
+    if(i!=17 & i!=9) {
+      Po <- Potential(c("L", "U", "U"), c("M", "M", "A"))
+    } else if(i==9) {
+      Po <- Potential(c("L", "U", "U"), c("M", "M", "M"))
+    } else {Po <- Potential(c("L", "L", "U"), c("CDR", "CDR", "O"))}
+    APo <- AddPotential(SpecSetZero2[i, 1], ChrInfo[1, 7], c("U", "E", "E"), c("MP", "ATK", "O"))
+    SpecSetZero2[i, 9] <- SpecSetZero2[i, 9] + Po[1, 1] + APo[1, 1]
+    SpecSetZero2[i, 10] <- SpecSetZero2[i, 10] + Po[1, 2] + APo[1, 2]
+    SpecSetZero2[i, 6] <- SpecSetZero2[i, 6] + Po[1, 3] + APo[1, 5]
+    SpecSetZero2[i, 19] <- SpecSetZero2[i, 19] + Po[1, 5] + APo[1, 7]
+    SpecSetZero2[i, 2] <- SpecSetZero2[i, 2] + APo[1, 3]
+    SpecSetZero2[i, 7] <- SpecSetZero2[i, 7] + APo[1, 4]
   }
 }

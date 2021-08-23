@@ -78,10 +78,14 @@ ReadytoDiePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(PhantomCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(PhantomCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 PhantomPassive <- Passive(list(HighDexterity=HighDexterity, LuckMonopoly=LuckMonopoly, CaneAcceleration=CaneAcceleration, LuckofPhantomThief=LuckofPhantomThief, MoonLight=MoonLight, AcuteSense=AcuteSense, 
-                               PrayofAria=PrayofAria, CaneExpert=CaneExpert, ReadytoDiePassive=ReadytoDiePassive, BlinkPassive=BlinkPassive))
+                               PrayofAria=PrayofAria, CaneExpert=CaneExpert, ReadytoDiePassive=ReadytoDiePassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Phantom - Buff

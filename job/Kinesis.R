@@ -107,10 +107,14 @@ Sukdal <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(KinesisCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(KinesisCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 KinesisPassive <- Passive(list(ESP, PsychicForcePassive, Najae1, PsychicForce2Passive, InnocentPower, Najae2, ESPMastery, PsychicForce3Passive, JeongsinGanghwa, Jeonggyo, 
-                               PsychicChargingPassive, ESPBattleOrder, Gakseong, JeongsinJipjung, Jeondal, Sukdal, BlinkPassive))
+                               PsychicChargingPassive, ESPBattleOrder, Gakseong, JeongsinJipjung, Jeondal, Sukdal, BlinkPassive, RopeConnectPassive))
 
 
 ## Kinesis - Buff

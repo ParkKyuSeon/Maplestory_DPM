@@ -85,10 +85,15 @@ SpellBoost <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(BattleMageCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(BattleMageCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 BattleMagePassive <- Passive(list(YellowAura=YellowAura, ArtofStaff=ArtofStaff, StaffMastery=StaffMastery, HighWisdom=HighWisdom, BattleMastery=BattleMastery, 
-                                  NerbStimulation=NerbStimulation, DarkAura=DarkAura, DebuffAura=DebuffAura, BattleRage=BattleRage, StaffExpert=StaffExpert, SpellBoost=SpellBoost, BlinkPassive=BlinkPassive))
+                                  NerbStimulation=NerbStimulation, DarkAura=DarkAura, DebuffAura=DebuffAura, BattleRage=BattleRage, StaffExpert=StaffExpert, SpellBoost=SpellBoost, BlinkPassive=BlinkPassive, 
+                                  RopeConnectPassive=RopeConnectPassive))
 
 
 ## BattleMage - Buff

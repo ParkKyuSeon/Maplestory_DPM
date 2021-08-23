@@ -78,10 +78,14 @@ LoadedDice <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(ViperCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(ViperCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 ViperPassive <- Passive(list(CriticalRoar, MentalClearity, PhysicalTraining, CriticalRage, VipersitionPassive, CounterAttack, GuardCrush, StimulatePassive,
-                             LoadedDice, BlinkPassive))
+                             LoadedDice, BlinkPassive, RopeConnectPassive))
 
 
 ## Viper - Buff

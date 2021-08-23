@@ -75,9 +75,13 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(HeroCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
 
-HeroPassive <- Passive(list(WeaponMastery, PhysicalTraining, ChanceAttack, Enrage, AdvancedCombo, CombatMastery, AdvancedFinalAttack, BodyofSteelPassive, BlinkPassive))
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(HeroCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
+
+HeroPassive <- Passive(list(WeaponMastery, PhysicalTraining, ChanceAttack, Enrage, AdvancedCombo, CombatMastery, AdvancedFinalAttack, BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Hero - Buff

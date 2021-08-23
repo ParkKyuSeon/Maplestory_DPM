@@ -611,7 +611,7 @@ MercedesVPrior$N5 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-
                        "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
                        "LegendrySpear-ElementalKnight-UnicornSpike", "LeafTornado-ElementalKnight-UnicornSpike", 
                        "Blink", "SpiderInMirror", 
-                       "LegendrySpear-UnicornSpike-LightningEdge", 
+                       "LegendrySpear-LeafTornado-LightningEdge", 
                        "RopeConnect", "FreudBlessing")
 
 ## Phantom

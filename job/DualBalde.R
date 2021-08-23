@@ -65,10 +65,14 @@ ReadyToDie <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
 value <- c(GetCoreLv(DualBladeCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(DualBladeCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 DualBladePassive <- Passive(list(Karma=Karma, PhysicalTraining=PhysicalTraining, ThornsEffect=ThornsEffect, Sharpness=Sharpness, DualBladeExpert=DualBladeExpert, 
-                                 ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive))
+                                 ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## DualBlade - Buff

@@ -81,11 +81,15 @@ LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(CannonShooterCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(CannonShooterCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 CannonShooterPassive <- Passive(list(BuildupCannon=BuildupCannon, CriticalFire=CriticalFire, PirateTraining=PirateTraining, MonkeyWavePassive=MonkeyWavePassive, 
                                      BarrelRoulettePassive=BarrelRoulettePassive, ReinforceCannon=ReinforceCannon, PirateSpiritPassive=PirateSpiritPassive, OverburningCannon=OverburningCannon, 
-                                     BuckShotPassive=BuckShotPassive, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive))
+                                     BuckShotPassive=BuckShotPassive, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## CannonShooter - Buff

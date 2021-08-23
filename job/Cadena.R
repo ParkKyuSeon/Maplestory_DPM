@@ -82,11 +82,15 @@ ReadyToDie <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(CadenaCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(CadenaCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 CadenaPassive <- Passive(list(CollectingFourleaf=CollectingFourleaf, PhysicalTraining=PhysicalTraining, QuickServiceMind1=QuickServiceMind1, BasicDetection=BasicDetection, WeaponVarietyBuff=WeaponVarietyBuff, 
                               SummonSlashingKnifeDebuff=SummonSlashingKnifeDebuff, WeakpointConvergingAttack=WeakpointConvergingAttack, WeaponExpert=WeaponExpert, QuickServiceMind2=QuickServiceMind2, 
-                              ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive))
+                              ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Cadena - Buff
@@ -160,9 +164,9 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Deal40s <- rbind(data.frame(option, value), info)}
 
-CadenaBuff <- Buff(list(WeaponBooster=WeaponBooster, MapleSoldier=MapleSoldier, ShadowdealersElixir=ShadowdealersElixir, ProfessionalAgentBuff=ProfessionalAgentBuff, 
-                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ChainArtsFuryBuff=ChainArtsFuryBuff, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, 
-                         BlessofGrandisGoddess=BlessofGrandisGoddess, Deal40s=Deal40s, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+CadenaBuff <- list(WeaponBooster=WeaponBooster, MapleSoldier=MapleSoldier, ShadowdealersElixir=ShadowdealersElixir, ProfessionalAgentBuff=ProfessionalAgentBuff, 
+                   UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ChainArtsFuryBuff=ChainArtsFuryBuff, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, 
+                   BlessofGrandisGoddess=BlessofGrandisGoddess, Deal40s=Deal40s, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## Petbuff : WeaponBooster(600ms), MapleSoldier(0ms), UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   CadenaBuff[[length(CadenaBuff)+1]] <- UsefulAdvancedBless
@@ -410,7 +414,11 @@ CadenaDealCycle <- t(rep(0, length(DealCycle)))
 colnames(CadenaDealCycle) <- DealCycle
 CadenaDealCycle <- data.frame(CadenaDealCycle)
 
-CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimes.csv"
+if(CadenaSpec$CoolTimeReset==24) {
+  CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimes.csv"
+} else if(CadenaSpec$CoolTimeReset==26) {
+  CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimesml.csv"
+}
 CadenaTimes <- read.csv(CadenaTimes, header=T, row.names=1)
 
 CadenaCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 

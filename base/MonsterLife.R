@@ -185,4 +185,123 @@ MLTypeA21 <- MonsterLifeSpecs(MonsterLifeData, c("Hogeol", "Leica", "Papulatus",
 #### Shinsoo, EliteBloodTooth, YetiPharaoh
 
 ### Farm Level 40(28 Slots)
-#### STR Type 3-1 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=F
+#### STR Type 3-1 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeS31 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "MasterRednug", 
+                                                 "Bigeup", "IncongruitySoul", "FrankenRoid", "Leica", "ReeperSpecter",
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox", "KingSlime"))
+#### EliteBloodTooth, DemonWarrior, ThiefCrow, Ifrit
+
+#### STR Type 3-2 : STR, SummonedDuration=F, BuffDuration=T, FinalATKDMR=F, CRR=F
+MLTypeS32 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", "Akairum", 
+                                                 "Lazuli", "Tinman", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "MasterRednug", 
+                                                 "IncongruitySoul", "FrankenRoid", "Leica", "DemonWarrior",
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox", "PapulatusClock"))
+#### EliteBloodTooth, AkairumPriest, Victor, Ifrit
+
+#### STR Type 3-3 : STR, SummonedDuration=F, BuffDuration=F, FinalATKDMR=T, CRR=T
+MLTypeS33 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "Pierre", 
+                                                 "Puso", "Bigeup", "IncongruitySoul", "FrankenRoid", "Leica", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox", "Targa"))
+#### EliteBloodTooth, KingSlime, ThiefCrow, Ifrit
+
+#### STR Type 3-5 : STR, SummonedDuration=T, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeS35 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "BigPumpkin", 
+                                                 "CoupleYeti", "GoldYeti", "IncongruitySoul", "FrankenRoid", "Leica", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox", "KingSlime"))
+#### EliteBloodTooth, Giant, ThiefCrow, Ifrit
+
+
+#### DEX Type 3-1 : DEX, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeD31 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", "Akairum", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "MasterRelic", 
+                                                 "Bigeup", "IncongruitySoul", "Lilinoch", "Taeryun", "AkairumPriest", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox"))
+#### EliteBloodTooth, KingSlime, GuwaruVestige, Ifrit
+
+#### DEX Type 3-2 : DEX, SummonedDuration=F, BuffDuration=F, FinalATKDMR=T, CRR=T
+MLTypeD32 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "Pierre", 
+                                                 "Puso", "Bigeup", "IncongruitySoul", "Lilinoch", "Taeryun", "AkairumPriest", 
+                                                 "Targa", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox"))
+#### EliteBloodTooth, KingSlime, ThiefCrow, Ifrit
+
+#### DEX Type 3-3 : DEX, SummonedDuration=T, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeD33 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "BigPumpkin", 
+                                                 "CoupleYeti", "GoldYeti", "IncongruitySoul", "Lilinoch", "Taeryun", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox", "KingSlime"))
+#### EliteBloodTooth, Giant, ThiefCrow, Ifrit
+
+#### DEX Type 3-4 : DEX, SummonedDuration=T, BuffDuration=F, FinalATKDMR=T, CRR=F
+MLTypeD34 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "Tinman", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "Pierre", 
+                                                 "CoupleYeti", "GoldYeti", "IncongruitySoul", "Lilinoch", "Taeryun", "PapulatusClock", 
+                                                 "Targa", "Oberon", "SeriousViking", "WolmyoThief", "NineTailedFox"))
+#### EliteBloodTooth, Victor, ThiefCrow, Ifrit
+
+#### INT Type 3-1 : INT, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeI31 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "MasterMargana", 
+                                                 "Bigeup", "IncongruitySoul", "Timer", "MachineMT09", "AkairumPriest", "DemonMagician", 
+                                                 "ToyKnight", "Oberon", "WolmyoThief", "NineTailedFox", "SeriousViking"))
+#### EliteBloodTooth, KingSlime, ThiefCrow, Ifrit
+
+#### INT Type 3-2 : INT, SummonedDuration=F, BuffDuration=T, FinalATKDMR=F, CRR=T
+MLTypeI32 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", "Akairum", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "Will", "VonBon", "HugeSpider", 
+                                                 "MiniSpider", "IncongruitySoul", "Timer", "MachineMT09", "AkairumPriest", "ReeperSpecter", 
+                                                 "ToyKnight", "Oberon", "WolmyoThief", "NineTailedFox"))
+#### SeriousViking, EliteBloodTooth, KingSlime, Grief
+
+#### INT Type 3-3 : INT, SummonedDuration=F, BuffDuration=T, FinalATKDMR=F, CRR=F
+MLTypeI33 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", "Akairum", 
+                                                 "Lazuli", "Tinman", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "Will", "VonBon", "HugeSpider", 
+                                                 "MiniSpider", "IncongruitySoul", "Timer", "MachineMT09", "AkairumPriest", "PapulatusClock", 
+                                                 "ToyKnight", "Oberon", "WolmyoThief", "NineTailedFox"))
+#### SeriousViking, EliteBloodTooth, Victor, Grief
+
+#### INT Type 3-5 : INT, SummonedDuration=T, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeI35 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "BigPumpkin", 
+                                                 "CoupleYeti", "GoldYeti", "IncongruitySoul", "Timer", "MachineMT09", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "KingSlime", "NineTailedFox"))
+#### EliteBloodTooth, Giant, ThiefCrow, Ifrit
+
+#### LUK Type 3-1 : LUK, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeL31 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "MasterHisab", 
+                                                 "Bigeup", "IncongruitySoul", "Dunas", "Hogeol", "Papulatus", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "KingSlime", "NineTailedFox"))
+#### EliteBloodTooth, ThiefCrow, Ifrit, Ergoth
+
+#### LUK Type 3-2 : LUK, SummonedDuration=F, BuffDuration=F, FinalATKDMR=F, CRR=T, CoolTimeReset=T
+MLTypeL32 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "Lapis", "SmallBalloon", "BigBalloon", 
+                                                 "Bigeup", "IncongruitySoul", "Dunas", "Hogeol", "Papulatus", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "KingSlime", "NineTailedFox"))
+#### EliteBloodTooth, ThiefCrow, Ifrit, PrimeMinister
+
+#### LUK Type 3-3 : LUK, SummonedDuration=T, BuffDuration=F, FinalATKDMR=F, CRR=T
+MLTypeL33 <- MonsterLifeSpecs(MonsterLifeData, c("VonLeon", "Cygnus", "BlackViking", "Hilla", 
+                                                 "Lazuli", "RomantistKingSlime", "Scarecrow", "Phantom", "Eunwol", "Rang", 
+                                                 "LightLumi", "DarkLumi", "EquilLumi", "Lania", "DarkMageShadow", "Lapis", "BigPumpkin", 
+                                                 "CoupleYeti", "GoldYeti", "IncongruitySoul", "Dunas", "Hogeol", "NineTailedFox", 
+                                                 "ToyKnight", "Oberon", "SeriousViking", "WolmyoThief", "KingSlime"))
+#### EliteBloodTooth, Giant, ThiefCrow, Ifrit

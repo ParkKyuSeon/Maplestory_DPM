@@ -130,6 +130,11 @@ SpecLegendry$CommonVSet <- data.frame(Use=c(T, T, T, T, T, F),
                                       Lv=c(25, 1, 1, 20, 1, 0), 
                                       row.names=c("Blink", "ErdaNova", "ErdaWill", "RopeConnect", "SpecialCore", "CrestoftheSolar"))
 
+## SpecSet - Legendry (Zero)
+SpecLegendryZero <- SpecLegendry
+SpecLegendryZero$ItemSet <- ItemSum(SpecSetZero2, SetOption(SpecSetZero2, "F"), PetSetOption(SpecLegendryZero$Pets))
+
+
 
 
 # Union PreSet Structure (WITHOUT CALCULATING CHARACTER)

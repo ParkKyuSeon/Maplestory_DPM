@@ -78,11 +78,15 @@ AdvancedFinalAttack <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(MercedesCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(MercedesCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 MercedesPassive <- Passive(list(ElfQueen=ElfQueen, PotentialPower=PotentialPower, SharpAiming=SharpAiming, SpiritInfusion=SpiritInfusion, 
                                 PhysicalTraining=PhysicalTraining, IgnisRoar=IgnisRoar, DualBowgunExpert=DualBowgunExpert, DefenceBreak=DefenceBreak, 
-                                AdvancedFinalAttack=AdvancedFinalAttack, BlinkPassive=BlinkPassive))
+                                AdvancedFinalAttack=AdvancedFinalAttack, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Mercedes - Buff

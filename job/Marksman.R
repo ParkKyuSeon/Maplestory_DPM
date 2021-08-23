@@ -79,10 +79,14 @@ AdditionalBolt <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(MarksmanCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(MarksmanCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 MarksmanPassive <- Passive(list(ArcherMastery, CriticalShot, PhysicalTraining, CrossbowMastery, ExtremeArchery, Marksmanship, 
-                                IllusionStep, CrossbowExpert, AdditionalBolt, BlinkPassive))
+                                IllusionStep, CrossbowExpert, AdditionalBolt, BlinkPassive, RopeConnectPassive))
 
 
 ## Marksman - Buff

@@ -82,11 +82,15 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(AranCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(AranCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 AranPassive <- Passive(list(RegainedMemory=RegainedMemory, SnowCharge=SnowCharge, PolarmMastery=PolarmMastery, PhysicalTraining=PhysicalTraining, 
                             AdvancedComboAbility=AdvancedComboAbility, Might=Might, CleavingAttack=CleavingAttack, HighMastery=HighMastery, AdvancedFinalAttack=AdvancedFinalAttack, 
-                            BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
+                            BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Aran - Buff

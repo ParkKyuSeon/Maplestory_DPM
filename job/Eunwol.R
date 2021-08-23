@@ -79,7 +79,11 @@ LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(EunwolCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(EunwolCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 EunwolPassive <- Passive(list(JeongryeongChinhwa=JeongryeongChinhwa, JeongryeongGyeolsok2=JeongryeongGyeolsok2, GeunryeokDanryeon=GeunryeokDanryeon, 
                               JeongryeongGyeolsok3=JeongryeongGyeolsok3, Yakhwa=Yakhwa, JeongryeongGyeolsok4=JeongryeongGyeolsok4, GogeupKnuckleSukryeon=GogeupKnuckleSukryeon, 

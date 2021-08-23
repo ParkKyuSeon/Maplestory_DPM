@@ -102,10 +102,14 @@ SpiralofManaPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(EvanCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(EvanCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 EvanPassive <- Passive(list(DragonEquip, InheritedWill, LinkedMagic, HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential, MagicMastery, DragonFury, HighDragonPotential, 
-                            SpiralofManaPassive, BlinkPassive))
+                            SpiralofManaPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Evan - Buff

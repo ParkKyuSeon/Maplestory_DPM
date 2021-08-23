@@ -75,10 +75,15 @@ TruthofMagic <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(FlameWizardCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(FlameWizardCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 FlameWizardPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, InbornTalent=InbornTalent, SpellTraining=SpellTraining, 
-                                   LiberatedMagic=LiberatedMagic, WeaknessResearch=WeaknessResearch, BrilliantEnlightenment=BrilliantEnlightenment, TruthofMagic=TruthofMagic, BlinkPassive=BlinkPassive))
+                                   LiberatedMagic=LiberatedMagic, WeaknessResearch=WeaknessResearch, BrilliantEnlightenment=BrilliantEnlightenment, TruthofMagic=TruthofMagic, BlinkPassive=BlinkPassive, 
+                                   RopeConnectPassive=RopeConnectPassive))
 
 
 ## FlameWizard - Buff
@@ -940,7 +945,7 @@ FlameWizardAddATK <- function(DealCycle, ATKFinal, SummonedFinal, FlameWizardCor
     if(DealCycle$Skills[i]=="SalamanderMischiefATK") {
       DealCycle$SalamanderMischiefStack[i] <- SMStack
       SMStack <- SMStack + 1
-      SMStack <- min(SMStack, 15 + FlameWizardCore[[2]][4, 2])
+      SMStack <- min(SMStack, 15 + GetCoreLv(FlameWizardCore, "SalamanderMischief"))
       ATKTimes <- ATKTimes + 1
       SMStack <- ifelse(ATKTimes==96, 0, SMStack)
       ATKTimes <- ifelse(ATKTimes==96, 0, ATKTimes)

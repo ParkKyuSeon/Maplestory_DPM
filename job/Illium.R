@@ -83,10 +83,15 @@ SoulofCrystal <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(IlliumCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(IlliumCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 IlliumPassive <- Passive(list(MagicCircuit=MagicCircuit, MagicGuntletMastery=MagicGuntletMastery, BlessMark=BlessMark, LefMastery=LefMastery, Tenacity=Tenacity, EndlessResearch=EndlessResearch, 
-                              BlessMarkCompletion=BlessMarkCompletion, CurseMarkCompletion=CurseMarkCompletion, WisdomoftheCrystal=WisdomoftheCrystal, SoulofCrystal=SoulofCrystal, BlinkPassive=BlinkPassive))
+                              BlessMarkCompletion=BlessMarkCompletion, CurseMarkCompletion=CurseMarkCompletion, WisdomoftheCrystal=WisdomoftheCrystal, SoulofCrystal=SoulofCrystal, BlinkPassive=BlinkPassive, 
+                              RopeConnectPassive=RopeConnectPassive))
 
 
 ## Illium - Buff

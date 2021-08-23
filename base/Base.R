@@ -64,20 +64,3 @@ HyperStatOpt$Dummy <- data.frame(MainStat=rep(0, nrow(ChrInfo)),
                                  ATK=rep(0, nrow(ChrInfo)), 
                                  row.names=ChrInfo$job, 
                                  stringsAsFactors=F)
-
-
-## DPMs
-# DPM12344 <- data.frame(t(rep(0, 43)))
-# DPM12344 <- rbind(DPM12344, DPM12344, DPM12344, DPM12344)
-# colnames(DPM12344) <- job
-# rownames(DPM12344) <- c("DPM", "DamageLeakage", "Restraint", "40s")
-
-# DPM12347 <- data.frame(t(rep(0, 43)))
-# DPM12347 <- rbind(DPM12347, DPM12347, DPM12347, DPM12347)
-# colnames(DPM12347) <- job
-# rownames(DPM12347) <- c("DPM", "DamageLeakage", "Restraint", "40s")
-
-DPM12349 <- data.frame(t(rep(0, 45)))
-DPM12349 <- rbind(DPM12349, DPM12349, DPM12349, DPM12349)
-colnames(DPM12349) <- job
-rownames(DPM12349) <- c("DPM", "DamageLeakage", "Restraint", "40s")

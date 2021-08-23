@@ -74,11 +74,15 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(ZeroCore, "Blink"))
 BlinkPassive <- data.frame(option, value)
 
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(ZeroCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)
+
 option <- factor(c("BDR"), levels=PSkill)
 value <- c(0 * 2)
 WeaponAddOption <- data.frame(option, value)}
 
-ZeroPassive <- Passive(list(DivineForce, ResolveTime, Mastery, RapidTime, ImmuneBarrier, NoWillofUnion, BodyofSteelPassive, BlinkPassive, WeaponAddOption))
+ZeroPassive <- Passive(list(DivineForce, ResolveTime, Mastery, RapidTime, ImmuneBarrier, NoWillofUnion, BodyofSteelPassive, BlinkPassive, RopeConnectPassive, WeaponAddOption))
 
 
 ## Zero - Buff
@@ -167,9 +171,9 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalBindDebuff <- rbind(data.frame(option, value), info)}
 
-ZeroBuff <- Buff(list(Alpha=Alpha, Beta=Beta, Tag=Tag, BetaTargetBDR=BetaTargetBDR, MapleSoldier=MapleSoldier, TimeDistortion=TimeDistortion, TimeHolding=TimeHolding, 
-                      UsefulSharpEyes=UsefulSharpEyes, UsefulWindBooster=UsefulWindBooster, AuraWeaponBuff=AuraWeaponBuff, BlessofRhinneBuff=BlessofRhinneBuff, LimitBreakBuff=LimitBreakBuff, 
-                      CriticalBindDebuff=CriticalBindDebuff, Restraint4=Restraint4, SoulContractLink=SoulContractLink))
+ZeroBuff <- list(Alpha=Alpha, Beta=Beta, Tag=Tag, BetaTargetBDR=BetaTargetBDR, MapleSoldier=MapleSoldier, TimeDistortion=TimeDistortion, TimeHolding=TimeHolding, 
+                 UsefulSharpEyes=UsefulSharpEyes, UsefulWindBooster=UsefulWindBooster, AuraWeaponBuff=AuraWeaponBuff, BlessofRhinneBuff=BlessofRhinneBuff, LimitBreakBuff=LimitBreakBuff, 
+                 CriticalBindDebuff=CriticalBindDebuff, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## Petbuff : UsefulSharpEyes, UsefulWindBooster, (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   ZeroBuff[[length(ZeroBuff)+1]] <- UsefulAdvancedBless

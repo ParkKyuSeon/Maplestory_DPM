@@ -75,10 +75,14 @@ MagicMastery <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(LuminousCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(LuminousCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 LuminousPassive <- Passive(list(PowerofLight=PowerofLight, BlessofDarkness=BlessofDarkness, SpellMastery=SpellMastery, HighWisdom=HighWisdom, 
-                                MorningStarfall=MorningStarfall, DarkCrescendo=DarkCrescendo, DarknessSorcery=DarknessSorcery, MagicMastery=MagicMastery, BlinkPassive=BlinkPassive))
+                                MorningStarfall=MorningStarfall, DarkCrescendo=DarkCrescendo, DarknessSorcery=DarknessSorcery, MagicMastery=MagicMastery, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Luminous - Buff

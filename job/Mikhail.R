@@ -102,12 +102,16 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(MikhailCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(MikhailCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 MikhailPassive <- Passive(list(ElementalExpert=ElementalExpert, Encourage=Encourage, SwordMastery=SwordMastery, PhysicalTraining=PhysicalTraining, 
                                SoulLink=SoulLink, AdvancedRoyalGuard=AdvancedRoyalGuard, Intention=Intention, SoulAttack=SoulAttack, ShiningCharge=ShiningCharge, 
                                SoulRage=SoulRage, AdvnacedSwordMastery=AdvnacedSwordMastery, AdvancedFinalAttack=AdvancedFinalAttack, CombatMastery=CombatMastery, 
-                               BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
+                               BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Mikhail- Buff

@@ -73,10 +73,14 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(DemonSlayerCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(DemonSlayerCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 DemonSlayerPassive <- Passive(list(DeathCurse, PhysicalTraining, Outrage, EvilTorture, Concentration, DarkBindPassive, AdvancedWeaponMastery, 
-                                   BodyofSteelPassive, BlinkPassive))
+                                   BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## DemonSlayer - Buff

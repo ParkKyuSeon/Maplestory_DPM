@@ -77,10 +77,14 @@ AdvancedFinalAttack <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(BowmasterCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(BowmasterCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 BowmasterPassive <- Passive(list(ArcherMastery, CriticalShot, PhysicalTraining, BowAcceleration, ExtremeArchery, MarksmanShip, BowExpert, 
-                                 IllusionStep, AdvancedFinalAttack, BlinkPassive))
+                                 IllusionStep, AdvancedFinalAttack, BlinkPassive, RopeConnectPassive))
 
 
 ## Bowmaster - Buff

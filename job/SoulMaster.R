@@ -86,11 +86,15 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(SoulMasterCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(SoulMasterCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 SoulMasterPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementSoul=ElementSoul, SwordofLight=SwordofLight, 
                                   InnerTrust=InnerTrust, BodyandSoul=BodyandSoul, InnerShout=InnerShout, SoulPledge=SoulPledge, SwordExpert=SwordExpert, 
-                                  Unforeseeable=Unforeseeable, BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
+                                  Unforeseeable=Unforeseeable, BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## SoulMaster - Buff

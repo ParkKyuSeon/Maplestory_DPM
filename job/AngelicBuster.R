@@ -78,10 +78,14 @@ LoadedDice <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(AngelicBusterCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(AngelicBusterCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 AngelicBusterPassive <- Passive(list(TrueSuccesser, SoulShooterMastery, InnerFire, CallofAincient, AffinityIII, TrinityPassive, SoulShooterExpert,
-                                     TrinityFusionPassive, LoadedDice, BlinkPassive))
+                                     TrinityFusionPassive, LoadedDice, BlinkPassive, RopeConnectPassive))
 
 
 ## AngelicBuster - Buff

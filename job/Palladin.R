@@ -76,9 +76,13 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(PalladinCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
 
-PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofSteelPassive, BlinkPassive))
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(PalladinCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
+
+PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Palladin - Buff

@@ -71,9 +71,13 @@ Yuyu <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(LaraCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
 
-LaraPassive <- Passive(list(SpiritIntimacy, WandMastery, PhysicalTraining, Mugu, WandExpert, Hyean, Yuyu, BlinkPassive))
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(LaraCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
+
+LaraPassive <- Passive(list(SpiritIntimacy, WandMastery, PhysicalTraining, Mugu, WandExpert, Hyean, Yuyu, BlinkPassive, RopeConnectPassive))
 
 
 ## Lara - Buff

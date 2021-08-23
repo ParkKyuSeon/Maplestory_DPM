@@ -83,11 +83,15 @@ UnstableMemorizePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(ArchMageTCCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(ArchMageTCCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 ArchMageTCPassive <- Passive(list(MPIncrease=MPIncrease, SpellMastery=SpellMastery, HighWisdom=HighWisdom, ElementalResetPassive=ElementalResetPassive, 
                                   MagicCritical=MagicCritical, ElementAmplification=ElementAmplification, ElquinesPassive=ElquinesPassive, MasterMagic=MasterMagic, ArcaneAim=ArcaneAim, 
-                                  UnstableMemorizePassive=UnstableMemorizePassive, BlinkPassive=BlinkPassive))
+                                  UnstableMemorizePassive=UnstableMemorizePassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## ArchMageTC - Buff
@@ -1085,7 +1089,7 @@ ArchMageTCDealCycleTB2 <- BishopInfinity(ArchMageTCDealCycleTB2, 6000, 70 + Arch
 
 ArchMageTCFinalDPM2 <- InfinityDealCalcWithMaxDMR(ArchMageTCDealCycleTB, ArchMageTCDealCycleTB2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, TCUnsdata, 
                                                   NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
-TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPMwithMax2)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
+TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPM2)) / (TCUnsdata$DealCycleTime * 1000 / 60000)
 
 ArchMageTCDealData2 <- data.frame(ArchMageTCDealCycleTB$Skills, ArchMageTCDealCycleTB$Time, ArchMageTCDealCycleTB$Restraint4, 
                                  DealCalcWithMaxDMR(ArchMageTCDealCycleTB, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 

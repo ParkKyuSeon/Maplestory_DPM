@@ -75,11 +75,15 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(BlasterCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(BlasterCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 BlasterPassive <- Passive(list(GuntletMastery=GuntletMastery, PhysicalTraining=PhysicalTraining, ChargeMastery=ChargeMastery, CombinationTraining=CombinationTraining, 
                                GuntletExpert=GuntletExpert, AdvancedChargeMastery=AdvancedChargeMastery, CombinationTrainingII=CombinationTrainingII, 
-                               BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
+                               BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Blaster - Buff

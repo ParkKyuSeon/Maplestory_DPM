@@ -78,11 +78,15 @@ AlbatrossMaximum <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(WindBreakerCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(WindBreakerCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 WindBreakerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementStorm=ElementStorm, WhisperoftheWind=WhisperoftheWind, 
                                    PhysicalTraining=PhysicalTraining, BowAcceleration=BowAcceleration, WindBlessing=WindBlessing, BowExpert=BowExpert, AlbatrossMaximum=AlbatrossMaximum, 
-                                   BlinkPassive=BlinkPassive))
+                                   BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## WindBreaker - Buff

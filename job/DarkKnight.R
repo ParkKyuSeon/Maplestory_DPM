@@ -79,11 +79,15 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(DarkKnightCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(DarkKnightCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 DarkKnightPassive <- Passive(list(WeaponMastery=WeaponMastery, PhysicalTraining=PhysicalTraining, CrossOverChainPassive=CrossOverChainPassive, LordofDarkness=LordofDarkness, BeholdersBuff=BeholdersBuff, 
                                   SacrificePassive=SacrificePassive, ReincarnationPassive=ReincarnationPassive, AdvancedWeaponMastery=AdvancedWeaponMastery, 
-                                  BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
+                                  BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## DarkKnight - Buff

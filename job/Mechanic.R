@@ -78,10 +78,14 @@ LoadedDice <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(MechanicCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(MechanicCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 MechanicPassive <- Passive(list(MechanicParts=MechanicParts, HiddenPiece=HiddenPiece, MechanicMastery=MechanicMastery, PhysicalTraining=PhysicalTraining, MetalArmorTank=MetalArmorTank, 
-                                OverTuning=OverTuning, MetalArmorExtreme=MetalArmorExtreme, RobotMastery=RobotMastery, LoadedDice=LoadedDice, BlinkPassive=BlinkPassive))
+                                OverTuning=OverTuning, MetalArmorExtreme=MetalArmorExtreme, RobotMastery=RobotMastery, LoadedDice=LoadedDice, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Mechanic - Buff

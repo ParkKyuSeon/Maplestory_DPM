@@ -86,10 +86,15 @@ BodyofSteelPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(AdeleCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(AdeleCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 AdelePassive <- Passive(list(MagicCircuit=MagicCircuit, Pace=Pace, Rudiment=Rudiment, Mastery=Mastery, Train=Train, 
-                             Ascent=Ascent, Expert=Expert, Demolition=Demolition, Attain=Attain, GraveDebuff=GraveDebuff, BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive))
+                             Ascent=Ascent, Expert=Expert, Demolition=Demolition, Attain=Attain, GraveDebuff=GraveDebuff, BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, 
+                             RopeConnectPassive=RopeConnectPassive))
 
 
 ## Adele - Buff

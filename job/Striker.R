@@ -82,10 +82,15 @@ LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(StrikerCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(StrikerCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 StrikerPassive <- Passive(list(ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, PhysicalTraining=PhysicalTraining, Noebaek=Noebaek, 
-                               Geukgap=Geukgap, Noeje=Noeje, KnuckleExpert=KnuckleExpert, Noesin=Noesin, PrimalBolt=PrimalBolt, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive))
+                               Geukgap=Geukgap, Noeje=Noeje, KnuckleExpert=KnuckleExpert, Noesin=Noesin, PrimalBolt=PrimalBolt, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive, 
+                               RopeConnectPassive=RopeConnectPassive))
 
 
 ## Striker - Buff

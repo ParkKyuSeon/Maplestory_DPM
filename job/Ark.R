@@ -73,14 +73,18 @@ value <- c(20 + ArkBase$PSkillLv)
 BattleFrenzy <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(10 + GetArkCore(ArkCore, "LoadedDice"))
+value <- c(10 + GetCoreLv(ArkCore, "LoadedDice"))
 LoadedDice <- data.frame(option, value) 
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(GetArkCore(ArkCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+value <- c(GetCoreLv(ArkCore, "Blink"))
+BlinkPassive <- data.frame(option, value)
 
-ArkPassive <- Passive(list(MagicCircuit, MysticAchMastery, KnuckleMastery, PhysicalTraining, InitateFusion, KnuckleExpert, CompleteFusion, BattleFrenzy, LoadedDice, BlinkPassive))
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(ArkCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
+
+ArkPassive <- Passive(list(MagicCircuit, MysticAchMastery, KnuckleMastery, PhysicalTraining, InitateFusion, KnuckleExpert, CompleteFusion, BattleFrenzy, LoadedDice, BlinkPassive, RopeConnectPassive))
 
 
 ## Ark - Buff

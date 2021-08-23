@@ -82,10 +82,14 @@ ReadyToDie <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(HoyeongCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(HoyeongCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 HoyeongPassive <- Passive(list(SpiritIntimacy=SpiritIntimacy, GoeiBongin=GoeiBongin, FanMastery=FanMastery, Siman=Siman, 
-                               PhysicalTraining=PhysicalTraining, Sura=Sura, FanExpert=FanExpert, Deukdo=Deukdo, Jeomjeong=Jeomjeong, ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive))
+                               PhysicalTraining=PhysicalTraining, Sura=Sura, FanExpert=FanExpert, Deukdo=Deukdo, Jeomjeong=Jeomjeong, ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Hoyeong - Buff

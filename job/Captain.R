@@ -84,12 +84,16 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(CaptainCore, "Blink"))
 BlinkPassive <- data.frame(option, value)
 
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(CaptainCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(22)
 GiantBullet <- data.frame(option, value)}
 
 CaptainPassive <- Passive(list(CriticalRoar, PhysicalTraining, HollowPointBullet, FullMetalJacket, ContinualAiming, CounterAttack, CrewCommandership, CaptainDignityPassive, UnwearyingNectar,
-                               LoadedDice, BlinkPassive, GiantBullet))
+                               LoadedDice, BlinkPassive, RopeConnectPassive, GiantBullet))
 
 
 ## Captain - Buff
