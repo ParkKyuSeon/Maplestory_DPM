@@ -100,10 +100,14 @@ BlinkPassive <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(GetCoreLv(DemonAvengerCore, "BodyofSteel") * 50 / 17.5)
-BodyofSteelPassive <- data.frame(option, value)}
+BodyofSteelPassive <- data.frame(option, value)
+
+option <- factor(c("SubStat1"), levels=PSkill)
+value <- c(GetCoreLv(DemonAvengerCore, "RopeConnect"))
+RopeConnectPassive <- data.frame(option, value)}
 
 DemonAvengerPassive <- Passive(list(ConversionStarForce, DemonicSharpness, AbyssalRage, InnerStrength, OverwhelmingPower, DefenseExpertise, AdvancedDesperadoMastery, MapleSoldierPassive, 
-                                    BlinkPassive, BodyofSteelPassive))
+                                    BlinkPassive, BodyofSteelPassive, RopeConnectPassive))
 
 
 ## DemonAvenger - Buff

@@ -115,15 +115,19 @@ LoadedDicePassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(XenonCore, "Blink"))
-BlinkPassive <- data.frame(option, value)}
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1", "SubStat2"), levels=PSkill)
+value <- c(rep(GetCoreLv(XenonCore, "RopeConnect"), 3))
+RopeConnectPassive <- data.frame(option, value)}
 
 XenonPassive <- Passive(list(MultiLateralI, MultiLateralII, MultiLateralIII, MultiLateralVI, MultiLateralV, MultiLateralVI, 
                              XenonBoost, LinearPerspective, MinoritySupport, XenonMastery, DualbridDefensive, XenonExpert, OffensiveMatrix, 
-                             ReadyToDiePassive, LoadedDicePassive, BlinkPassive))
+                             ReadyToDiePassive, LoadedDicePassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Xenon - Buff
-OverloadModeTime <- 70
+OverloadModeTime <- ifelse(DPMCalcOption$MonsterLifeLevel >= 3, 70.5, 70)
 {option <- factor(levels=BSkill)
 value <- c()
 info <- c(0, 1, 0, F, F, F, F)
@@ -472,12 +476,12 @@ XenonSummoned <- Summoned(list(HologramGrafity=HologramGrafity, ResistanceLineIn
 ATKFinal <- data.frame(XenonATK)
 ATKFinal$Delay[c(-8:-10)] <- Delay(ATKFinal$Delay, XenonSpec$ATKSpeed)[c(-8:-10)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
-ATKFinal <- AddATKRateSkills("VirtualProjection", BuffFinal, ATKFinal, c("FuzzylopMasquerade", "MegaSmasher", "OverloadModeATK", "MeltdownExplosion"))
 
 BuffFinal <- data.frame(XenonBuff)
 BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
 BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, XenonSpec$BuffDuration / 100, 0) +
   ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
+ATKFinal <- AddATKRateSkills("VirtualProjection", BuffFinal, ATKFinal, c("FuzzylopMasquerade", "MegaSmasher", "OverloadModeATK", "MeltdownExplosion"))
 
 SummonedFinal <- data.frame(XenonSummoned)
 SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, XenonSpec$CoolReduceP, XenonSpec$CoolReduce)
@@ -1308,4 +1312,8 @@ colnames(XenonDealData_A9) <- c("Skills", "Time", "R4", "Deal")
 XenonRR_A9 <- Deal_RR(XenonDealData_A9)
 Xenon40s_A9 <- Deal_40s(XenonDealData_A9, F, StartTime=subset(XenonDealData_A9, XenonDealData_A9$Skills=="HologramGrafityFusionBuff")$Time[1])
 
-print(data.frame(XenonDPM_A9=XenonDPM_A9, XenonRR_A9=XenonRR_A9, Xenon40s_A9=Xenon40s_A9))
+if(DPMCalcOption$XenonSpecSetAlt=="SpecDefaultXenon_A6A3") {
+  print(data.frame(XenonDPM_A9=XenonDPM_A9, XenonRR_A9=XenonRR_A9, Xenon40s_A9=Xenon40s_A9))
+} else {
+  print(data.frame(XenonDPM_A21=XenonDPM_A9, XenonRR_A21=XenonRR_A9, Xenon40s_A21=Xenon40s_A9))
+}

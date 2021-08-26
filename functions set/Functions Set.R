@@ -270,7 +270,7 @@ StarforceDA <- function(ReqLv, Superior=F, Stars, ClassOnly=c(T, F), ItemType) {
     ATK <- ifelse(Stars>5, sum(sfsup[6:Stars, t]), 0)
     ATKSub <- ifelse(Stars>5, sum(sfsup[6:Stars, t]), 0)
     Result <- as.data.frame(t(c(ATK, ATKSub, HP, SubStat1, SubStat2)))
-    colnames(Result) <- c("ATK", "ATKSub", "HP", "SubStat1", "SubStat2")
+    colnames(Result) <- c("ATK", "ATK(Sub)", "HP", "SubStat1", "SubStat2")
     ifelse(sum(as.numeric(is.na(Result)))==0, return(Result), warning("Starforce Maximum Exceed"))
   }
 }
@@ -3105,4 +3105,25 @@ LuckyDiceProbs <- function(PSkillLv = 0, Hyper_Enhance = F, Hyper_ExtraNumber = 
 ## Job Indexing Function
 FindJob <- function(Data, Job) {
   return(Data[rownames(Data)==Job, ])
+}
+
+
+## DealRatio Collapse
+DealRatioCollapse <- function(DealRatio, CollapseList) {
+  DealRatioNew <- DealRatio[1, ]
+  DealRatioNew <- DealRatioNew[-1, ]
+  DealRatioDummy <- DealRatioNew
+  
+  for(i in 1:length(CollapseList)) {
+    DealRatioSub <- DealRatioDummy
+    for(j in 1:length(CollapseList[[i]])) {
+      DealRatioSub <- rbind(DealRatioSub, subset(DealRatio, rownames(DealRatio)==CollapseList[[i]][j]))
+    }
+    DealRatioSub$Ratio[1] <- sum(DealRatioSub$Ratio)
+    DealRatioSub <- DealRatioSub[1, ]
+    rownames(DealRatioSub) <- names(CollapseList)[i]
+    DealRatioNew <- rbind(DealRatioNew, DealRatioSub)
+  }
+  
+  C
 }

@@ -1,13 +1,13 @@
 ## Options Setting
 DPMCalcOption <- data.frame(SpecSet = "SpecLegendry", 
                             ZeroSpecSet = "SpecLegendryZero", 
-                            XenonSpecSet = "SpecLegendry", 
-                            XenonSpecSetAlt = "SpecLegendry", 
-                            DemonAvengerSpecSet = "SpecLegendry", 
+                            XenonSpecSet = "SpecLegendryXenon_A15S9", 
+                            XenonSpecSetAlt = "SpecLegendryXenon_A15A6", 
+                            DemonAvengerSpecSet = "SpecLegendryDemonAvenger", 
                             MobSet = "MobDefault", 
                             MonsterLifeLevel = 3, ## Not a Monster Life Farm Level
                             WeaponSF = 18, 
-                            DemonAvengerSF = 264, 
+                            DemonAvengerSF = 330, ## 264 : Unique, 330 : Legendry
                             Optimization = F, 
                             OptdataDelete = T,
                             DataName = "DPM12352_L", 
@@ -117,10 +117,10 @@ SpecLegendryAbility[rownames(SpecLegendryAbility)=="Eunwol", ] <- c("BDR", "CRR"
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Blaster", ] <- c("BDR", "ATK", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="BattleMage", ] <- c("BDR", "ATK", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="WildHunter", ] <- c("BDR", "CRR", "DisorderBDR")
-SpecLegendryAbility[rownames(SpecLegendryAbility)=="Xenon", ] <- c("BDR", "DisorderBDR")
+SpecLegendryAbility[rownames(SpecLegendryAbility)=="Xenon", ] <- c("BDR", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Mechanic", ] <- c("PassiveLv", "BDR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="DemonSlayer", ] <- c("BDR", "ATK", "DisorderBDR")
-SpecLegendryAbility[rownames(SpecLegendryAbility)=="DemonAvenger", ] <- c("BDR", "DisorderBDR")
+SpecLegendryAbility[rownames(SpecLegendryAbility)=="DemonAvenger", ] <- c("BDR", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Kaiser", ] <- c("BDR", "DisorderBDR", "BuffDuration")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Kain", ] <- c("PassiveLv", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Cadena", ] <- c("CoolTimeReset", "BDR", "DisorderBDR")
@@ -223,7 +223,7 @@ SpecLegendryLink[rownames(SpecLegendryLink)=="Eunwol", ] <- c("Eunwol", "DemonAv
 SpecLegendryLink[rownames(SpecLegendryLink)=="Blaster", ] <- c("CygnusKnights", "DemonAvenger", "Xenon", "Zero")
 SpecLegendryLink[rownames(SpecLegendryLink)=="BattleMage", ] <- c("CygnusKnights", "Xenon", "DemonAvenger", "Phantom")
 SpecLegendryLink[rownames(SpecLegendryLink)=="WildHunter", ] <- c("Xenon", "DemonAvenger", "Mikhail", "Phantom")
-SpecLegendryLink[rownames(SpecLegendryLink)=="Xenon", ] <- c("CygnusKnights", "DemonAvenger", "Xenon", "Phantom")
+SpecLegendryLink[rownames(SpecLegendryLink)=="Xenon", ] <- c("CygnusKnights", "DemonAvenger", "Xenon", "Zero")
 SpecLegendryLink[rownames(SpecLegendryLink)=="Mechanic", ] <- c("CygnusKnights", "Xenon", "DemonAvenger", "Zero")
 SpecLegendryLink[rownames(SpecLegendryLink)=="DemonSlayer", ] <- c("Xenon", "DemonAvenger", "CygnusKnights", "Zero")
 SpecLegendryLink[rownames(SpecLegendryLink)=="DemonAvenger", ] <- c("Kaiser", "Phantom", "DemonAvenger", "CygnusKnights")
@@ -375,10 +375,10 @@ MonsterLifePreSet[rownames(MonsterLifePreSet)=="Eunwol", ] <- c("", "MLTypeS21",
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Blaster", ] <- c("", "MLTypeS22", "MLTypeS31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="BattleMage", ] <- c("", "MLTypeI21", "MLTypeI31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="WildHunter", ] <- c("", "MLTypeD23", "MLTypeD32")
-MonsterLifePreSet[rownames(MonsterLifePreSet)=="Xenon", ] <- c("", "MLTypeA21", "")
+MonsterLifePreSet[rownames(MonsterLifePreSet)=="Xenon", ] <- c("", "MLTypeA21", "MLTypeA31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Mechanic", ] <- c("", "MLTypeD22", "MLTypeD33")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="DemonSlayer", ] <- c("", "MLTypeS21", "MLTypeS31")
-MonsterLifePreSet[rownames(MonsterLifePreSet)=="DemonAvenger", ] <- c("", "MLTypeH21", "")
+MonsterLifePreSet[rownames(MonsterLifePreSet)=="DemonAvenger", ] <- c("", "MLTypeH21", "MLTypeH31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Kaiser", ] <- c("", "MLTypeS21", "MLTypeS31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Kain", ] <- c("", "MLTypeD21", "MLTypeD31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Cadena", ] <- c("", "MLTypeL21", "MLTypeL32")

@@ -335,7 +335,7 @@ AdvancedFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(MercedesCore, "UnicornSpike")>=40, 20, 0), 3 * GetCoreLv(MercedesCore, "UnicornSpike"))
-info <- c((415 + 2 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 5 * 1.845, 0, NA, 10, T, T, F)
+info <- c((445 + 2 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 5 * 1.845, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UnicornSpikeGhost <- rbind(data.frame(option, value), info)
@@ -363,7 +363,7 @@ AdvancedStrikeDualShotGhost <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(MercedesCore, "WrathofEnlil")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "WrathofEnlil"))
-info <- c(400 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 10 * 1.845, 0, NA, 8, F, F, F)
+info <- c(460 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 10 * 1.845, 0, NA, 8, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WrathofEnlilGhost <- rbind(data.frame(option, value), info)
@@ -601,7 +601,7 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
           IgnisDummy <- ifelse(IgnisDummy >= 7000, 0, IgnisDummy)
         }
       }
-      if(DebuffDummy==0) {
+      if(DebuffDummy==0 & DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
         DealCycle <- DCATKSkip(DealCycle, "UnicornSpike", ATKFinal, SkipStructure)
         DealCycle$UnicornSpikeDebuff[nrow(DealCycle)] <- 30000
         DealCycle <- DCATKSkip(DealCycle, "LegendrySpear", ATKFinal, SkipStructure)
@@ -617,13 +617,32 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
         DebuffDummy <- 4
         IgnisDummy <- DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] + DealCycle$Time[1]
       }
-      if(IgnisDummy==0) {
+      if(IgnisDummy==0 & DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
         DealCycle <- DCATKSkip(DealCycle, "WrathofEnlil", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "AdvancedStrikeDualShot", ATKFinal, SkipStructure)
         DealCycle$SkipDummy[nrow(DealCycle)] <- 1
         DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
         DebuffDummy <- DebuffDummy - 1
         IgnisDummy <- IgnisDummy + DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] + DealCycle$Time[1]
+      }
+      if(IgnisDummy==0 & DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+        DealCycle <- DCATKSkip(DealCycle, "UnicornSpike", ATKFinal, SkipStructure)
+        DealCycle$UnicornSpikeDebuff[nrow(DealCycle)] <- 30000
+        DealCycle <- DCATKSkip(DealCycle, "AdvancedStrikeDualShot", ATKFinal, SkipStructure)
+        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
+        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
+        DealCycle <- DCATKSkip(DealCycle, "LegendrySpear", ATKFinal, SkipStructure)
+        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
+        DealCycle$LegendrySpearDebuff[nrow(DealCycle)] <- 30000
+        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
+        DealCycle <- DCATKSkip(DealCycle, "WrathofEnlil", ATKFinal, SkipStructure)
+        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
+        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
+        DealCycle <- DCATKSkip(DealCycle, "AdvancedStrikeDualShot", ATKFinal, SkipStructure)
+        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
+        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
+        DebuffDummy <- 1
+        IgnisDummy <- IgnisDummy + DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-4] + DealCycle$Time[1]
       }
       if(nrow(subset(DealCycle, DealCycle$Skills=="BreathofIrkallaPre"))==0) {
         DealCycle <- DCATK(DealCycle, "BreathofIrkallaPre", ATKFinal)
@@ -642,14 +661,16 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
         }
       }
       if(subset(SkipStructure, rownames(SkipStructure)=="UnicornSpike")$SkippedDelay + 
-         subset(SkipStructure, rownames(SkipStructure)=="LegendrySpear")$SkippedDelay + IgnisDummy >= 7000 & DebuffDummy == 1) {
+         subset(SkipStructure, rownames(SkipStructure)=="LegendrySpear")$SkippedDelay + IgnisDummy >= 7000 & DebuffDummy == 1 & 
+         DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
         DebuffDummy <- DebuffDummy - 1
       }
       if(DebuffDummy != 0 & IgnisDummy != 0) {
         DealCycle <- DCATK(DealCycle, "RingofIshtar", ATKFinal)
         DealCycle$IgnisRoarStack[nrow(DealCycle)] <- DealCycle$IgnisRoarStack[nrow(DealCycle)] + 100
         IgnisDummy <- IgnisDummy + 120
-        IgnisDummy <- ifelse(IgnisDummy >= 7000, 0, IgnisDummy)
+        IgnisDummy <- ifelse(DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & IgnisDummy >= 7000, 0, 
+                             ifelse(DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] > 0 & IgnisDummy >= 5500, 0, IgnisDummy))
       }
     }
     

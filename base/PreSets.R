@@ -90,7 +90,7 @@ SpecDefaultZero <- SpecDefault
 SpecDefaultZero$ItemSet <- ItemSum(SpecSetZero1, SetOption(SpecSetZero1, "F"), PetSetOption(SpecDefaultZero$Pets))
 
 
-## SpecSet - Default (Xenon_A6S6)
+## SpecSet - Default (Xenon_A6S6 / Xenon_A6A3)
 SpecDefaultXenon_A6S6 <- SpecDefault
 SpecDefaultXenon_A6S6$ItemSet <- ItemSum(SpecSetXenon1_A6S6, SetOption(SpecSetXenon1_A6S6, "AR"), PetSetOption(SpecDefaultXenon_A6S6$Pets))
 SpecDefaultXenon_A6S6$CoolReduceInfo <- data.frame(AllStatP=c(0, -9), 
@@ -133,6 +133,24 @@ SpecLegendry$CommonVSet <- data.frame(Use=c(T, T, T, T, T, F),
 ## SpecSet - Legendry (Zero)
 SpecLegendryZero <- SpecLegendry
 SpecLegendryZero$ItemSet <- ItemSum(SpecSetZero2, SetOption(SpecSetZero2, "F"), PetSetOption(SpecLegendryZero$Pets))
+
+
+## SpecSet - Legendry (Xenon_A15S9 / Xenon_A15A6)
+SpecLegendryXenon_A15S9 <- SpecLegendry
+SpecLegendryXenon_A15S9$ItemSet <- ItemSum(SpecSetXenon2_A15S9, SetOption(SpecSetXenon2_A15S9, "AR"), PetSetOption(SpecLegendryXenon_A15S9$Pets))
+SpecLegendryXenon_A15S9$CoolReduceInfo <- data.frame(AllStatP=c(0, -9), 
+                                                     CoolReduce=c(0, 2))
+
+SpecLegendryXenon_A15A6 <- SpecLegendry
+SpecLegendryXenon_A15A6$ItemSet <- ItemSum(SpecSetXenon2_A15A6, SetOption(SpecSetXenon2_A15A6, "AR"), PetSetOption(SpecLegendryXenon_A15A6$Pets))
+SpecLegendryXenon_A15A6$CoolReduceInfo <- data.frame(AllStatP=c(0, -9), 
+                                                     CoolReduce=c(0, 2))
+
+
+## SpecSet - Legendry (DemonAvenger)
+SpecLegendryDemonAvenger <- SpecLegendry
+SpecLegendryDemonAvenger$ItemSet <- ItemSum(SpecSetDemonAvenger2, SetOption(SpecSetDemonAvenger2, "AR"), PetSetOption(SpecLegendryDemonAvenger$Pets))
+
 
 
 
