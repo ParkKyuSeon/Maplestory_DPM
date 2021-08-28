@@ -1761,11 +1761,13 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
                                       NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR")))
   colnames(EvanDealData) <- c("Skills", "Time", "R4", "Deal")
   
-  EvanDealCycle2 <- EvanDealCycle
-  EvanDealCycle2[EvanDealCycle2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
-  EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycle2), 
-                                  list(EvanDealData$Deal, DealCalc(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
-                                                                   NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))), 
+  EvanDealCycle_2 <- EvanDealCycle
+  EvanDealCycle_2[EvanDealCycle_2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
+  EvanDeal1 <- DealCalc(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+                        NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+  EvanDeal2 <- DealCalc(EvanDealCycle_2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+                        NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
+  EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycle_2), list(EvanDeal1, EvanDeal2), 
                                   rep(max(EvanDealCycle$Time), 2), c(0.6518, 0.3482))
   
   set(get(DPMCalcOption$DataName), as.integer(3), "Evan", Deal_RR(EvanDealData))

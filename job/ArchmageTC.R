@@ -1052,11 +1052,11 @@ ArchMageTCDealData <- data.frame(ArchMageTCDealCycle$Skills, ArchMageTCDealCycle
                                  DealCalcWithMaxDMR(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
                                                     NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")))
 colnames(ArchMageTCDealData) <- c("Skills", "Time", "R4", "Deal")
-ArchMageTCDealRatio <- InfinityDealRatio(ArchMageTCDealCycle, ArchMageTCDealCycle2, 
-                                         DealCalcWithMaxDMR(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
-                                                            NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")), 
-                                         DealCalcWithMaxDMR(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
-                                                            NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")), TCUnsdata)
+ArchMageTCDeal1 <- DealCalcWithMaxDMR(ArchMageTCDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+                                      NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
+ArchMageTCDeal2 <- DealCalcWithMaxDMR(ArchMageTCDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+                                      NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
+ArchMageTCDealRatio <- InfinityDealRatio(ArchMageTCDealCycle, ArchMageTCDealCycle2, ArchMageTCDeal1, ArchMageTCDeal2, TCUnsdata)
 
 set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageTC", Deal_RR(ArchMageTCDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageTC", Deal_40s(ArchMageTCDealData, F, NA, FinishTime=subset(ArchMageTCDealData, ArchMageTCDealData$Skills=="Restraint4")$Time[1] + 15000))

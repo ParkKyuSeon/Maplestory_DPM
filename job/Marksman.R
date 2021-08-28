@@ -650,7 +650,7 @@ colnames(MarksmanDealCycle0) <- DealCycle
 
 MarksmanDealCycle0 <- DCBuff(MarksmanDealCycle0, c("CrossbowBooster", "SoulArrow", "SharpEyes", "MapleSoldier", "UsefulCombatOrders"), BuffFinal)
 if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
-  MarksmanDealCycle <- DCBuff(MarksmanDealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  MarksmanDealCycle0 <- DCBuff(MarksmanDealCycle0, c("UsefulAdvancedBless"), BuffFinal)
 }
 MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("SpiderInMirror"), ATKFinal)
 MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="GuidedArrow", SummonedFinal)

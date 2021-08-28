@@ -3108,22 +3108,24 @@ FindJob <- function(Data, Job) {
 }
 
 
-## DealRatio Collapse
-DealRatioCollapse <- function(DealRatio, CollapseList) {
-  DealRatioNew <- DealRatio[1, ]
-  DealRatioNew <- DealRatioNew[-1, ]
-  DealRatioDummy <- DealRatioNew
-  
-  for(i in 1:length(CollapseList)) {
-    DealRatioSub <- DealRatioDummy
-    for(j in 1:length(CollapseList[[i]])) {
-      DealRatioSub <- rbind(DealRatioSub, subset(DealRatio, rownames(DealRatio)==CollapseList[[i]][j]))
+## DealCycle Collapse
+DealCycleCollapse <- function(DealCycle, SkillList, Cores=detectCores(logical=F)-1) {
+  CollapseEach <- function(i) {
+    Idx <- 1
+    for(j in 1:length(SkillList)) {
+      if(sum(DealCycle$Skills[i]==SkillList[[j]]) >= 1) {
+        Skill <- names(SkillList)[[j]]
+        Idx <- 0
+        break
+      }
     }
-    DealRatioSub$Ratio[1] <- sum(DealRatioSub$Ratio)
-    DealRatioSub <- DealRatioSub[1, ]
-    rownames(DealRatioSub) <- names(CollapseList)[i]
-    DealRatioNew <- rbind(DealRatioNew, DealRatioSub)
+    if(Idx == 1) {
+      Skill <- DealCycle$Skills[i]
+    }
+    Skill <- as.character(Skill)
+    return(Skill)
   }
-  
-  C
+  DealCycleSkillList <- mcmapply(CollapseEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+  DealCycle$Skills <- DealCycleSkillList
+  return(DealCycle)
 }

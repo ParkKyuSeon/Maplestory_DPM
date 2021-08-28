@@ -860,11 +860,11 @@ BishopDealData <- data.frame(BishopDealCycle$Skills, BishopDealCycle$Time, Bisho
                              DealCalcWithMaxDMR(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
                                                 NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")))
 colnames(BishopDealData) <- c("Skills", "Time", "R4", "Deal")
-BishopDealRatio <- InfinityDealRatio(BishopDealCycle, BishopDealCycle2, 
-                                     DealCalcWithMaxDMR(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
-                                                        NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), 
-                                     DealCalcWithMaxDMR(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
-                                                        NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), BIUnsdata)
+BishopDeal1 <- DealCalcWithMaxDMR(BishopDealCycle, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
+                                  NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+BishopDeal2 <- DealCalcWithMaxDMR(BishopDealCycle2, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
+                                  NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+BishopDealRatio <- InfinityDealRatio(BishopDealCycle, BishopDealCycle2, BishopDeal1, BishopDeal2, BIUnsdata)
 
 set(get(DPMCalcOption$DataName), as.integer(3), "Bishop", Deal_RR(BishopDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Bishop", Deal_40s(BishopDealData, F, NA, FinishTime=subset(BishopDealData, BishopDealData$Skills=="Restraint4")$Time[1] + 15000))

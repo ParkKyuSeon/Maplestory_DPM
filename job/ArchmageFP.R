@@ -1051,11 +1051,11 @@ ArchMageFPDealData <- data.frame(ArchMageFPDealCycle$Skills, ArchMageFPDealCycle
                                  DealCalcWithMaxDMR(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
                                                     NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")))
 colnames(ArchMageFPDealData) <- c("Skills", "Time", "R4", "Deal")
-ArchMageFPDealRatio <- InfinityDealRatio(ArchMageFPDealCycle, ArchMageFPDealCycle2, 
-                                         DealCalcWithMaxDMR(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
-                                                            NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), 
-                                         DealCalcWithMaxDMR(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
-                                                            NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")), FPUnsdata)
+ArchMageFPDeal1 <- DealCalcWithMaxDMR(ArchMageFPDealCycle, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
+                                      NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+ArchMageFPDeal2 <- DealCalcWithMaxDMR(ArchMageFPDealCycle2, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
+                                      NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
+ArchMageFPDealRatio <- InfinityDealRatio(ArchMageFPDealCycle, ArchMageFPDealCycle2, ArchMageFPDeal1, ArchMageFPDeal2, FPUnsdata)
 
 set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageFP", Deal_RR(ArchMageFPDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageFP", Deal_40s(ArchMageFPDealData, F, NA, FinishTime=subset(ArchMageFPDealData, ArchMageFPDealData$Skills=="Restraint4")$Time[1] + 15000))
