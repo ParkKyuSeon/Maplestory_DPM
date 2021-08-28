@@ -534,6 +534,8 @@ KinesisDealRatio <- DealRatio(KinesisDealCycleSimplified, KinesisFinalDPMwithMax
 
 
 DealRatioSave <- function(JobName, DealRatioData, Modifier) {
+  DealRatioData <- DealRatioData[order(DealRatioData$Ratio, decreasing=T), ]
+  DealRatioData$Damage <- round(DealRatioData$Damage)
   DealRatioData$Ratio <- round(DealRatioData$Ratio, 4)
   write.csv(DealRatioData, paste("jobdata/", JobName, "/", JobName, "DealRatio", Modifier, ".csv", sep=""))
 }
