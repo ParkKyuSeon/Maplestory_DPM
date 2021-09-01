@@ -978,9 +978,10 @@ TCAddATKCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Thunder
       DealCycle$ExtremeMagic[i] <- 1
     }
   }
-  DealCycle$FrostEffectStack <- 0
   DealCycle$FrostEffectStackBDR <- DealCycle$FrostEffectStackCalc * 12
   DealCycle$FrostEffectStackCDMR <- DealCycle$FrostEffectStackCalc * 3
+  DealCycle$FrostEffectStackCalc <- DealCycle$FrostEffectStack
+  DealCycle$FrostEffectStack <- 0
   
   ## Overload Mana
   for(i in 1:nrow(DealCycle)) {
