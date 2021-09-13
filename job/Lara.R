@@ -770,7 +770,6 @@ LaraCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
          DealCycle$Time[nrow(DealCycle)] + DealCycle$SunlightSiteBuff[nrow(DealCycle)] < TotalTime) {
         if(DealCycle$FreeEarthVeinStack[nrow(DealCycle)] > 0 & FERemain == 0) {
           DealCycle <- DCATK(DealCycle, "FreeEarthVein", ATKFinal)
-          DealCycle[1, 2:ncol(DealCycle)] <- 30
           AWRemain <- max(0, AWRemain - DealCycle$Time[1])
           RGRemain <- max(0, RGRemain - DealCycle$Time[1])
           SSRemain <- max(0, SSRemain - DealCycle$Time[1])

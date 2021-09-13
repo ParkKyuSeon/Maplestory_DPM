@@ -17,7 +17,7 @@ DPMCalcOption <- data.frame(SpecSet = "SpecLegendry",
 CSVExportOption <- data.frame(Leakage = F, 
                               OrderBy = "DPM", ## Default, JobName, DPM, Restratint, 40s
                               RatioStandard = "Bishop", ## Bishop, Minimum, Maximum
-                              FileName = "DPM12352_L",
+                              FileName = "DPM12353_L",
                               
                               stringsAsFactors=F)
 
