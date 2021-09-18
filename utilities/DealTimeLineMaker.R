@@ -190,9 +190,6 @@ legend(x=0, y=800000, legend=c("CannonShooter", "Viper", "Striker", "Eunwol(Fixe
 
 
 
-
-
-
 ## Cumulative Deal Graph (360s)
 ## Warrior
 CumulativeDealGraph(HeroDealData, "Warrior(1)", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
@@ -390,7 +387,7 @@ XenonDealTL <- DealTimeLine(XenonDealData$Time, XenonDealData$Deal)
 KinesisDealTL <- DealTimeLine(KinesisDealData$Time, KinesisDealData$Deal)
 
 
-DealGraphSave <- function(JobName, DealTL, GetTimeData, Modifier, MaxDeal=30000, CumDealDivider=50000,  width=1366, height=768) {
+DealGraphSave <- function(JobName, DealTL, GetTimeData, Modifier, MaxDeal=30000, CumDealDivider=50000,  width=1024, height=576) {
   png(filename=paste("jobdata/", JobName, "/", JobName, "DealTL", Modifier, ".png", sep=""), width=width, height=height)
   TLGraph(DealTL, max(GetTimeData$Time)/1000, JobName, F, MaxDeal=MaxDeal)
   dev.off()
