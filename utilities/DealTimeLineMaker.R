@@ -50,7 +50,7 @@ DealIrr <- function(DealTL, DealTime) {
   Irr <- sum(abs(DealTL$Deal - AVGDeal) / AVGDeal) / length(DealTL$Deal)
   return(Irr)
 }
-RRGraph <- function(RestraintTL, JobName, VertLineTime=c(10, 13, 14), col="Skyblue", ylim=c(0, 80000), add=F, reverse=F) {
+RRGraph <- function(RestraintTL, JobName, VertLineTime=c(10, 13, 14), col="Skyblue", ylim=c(0, 80000), add=F, reverse=F, BishopRRDeal=32198) {
   RestraintTL$Time <- RestraintTL$Time - RestraintTL$Time[1]
   
   if(reverse==T) {
@@ -74,10 +74,10 @@ RRGraph <- function(RestraintTL, JobName, VertLineTime=c(10, 13, 14), col="Skybl
     for(i in 0:15) {
       abline(v=i, col="Gray80", lwd=ifelse(i==10, 4, ifelse(sum(i==c(13, 14))==1, 3, 1)))
     }
-    for(i in 0:8) {
+    for(i in 0:100) {
       abline(h=i*10000, col="Gray80")
     }
-    abline(h=31709, col="Gray80", lwd=3)
+    abline(h=BishopRRDeal, col="Gray80", lwd=3)
   }
 }
 CumulativeDealGraph <- function(RawDealTL, JobName, MaxTime=720, col="Skyblue", ylim=c(0, 800000), add=F) {
@@ -387,13 +387,19 @@ XenonDealTL <- DealTimeLine(XenonDealData$Time, XenonDealData$Deal)
 KinesisDealTL <- DealTimeLine(KinesisDealData$Time, KinesisDealData$Deal)
 
 
-DealGraphSave <- function(JobName, DealTL, GetTimeData, Modifier, MaxDeal=30000, CumDealDivider=50000,  width=1024, height=576) {
+DealGraphSave <- function(JobName, DealTL, GetTimeData, Modifier, MaxDeal=30000, CumDealDivider=50000, width=1024, height=576) {
   png(filename=paste("jobdata/", JobName, "/", JobName, "DealTL", Modifier, ".png", sep=""), width=width, height=height)
   TLGraph(DealTL, max(GetTimeData$Time)/1000, JobName, F, MaxDeal=MaxDeal)
   dev.off()
   
   png(filename=paste("jobdata/", JobName, "/", JobName, "DealTL_C", Modifier, ".png", sep=""), width=width, height=height)
   TLGraph(DealTL, max(GetTimeData$Time)/1000, JobName, T, CumDealDivider=CumDealDivider)
+  dev.off()
+}
+RRGraphSave <- function(JobName, DealData, Modifier, MaxDeal=80000, width=1024, height=768, reverse=F, BishopRRDeal=32198) {
+  png(filename=paste("jobdata/", JobName, "/", JobName, "RestraintTL", Modifier, ".png", sep=""), width=width, height=height)
+  RRDealData <- DealData_RR(DealData)
+  RRGraph(RRDealData, JobName, ylim=c(0, MaxDeal), add=F, reverse=reverse, BishopRRDeal=BishopRRDeal)
   dev.off()
 }
 
@@ -410,4 +416,29 @@ for(i in 1:nrow(ChrInfo)) {
                 Modifier=Modifier, 
                 MaxDeal=MaxDeal, 
                 CumDealDivider=CumDealDivider)
+}
+
+MaxDeal <- 210000 ; BishopRRDeal <- 85649
+for(i in 1:nrow(ChrInfo)) {
+  if(sum(ChrInfo$job[i]==c("ArchMageFP", "ArchMageTC", "Bishop"))==1) {
+    DealDataDummy <- data.frame(get(paste(ChrInfo$job[i], "DealCycle", sep=""))$Skills, get(paste(ChrInfo$job[i], "DealCycle", sep=""))$Time, get(paste(ChrInfo$job[i], "DealCycle", sep=""))$Restraint4, 
+                                get(paste(ChrInfo$job[i], "Deal1", sep="")))
+    colnames(DealDataDummy) <- c("Skills", "Time", "R4", "Deal")
+    
+    RRGraphSave(JobName=ChrInfo$job[i], 
+                DealData=DealDataDummy, 
+                Modifier=Modifier, 
+                MaxDeal=MaxDeal, 
+                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "Striker"))==1, T, F), 
+                BishopRRDeal=BishopRRDeal)
+  } else {
+    RRGraphSave(JobName=ChrInfo$job[i], 
+                DealData=get(ifelse(ChrInfo$job[i]=="CannonMaster", "CannonShooterDealData", 
+                                    ifelse(ChrInfo$job[i]=="DualBlader", "DualBladeDealData", 
+                                           paste(ChrInfo$job[i], "DealData", sep="")))), 
+                Modifier=Modifier, 
+                MaxDeal=MaxDeal, 
+                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "Striker"))==1, T, F), 
+                BishopRRDeal=BishopRRDeal)
+  }
 }

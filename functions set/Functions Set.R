@@ -3053,6 +3053,16 @@ Deal_40s <- function(DealData, StartWithRR=T, StartTime=NA, FinishTime=NA) {
   }
   return(sum(Dealdata_40s$Deal))
 }
+DealData_RR <- function(DealData) {
+  RR <- subset(DealData, DealData$R4 > 0)
+  rownames(RR) <- 1:nrow(RR)
+  Idx <- as.numeric(rownames(subset(RR, RR$Skills=="Restraint4")))
+  if(length(Idx)==1) {
+    return(RR)
+  } else {
+    return(RR[1:(Idx[2]-1), ])
+  }
+}
 
 
 ## Double Lucky Dice Data
