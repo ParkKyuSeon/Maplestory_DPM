@@ -1,5 +1,3 @@
-library(ggplot2)
-
 DealTimeLine <- function(Time, Deal, BreakTime=5000) {
   Breaks <- ceiling(max(Time)/BreakTime)
   Times <- seq(from=0, to=Breaks*BreakTime, by=BreakTime)
@@ -18,7 +16,7 @@ DealTimeLine <- function(Time, Deal, BreakTime=5000) {
   colnames(DealTL) <- c("Time", "Deal")
   return(DealTL)
 }
-TLGraph <- function(DealTL, DealTime, JobName, Cumulative=F, MaxDeal=30000) {
+TLGraph <- function(DealTL, DealTime, JobName, Cumulative=F, MaxDeal=30000, CumDealDivider=50000) {
   AVGDeal <- sum(DealTL$Deal) / DealTime * 5
   if(Cumulative==T) {
     CumDeal <- c()
@@ -32,17 +30,17 @@ TLGraph <- function(DealTL, DealTime, JobName, Cumulative=F, MaxDeal=30000) {
   
   
   if(Cumulative==T) {
-    barplot(DealTL$CumDeal, names.arg=DealTL$Time, space=0, ylim=c(0, ceiling(max(DealTL$CumDeal)/50000)*50000),
+    barplot(DealTL$CumDeal, names.arg=DealTL$Time, space=0, ylim=c(0, ceiling(max(DealTL$CumDeal)/CumDealDivider)*CumDealDivider),
             cex.axis=1, cex.names=0.7, las=2, border="gray60", col="skyblue", 
             main=paste(JobName, "Deal Time Line(Cumulative)"))
-    abline(h=25000 * 1:100, col="gray80")
+    abline(h=(CumDealDivider/2) * 1:100, col="gray80")
     curve(x * AVGDeal, 0, nrow(DealTL), col="gray40", lwd=3, add=T, 
           xlim=c(0, nrow(DealTL)))
   } else {
     barplot(DealTL$Deal, names.arg=DealTL$Time, ylim=c(0, MaxDeal),
             cex.axis=1, cex.names=0.7, las=2, border=NA, col="skyblue", 
             main=paste(JobName, "Deal Time Line(Non-cumulative)"))
-    abline(h=2500 * 1:100, col="gray80")
+    abline(h=ifelse(MaxDeal < 50000, 2500, 5000) * 1:100, col="gray80")
     abline(h=AVGDeal, col="gray40", lwd=3)
   }
 }
@@ -155,7 +153,7 @@ CumulativeDealGraph(BattleMageDealData, "BattleMage", col=colorset[8], add=T)
 CumulativeDealGraph(IlliumDealData, "Illium", col=colorset[9], add=T)
 
 legend(x=0, y=800000, legend=c("ArchMageFP", "ArchMageTC", "Bishop", 
-                              "FlameWizard", "Luminous", "BattleMage", "Illium"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
+                               "FlameWizard", "Luminous", "BattleMage", "Illium"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
 
 ## Archer
 CumulativeDealGraph(BowmasterDealData, "Archer", col=colorset[2])
@@ -176,7 +174,7 @@ CumulativeDealGraph(PhantomDealData, "Phantom", col=colorset[5], add=T)
 CumulativeDealGraph(HoyeongDealData, "Hoyeong", col=colorset[6], add=T)
 
 legend(x=0, y=800000, legend=c("NightLord", "DualBlader", "NightWlaker", 
-                              "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=3)
+                               "Phantom", "Hoyeong"), col=colorset[2:6], lty=1, lwd=3)
 
 ## Pirates
 CumulativeDealGraph(CannonShooterDealData, "Pirates", col=colorset[2])
@@ -259,27 +257,6 @@ CumulativeDealGraph(ABDealData, "AngelicBuster", col=colorset[9], MaxTime=360, y
 
 legend(x=0, y=400000, legend=c("CannonShooter", "Viper", "Striker", "Eunwol(Fixed)", "Mechanic", 
                                "Ark", "AngelicBuster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=3)
-
-## 1~5
-CumulativeDealGraph(AdeleDealData, "", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
-CumulativeDealGraph(BlasterDealData, "Blaster", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
-CumulativeDealGraph(HoyeongDealData, "Hoyeong", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
-CumulativeDealGraph(IlliumDealData, "Illium", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
-CumulativeDealGraph(ArkDealData, "Ark", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
-
-legend(x=0, y=400000, legend=c("Adele", "Blaster", "Hoyeong", "Illium", "Ark"), col=colorset[c(2:6)], lty=1, lwd=3)
-
-## 31_35
-CumulativeDealGraph(data.frame(Time=BishopDealCycle2$Time, Deal=BishopDamage2), "", col=colorset[2], MaxTime=360, ylim=c(0, 400000))
-CumulativeDealGraph(WindBreakerDealData, "WindBreaker", col=colorset[3], MaxTime=360, ylim=c(0, 400000), add=T)
-CumulativeDealGraph(PalladinDealData, "Palladin", col=colorset[4], MaxTime=360, ylim=c(0, 400000), add=T)
-CumulativeDealGraph(MercedesDealData, "Mercedes", col=colorset[5], MaxTime=360, ylim=c(0, 400000), add=T)
-CumulativeDealGraph(BattleMageDealData, "BattleMage", col=colorset[6], MaxTime=360, ylim=c(0, 400000), add=T)
-
-legend(x=0, y=400000, legend=c("Bishop", "WindBreaker", "Palladin", "Mercedes", "BattleMage"), col=colorset[c(2:6)], lty=1, lwd=3)
-
-
-
 
 
 
@@ -364,338 +341,76 @@ legend(x=0, y=80000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)",
                               "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(1:7, 9:10)], lty=1, lwd=4)
 
 
-## 1~7
-RRGraph(NightLordDealData[31:434, ], "", col=colorset[2])
-RRGraph(ArkDealData[58:391, ], "Ark", col=colorset[3], add=T)
-RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[4], add=T)
-RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[5], add=T)
-RRGraph(data.frame(Time=ArchMageTC40s$Time, Deal=ArchMageTC40s$Damage)[730:1009, ], "ArchMageTC", col=colorset[6], add=T, reverse=T)
-RRGraph(KainDealData[185:404, ], "Kain", col=colorset[8], add=T)
-RRGraph(BlasterDealData[19:275, ], "Blaster", col=colorset[9], add=T)
-
-legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Adele", "ArchMageTC(R)", "Kain", "Blaster"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
-
-## 39~45
-RRGraph(DemonAvengerDealData[86:319, ], "", col=colorset[2])
-RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[3], add=T)
-RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[4], reverse=T, add=T)
-RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[5], add=T, reverse=T)
-RRGraph(KaiserDealData[39:274, ], "Kaiser", col=colorset[6], add=T)
-RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[8], add=T)
-RRGraph(SoulMasterDealData[360:577, ], "SoulMaster", col=colorset[9], add=T, reverse=T)
-
-legend(x=0, y=80000, legend=c("DemonAvenger", "WindBreaker", "Striker(R)", "Bishop", 
-                              "Kaiser", "Luminous", "SoulMaster(R)"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
-
-## 1~4, 42~45
-RRGraph(NightLordDealData[31:434, ], "", col=colorset[2])
-RRGraph(ArkDealData[58:391, ], "Ark", col=colorset[3], add=T)
-RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[4], add=T)
-RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[5], add=T)
-RRGraph(DemonAvengerDealData[86:319, ], "DemonAvenger", col=colorset[6], add=T)
-RRGraph(WindBreakerDealData[112:1136, ], "WindBreaker", col=colorset[8], add=T)
-RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[9], reverse=T, add=T)
-RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[10], add=T, reverse=T)
-
-legend(x=0, y=80000, legend=c("NightLord", "Ark", "Hoyeong", "Adele", 
-                              "DemonAvenger", "WindBreaker", "Striker(R)", "Bishop"), col=colorset[c(2:6, 8:10)], lty=1, lwd=4)
-
-
 
 ## Deal Graph
-## Hero
 HeroDealTL <- DealTimeLine(HeroDealData$Time, HeroDealData$Deal)
-TLGraph(HeroDealTL, max(HeroDealData$Time)/1000, "Hero", F)
-TLGraph(HeroDealTL, max(HeroDealData$Time)/1000, "Hero", T)
-DealIrr(HeroDealTL, max(HeroDealData$Time)/1000)
-
-## Palladin
 PalladinDealTL <- DealTimeLine(PalladinDealData$Time, PalladinDealData$Deal)
-TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Paladin", F)
-TLGraph(PalladinDealTL, max(PalladinDealData$Time)/1000, "Paladin", T)
-DealIrr(PalladinDealTL, max(PalladinDealData$Time)/1000)
-
-## DarkKnight
 DarkKnightDealTL <- DealTimeLine(DarkKnightDealData$Time, DarkKnightDealData$Deal)
-TLGraph(DarkKnightDealTL, max(DarkKnightDealData$Time)/1000, "DarkKnight", F)
-TLGraph(DarkKnightDealTL, max(DarkKnightDealData$Time)/1000, "DarkKnight", T)
-DealIrr(DarkKnightDealTL, max(DarkKnightDealData$Time)/1000)
-
-## ArchMageFP
-ArchMageFPDealTL <- DealTimeLine(ArchMageFPDealCycle2$Time, ArchMageFPDamage2)
-TLGraph(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000, "ArchMageFP", F)
-TLGraph(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000, "ArchMageFP", T)
-DealIrr(ArchMageFPDealTL, max(ArchMageFPDealCycle2$Time)/1000)
-
-## ArchMageTC
-ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle2$Time, ArchMageTCDamage2)
-TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageIL", F)
-TLGraph(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000, "ArchMageIL", T)
-DealIrr(ArchMageTCDealTL, max(ArchMageTCDealCycle2$Time)/1000)
-
-## Bishop
-BishopDealTL <- DealTimeLine(BishopDealCycle2$Time, BishopDamage2)
-TLGraph(BishopDealTL, max(BishopDealCycle2$Time)/1000, "Bishop", F)
-TLGraph(BishopDealTL, max(BishopDealCycle2$Time)/1000, "Bishop", T)
-DealIrr(BishopDealTL, max(BishopDealCycle2$Time)/1000)
-
-## Bowmaster
+ArchMageFPDealTL <- DealTimeLine(ArchMageFPDealCycle$Time, ArchMageFPDeal1)
+ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle$Time, ArchMageTCDeal1)
+BishopDealTL <- DealTimeLine(BishopDealCycle$Time, BishopDeal1)
 BowmasterDealTL <- DealTimeLine(BowmasterDealData$Time, BowmasterDealData$Deal)
-TLGraph(BowmasterDealTL, max(BowmasterDealData$Time)/1000, "Bowmaster", F)
-TLGraph(BowmasterDealTL, max(BowmasterDealData$Time)/1000, "Bowmaster", T)
-DealIrr(BowmasterDealTL, max(BowmasterDealData$Time)/1000)
-
-## Marksman
-MarksmanDealTL <- DealTimeLine(MarksmanDealCycle$Time, MarksmanFinalDPMwithMax)
-TLGraph(MarksmanDealTL, max(MarksmanDealCycle$Time)/1000, "Marksman", F)
-TLGraph(MarksmanDealTL, max(MarksmanDealCycle$Time)/1000, "Marksman", T)
-DealIrr(MarksmanDealTL, max(MarksmanDealCycle$Time)/1000)
-
-## PathFinder
+MarksmanDealTL <- DealTimeLine(MarksmanDealData$Time, MarksmanDealData$Deal)
 PathFinderDealTL <- DealTimeLine(PathFinderDealData$Time, PathFinderDealData$Deal)
-TLGraph(PathFinderDealTL, max(PathFinderDealData$Time)/1000, "PathFinder", F)
-TLGraph(PathFinderDealTL, max(PathFinderDealData$Time)/1000, "PathFinder", T)
-DealIrr(PathFinderDealTL, max(PathFinderDealData$Time)/1000)
-
-## NightLord
 NightLordDealTL <- DealTimeLine(NightLordDealData$Time, NightLordDealData$Deal)
-TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", F)
-TLGraph(NightLordDealTL, max(NightLordDealData$Time)/1000, "NightLord", T)
-DealIrr(NightLordDealTL, max(NightLordDealData$Time)/1000)
-
-## Shadower
 ShadowerDealTL <- DealTimeLine(ShadowerDealData$Time, ShadowerDealData$Deal)
-TLGraph(ShadowerDealTL, max(ShadowerDealData$Time)/1000, "Shadower", F)
-TLGraph(ShadowerDealTL, max(ShadowerDealData$Time)/1000, "Shadower", T)
-DealIrr(ShadowerDealTL, max(ShadowerDealData$Time)/1000)
-
-## DualBlade
-DualBladeDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
-TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", F)
-TLGraph(DualBladeDealTL, max(DualBladeDealData$Time)/1000, "DualBlade", T)
-DealIrr(DualBladeDealTL, max(DualBladeDealData$Time)/1000)
-
-## Captain
+DualBladerDealTL <- DealTimeLine(DualBladeDealData$Time, DualBladeDealData$Deal)
 CaptainDealTL <- DealTimeLine(CaptainDealData$Time, CaptainDealData$Deal)
-TLGraph(CaptainDealTL, max(CaptainDealData$Time)/1000, "Captain", F)
-TLGraph(CaptainDealTL, max(CaptainDealData$Time)/1000, "Captain", T)
-DealIrr(CaptainDealTL, max(CaptainDealData$Time)/1000)
-
-## CannonShooter
-CannonShooterDealTL <- DealTimeLine(CannonShooterDealData$Time, CannonShooterDealData$Deal)
-TLGraph(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000, "CannonShooter", F)
-TLGraph(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000, "CannonShooter", T)
-DealIrr(CannonShooterDealTL, max(CannonShooterDealData$Time)/1000)
-
-## Viper
+CannonMasterDealTL <- DealTimeLine(CannonShooterDealData$Time, CannonShooterDealData$Deal)
 ViperDealTL <- DealTimeLine(ViperDealData$Time, ViperDealData$Deal)
-TLGraph(ViperDealTL, max(ViperDealData$Time)/1000, "Viper", F)
-TLGraph(ViperDealTL, max(ViperDealData$Time)/1000, "Viper", T)
-DealIrr(ViperDealTL, max(ViperDealData$Time)/1000)
-
-## Mikhail
 MikhailDealTL <- DealTimeLine(MikhailDealData$Time, MikhailDealData$Deal)
-TLGraph(MikhailDealTL, max(MikhailDealData$Time)/1000, "Mikhail", F)
-TLGraph(MikhailDealTL, max(MikhailDealData$Time)/1000, "Mikhail", T)
-DealIrr(MikhailDealTL, max(MikhailDealData$Time)/1000)
-
-## SoulMaster
 SoulMasterDealTL <- DealTimeLine(SoulMasterDealData$Time, SoulMasterDealData$Deal)
-TLGraph(SoulMasterDealTL, max(SoulMasterDealData$Time)/1000, "SoulMaster", F)
-TLGraph(SoulMasterDealTL, max(SoulMasterDealData$Time)/1000, "SoulMaster", T)
-DealIrr(SoulMasterDealTL, max(SoulMasterDealData$Time)/1000)
-
-## FlameWizard
 FlameWizardDealTL <- DealTimeLine(FlameWizardDealData$Time, FlameWizardDealData$Deal)
-TLGraph(FlameWizardDealTL, max(FlameWizardDealData$Time)/1000, "FlameWizard", F)
-TLGraph(FlameWizardDealTL, max(FlameWizardDealData$Time)/1000, "FlameWizard", T)
-DealIrr(FlameWizardDealTL, max(FlameWizardDealData$Time)/1000)
-
-## WindBreaker
 WindBreakerDealTL <- DealTimeLine(WindBreakerDealData$Time, WindBreakerDealData$Deal)
-TLGraph(WindBreakerDealTL, max(WindBreakerDealData$Time)/1000, "WindBreaker", F)
-TLGraph(WindBreakerDealTL, max(WindBreakerDealData$Time)/1000, "WindBreaker", T)
-DealIrr(WindBreakerDealTL, max(WindBreakerDealData$Time)/1000)
-
-## NightWalker
 NightWalkerDealTL <- DealTimeLine(NightWalkerDealData$Time, NightWalkerDealData$Deal)
-TLGraph(NightWalkerDealTL, max(NightWalkerDealData$Time)/1000, "NightWalker", F)
-TLGraph(NightWalkerDealTL, max(NightWalkerDealData$Time)/1000, "NightWalker", T)
-DealIrr(NightWalkerDealTL, max(NightWalkerDealData$Time)/1000)
-
-## Striker
 StrikerDealTL <- DealTimeLine(StrikerDealData$Time, StrikerDealData$Deal)
-TLGraph(StrikerDealTL, max(StrikerDealData$Time)/1000, "Striker", F)
-TLGraph(StrikerDealTL, max(StrikerDealData$Time)/1000, "Striker", T)
-DealIrr(StrikerDealTL, max(StrikerDealData$Time)/1000)
-
-## Aran
 AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
-TLGraph(AranDealTL, max(AranDealData$Time)/1000, "Aran", F)
-TLGraph(AranDealTL, max(AranDealData$Time)/1000, "Aran", T)
-DealIrr(AranDealTL, max(AranDealData$Time)/1000)
-
-## Evan
 EvanDealTL <- DealTimeLine(EvanDealData$Time, EvanDealData$Deal)
-TLGraph(EvanDealTL, max(EvanDealData$Time)/1000, "Evan", F)
-TLGraph(EvanDealTL, max(EvanDealData$Time)/1000, "Evan", T)
-DealIrr(EvanDealTL, max(EvanDealData$Time)/1000)
-
-## Luminous
 LuminousDealTL <- DealTimeLine(LuminousDealData$Time, LuminousDealData$Deal)
-TLGraph(LuminousDealTL, max(LuminousDealData$Time)/1000, "Luminous", F)
-TLGraph(LuminousDealTL, max(LuminousDealData$Time)/1000, "Luminous", T)
-DealIrr(LuminousDealTL, max(LuminousDealData$Time)/1000)
-
-## Mercedes
 MercedesDealTL <- DealTimeLine(MercedesDealData$Time, MercedesDealData$Deal)
-TLGraph(MercedesDealTL, max(MercedesDealData$Time)/1000, "Mercedes", F)
-TLGraph(MercedesDealTL, max(MercedesDealData$Time)/1000, "Mercedes", T)
-DealIrr(MercedesDealTL, max(MercedesDealData$Time)/1000)
-
-## Phantom
 PhantomDealTL <- DealTimeLine(PhantomDealData$Time, PhantomDealData$Deal)
-TLGraph(PhantomDealTL, max(PhantomDealData$Time)/1000, "Phantom", F)
-TLGraph(PhantomDealTL, max(PhantomDealData$Time)/1000, "Phantom", T)
-DealIrr(PhantomDealTL, max(PhantomDealData$Time)/1000)
-
-## Eunwol
-EunwolDealTL <- DealTimeLine(EunwolDealDataFixed$Time, EunwolDealDataFixed$Deal)
-TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", F)
-TLGraph(EunwolDealTL, max(EunwolDealData$Time)/1000, "Eunwol", T)
-DealIrr(EunwolDealTL, max(EunwolDealData$Time)/1000)
-
-## DemonSlayer
+EunwolDealTL <- DealTimeLine(EunwolDealDataFGX$Time, EunwolDealDataFGX$Deal)
 DemonSlayerDealTL <- DealTimeLine(DemonSlayerDealData$Time, DemonSlayerDealData$Deal)
-TLGraph(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000, "DemonSlayer", F)
-TLGraph(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000, "DemonSlayer", T)
-DealIrr(DemonSlayerDealTL, max(DemonSlayerDealData$Time)/1000)
-
-## DemonAvenger
 DemonAvengerDealTL <- DealTimeLine(DemonAvengerDealData$Time, DemonAvengerDealData$Deal)
-TLGraph(DemonAvengerDealTL, max(DemonAvengerDealData$Time)/1000, "DemonAvenger", F)
-TLGraph(DemonAvengerDealTL, max(DemonAvengerDealData$Time)/1000, "DemonAvenger", T)
-DealIrr(DemonAvengerDealTL, max(DemonAvengerDealData$Time)/1000)
-
-## Blaster
 BlasterDealTL <- DealTimeLine(BlasterDealData$Time, BlasterDealData$Deal)
-TLGraph(BlasterDealTL, max(BlasterDealData$Time)/1000, "Blaster", F)
-TLGraph(BlasterDealTL, max(BlasterDealData$Time)/1000, "Blaster", T)
-DealIrr(BlasterDealTL, max(BlasterDealData$Time)/1000)
-
-## BattleMage
 BattleMageDealTL <- DealTimeLine(BattleMageDealData$Time, BattleMageDealData$Deal)
-TLGraph(BattleMageDealTL, max(BattleMageDealData$Time)/1000, "BattleMage", F)
-TLGraph(BattleMageDealTL, max(BattleMageDealData$Time)/1000, "BattleMage", T)
-DealIrr(BattleMageDealTL, max(BattleMageDealData$Time)/1000)
-
-## WildHunter
 WildHunterDealTL <- DealTimeLine(WildHunterDealData$Time, WildHunterDealData$Deal)
-TLGraph(WildHunterDealTL, max(WildHunterDealData$Time)/1000, "WildHunter", F)
-TLGraph(WildHunterDealTL, max(WildHunterDealData$Time)/1000, "WildHunter", T)
-DealIrr(WildHunterDealTL, max(WildHunterDealData$Time)/1000)
-
-## Mechanic
 MechanicDealTL <- DealTimeLine(MechanicDealData$Time, MechanicDealData$Deal)
-TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", F)
-TLGraph(MechanicDealTL, max(MechanicDealData$Time)/1000, "Mechanic", T)
-DealIrr(MechanicDealTL, max(MechanicDealData$Time)/1000)
-
-## Kaiser
 KaiserDealTL <- DealTimeLine(KaiserDealData$Time, KaiserDealData$Deal)
-TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", F)
-TLGraph(KaiserDealTL, max(KaiserDealData$Time)/1000, "Kaiser", T)
-DealIrr(KaiserDealTL, max(KaiserDealData$Time)/1000)
-
-## Kain
 KainDealTL <- DealTimeLine(KainDealData$Time, KainDealData$Deal)
-TLGraph(KainDealTL, max(KainDealData$Time)/1000, "Kain", F)
-TLGraph(KainDealTL, max(KainDealData$Time)/1000, "Kain", T)
-DealIrr(KainDealTL, max(KainDealData$Time)/1000)
-
-## Cadena
 CadenaDealTL <- DealTimeLine(CadenaDealData$Time, CadenaDealData$Deal)
-TLGraph(CadenaDealTL, max(CadenaDealData$Time)/1000, "Cadena", F)
-TLGraph(CadenaDealTL, max(CadenaDealData$Time)/1000, "Cadena", T)
-DealIrr(CadenaDealTL, max(CadenaDealData$Time)/1000)
-
-## AngelicBuster
-AngelicBusterDealTL <- DealTimeLine(ABDealData2$Time, ABDealData2$Deal)
-TLGraph(AngelicBusterDealTL, max(ABDealData2$Time)/1000, "AngelicBuster", F)
-TLGraph(AngelicBusterDealTL, max(ABDealData2$Time)/1000, "AngelicBuster", T)
-DealIrr(AngelicBusterDealTL, max(ABDealData2$Time)/1000)
-
-## Illium
+AngelicBusterDealTL <- DealTimeLine(AngelicBusterDealData$Time, AngelicBusterDealData$Deal)
 IlliumDealTL <- DealTimeLine(IlliumDealData$Time, IlliumDealData$Deal)
-TLGraph(IlliumDealTL, max(IlliumDealData$Time)/1000, "Illium", F)
-TLGraph(IlliumDealTL, max(IlliumDealData$Time)/1000, "Illium", T)
-DealIrr(IlliumDealTL, max(IlliumDealData$Time)/1000)
-
-## Adele
 AdeleDealTL <- DealTimeLine(AdeleDealData$Time, AdeleDealData$Deal)
-TLGraph(AdeleDealTL, max(AdeleDealData$Time)/1000, "Adele", F)
-TLGraph(AdeleDealTL, max(AdeleDealData$Time)/1000, "Adele", T)
-DealIrr(AdeleDealTL, max(AdeleDealData$Time)/1000)
-
-## Ark
 ArkDealTL <- DealTimeLine(ArkDealData$Time, ArkDealData$Deal)
-TLGraph(ArkDealTL, max(ArkDealData$Time)/1000, "Ark", F)
-TLGraph(ArkDealTL, max(ArkDealData$Time)/1000, "Ark", T)
-DealIrr(ArkDealTL, max(ArkDealData$Time)/1000)
-
-## Lara
 LaraDealTL <- DealTimeLine(LaraDealData$Time, LaraDealData$Deal)
-TLGraph(LaraDealTL, max(LaraDealData$Time)/1000, "Lara", F)
-TLGraph(LaraDealTL, max(LaraDealData$Time)/1000, "Lara", T)
-DealIrr(LaraDealTL, max(LaraDealData$Time)/1000)
-
-## Hoyeong
 HoyeongDealTL <- DealTimeLine(HoyeongDealData$Time, HoyeongDealData$Deal)
-TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", F)
-TLGraph(HoyeongDealTL, max(HoyeongDealData$Time)/1000, "Hoyeong", T)
-DealIrr(HoyeongDealTL, max(HoyeongDealData$Time)/1000)
-
-## Zero
 ZeroDealTL <- DealTimeLine(ZeroDealData$Time, ZeroDealData$Deal)
-TLGraph(ZeroDealTL, max(ZeroDealData$Time)/1000, "Zero", F)
-TLGraph(ZeroDealTL, max(ZeroDealData$Time)/1000, "Zero", T)
-DealIrr(ZeroDealTL, max(ZeroDealData$Time)/1000)
-
-## Xenon
 XenonDealTL <- DealTimeLine(XenonDealData$Time, XenonDealData$Deal)
-TLGraph(XenonDealTL, max(XenonDealData$Time)/1000, "Xenon", F)
-TLGraph(XenonDealTL, max(XenonDealData$Time)/1000, "Xenon", T)
-DealIrr(XenonDealTL, max(XenonDealData$Time)/1000)
-
-## Kinesis
 KinesisDealTL <- DealTimeLine(KinesisDealData$Time, KinesisDealData$Deal)
-TLGraph(KinesisDealTL, max(KinesisDealData$Time)/1000, "Kinesis", F)
-TLGraph(KinesisDealTL, max(KinesisDealData$Time)/1000, "Kinesis", T)
-DealIrr(KinesisDealTL, max(KinesisDealData$Time)/1000)
 
 
+DealGraphSave <- function(JobName, DealTL, GetTimeData, Modifier, MaxDeal=30000, CumDealDivider=50000,  width=1366, height=768) {
+  png(filename=paste("jobdata/", JobName, "/", JobName, "DealTL", Modifier, ".png", sep=""), width=width, height=height)
+  TLGraph(DealTL, max(GetTimeData$Time)/1000, JobName, F, MaxDeal=MaxDeal)
+  dev.off()
+  
+  png(filename=paste("jobdata/", JobName, "/", JobName, "DealTL_C", Modifier, ".png", sep=""), width=width, height=height)
+  TLGraph(DealTL, max(GetTimeData$Time)/1000, JobName, T, CumDealDivider=CumDealDivider)
+  dev.off()
+}
 
-
-
-
-
-## Toy Job
-set.seed(1)
-ToyJobDeal <- rnorm(66, 6000, 400)
-ToyJobTL <- data.frame(Time=seq(0, 355, 5), 
-                       Deal=c(12500, 12000, 11500, ToyJobDeal[1:33], 12500, 12000, 11500, ToyJobDeal[34:66]))
-TLGraph(ToyJobTL, 360, "ToyJob", F)
-TLGraph(ToyJobTL, 360, "ToyJob", T)
-sum(ToyJobTL$Deal)/6
-
-## Toy Job
-set.seed(1)
-ToyJobDeal <- rnorm(66, 6000, 400)
-ToyJobTL <- data.frame(Time=seq(0, 355, 5), 
-                       Deal=c(10500, 10000, 9500, ToyJobDeal[1:33], 10500, 10000, 9500, ToyJobDeal[34:66]))
-TLGraph(ToyJobTL, 360, "ToyJob", F)
-TLGraph(ToyJobTL, 360, "ToyJob", T)
-sum(ToyJobTL$Deal)/6
-
-
-
+Modifier <- "_L"
+MaxDeal <- 80000 ; CumDealDivider <- 100000
+for(i in 1:nrow(ChrInfo)) {
+  DealGraphSave(JobName=ChrInfo$job[i], 
+                DealTL=get(paste(ChrInfo$job[i], "DealTL", sep="")), 
+                GetTimeData=get(ifelse(sum(ChrInfo$job[i]==c("ArchMageFP", "ArchMageTC", "Bishop"))==1, 
+                                       paste(ChrInfo$job[i], "DealCycle", sep=""), 
+                                       ifelse(ChrInfo$job[i]=="CannonMaster", "CannonShooterDealData", 
+                                              ifelse(ChrInfo$job[i]=="DualBlader", "DualBladeDealData", 
+                                                     paste(ChrInfo$job[i], "DealData", sep=""))))), 
+                Modifier=Modifier, 
+                MaxDeal=MaxDeal, 
+                CumDealDivider=CumDealDivider)
+}
