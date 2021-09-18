@@ -430,6 +430,11 @@ source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Palladin.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/DarkKnight.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/ArchMageFP.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/ArchMageTC.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Bishop.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Bowmaster.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Marksman.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/PathFinder.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/BattleMage.R")
 
 

@@ -172,7 +172,7 @@ colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=BSkill)
-value <- c(max(400, MobDefault$Basic$Guard * (100 + 5 * BowmasterBase$PSkillLv) / 100), 50 + 2 * BowmasterBase$PSkillLv)
+value <- c(min(400, MobDefault$Basic$Guard * (100 + 5 * BowmasterBase$PSkillLv) / 100), 50 + 2 * BowmasterBase$PSkillLv)
 info <- c(1, 9, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
