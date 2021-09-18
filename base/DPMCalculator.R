@@ -426,6 +426,9 @@ if(DPMCalcOption$Optimization == T & DPMCalcOption$OptdataDelete == T & sum(name
 
 
 ## Sourcing and Calculation
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Hero.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Palladin.R")
+source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/DarkKnight.R")
 source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/BattleMage.R")
 
 
