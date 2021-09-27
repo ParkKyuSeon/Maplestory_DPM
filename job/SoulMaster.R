@@ -934,3 +934,9 @@ SoulMasterDealData <- data.frame(SoulMasterDealCycle$Skills, SoulMasterDealCycle
 colnames(SoulMasterDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "SoulMaster", Deal_RR(SoulMasterDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "SoulMaster", Deal_40s(SoulMasterDealData, F, NA, FinishTime=subset(SoulMasterDealData, SoulMasterDealData$Skills=="Restraint4")$Time[1] + 15000))
+
+SoulMasterSpecMean <- SpecMean("SoulMaster", SoulMasterDealCycleReduction, 
+                               DealCalcWithMaxDMR(SoulMasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt, 
+                                                  NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR")), 
+                               ATKFinal, BuffFinal, SummonedFinal, SoulMasterSpecOpt, 
+                               NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))

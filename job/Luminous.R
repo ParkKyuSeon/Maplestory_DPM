@@ -754,3 +754,7 @@ LuminousDealData <- data.frame(LuminousDealCycle$Skills, LuminousDealCycle$Time,
 colnames(LuminousDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Luminous", Deal_RR(LuminousDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Luminous", Deal_40s(LuminousDealData))
+
+LuminousSpecMean <- SpecMean("Luminous", LuminousDealCycleReduction, 
+                             DealCalcWithMaxDMR(LuminousDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, LuminousSpecOpt), 
+                             ATKFinal, BuffFinal, SummonedFinal, LuminousSpecOpt)

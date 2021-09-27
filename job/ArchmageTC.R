@@ -980,7 +980,9 @@ TCAddATKCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Thunder
   }
   DealCycle$FrostEffectStackBDR <- DealCycle$FrostEffectStackCalc * 12
   DealCycle$FrostEffectStackCDMR <- DealCycle$FrostEffectStackCalc * 3
-  DealCycle$FrostEffectStackCalc <- DealCycle$FrostEffectStack
+  for(i in 1:nrow(DealCycle)) {
+    DealCycle$FrostEffectStackCalc[i] <- max(DealCycle$FrostEffectStack[i], DealCycle$FrostEffectStackCalc[i])
+  }
   DealCycle$FrostEffectStack <- 0
   
   ## Overload Mana

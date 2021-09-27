@@ -1875,3 +1875,7 @@ HoyeongDealData <- data.frame(HoyeongDealCycle$Skills, HoyeongDealCycle$Time, Ho
 colnames(HoyeongDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Hoyeong", Deal_RR(HoyeongDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Hoyeong", Deal_40s(HoyeongDealData))
+
+HoyeongSpecMean <- SpecMean("Hoyeong", HoyeongDealCycleReduction, 
+                            DealCalcWithMaxDMR(HoyeongDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt), 
+                            ATKFinal, BuffFinal, SummonedFinal, HoyeongSpecOpt)

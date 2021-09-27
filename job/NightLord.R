@@ -572,3 +572,7 @@ NightLordDealData <- data.frame(NightLordDealCycle$Skills, NightLordDealCycle$Ti
 colnames(NightLordDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "NightLord", Deal_RR(NightLordDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "NightLord", Deal_40s(NightLordDealData))
+
+NightLordSpecMean <- SpecMean("NightLord", NightLordDealCycleReduction, 
+                              DealCalcWithMaxDMR(NightLordDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt), 
+                              ATKFinal, BuffFinal, SummonedFinal, NightLordSpecOpt)

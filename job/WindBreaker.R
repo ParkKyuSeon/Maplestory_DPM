@@ -72,7 +72,7 @@ option <- factor(c("Mastery", "ATK", "FDR", "CDMR", "BDR"), levels=PSkill)
 value <- c(70 + ceiling(WindBreakerBase$PSkillLv/2), 30 + WindBreakerBase$PSkillLv, 25 + ceiling(WindBreakerBase$PSkillLv/3), 20 + floor(WindBreakerBase$PSkillLv/2), 40 + WindBreakerBase$PSkillLv)
 BowExpert <- data.frame(option, value)
 
-option <- factor(c("ATK", "DMR", "IGR", "CRR", "ATKSpeed"), levels=PSkill)
+option <- factor(c("ATK", "BDR", "IGR", "CRR", "ATKSpeed"), levels=PSkill)
 value <- c(50 + WindBreakerBase$SkillLv, 25 + 2 * floor(WindBreakerBase$SkillLv/3), 15 + floor(WindBreakerBase$SkillLv/3), 25 + floor(WindBreakerBase$SkillLv/3), 2)
 AlbatrossMaximum <- data.frame(option, value)
 
@@ -638,3 +638,9 @@ WindBreakerDealData <- data.frame(WindBreakerDealCycle$Skills, WindBreakerDealCy
 colnames(WindBreakerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "WindBreaker", Deal_RR(WindBreakerDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "WindBreaker", Deal_40s(WindBreakerDealData))
+
+WindBreakerSpecMean <- SpecMean("WindBreaker", WindBreakerDealCycleReduction, 
+                                DealCalcWithMaxDMR(WindBreakerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, 
+                                                   NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR")), 
+                                ATKFinal, BuffFinal, SummonedFinal, WindBreakerSpecOpt, 
+                                NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))

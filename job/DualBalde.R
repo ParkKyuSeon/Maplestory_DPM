@@ -667,3 +667,7 @@ DualBladeDealData <- data.frame(DualBladeDealCycle$Skills, DualBladeDealCycle$Ti
 colnames(DualBladeDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "DualBlader", Deal_RR(DualBladeDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "DualBlader", Deal_40s(DualBladeDealData))
+
+DualBladeSpecMean <- SpecMean("DualBlade", DualBladeDealCycleReduction, 
+                              DealCalcWithMaxDMR(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt), 
+                              ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt)

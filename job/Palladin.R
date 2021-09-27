@@ -62,7 +62,7 @@ option <- factor("ATK", levels=PSkill)
 value <- c(20)
 BlessingArmor <- data.frame(option, value)
 
-option <- factor(c("DMR", "ATK"), levels=PSkill)
+option <- factor(c("BDR", "ATK"), levels=PSkill)
 value <- c(25, 60)
 AdvancedCharge <- data.frame(option, value)
 
@@ -614,3 +614,7 @@ PalladinDealData <- data.frame(PalladinDealCycle$Skills, PalladinDealCycle$Time,
 colnames(PalladinDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Palladin", Deal_RR(PalladinDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Palladin", Deal_40s(PalladinDealData))
+
+PalladinSpecMean <- SpecMean("Palladin", PalladinDealCycleReduction, 
+                             DealCalcWithMaxDMR(PalladinDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt), 
+                             ATKFinal, BuffFinal, SummonedFinal, PalladinSpecOpt)

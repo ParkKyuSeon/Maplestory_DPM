@@ -1430,5 +1430,10 @@ set(get(DPMCalcOption$DataName), as.integer(4), "Eunwol", Deal_40s(EunwolDealDat
 EunwolFGORR <- Deal_RR(EunwolDealDataFGO)
 EunwolFGO40s <- Deal_40s(EunwolDealDataFGO)
 
+EunwolSpecMean <- ResetSpecMean("Eunwol", 
+                                list(EunwolDealCycleFGX, EunwolDealCycleFGO), 
+                                list(EunwolFGXDeal, EunwolFGODeal), 
+                                ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, rep(max(EunwolDealCycleFGX$Time), 2), c(0.5136, 0.4864))
+
 print(list(EWMoving=data.frame(MovingDPM=MovingDPM, MovingRR=EunwolMGXRR, Moving40s=EunwolMGX40s, MovingGanpaRR=EunwolMGORR, MovingGanpa40s=EunwolMGO40s),  
            EWFixed=data.frame(FixedGanpaRR=EunwolFGORR, FixedGanpa40s=EunwolFGO40s)))

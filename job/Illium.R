@@ -787,6 +787,10 @@ colnames(IlliumDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Illium", Deal_RR(IlliumDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Illium", Deal_40s(IlliumDealData))
 
+IlliumSpecMean <- SpecMean("Illium", IlliumDealCycleReduction, 
+                           DealCalcWithMaxDMR(IlliumDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt), 
+                           ATKFinal, BuffFinal, SummonedFinal, IlliumSpecOpt)
+
 
 ## Glorywing Ignition 
 DealCycle <- c("Skills", "Time", rownames(IlliumBuff))

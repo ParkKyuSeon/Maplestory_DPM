@@ -744,3 +744,8 @@ MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time,
 colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Mechanic", Deal_RR(MechanicDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Mechanic", Deal_40s(MechanicDealData))
+
+MechanicSpecMean <- ResetSpecMean("Mechanic", 
+                                  list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555), 
+                                  list(MechanicDeal1, MechanicDeal2, MechanicDeal3), 
+                                  ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 3), MechanicDealCycleProbs)

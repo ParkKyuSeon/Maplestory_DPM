@@ -2168,6 +2168,10 @@ colnames(ArkDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Ark", Deal_RR(ArkDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Ark", Deal_40s(ArkDealData))
 
+ArkSpecMean <- SpecMean("Ark", ArkDealCycleReduction, 
+                        DealCalcWithMaxDMR(ArkDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt), 
+                        ATKFinal, BuffFinal, SummonedFinal, ArkSpecOpt)
+
 # chaos : 50, hunger : 71, wound : 77, terror : 12, deviousominousdream : 53, restraint : 3, agony : 9, beast : 6, recall : 3, hate : 44
 # abyss : 57, gust : 86, scarlet : 101, nightmare : 97, deviousnightmare : 54
 

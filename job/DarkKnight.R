@@ -725,6 +725,10 @@ colnames(DarkKnightDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "DarkKnight", Deal_RR(DarkKnightDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "DarkKnight", Deal_40s(DarkKnightDealData, F, NA, FinishTime=subset(DarkKnightDealData, DarkKnightDealData$Skills=="Restraint4")$Time[1] + 15000))
 
+DarkKnightSpecMean <- SpecMean("DarkKnight", DarkKnightDealCycleReduction, 
+                               DealCalcWithMaxDMR(DarkKnightDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt), 
+                               ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt)
+
 
 ## Reincarnation OFF
 DealCycle <- c("Skills", "Time", rownames(DarkKnightBuff))

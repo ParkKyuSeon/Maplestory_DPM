@@ -1773,6 +1773,11 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
   set(get(DPMCalcOption$DataName), as.integer(3), "Evan", Deal_RR(EvanDealData))
   set(get(DPMCalcOption$DataName), as.integer(4), "Evan", Deal_40s(EvanDealData))
   
+  EvanSpecMean <- ResetSpecMean("Evan", 
+                                list(EvanDealCycle, EvanDealCycle_2), 
+                                list(EvanDeal1, EvanDeal2), 
+                                ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, rep(max(EvanDealCycle$Time), 2), c(0.6518, 0.3482))
+  
   
   ## DoE(3) - DB - BoW
   DealCycle <- c("Skills", "Time", rownames(EvanBuff))

@@ -1840,3 +1840,7 @@ KainDealData <- data.frame(KainDealCycle$Skills, KainDealCycle$Time, KainDealCyc
 colnames(KainDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Kain", Deal_RR(KainDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Kain", Deal_40s(KainDealData, F, StartTime=subset(KainDealData, KainDealData$Skills=="ChasingShot")$Time[1]))
+
+KainSpecMean <- SpecMean("Kain", KainDealCycleReduction, 
+                         DealCalcWithMaxDMR(KainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
+                         ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt)

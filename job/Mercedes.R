@@ -803,3 +803,7 @@ MercedesDealData <- data.frame(MercedesDealCycle$Skills, MercedesDealCycle$Time,
 colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Mercedes", Deal_RR(MercedesDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Mercedes", Deal_40s(MercedesDealData))
+
+MercedesSpecMean <- SpecMean("Mercedes", MercedesDealCycleReduction, 
+                             DealCalcWithMaxDMR(MercedesDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt), 
+                             ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt)

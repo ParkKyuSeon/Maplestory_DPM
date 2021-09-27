@@ -690,3 +690,9 @@ MikhailDealData <- data.frame(MikhailDealCycle$Skills, MikhailDealCycle$Time, Mi
 colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Mikhail", Deal_RR(MikhailDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Mikhail", Deal_40s(MikhailDealData))
+
+MikhailSpecMean <- SpecMean("Mikhail", MikhailDealCycleReduction, 
+                            DealCalcWithMaxDMR(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, 
+                                               NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR")), 
+                            ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, 
+                            NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))

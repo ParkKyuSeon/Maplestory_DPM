@@ -106,7 +106,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PanicBuff <- rbind(data.frame(option, value), info)
 
-option <- factor("DMR", levels=BSkill)
+option <- factor("BDR", levels=BSkill)
 value <- c(25 + ceiling(HeroBase$SkillLv/2))
 info <- c(30, 31, 0, F, NA, NA, F)
 info <- data.frame(BInfo, info)

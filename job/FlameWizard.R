@@ -1041,3 +1041,9 @@ FlameWizardDealData <- data.frame(FlameWizardDealCycle$Skills, FlameWizardDealCy
 colnames(FlameWizardDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "FlameWizard", Deal_RR(FlameWizardDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "FlameWizard", Deal_40s(FlameWizardDealData, F, StartTime=subset(FlameWizardDealData, FlameWizardDealData$Skills=="BlazingOrbitalFlameStart")$Time[1]))
+
+FlameWizardSpecMean <- SpecMean("FlameWizard", FlameWizardDealCycleReduction, 
+                                DealCalcWithMaxDMR(FlameWizardDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, FlameWizardSpecOpt, 
+                                                   NotBuffCols=c("BlessofCygnusBDR", "SalamanderMischiefStack"), NotBuffColOption=c("BDR", "FDR")), 
+                                ATKFinal, BuffFinal, SummonedFinal, FlameWizardSpecOpt, 
+                                NotBuffCols=c("BlessofCygnusBDR", "SalamanderMischiefStack"), NotBuffColOption=c("BDR", "FDR"))

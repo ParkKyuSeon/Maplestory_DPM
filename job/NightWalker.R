@@ -877,6 +877,12 @@ colnames(NightWalkerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "NightWalker", Deal_RR(NightWalkerDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "NightWalker", Deal_40s(NightWalkerDealData))
 
+NightWalkerSpecMean <- SpecMean("NightWalker", NightWalkerDealCycleReduction, 
+                                DealCalcWithMaxDMR(NightWalkerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt, 
+                                                   NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR")), 
+                                ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt, 
+                                NotBuffCols=c("BlessofCygnusBDR"), NotBuffColOption=c("BDR"))
+
 
 ## Jumpshot Rate (75%)
 DealCycle <- c("Skills", "Time", rownames(NightWalkerBuff))

@@ -1393,3 +1393,9 @@ KinesisDealData <- data.frame(KinesisDealCycle$Skills, KinesisDealCycle$Time, Ki
 colnames(KinesisDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Kinesis", Deal_RR(KinesisDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Kinesis", Deal_40s(KinesisDealData))
+
+KinesisSpecMean <- SpecMean("Kinesis", KinesisDealCycleReduction, 
+                            DealCalcWithMaxDMR(KinesisDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt, 
+                                               NotBuffCols=c("LawofGravityFDR"), NotBuffColOption=c("FDR")), 
+                            ATKFinal, BuffFinal, SummonedFinal, KinesisSpecOpt, 
+                            NotBuffCols=c("LawofGravityFDR"), NotBuffColOption=c("FDR"))

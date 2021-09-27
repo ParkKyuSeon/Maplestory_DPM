@@ -1354,6 +1354,10 @@ colnames(WildHunterDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "WildHunter", Deal_RR(WildHunterDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "WildHunter", Deal_40s(WildHunterDealData))
 
+WildHunterSpecMean <- SpecMean("WildHunter", WildHunterDealCycleReduction, 
+                               DealCalcWithMaxDMR(WildHunterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt), 
+                               ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt)
+
 
 ## Jaguar Storm 2 Hits
 DealCycle <- c("Skills", "Time", rownames(WildHunterBuff))

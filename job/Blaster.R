@@ -826,6 +826,12 @@ colnames(BlasterDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Blaster", Deal_RR(BlasterDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Blaster", Deal_40s(BlasterDealData))
 
+BlasterSpecMean <- SpecMean("Blaster", BlasterDealCycleReduction, 
+                            DealCalcWithMaxDMR(BlasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, 
+                                               NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR")), 
+                            ATKFinal, BuffFinal, SummonedFinal, BlasterSpecOpt, 
+                            NotBuffCols=c("CylinderGauge"), NotBuffColOption=c("FDR"))
+
 
 ## Mag - Fang 540ms
 DealCycle <- c("Skills", "Time", rownames(BlasterBuff))

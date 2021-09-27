@@ -1574,3 +1574,9 @@ ZeroDealData <- data.frame(ZeroDealCycle$Skills, ZeroDealCycle$Time, ZeroDealCyc
 colnames(ZeroDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Zero", Deal_RR(ZeroDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Zero", Deal_40s(ZeroDealData))
+
+ZeroSpecMean <- SpecMean("Zero", ZeroDealCycleReduction, 
+                         DealCalcWithMaxDMR(ZeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, 
+                                            NotBuffCols=c("BetaTargetBDR"), NotBuffColOption=c("BDR")), 
+                         ATKFinal, BuffFinal, SummonedFinal, ZeroSpecOpt, 
+                         NotBuffCols=c("BetaTargetBDR"), NotBuffColOption=c("BDR"))

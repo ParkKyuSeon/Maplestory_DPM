@@ -735,6 +735,10 @@ colnames(CadenaDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Cadena", Deal_RR(CadenaDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Cadena", Deal_40s(CadenaDealData))
 
+CadenaSpecMean <- SpecMean("Cadena", CadenaDealCycleReduction, 
+                           DealCalcWithMaxDMR(CadenaDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt), 
+                           ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt)
+
 
 ## Cadena Without Cool Reset Ability
 CadenaSpecOptBDRAB <- CadenaSpecOpt

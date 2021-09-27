@@ -1125,6 +1125,12 @@ colnames(DemonAvengerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "DemonAvenger", Deal_RR(DemonAvengerDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "DemonAvenger", Deal_40s(DemonAvengerDealData))
 
+DemonAvengerSpecMean <- SpecMean("DemonAvenger", DemonAvengerDealCycleReduction, 
+                                 DealCalcWithMaxDMR(DemonAvengerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
+                                                    NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR")), 
+                                 ATKFinal, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
+                                 NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
+
 
 ## Demon Frenzy - 2 Stacks
 DealCycle <- c("Skills", "Time", rownames(DemonAvengerBuff))

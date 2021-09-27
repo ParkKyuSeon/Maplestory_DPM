@@ -789,3 +789,8 @@ PhantomDealData <- data.frame(PhantomDealCycle$Skills, PhantomDealCycle$Time, Ph
 colnames(PhantomDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Phantom", Deal_RR(PhantomDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Phantom", Deal_40s(PhantomDealData))
+
+PhantomSpecMean <- ResetSpecMean("Phantom", 
+                                  list(PhantomDealCycle, PhantomDealCycle2), 
+                                  list(PhantomDeal1, PhantomDeal2), 
+                                  ATKFinal, BuffFinal, SummonedFinal, PhantomSpecOpt, rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))

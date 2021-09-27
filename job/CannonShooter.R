@@ -1020,6 +1020,11 @@ colnames(CannonShooterDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "CannonMaster", Deal_RR(CannonShooterDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "CannonMaster", Deal_40s(CannonShooterDealData))
 
+CannonShooterSpecMean <- ResetSpecMean("CannonShooter", 
+                                       CannonShooterDealCycles, 
+                                       CannonShooterDealDatas, 
+                                       ATKFinal, BuffFinal, SummonedFinal, CannonShooterSpecOpt, rep(max(CannonShooterDealCycle$Time), 9), CannonShooterCycleProbs)
+
 
 ## Cocoball 5 Hits
 BuffFinalFlag <- BuffFinal

@@ -1264,6 +1264,10 @@ colnames(DemonSlayerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "DemonSlayer", Deal_RR(DemonSlayerDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "DemonSlayer", Deal_40s(DemonSlayerDealData))
 
+DemonSlayerSpecMean <- SpecMean("DemonSlayer", DemonSlayerDealCycleReduction, 
+                                DealCalcWithMaxDMR(DemonSlayerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt), 
+                                ATKFinal, BuffFinal, SummonedFinal, DemonSlayerSpecOpt)
+
 
 ## DemonSlayer - Demon Slash Not Used When Demon Awakening is off
 DealCycle <- c("Skills", "Time", rownames(DemonSlayerBuff))

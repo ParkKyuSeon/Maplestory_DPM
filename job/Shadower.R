@@ -968,3 +968,7 @@ ShadowerDealData <- data.frame(ShadowerDealCycle$Skills, ShadowerDealCycle$Time,
 colnames(ShadowerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Shadower", Deal_RR(ShadowerDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Shadower", Deal_40s(ShadowerDealData))
+
+ShadowerSpecMean <- SpecMean("Shadower", ShadowerDealCycleReduction, 
+                             DealCalcWithMaxDMR(ShadowerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt), 
+                             ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt)

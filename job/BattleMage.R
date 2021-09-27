@@ -950,3 +950,7 @@ BattleMageDealData <- data.frame(BattleMageDealCycle$Skills, BattleMageDealCycle
 colnames(BattleMageDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "BattleMage", Deal_RR(BattleMageDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "BattleMage", Deal_40s(BattleMageDealData))
+
+BattleMageSpecMean <- SpecMean("BattleMage", BattleMageDealCycleReduction, 
+                               DealCalcWithMaxDMR(BattleMageDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt), 
+                               ATKFinal, BuffFinal, SummonedFinal, BattleMageSpecOpt)

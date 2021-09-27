@@ -982,3 +982,7 @@ PathFinder60msRR <- Deal_RR(PathFinderDealData60ms)
 PathFinder60ms40s <- Deal_40s(PathFinderDealData60ms, F, StartTime=subset(PathFinderDealData60ms, PathFinderDealData60ms$Skills=="RelicUnboundDischargeStart")$Time[1])
 
 print(data.frame(PathFinder60msDPM=PathFinder60msDPM, PathFinder60msRR=PathFinder60msRR, PathFinder60ms40s=PathFinder60ms40s))
+
+PathFinderSpecMean <- SpecMean("PathFinder", PathFinderDealCycleReduction, 
+                               DealCalcWithMaxDMR(PathFinderDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt), 
+                               ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt)

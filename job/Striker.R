@@ -882,3 +882,9 @@ StrikerDealData <- data.frame(StrikerDealCycle$Skills, StrikerDealCycle$Time, St
 colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Striker", Deal_RR(StrikerDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Striker", Deal_40s(StrikerDealData))
+
+StrikerSpecMean <- SpecMean("Striker", StrikerDealCycleReduction, 
+                            DealCalcWithMaxDMR(StrikerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, 
+                                               NotBuffCols=c("LightningStack", "BlessofCygnusBDR"), NotBuffColOption=c("IGR", "BDR")), 
+                            ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, 
+                            NotBuffCols=c("LightningStack", "BlessofCygnusBDR"), NotBuffColOption=c("IGR", "BDR"))

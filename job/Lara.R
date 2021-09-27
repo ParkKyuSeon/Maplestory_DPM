@@ -1684,3 +1684,7 @@ LaraDealData <- data.frame(LaraDealCycle$Skills, LaraDealCycle$Time, LaraDealCyc
 colnames(LaraDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Lara", Deal_RR(LaraDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Lara", Deal_40s(LaraDealData))
+
+LaraSpecMean <- SpecMean("Lara", LaraDealCycleReduction, 
+                         DealCalcWithMaxDMR(LaraDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, LaraSpecOpt), 
+                         ATKFinal, BuffFinal, SummonedFinal, LaraSpecOpt)

@@ -749,3 +749,7 @@ BowmasterDealData <- data.frame(BowmasterDealCycle$Skills, BowmasterDealCycle$Ti
 colnames(BowmasterDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Bowmaster", Deal_RR(BowmasterDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Bowmaster", Deal_40s(BowmasterDealData))
+
+BowmasterSpecMean <- SpecMean("Bowmaster", BowmasterDealCycleReduction, 
+                              DealCalcWithMaxDMR(BowmasterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt), 
+                              ATKFinal, BuffFinal, SummonedFinal, BowmasterSpecOpt)

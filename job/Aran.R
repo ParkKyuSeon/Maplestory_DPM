@@ -892,3 +892,7 @@ AranDealData <- data.frame(AranDealCycle$Skills, AranDealCycle$Time, AranDealCyc
 colnames(AranDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Aran", Deal_RR(AranDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Aran", Deal_40s(AranDealData))
+
+AranSpecMean <- SpecMean("Aran", AranDealCycleReduction, 
+                         DealCalcWithMaxDMR(AranDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt), 
+                         ATKFinal, BuffFinal, SummonedFinal, AranSpecOpt)

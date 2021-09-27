@@ -484,6 +484,10 @@ colnames(MarksmanDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Marksman", Deal_RR(MarksmanDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Marksman", Deal_40s(MarksmanDealData))
 
+MarksmanSpecMean <- SpecMean("Marksman", MarksmanDealCycleReduction, 
+                             DealCalcWithMaxDMR(MarksmanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt), 
+                             ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt)
+
 
 ## Distance 0
 Distance <- 100
