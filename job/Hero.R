@@ -583,3 +583,9 @@ HeroDealData <- data.frame(HeroDealCycle$Skills, HeroDealCycle$Time, HeroDealCyc
 colnames(HeroDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Hero", Deal_RR(HeroDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Hero", Deal_40s(HeroDealData, F, StartTime=subset(HeroDealData, HeroDealData$Skills=="SwordIllusionStart")$Time[1]))
+
+HeroSpecMean <- SpecMean("Hero", HeroDealCycleReduction, 
+                         DealCalcWithMaxDMR(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, 
+                                            NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK")), 
+                         ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, 
+                         NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK"))

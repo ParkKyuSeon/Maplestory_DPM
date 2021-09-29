@@ -1558,3 +1558,8 @@ KaiserDealData <- data.frame(KaiserDealCycle0$Skills, KaiserDealCycle0$Time, Kai
 colnames(KaiserDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Kaiser", Deal_RR(KaiserDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Kaiser", Deal_40s(KaiserDealData))
+
+KaiserSpecMean <- ResetSpecMean("Kaiser", 
+                                KaiserDealCycles, 
+                                KaiserDealDatas, 
+                                ATKFinal, BuffFinal, SummonedFinal, KaiserSpecOpt, KaiserDealCycleTimes, KaiserDealCycleProbs)

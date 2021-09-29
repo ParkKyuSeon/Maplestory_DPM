@@ -1044,6 +1044,11 @@ AngelicBusterDealData <- data.frame(AngelicBusterDealCycle00$Skills, AngelicBust
 colnames(AngelicBusterDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(4), "AngelicBuster", Deal_40s(AngelicBusterDealData, F, StartTime=subset(AngelicBusterDealData, AngelicBusterDealData$Skills=="FinituraFettuccia")$Time[1]))
 
+AngelicBusterSpecMean <- ResetSpecMean("AngelicBuster", 
+                                       AngelicBusterDealCycles, 
+                                       AngelicBusterDealDatas, 
+                                       ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterDealCycleTimes, AngelicBusterDealCycleProbs)
+
 
 ## SpotLight 2 Hits
 for(i in 0:2) {

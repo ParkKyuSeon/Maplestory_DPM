@@ -1298,6 +1298,10 @@ colnames(XenonDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Xenon", Deal_RR(XenonDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Xenon", Deal_40s(XenonDealData, F, StartTime=subset(XenonDealData, XenonDealData$Skills=="HologramGrafityFusionBuff")$Time[1]))
 
+XenonSpecMean <- XenonSpecMean("Xenon", XenonDealCycleReduction, 
+                               DealCalcWithMaxDMR(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt), 
+                               ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt)
+
 
 ## Potential - AllStat 9%
 XenonSpecOpt_2 <- OptDataAdd(XenonSpec2, XenonSpecOpt1, "Potential", XenonBase$CRROver, DemonAvenger=F)

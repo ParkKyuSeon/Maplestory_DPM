@@ -977,3 +977,8 @@ CaptainDealData <- data.frame(CaptainDealCycle$Skills, CaptainDealCycle$Time, Ca
 colnames(CaptainDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Captain", Deal_RR(CaptainDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Captain", Deal_40s(CaptainDealData))
+
+CaptainSpecMean <- ResetSpecMean("Captain", 
+                                 list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
+                                 list(CaptainDeal1, CaptainDeal2, CaptainDeal3), 
+                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)

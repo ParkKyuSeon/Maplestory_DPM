@@ -3673,6 +3673,133 @@ XenonOptimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkill
   print(lvs)
   return(SpecInc)
 }
+XenonSpecMean <- function(JobName, DealCycle, DealData, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores=(detectCores(logical=F)-1)) {
+  ## Act Skills and Summoned Skills Collapse
+  ATKSkills <- c(rownames(ATKSkillsList), rownames(SummonedSkillsList))
+  ATKSkillsList <- rbind(ATKSkillsList, SummonedSkillsList[, c(-16, -18)])
+  ATKSkillsList <- subset(ATKSkillsList, ATKSkillsList$Damage > 0)
+  
+  BuffSkills <- rownames(BuffList)
+  BuffOpList <- colnames(BuffList)
+  SpecList <- colnames(Specs)
+  
+  BuffList <- data.frame(BuffList)
+  BuffList$BuffOpRatio <- ifelse(is.na(BuffList$CoolTime)==T, 1, BuffList$Duration / BuffList$CoolTime)
+  NonATimeBuff <- subset(BuffList, BuffList$BuffOpRatio<1)
+  
+  t <- c()
+  ind <- c()
+  p <- c()
+  for(i in 1:length(SpecList)) {
+    ind[i] <- 0
+    p[i] <- 1
+    t[i] <- 1
+    while(ind[i]==0) {
+      t[i] <- ifelse(SpecList[i]==BuffOpList[p[i]], t[i], t[i] + 1)
+      ind[i] <- ifelse(SpecList[i]==BuffOpList[p[i]] | p[i] >= length(BuffOpList), 1, 0)
+      p[i] <- p[i] + 1
+    }
+  }
+  
+  for(i in 1:length(SpecList)) {
+    t[i] <- ifelse(t[i] > length(BuffOpList), NA, t[i])
+  }
+  
+  k <- rownames(NonATimeBuff)
+  b <- c()
+  for(i in 1:(ncol(DealCycle)-2)) {
+    b[i] <- max(k==colnames(DealCycle)[i+2])
+  }
+  c <- data.frame(c(1:length(b)), b)
+  c <- subset(c, c$b==1)[, 1] + 2
+  
+  ## Deal Calculation
+  Deal <- c()
+  SpecCalcEach <- function(i) {
+    BuffInd <- DealCycle[i, c] > 0
+    
+    d <- NonATimeBuff[BuffInd, ]
+    if(nrow(d) > 0) {
+      BuffEach <- c()
+      for(j in 1:ncol(d)) {
+        if(colnames(d)[j]=="IGR") {
+          BuffEach[j] <- IGRCalc(d[, j])
+        } else if(colnames(d)[j]=="FDR") {
+          BuffEach[j] <- FDRCalc(d[, j])
+        } else if(colnames(d)[j]=="Disorder") {
+          BuffEach[j] <- max(d[, j])
+        } else if(colnames(d)[j]=="LvDiffIgnore") {
+          BuffEach[j] <- max(d[, j])
+        } else {
+          BuffEach[j] <- sum(d[, j])
+        }
+      }
+      BuffEach <- data.frame(t(BuffEach))
+      colnames(BuffEach) <- colnames(d)
+    } else {
+      BuffEach <- data.frame(t(rep(0, ncol(d))))
+      colnames(BuffEach) <- colnames(d)
+    }
+    SpecEach <- c()
+    for(j in 1:ncol(Specs)) {
+      if(is.na(t[j]==T)) {
+        SpecEach[j] <- Specs[1, j]
+      } else if(colnames(Specs)[j]=="IGR") {
+        SpecEach[j] <- IGRCalc(c(Specs[1, j], BuffEach[1, t[j]]))
+      } else if(colnames(Specs)[j]=="FDR") {
+        SpecEach[j] <- FDRCalc(c(Specs[1, j], BuffEach[1, t[j]]))
+      } else if(colnames(Specs)[j]=="Disorder" | colnames(Specs)[j]=="LvDiffIgnore") {
+        SpecEach[j] <- max(c(Specs[1, j], BuffEach[1, t[j]]))
+      } else {
+        SpecEach[j] <- Specs[1, j] + BuffEach[1, t[j]]
+      }
+    }
+    SpecEach <- data.frame(t(SpecEach))
+    colnames(SpecEach) <- colnames(Specs)
+    
+    SkillInd <- DealCycle[i, 1]==rownames(ATKSkillsList)
+    Skills <- ATKSkillsList[SkillInd, ]
+    if(nrow(Skills) == 0) {
+      SpecEach <- SpecEach * 0
+    } else {
+      Weight <- DealData[i] / sum(DealData)
+      SpecEach$MainStat <- SpecEach$MainStat + SpecEach$SubStat1 + SpecEach$SubStat2 + 
+        floor(Specs$MainStatWithoutStatP * DealCycle$SurplusSupplyStack[i] / 100) + 
+        floor(Specs$SubStat1WithoutStatP * DealCycle$SurplusSupplyStack[i] / 100) + 
+        floor(Specs$SubStat2WithoutStatP * DealCycle$SurplusSupplyStack[i] / 100)
+      SpecEach$SubStat1 <- 0
+      SpecEach$SubStat2 <- 0
+      SpecEach$ATK <- SpecEach$ATK + Skills$ATK
+      SpecEach$ATKP <- SpecEach$ATKP + Skills$ATKP
+      SpecEach$IGR <- IGRCalc(c(SpecEach$IGR, Skills$IGR))
+      SpecEach$BDR <- SpecEach$BDR + Skills$BDR
+      SpecEach$CRR <- min(SpecEach$CRR + Skills$CRR, 100)
+      SpecEach$CDMR <- SpecEach$CDMR + Skills$CDMR
+      SpecEach$FDR <- FDRCalc(c(SpecEach$FDR, Skills$FDR))
+      SpecEach$ImmuneIgnore <- SpecEach$ImmuneIgnore + Skills$ImmuneIgnore
+      SpecEach <- SpecEach * Weight
+    }
+    return(SpecEach)
+  }
+  SpecEach <- mcmapply(SpecCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+  SpecEach <- as.data.frame(SpecEach)
+  for(i in 1:ncol(SpecEach)) {
+    SpecEach[, i] <- unlist(SpecEach[, i])
+  }
+  SpecEach <- t(SpecEach)
+  SpecEach <- data.frame(t(data.frame(colSums(SpecEach))))
+  if(is.null(SpecEach$SubStat2)==T) {
+    SpecEach$SubStat2 <- 0
+  }
+  printSpecList <- c("MainStat", "SubStat1", "SubStat2", "ATK", "ATKP", "IGR", "BDR", "CRR", "CDMR", "FDR", "Mastery", "ImmuneIgnore")
+  MeanSpec <- data.frame(MainStat=SpecEach$MainStat)
+  for(i in 2:length(printSpecList)) {
+    MeanSpec <- cbind(MeanSpec, data.frame(subset(t(SpecEach), colnames(SpecEach)==printSpecList[i])))
+    colnames(MeanSpec)[i] <- printSpecList[i]
+  }
+  rownames(MeanSpec) <- paste(JobName, "MeanSpec", sep="")
+  return(MeanSpec)
+}
 
 ## DemonAvenger Functions
 DemonAvengerOptimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0, Cores=(detectCores(logical=F)-1), 

@@ -1077,3 +1077,8 @@ ViperDealData <- data.frame(ViperDealCycle5$Skills, ViperDealCycle5$Time, ViperD
 colnames(ViperDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Viper", Deal_RR(ViperDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Viper", Deal_40s(ViperDealData))
+
+ViperSpecMean <- ResetSpecMean("Viper", 
+                               list(ViperDealCycle5, ViperDealCycle55, ViperDealCycle57, ViperDealCycle555, ViperDealCycle557, ViperDealCycle577), 
+                               ViperDealDatas, 
+                               ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 6), ViperDealCycleProbs)
