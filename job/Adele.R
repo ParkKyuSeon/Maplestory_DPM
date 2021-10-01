@@ -756,8 +756,8 @@ colnames(AdeleDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Adele", Deal_RR(AdeleDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Adele", Deal_40s(AdeleDealData, F, StartTime=subset(AdeleDealData, AdeleDealData$Skills=="InfiniteBuff")$Time[1]))
 
-AdeleSpecMean <- SpecMean("Adele", AdeleDealCycleReduction, 
-                          DealCalcWithMaxDMR(AdeleDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt), 
+AdeleSpecMean <- SpecMean("Adele", AdeleDealCycleTriggerReduction, 
+                          DealCalcWithMaxDMR(AdeleDealCycleTriggerReduction, ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt), 
                           ATKFinal, BuffFinal, SummonedFinal, AdeleSpecOpt)
 
 

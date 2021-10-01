@@ -972,7 +972,6 @@ for(i in 0:2) {
     ABDealCycle <- OverDriveExhaustBuff(ABDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
     
     assign(paste("AngelicBusterDealCycle", i, j, sep=""), ABDealCycle)
-    assign(paste("AngelicBusterDealCycleReduction", i, j, sep=""), ABDealCycleReduction)
     print(paste("i=", i, " done, j=", j, " done", sep=""))
   }
 }

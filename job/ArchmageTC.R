@@ -74,7 +74,7 @@ value <- c(30 + 3 * ArchMageTCBase$PSkillLv, 50 + 5 * ArchMageTCBase$PSkillLv)
 MasterMagic <- data.frame(option, value)
 
 option <- factor(c("IGR", "BDR"), levels=PSkill)
-value <- c(20 + ceiling(ArchmageTCBase$SkillLv/2), 40)
+value <- c(20 + ceiling(ArchMageTCBase$SkillLv/2), 40)
 ArcaneAim <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)

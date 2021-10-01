@@ -1121,7 +1121,7 @@ Cocoball5HitsDealCycles <- list(Cocoball5Hits_5Others, Cocoball5Hits_5Lightning,
                                 Cocoball5Hits_555Others, Cocoball5Hits_555Lightning, Cocoball5Hits_555Ice)
 Cocoball5HitsDPM <- ResetDealCalcWithMaxDMR(DealCycles=Cocoball5HitsDealCycles, 
                                            ATKFinal, BuffFinalFlag, SummonedFinal, CannonShooterSpecOpt, rep(max(CannonShooterDealCycle$Time), 9), CannonShooterCycleProbs)
-Cocoball5HitsDPM <- sum(na.omit(Cocoball5HitsDPM)) / (max(CannonShooterFinalCycle$Time)/ 60000)
+Cocoball5HitsDPM <- sum(na.omit(Cocoball5HitsDPM)) / (max(CannonShooter_5Others$Time)/ 60000)
 
 Cocoball5HitsDealData <- data.frame(Cocoball5Hits_5Others$Skills, Cocoball5Hits_5Others$Time, Cocoball5Hits_5Others$Restraint4, 
                                     DealCalcWithMaxDMR(Cocoball5Hits_5Others, ATKFinal, BuffFinalFlag, SummonedFinal, CannonShooterSpecOpt))
@@ -1224,7 +1224,7 @@ Cocoball40HitsDealCycles <- list(Cocoball40Hits_5Others, Cocoball40Hits_5Lightni
                                  Cocoball40Hits_555Others, Cocoball40Hits_555Lightning, Cocoball40Hits_555Ice)
 Cocoball40HitsDPM <- ResetDealCalcWithMaxDMR(DealCycles=Cocoball40HitsDealCycles, 
                                              ATKFinal, BuffFinal, SummonedFinal, CannonShooterSpecOpt, rep(max(CannonShooterDealCycle$Time), 9), CannonShooterCycleProbs)
-Cocoball40HitsDPM <- sum(na.omit(Cocoball40HitsDPM)) / (max(CannonShooterFinalCycle$Time)/ 60000)
+Cocoball40HitsDPM <- sum(na.omit(Cocoball40HitsDPM)) / (max(CannonShooter_5Others$Time)/ 60000)
 
 Cocoball40HitsDealData <- data.frame(Cocoball40Hits_5Others$Skills, Cocoball40Hits_5Others$Time, Cocoball40Hits_5Others$Restraint4, 
                                      DealCalcWithMaxDMR(Cocoball40Hits_5Others, ATKFinal, BuffFinal, SummonedFinal, CannonShooterSpecOpt))

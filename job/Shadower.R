@@ -790,7 +790,7 @@ ShadowerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) 
       for(j in 1:length(MYTime)) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- "Myeolgwichamyeongjin"
-        DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + WhirlWindTime[j]
+        DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[i] + MYTime[j]
       }
     }
   }

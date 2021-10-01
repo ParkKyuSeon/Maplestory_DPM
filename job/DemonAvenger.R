@@ -291,6 +291,18 @@ DemonAvengerCoolReduceType <- DemonAvengerSpec$CoolReduceType
 DemonAvengerSpec <- DemonAvengerSpec$Spec
 
 
+## DemonAvenger - Spider In Mirror
+SIM <- SIMData(GetCoreLv(DemonAvengerCore, "SpiderInMirror"))
+SpiderInMirror <- SIM$SpiderInMirror
+SpiderInMirrorStart <- SIM$SpiderInMirrorStart
+SpiderInMirror1 <- SIM$SpiderInMirror1
+SpiderInMirror2 <- SIM$SpiderInMirror2
+SpiderInMirror3 <- SIM$SpiderInMirror3
+SpiderInMirror4 <- SIM$SpiderInMirror4
+SpiderInMirror5 <- SIM$SpiderInMirror5
+SpiderInMirrorWait <- SIM$SpiderInMirrorWait
+
+
 ## DemonAvenger - Attacks
 ## Hyper : Exceed - Reinforce / Exceed - Reduce Overload / Exceed - Bonus Chance / Shield Chasing - Reinforce / Shield Chasing - Extra Target
 {option <- factor(levels=ASkill)

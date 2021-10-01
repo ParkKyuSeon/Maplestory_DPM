@@ -61,7 +61,7 @@ value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
 option <- factor(c("BDR"), levels=PSkill)
-value <- c(5 * PartyMembers)
+value <- c(5 * General$General$PartyMembers)
 SoulLink <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)

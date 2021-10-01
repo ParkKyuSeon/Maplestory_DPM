@@ -547,8 +547,8 @@ colnames(info) <- c("option", "value")
 AbyssSpellInfinitySpell <- rbind(data.frame(option, value), info)}
 
 ArkATK <- Attack(list(PlainChargeDrive=PlainChargeDrive, ScarletChargeDrive=ScarletChargeDrive, GustChargeDrive=GustChargeDrive, AbyssChargeDrive1=AbyssChargeDrive1, AbyssChargeDrive2=AbyssChargeDrive2, 
-                      PlainSpell=PlaneSpell, ScarletSpell=ScarletSpell, GustSpell=GustSpell, AbyssSpell=AbyssSpell, 
-                      PlainSpellInfinitySpell=PlaneSpellInfinitySpell, ScarletSpellInfinitySpell=ScarletSpellInfinitySpell, 
+                      PlainSpell=PlainSpell, ScarletSpell=ScarletSpell, GustSpell=GustSpell, AbyssSpell=AbyssSpell, 
+                      PlainSpellInfinitySpell=PlainSpellInfinitySpell, ScarletSpellInfinitySpell=ScarletSpellInfinitySpell, 
                       GustSpellInfinitySpell=GustSpellInfinitySpell, AbyssSpellInfinitySpell=AbyssSpellInfinitySpell,
                       EndlessNightmare=EndlessNightmare, EndlessOminousDream=EndlessOminousDream, 
                       GrievousWound=GrievousWound, InsatiableHunger=InsatiableHunger, UnbridledChaos=UnbridledChaos, 
