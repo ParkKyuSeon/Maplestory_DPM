@@ -596,22 +596,22 @@ LuminousVPrior$N2 <- c("LightReflection-Apocalypse-AbsoluteKill", "LightReflecti
 
 ## Mercedes
 MercedesVPassive <- list()
-MercedesVPassive$N4 <- data.frame(Skills=c("RingofIshtar", "AdvancedStrikeDualShot_AdvancedFinalAttack", "LeafTornado", "ElementalKnight", "WrathofEnlil", "UnicornSpike"), 
+MercedesVPassive$N4 <- data.frame(Skills=c("RingofIshtar", "AdvancedStrikeDualShot_AdvancedFinalAttack", "LeafTornado_GustDive", "ElementalKnight", "WrathofEnlil", "UnicornSpike"), 
                                   Lv=c(50, 50, 50, 50, 50, 50), 
                                   stringsAsFactors=F)
-MercedesVPassive$N5 <- data.frame(Skills=c("RingofIshtar", "AdvancedStrikeDualShot_AdvancedFinalAttack", "LeafTornado", "ElementalKnight", "WrathofEnlil", "UnicornSpike", "LegendrySpear", "LightningEdge"), 
+MercedesVPassive$N5 <- data.frame(Skills=c("RingofIshtar", "AdvancedStrikeDualShot_AdvancedFinalAttack", "LeafTornado_GustDive", "ElementalKnight", "WrathofEnlil", "UnicornSpike", "LegendrySpear", "RollingMoonsault"), 
                                   Lv=c(50, 50, 50, 50, 50, 50, 50, 25), 
                                   stringsAsFactors=F)
 MercedesVPrior <- list()
 MercedesVPrior$N4 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", "RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", 
                        "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
-                       "LeafTornado-ElementalKnight-UnicornSpike", "LeafTornado-ElementalKnight-UnicornSpike", 
+                       "LeafTornado_GustDive-ElementalKnight-UnicornSpike", "LeafTornado_GustDive-ElementalKnight-UnicornSpike", 
                        "Blink", "SpiderInMirror", "RopeConnect", "FreudBlessing")
 MercedesVPrior$N5 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", "RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", 
                        "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
-                       "LegendrySpear-ElementalKnight-UnicornSpike", "LeafTornado-ElementalKnight-UnicornSpike", 
+                       "LegendrySpear-ElementalKnight-UnicornSpike", "LeafTornado_GustDive-ElementalKnight-UnicornSpike", 
                        "Blink", "SpiderInMirror", 
-                       "LegendrySpear-LeafTornado-LightningEdge", 
+                       "LegendrySpear-LeafTornado_GustDive-RollingMoonsault", 
                        "RopeConnect", "FreudBlessing")
 
 ## Phantom

@@ -20,6 +20,7 @@ CSVExportOption <- data.frame(Leakage = F,
                               FileName = "DPM12353_L",
                               
                               stringsAsFactors=F)
+JobOption <- data.frame()
 
 
 ## DPM Data Frame Make
