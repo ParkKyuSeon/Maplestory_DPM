@@ -2284,7 +2284,7 @@ AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, Destructio
   colnames(DC1) <- colnames(DealCycle)
   time <- DestructionCoolTime * 1000 + 1
   for(i in 2:nrow(DealCycle)-1) {
-    if(time > (DestructionCoolTime * 1000) & DealCycle$Skills[i]=="Javelin") {
+    if(time > (DestructionCoolTime * 1000) & sum(DealCycle$Skills[i]==c("Javelin", "Longinus"))==1) {
       DC1 <- rbind(DC1, DealCycle[i, ])
       DC1[nrow(DC1), 1] <- c("Destruction")
       time <- DealCycle[i+1, 2] - DealCycle[i, 2]
@@ -2347,7 +2347,7 @@ AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, Destructio
     
     time <- 4001
     while(p < Ind[i+1] & DealCycle$SoulofCrystal1[p] > 0) {
-      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Javelin"))==1) {
+      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Javelin", "Longinus"))==1) {
         DC <- rbind(DC, DealCycle[p, ])
         DC[nrow(DC), 1] <- c("DestructionSoul")
         time <- DealCycle[p+1, 2] - DealCycle[p, 2]
@@ -2375,7 +2375,7 @@ AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, Destructio
     
     time <- 4001
     while(p < Ind[i+1] & DealCycle$SoulofCrystal2[p] > 0) {
-      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Javelin"))==1) {
+      if(time > SoulofCrystalReactionCoolTime * 1000 & max(DealCycle$Skills[p]==c("Javelin", "Longinus"))==1) {
         DC <- rbind(DC, DealCycle[p, ])
         DC[nrow(DC), 1] <- c("DestructionSoul")
         time <- DealCycle[p+1, 2] - DealCycle[p, 2]
@@ -2490,7 +2490,7 @@ AddATKCycleIllium <- function(DealCycle, CrystalGateActivationSkills, Destructio
   
   ## CurseMark
   for(i in 1:nrow(DealCycle)) {
-    if(max(DealCycle$Skills[i]==c("EnhancedJavelin", "CristalIgnition", "JavelinAddATK"))==1) {
+    if(max(DealCycle$Skills[i]==c("EnhancedJavelin", "CristalIgnition", "JavelinAddATK", "Longinus"))==1) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("CurseMark")
     } else if(max(DealCycle$Skills[i]==c("Javelin"))==1) {
