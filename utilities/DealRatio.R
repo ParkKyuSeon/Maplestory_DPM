@@ -205,7 +205,7 @@ EvanSkillList <- list(BreathofWind=c("BreathofWind", "BreathofWindBonus"),
                       MagicFragment=c("MagicFragment1", "MagicFragment2", "MagicFragment3", "MagicFragment4"), 
                       SpiralofMana=c("SpiralofMana", "SpiralofManaRed"))
 EvanDealCycleSimplified <- DealCycleCollapse(EvanDealCycle, EvanSkillList)
-EvanDealCycle_2Simplified <- DealCycleCollapse(EvanDealCycle_2, EvanSkillList)
+EvanDealCycleHPSimplified <- DealCycleCollapse(EvanDealCycleHP, EvanSkillList)
 
 ## Luminous
 LuminousSkillList <- list(AbsoluteKill=c("AbsoluteKill", "AbsoluteKillAdd", "AbsoluteKillEq"), 
@@ -455,7 +455,7 @@ ZeroSkillList <- list(AdvancedEarthBreak=c("EarthBreak", "EarthBreakFloor", "Ear
                       AdvancedStormBreak=c("StormBreak", "StormBreakFloor", "StormBreakVortex"), 
                       AdvancedThrowingWeapon=c("ThrowingWeapon"), 
                       AdvancedWhirlWind=c("WhirlWind"), 
-                      WindCutter=c("WindCutter", "WindCutterVortex", "WindStrike"))
+                      WindCutter=c("WindCutter", "WindCutterVortex"))
 ZeroDealCycleSimplified <- DealCycleCollapse(ZeroDealCycle, ZeroSkillList)
 
 ## Kinesis
@@ -502,8 +502,8 @@ WindBreakerDealRatio <- DealRatio(WindBreakerDealCycleSimplified, WindBreakerFin
 NightWalkerDealRatio <- DealRatio(NightWalkerDealCycleSimplified, NightWalkerFinalDPMwithMax)
 StrikerDealRatio <- DealRatio(StrikerDealCycleSimplified, StrikerFinalDPMwithMax)
 AranDealRatio <- DealRatio(AranDealCycleSimplified, AranFinalDPMwithMax)
-EvanDealRatio <- ResetDealRatio(list(EvanDealCycleSimplified, EvanDealCycle_2Simplified), list(EvanDeal1, EvanDeal2), 
-                                rep(max(EvanDealCycle$Time), 2), c(0.6518, 0.3482))
+EvanDealRatio <- ResetDealRatio(list(EvanDealCycleSimplified, EvanDealCycleHPSimplified), list(EvanDeal1, EvanDeal2), 
+                                rep(max(EvanDealCycle$Time), 2), c(0.6564, 0.3436))
 LuminousDealRatio <- DealRatio(LuminousDealCycleSimplified, LuminousFinalDPMwithMax)
 MercedesDealRatio <- DealRatio(MercedesDealCycleSimplified, MercedesFinalDPMwithMax)
 PhantomDealRatio <- ResetDealRatio(DealCycles=list(PhantomDealCycleSimplified, PhantomDealCycle2Simplified), DealDatas=list(PhantomDeal1, PhantomDeal2), 

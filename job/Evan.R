@@ -571,7 +571,7 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 
 
 EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                      Period=c(180), CycleTime=c(360), DealCycleType=c("DoE-DB-BoW", "SoT-DoE-DB"), ActiveCoreData=EvanCore[[2]]) {
+                      Period=c(180), CycleTime=c(360), DealCycleType=c("DoE-DB-BoW", "SoT-DoE-DB"), ActiveCoreData=EvanCore[[2]], BoWBoE=c("BoW", "BoE", "NA")) {
   BuffSummonedPrior <- c("MagicBooster", "ElementalReset", "BlessofOnix", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
                          "SummonOnixDragon", "MapleWarriors2")
   Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
@@ -1031,9 +1031,11 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
               DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 400000 | 
               ### Breath - Return (If Dragon Break CoolTime is 0 or Dragon Dive CoolTime is -1000)
               RTRemain <= 0 & DBKRemain <= 0 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40000 | 
-              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 400000 | 
+              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320000 | 
+              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 330000 | 
               RTRemain <= 0 & DDRemain <= -1000 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40000 | 
-              RTRemain <= 0 & DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 400000 | 
+              RTRemain <= 0 & DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320000 | 
+              RTRemain <= 0 & DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 330000 | 
               ### Dive - Return
               RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 211140 | 
               ### Dive - Return (If Dragon Break CoolTime is 0)
@@ -1114,11 +1116,19 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DragonBuff(DealCycle)
         }
         ### Breath of Wind (Circle of Wind Cancel, DoE-DB-BoW Only)
-        else if(DealCycleType == "DoE-DB-BoW" & DealCycle$MirSkill[nrow(DealCycle)] > 30000 & DealCycle$MirSkill[nrow(DealCycle)] < 30780) {
+        else if(DealCycleType == "DoE-DB-BoW" & BoWBoE == "BoW" & DealCycle$MirSkill[nrow(DealCycle)] > 30000 & DealCycle$MirSkill[nrow(DealCycle)] < 32340) {
           DealCycle <- DCATK(DealCycle, "CircleofWindCancel", ATKFinal)
           DealCycle <- DragonBuff(DealCycle)
           
           DealCycle <- DCATK(DealCycle, "BreathofWind", ATKFinal)
+          DealCycle <- DragonBuff(DealCycle)
+        }
+        ### Breath of Earth (Circle of Earth Cancel, DoE-DB-BoW Only)
+        else if(DealCycleType == "DoE-DB-BoW" & BoWBoE == "BoE" & DealCycle$MirSkill[nrow(DealCycle)] > 30000 & DealCycle$MirSkill[nrow(DealCycle)] < 30780) {
+          DealCycle <- DCATK(DealCycle, "CircleofEarthCancel", ATKFinal)
+          DealCycle <- DragonBuff(DealCycle)
+          
+          DealCycle <- DCATK(DealCycle, "BreathofEarth", ATKFinal)
           DealCycle <- DragonBuff(DealCycle)
         }
         
@@ -1234,11 +1244,19 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             DealCycle <- DragonBuff(DealCycle)
           }
           ### Breath of Wind (Circle of Wind Cancel, DoE-DB-BoW Only)
-          else if(DealCycleType == "DoE-DB-BoW" & DealCycle$MirSkill[nrow(DealCycle)] > 30000 & DealCycle$MirSkill[nrow(DealCycle)] < 30780) {
+          else if(DealCycleType == "DoE-DB-BoW" & BoWBoE == "BoW" & DealCycle$MirSkill[nrow(DealCycle)] > 30000 & DealCycle$MirSkill[nrow(DealCycle)] < 32340) {
             DealCycle <- DCATK(DealCycle, "CircleofWindCancel", ATKFinal)
             DealCycle <- DragonBuff(DealCycle)
             
             DealCycle <- DCATK(DealCycle, "BreathofWind", ATKFinal)
+            DealCycle <- DragonBuff(DealCycle)
+          }
+          ### Breath of Earth (Circle of Earth Cancel, DoE-DB-BoW Only)
+          else if(DealCycleType == "DoE-DB-BoW" & BoWBoE == "BoE" & DealCycle$MirSkill[nrow(DealCycle)] > 30000 & DealCycle$MirSkill[nrow(DealCycle)] < 30780) {
+            DealCycle <- DCATK(DealCycle, "CircleofEarthCancel", ATKFinal)
+            DealCycle <- DragonBuff(DealCycle)
+            
+            DealCycle <- DCATK(DealCycle, "BreathofEarth", ATKFinal)
             DealCycle <- DragonBuff(DealCycle)
           }
           
@@ -1333,7 +1351,7 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   return(DealCycle)
 }
 EvanAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                       DealCycleType=c("DoE-DB-BoW", "SoT-DoE-DB"), DiveofEarthHit=4, SwiftofThunderHit=3, BreakReturnATK=F) {
+                       DealCycleType=c("DoE-DB-BoW", "SoT-DoE-DB"), DiveofEarthHit=4, SwiftofThunderHit=3, BreakReturnATK=F, BoWBoE=c("BoW", "BoE", "NA")) {
   MirSkillReduction <- function(DealCycle, Skill, Code) {
     Idx <- c()
     if(Code < 10) {
@@ -1392,11 +1410,17 @@ EvanAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   DealCycle <- MirSkillReduction(DealCycle, "DiveofEarth", 21)
   print(paste("Dive of Earth Hits", nrow(subset(DealCycle, DealCycle$Skills=="DiveofEarth")), "Times"))
   ### Breath of Wind
-  if(DealCycleType=="DoE-DB-BoW") {
+  if(DealCycleType=="DoE-DB-BoW" & BoWBoE == "BoW") {
     DealCycle <- RepATKCycle(DealCycle, "BreathofWind", 8, 1, ATKFinal)
     DealCycle <- MirSkillReduction(DealCycle, "BreathofWind", 31)
   }
   print(paste("Breath of Wind Hits", nrow(subset(DealCycle, DealCycle$Skills=="BreathofWind")), "Times"))
+  ### Breath of Earth
+  if(DealCycleType=="DoE-DB-BoW" & BoWBoE == "BoE") {
+    DealCycle <- RepATKCycle(DealCycle, "BreathofEarth", 7, 300, ATKFinal)
+    DealCycle <- MirSkillReduction(DealCycle, "BreathofEarth", 32)
+  }
+  print(paste("Breath of Earth Hits", nrow(subset(DealCycle, DealCycle$Skills=="BreathofEarth")), "Times"))
   ### Imperial Breath
   DealCycle <- RepATKCycle(DealCycle, "ImperialBreath", 16, 840, ATKFinal)
   DealCycle <- MirSkillReduction(DealCycle, "ImperialBreath", 41)
@@ -1712,15 +1736,34 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
                              BuffFinal, 
                              SummonedFinal,
                              EvanSpec, 
-                             180, 360, "DoE-DB-BoW", EvanCore[[2]])
+                             180, 360, "DoE-DB-BoW", EvanCore[[2]], "BoE")
   EvanDealCycle <- DealCycleFinal(EvanDealCycle)
   EvanDealCycle <- EvanAddATK(EvanDealCycle, 
                               ATKFinal, 
                               BuffFinal, 
                               SummonedFinal, 
                               Spec, 
-                              "DoE-DB-BoW", 4, 3, F)
+                              "DoE-DB-BoW", 4, 3, F, "BoE")
   EvanDealCycleReduction <- DealCycleReduction(EvanDealCycle, c("ElementalBlastFDR"))
+  
+  DealCycle <- c("Skills", "Time", rownames(EvanBuff))
+  EvanDealCycleHP <- t(rep(0, length(DealCycle)))
+  colnames(EvanDealCycleHP) <- DealCycle
+  EvanDealCycleHP <- data.frame(EvanDealCycleHP)
+  
+  EvanDealCycleHP <- EvanCycle(EvanDealCycleHP, 
+                             ATKFinal, 
+                             BuffFinal, 
+                             SummonedFinal,
+                             EvanSpec, 
+                             180, 360, "DoE-DB-BoW", EvanCore[[2]], "BoW")
+  EvanDealCycleHP <- DealCycleFinal(EvanDealCycleHP)
+  EvanDealCycleHP <- EvanAddATK(EvanDealCycleHP, 
+                              ATKFinal, 
+                              BuffFinal, 
+                              SummonedFinal, 
+                              Spec, 
+                              "DoE-DB-BoW", 4, 3, F, "BoW")
   
   Idx1 <- c() ; Idx2 <- c()
   for(i in 1:length(PotentialOpt)) {
@@ -1751,7 +1794,7 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
   }
   EvanSpecOpt <- OptDataAdd(EvanSpecOpt, EvanSpecOpt2, "HyperStat", EvanBase$CRROver, DemonAvenger=F)
   
-  EvanFinalDPMwithMax <- EvanBoW(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
+  EvanFinalDPMwithMax <- EvanBoW(EvanDealCycle, EvanDealCycleHP, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
                                  NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
   
   set(get(DPMCalcOption$DataName), as.integer(1), "Evan", sum(na.omit(EvanFinalDPMwithMax)) / (max(EvanDealCycle$Time) / 60000))
@@ -1761,22 +1804,21 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
                                       NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR")))
   colnames(EvanDealData) <- c("Skills", "Time", "R4", "Deal")
   
-  EvanDealCycle_2 <- EvanDealCycle
-  EvanDealCycle_2[EvanDealCycle_2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
+  EvanDealCycleHP[EvanDealCycleHP$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
   EvanDeal1 <- DealCalc(EvanDealCycle, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
                         NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
-  EvanDeal2 <- DealCalc(EvanDealCycle_2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
+  EvanDeal2 <- DealCalc(EvanDealCycleHP, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
                         NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
-  EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycle_2), list(EvanDeal1, EvanDeal2), 
-                                  rep(max(EvanDealCycle$Time), 2), c(0.6518, 0.3482))
+  EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycleHP), list(EvanDeal1, EvanDeal2), 
+                                  rep(max(EvanDealCycle$Time), 2), c(0.6564, 0.3436))
   
   set(get(DPMCalcOption$DataName), as.integer(3), "Evan", Deal_RR(EvanDealData))
   set(get(DPMCalcOption$DataName), as.integer(4), "Evan", Deal_40s(EvanDealData))
   
   EvanSpecMean <- ResetSpecMean("Evan", 
-                                list(EvanDealCycle, EvanDealCycle_2), 
+                                list(EvanDealCycle, EvanDealCycleHP), 
                                 list(EvanDeal1, EvanDeal2), 
-                                ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, rep(max(EvanDealCycle$Time), 2), c(0.6518, 0.3482))
+                                ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, rep(max(EvanDealCycle$Time), 2), c(0.6564, 0.3436))
   
   
   ## DoE(3) - DB - BoW
@@ -1790,16 +1832,35 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
                               BuffFinal, 
                               SummonedFinal,
                               EvanSpec, 
-                              180, 360, "DoE-DB-BoW", EvanCore[[2]])
+                              180, 360, "DoE-DB-BoW", EvanCore[[2]], "BoE")
   EvanDealCycle2 <- DealCycleFinal(EvanDealCycle2)
   EvanDealCycle2 <- EvanAddATK(EvanDealCycle2, 
                                ATKFinal, 
                                BuffFinal, 
                                SummonedFinal, 
                                Spec, 
-                               "DoE-DB-BoW", 3, 3, F)
+                               "DoE-DB-BoW", 3, 3, F, "BoE")
   
-  EvanDoE3HitsDPM <- EvanBoW(EvanDealCycle2, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
+  DealCycle <- c("Skills", "Time", rownames(EvanBuff))
+  EvanDealCycle2HP <- t(rep(0, length(DealCycle)))
+  colnames(EvanDealCycle2HP) <- DealCycle
+  EvanDealCycle2HP <- data.frame(EvanDealCycle2HP)
+  
+  EvanDealCycle2HP <- EvanCycle(EvanDealCycle2HP, 
+                                ATKFinal, 
+                                BuffFinal, 
+                                SummonedFinal,
+                                EvanSpec, 
+                                180, 360, "DoE-DB-BoW", EvanCore[[2]], "BoW")
+  EvanDealCycle2HP <- DealCycleFinal(EvanDealCycle2HP)
+  EvanDealCycle2HP <- EvanAddATK(EvanDealCycle2HP, 
+                                 ATKFinal, 
+                                 BuffFinal, 
+                                 SummonedFinal, 
+                                 Spec, 
+                                 "DoE-DB-BoW", 3, 3, F, "BoW")
+  
+  EvanDoE3HitsDPM <- EvanBoW(EvanDealCycle2, EvanDealCycle2HP, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
                              NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
   EvanDoE3HitsDPM <- sum(na.omit(EvanDoE3HitsDPM)) / (max(EvanDealCycle2$Time) / 60000)
   
@@ -1841,16 +1902,16 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
                               BuffFinal, 
                               SummonedFinal,
                               EvanSpec, 
-                              180, 360, "SoT-DoE-DB", EvanCore[[2]])
+                              180, 360, "SoT-DoE-DB", EvanCore[[2]], "NA")
   EvanDealCycle3 <- DealCycleFinal(EvanDealCycle3)
   EvanDealCycle3 <- EvanAddATK(EvanDealCycle3, 
                                ATKFinal, 
                                BuffFinal, 
                                SummonedFinal, 
                                Spec, 
-                               "SoT-DoE-DB", 4, 4, F)
+                               "SoT-DoE-DB", 4, 4, F, "NA")
   
-  EvanSoT4HitsDPM <- EvanBoW(EvanDealCycle3, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
+  EvanSoT4HitsDPM <- EvanBoW(EvanDealCycle3, EvanDealCycle3, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, 
                              NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
   EvanSoT4HitsDPM <- sum(na.omit(EvanSoT4HitsDPM)) / (max(EvanDealCycle3$Time) / 60000)
   

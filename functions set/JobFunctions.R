@@ -3914,9 +3914,9 @@ DemonAvengerOptimization2 <- function(DealCycle, ATKSkillsList, BuffList, Summon
 }
 
 ## Evan Functions
-EvanBoW <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores=(detectCores(logical=F)-1), 
+EvanBoW <- function(DealCycle, DealCycle2, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores=(detectCores(logical=F)-1), 
                     NotBuffCols=c(), NotBuffColOption=c()) {
-  if(nrow(subset(DealCycle, DealCycle$Skills=="BreathofWind")) == 0) {
+  if(nrow(subset(DealCycle, DealCycle$Skills=="BreathofEarth")) == 0) {
     Deal1 <- DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores, Collapse=T, 
                       NotBuffCols, NotBuffColOption)
     Deal1 <- sum(Deal1, na.rm=T)
@@ -3924,7 +3924,6 @@ EvanBoW <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Spec
   } else {
     HP <- (35 + floor(EvanSpec$SkillLv/2)) / 100
     
-    DealCycle2 <- DealCycle
     DealCycle2[DealCycle2$Skills=="BreathofWind", ]$Skills <- "BreathofWindBonus"
     
     Deal1 <- DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores, Collapse=T, 
