@@ -429,7 +429,7 @@ for(i in 1:nrow(ChrInfo)) {
                 DealData=DealDataDummy, 
                 Modifier=Modifier, 
                 MaxDeal=MaxDeal, 
-                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "Striker"))==1, T, F), 
+                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "FlameWizard", "Striker"))==1, T, F), 
                 BishopRRDeal=BishopRRDeal)
   } else {
     RRGraphSave(JobName=ChrInfo$job[i], 
@@ -438,7 +438,7 @@ for(i in 1:nrow(ChrInfo)) {
                                            paste(ChrInfo$job[i], "DealData", sep="")))), 
                 Modifier=Modifier, 
                 MaxDeal=MaxDeal, 
-                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "Striker"))==1, T, F), 
+                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "FlameWizard", "Striker"))==1, T, F), 
                 BishopRRDeal=BishopRRDeal)
   }
 }

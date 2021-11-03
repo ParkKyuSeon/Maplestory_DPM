@@ -764,13 +764,19 @@ KainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     ## Death Blessing
     if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PossessStrikeArrow", "PossessScatteringShot", "PossessShaftBreak", "PossessFallingDust", "PossessDragonBurstTick", "ThanatosDescentEndTick")) >= 1) {
       DealCycle$DeathBlessingStack[nrow(DealCycle)] <- min(15, DealCycle$DeathBlessingStack[(nrow(DealCycle)-1)] + 1)
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PossessExecuteSneakySniping", "ExecutePhantomBlade", "ExecuteTearingKnife", "ExecuteChainSickle", "ExecutePoisonNeedlePre", "ExecuteFatalBlitzTick")) >= 1) {
+    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("ExecutePhantomBlade", "ExecuteTearingKnife", "ExecuteChainSickle", "ExecutePoisonNeedlePre", "ExecuteFatalBlitzTick")) >= 1) {
       DealCycle$DeathBlessingStack[nrow(DealCycle)] <- max(0, DealCycle$DeathBlessingStack[(nrow(DealCycle)-1)] - 1)
       if(DealCycle$DeathBlessingStack[nrow(DealCycle)-1] > 0) {
         DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
         DealCycle$Skills[nrow(DealCycle)] <- ifelse(DealCycle$Incanation[nrow(DealCycle)] > 0, "DeathBlessingIncanation", "DeathBlessing")
         DealCycle$ContributionBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="ContributionBuff")$Duration * 1000
       }
+    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PossessExecuteSneakySniping")) >= 1) {
+      DealCycle$DeathBlessingStack[nrow(DealCycle)] <- min(15, DealCycle$DeathBlessingStack[(nrow(DealCycle)-1)] + 1)
+      DealCycle$DeathBlessingStack[nrow(DealCycle)] <- max(0, DealCycle$DeathBlessingStack[nrow(DealCycle)] - 1)
+      DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+      DealCycle$Skills[nrow(DealCycle)] <- ifelse(DealCycle$Incanation[nrow(DealCycle)] > 0, "DeathBlessingIncanation", "DeathBlessing")
+      DealCycle$ContributionBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="ContributionBuff")$Duration * 1000
     } else {
       DealCycle$DeathBlessingStack[nrow(DealCycle)] <- DealCycle$DeathBlessingStack[nrow(DealCycle)-1]
     }
