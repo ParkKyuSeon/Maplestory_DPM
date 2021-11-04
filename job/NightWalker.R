@@ -413,9 +413,9 @@ NightWalkerDealCycle <- data.frame(NightWalkerDealCycle)
 NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                              Period=c(180), CycleTime=c(360), JumpShotDelay=0) {
   BuffSummonedPrior <- c("ThrowingBooster", "ShadowServant", "SpiritThrowing", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "GloryofGardians",
-                         "ShadowSpear", "ShadowServantExtend", "BlessofCygnus", "CygnusPhalanx", "ShadowBiteBuffDummy", "DominionBuff", "ShadowIllusion1", "ShadowIllusion2", 
-                         "ReadyToDie2Stack", "SoulContractLink", "Restraint4")
-  Times180 <- c(0, 1, 0, 0, 0, 0, 0, 1, 3, 0.5, 6, 9, 1, 1, 1, 2, 2, 1)
+                         "CygnusPhalanx", "ShadowBiteBuffDummy", "ShadowSpear", "ShadowServantExtend", "BlessofCygnus")
+  Times180 <- c(0, 1, 0, 0, 0, 0, 0, 
+                6, 9, 1, 3, 0.5)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -479,10 +479,7 @@ NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
   for(i in 1:length(BuffList[[1]])) {
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
-      if(DealCycle$Skills[nrow(DealCycle)] == "DominionBuff") {
-        DealCycle <- DCATK(DealCycle, "DominionDummy", ATKFinal)
-        DealCycle <- DCATK(DealCycle, "Dominion", ATKFinal)
-      } else if(DealCycle$Skills[nrow(DealCycle)] == "ShadowBiteBuffDummy") {
+      if(DealCycle$Skills[nrow(DealCycle)] == "ShadowBiteBuffDummy") {
         DealCycle <- DCBuff(DealCycle, "ShadowBiteBuff", BuffFinal)
         DealCycle <- DCATK(DealCycle, "ShadowBite", ATKFinal)
       }
@@ -510,6 +507,8 @@ NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
   TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   RapidCool <- 0
+  DominionCool <- 0
+  SCCool <- 0
   ATKFinal$Delay[rownames(ATKFinal)=="QuintupleThrow2"] <- JumpShotDelay + 30
   
   for(k in 2:length(BuffList)) {
@@ -537,19 +536,74 @@ NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
           RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+          DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+          SCCool <- max(0, SCCool - DealCycle$Time[1])
         }
       }
       
-      if(RapidCool == 0) {
+      ## Dominion, Shadow Illusion
+      if(DominionCool == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 35000 | 
+         DominionCool == 0 & nrow(subset(DealCycle, DealCycle$Skills=="Dominion")) == 1) {
+        DealCycle <- DCBuff(DealCycle, "DominionBuff", BuffFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, 180000 - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "DominionDummy", ATKFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "Dominion", ATKFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+        DealCycle <- DCBuff(DealCycle, "ShadowIllusion1", BuffFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+        DealCycle <- DCBuff(DealCycle, "ShadowIllusion2", BuffFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+      }
+      ## Soul Contract, Ready To Die, Restraint4 
+      else if(SCCool == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 20000 | 
+              SCCool == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) >= 1 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) < 4) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, 90000 - DealCycle$Time[1])
+        DealCycle <- DCBuff(DealCycle, "ReadyToDie2Stack", BuffFinal)
+        RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+        if(nrow(subset(DealCycle, DealCycle$Skills=="Dominion")) > nrow(subset(DealCycle, DealCycle$Skills=="Restraint4"))) {
+          DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
+          RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+          DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+          SCCool <- max(0, SCCool - DealCycle$Time[1])
+        }
+      }
+      ## Rapid Throw
+      else if(RapidCool == 0 & nrow(subset(DealCycle, DealCycle$Skills=="RapidThrow")) == 0 & DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] <= 6000 & DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] > 0 |
+              RapidCool == 0 & nrow(subset(DealCycle, DealCycle$Skills=="RapidThrow")) >= 1 & nrow(subset(DealCycle, DealCycle$Skills=="RapidThrow")) < 4) {
         DealCycle <- DCATK(DealCycle, "RapidThrow", ATKFinal)
         RapidCool <- 90000 - DealCycle$Time[1]
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "RapidThrowLast", ATKFinal)
         RapidCool <- max(0, RapidCool - DealCycle$Time[1])
-      } else {
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
+      } 
+      else {
         DealCycle <- DCATK(DealCycle, "QuintupleThrow1", ATKFinal)
         RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "QuintupleThrow2", ATKFinal)
         RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+        DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+        SCCool <- max(0, SCCool - DealCycle$Time[1])
       }
     }
     
@@ -557,20 +611,32 @@ NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
       for(i in 1:length(BuffList[[k]])) {
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
-          if(DealCycle$Skills[nrow(DealCycle)] == "DominionBuff") {
-            DealCycle <- DCATK(DealCycle, "DominionDummy", ATKFinal)
-            DealCycle <- DCATK(DealCycle, "Dominion", ATKFinal)
-          } else if(DealCycle$Skills[nrow(DealCycle)] == "ShadowBiteBuffDummy") {
+          if(DealCycle$Skills[nrow(DealCycle)] == "ShadowBiteBuffDummy") {
             DealCycle <- DCBuff(DealCycle, "ShadowBiteBuff", BuffFinal)
             DealCycle <- DCATK(DealCycle, "ShadowBite", ATKFinal)
           }
           RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+          DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+          SCCool <- max(0, SCCool - DealCycle$Time[1])
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+          DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+          SCCool <- max(0, SCCool - DealCycle$Time[1])
         }
       }
     }
+  }
+  
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="Dominion")$Time) + min(subset(DealCycle, DealCycle$Skills=="Dominion")$Time) < 180000) {
+    DealCycle <- DCATK(DealCycle, "QuintupleThrow1", ATKFinal)
+    RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+    DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+    SCCool <- max(0, SCCool - DealCycle$Time[1])
+    DealCycle <- DCATK(DealCycle, "QuintupleThrow2", ATKFinal)
+    RapidCool <- max(0, RapidCool - DealCycle$Time[1])
+    DominionCool <- max(0, DominionCool - DealCycle$Time[1])
+    SCCool <- max(0, SCCool - DealCycle$Time[1])
   }
   DealCycle <- DealCycleFinal(DealCycle)
   return(DealCycle)
@@ -875,7 +941,7 @@ NightWalkerDealRatio <- DealRatio(NightWalkerDealCycle, NightWalkerFinalDPMwithM
 NightWalkerDealData <- data.frame(NightWalkerDealCycle$Skills, NightWalkerDealCycle$Time, NightWalkerDealCycle$Restraint4, NightWalkerFinalDPMwithMax)
 colnames(NightWalkerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "NightWalker", Deal_RR(NightWalkerDealData))
-set(get(DPMCalcOption$DataName), as.integer(4), "NightWalker", Deal_40s(NightWalkerDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "NightWalker", Deal_40s(NightWalkerDealData, F, NA, FinishTime=subset(NightWalkerDealData, NightWalkerDealData$Skills=="Restraint4")$Time[1] + 15000))
 
 NightWalkerSpecMean <- SpecMean("NightWalker", NightWalkerDealCycleReduction, 
                                 DealCalcWithMaxDMR(NightWalkerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, NightWalkerSpecOpt, 
@@ -914,7 +980,7 @@ NightWalkerDealData75 <- data.frame(NightWalkerDealCycle75$Skills, NightWalkerDe
 colnames(NightWalkerDealData75) <- c("Skills", "Time", "R4", "Deal")
 
 NightWalker75RR <- Deal_RR(NightWalkerDealData75)
-NightWalker7540s <- Deal_40s(NightWalkerDealData75)
+NightWalker7540s <- Deal_40s(NightWalkerDealData75, F, NA, FinishTime=subset(NightWalkerDealData75, NightWalkerDealData75$Skills=="Restraint4")$Time[1] + 15000)
 
 
 ## Jumpshot Rate (0%)
@@ -947,7 +1013,7 @@ NightWalkerDealData0 <- data.frame(NightWalkerDealCycle0$Skills, NightWalkerDeal
 colnames(NightWalkerDealData0) <- c("Skills", "Time", "R4", "Deal")
 
 NightWalker0RR <- Deal_RR(NightWalkerDealData0)
-NightWalker040s <- Deal_40s(NightWalkerDealData0)
+NightWalker040s <- Deal_40s(NightWalkerDealData0, F, NA, FinishTime=subset(NightWalkerDealData0, NightWalkerDealData0$Skills=="Restraint4")$Time[1] + 15000)
 
 print(list(NW75=data.frame(NightWalker75PDPM=NightWalker75, NightWalker75PRR=NightWalker75RR, NightWalker75P40s=NightWalker7540s), 
            NW0=data.frame(NightWalker0PDPM=NightWalker0, NightWalker0PRR=NightWalker0RR, NightWalker0P40s=NightWalker040s)))

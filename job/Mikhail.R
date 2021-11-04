@@ -381,11 +381,9 @@ colnames(MikhailDealCycle) <- DealCycle
 MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360)) {
   BuffSummonedPrior <- c("SwordBooster", "Encourage", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "QueenofTomorrow", 
-                         "AuraWeaponBuff", "RhoAias", "MikhailLink", "CygnusPhalanx", "BlessofCygnus", "LightofCourageBuff", "SwordofSoulLight", 
-                         "SoulContractLink", "SacredCube", "Restraint4")
+                         "CygnusPhalanx", "AuraWeaponBuff", "RhoAias", "BlessofCygnus")
   Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
-                1, 1, 1, 6, 0.5, 2, 1,
-                2, 0.5, 1)
+                6, 1, 1, 0.5)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -448,11 +446,8 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   DealCycle <- PreDealCycle
   for(i in 1:length(BuffList[[1]])) {
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
-      if(BuffList[[1]][i]=="SwordofSoulLight") {
-        DealCycle <- DCATK(DealCycle, "SwordofSoulLightAfterimage", ATKFinal)
-      }
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
-      if(DealCycle$Skills[nrow(DealCycle)]=="MikhailLink") {
+      if(DealCycle$Skills[nrow(DealCycle)]=="RhoAias") {
         DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
         DealCycle <- DCSummoned(DealCycle, "ShiningCrossInstall", SummonedFinal)
         DealCycle <- DCATK(DealCycle, "ShiningCross", ATKFinal)
@@ -485,8 +480,12 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   CSCool <- subset(ATKFinal, rownames(ATKFinal)=="ClaiomhSolais")$CoolTime * 1000
   DCCool <- subset(ATKFinal, rownames(ATKFinal)=="DeadlyCharge")$CoolTime * 1000
   RGCool <- subset(ATKFinal, rownames(ATKFinal)=="RoyalGuard")$CoolTime * 1000
-  CSRemain <- 0 ; DCRemain <- 0 ; RGRemain <- 0
-  ForceRayDummy <- 0
+  SSLCool <- subset(BuffFinal, rownames(BuffFinal)=="SwordofSoulLight")$CoolTime * 1000
+  MLCool <- subset(BuffFinal, rownames(BuffFinal)=="MikhailLink")$CoolTime * 1000
+  LCCool <- subset(BuffFinal, rownames(BuffFinal)=="LightofCourageBuff")$CoolTime * 1000
+  SCLCool <- subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000
+  CSRemain <- 0 ; DCRemain <- 0 ; RGRemain <- 0 ; SSLRemain <- 0 ; MLRemain <- 0 ; LCRemain <- 0 ; SCLRemain <- 0
+  ForceRayDummy <- 1
   
   for(k in 2:length(BuffList)) {
     CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
@@ -516,15 +515,111 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           CSRemain <- max(0, CSRemain - DealCycle$Time[1])
           DCRemain <- max(0, DCRemain - DealCycle$Time[1])
           RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+          SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+          MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+          LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+          SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        }
+      }
+      ## Sword of Soul Light
+      if(SSLRemain == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 40000 | 
+         SSLRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SwordofSoulLight")) == 1) {
+        DealCycle <- DCBuff(DealCycle, "SwordofSoulLight", BuffFinal)
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+        DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLCool - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        ForceRayDummy <- 0
+        
+        DealCycle <- DCATK(DealCycle, "SwordofSoulLightAfterimage", ATKFinal)
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+        DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+      }
+      ## Mikhail Link
+      if(MLRemain == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 35000 | 
+         MLRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="MikhailLink")) == 1) {
+        DealCycle <- DCBuff(DealCycle, "MikhailLink", BuffFinal)
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+        DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLCool - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+      }
+      ## Light of Courage, Sacred Cube
+      if(LCRemain == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 30000 | 
+         LCRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="LightofCourageBuff")) >= 1 & nrow(subset(DealCycle, DealCycle$Skills=="LightofCourageBuff")) < 4) {
+        DealCycle <- DCBuff(DealCycle, "LightofCourageBuff", BuffFinal)
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+        DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCCool - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        
+        if(nrow(subset(DealCycle, DealCycle$Skills=="LightofCourageBuff")) == 1) {
+          DealCycle <- DCBuff(DealCycle, "SacredCube", BuffFinal)
+          SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+          CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+          DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+          RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+          SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+          MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+          LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+          SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        }
+      }
+      ## Soul Contract, Restraint4
+      if(SCLRemain == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 20000 | 
+         SCLRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) >= 1 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) < 4) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+        DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+        RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLCool - DealCycle$Time[1])
+        
+        if(nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) == 1 | nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) == 3) {
+          DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
+          SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+          CSRemain <- max(0, CSRemain - DealCycle$Time[1])
+          DCRemain <- max(0, DCRemain - DealCycle$Time[1])
+          RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+          SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+          MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+          LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+          SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
         }
       }
       ## Light Force Ray
-      if(ForceRayDummy == 0 & DealCycle$SwordofSoulLight[nrow(DealCycle)] - DealCycle$Time[1] > 0 & DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] <= 2000) {
+      else if(ForceRayDummy == 0 & DealCycle$SwordofSoulLight[nrow(DealCycle)] - DealCycle$Time[1] > 0 & 
+              DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] > 0 & DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] <= 2000) {
         DealCycle <- DCATK(DealCycle, "LightForceRay", ATKFinal)
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
         ForceRayDummy <- 1
       }
       ## Royal Guard
@@ -532,11 +627,20 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         SCRemain <- SCRemain + DealCycle$Time[1]
         CSRemain <- CSRemain + DealCycle$Time[1]
         DCRemain <- DCRemain + DealCycle$Time[1]
+        SSLRemain <- SSLRemain + DealCycle$Time[1]
+        MLRemain <- MLRemain + DealCycle$Time[1]
+        LCRemain <- LCRemain + DealCycle$Time[1]
+        SCLRemain <- SCLRemain + DealCycle$Time[1]
+        
         DealCycle <- RoyalGuardCycle(DealCycle, ATKFinal, ATKFinal$CoolTime[3])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
         CSRemain <- max(0, CSRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
         DCRemain <- max(0, DCRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
         RGRemain <- RGCool - DealCycle$Time[1]
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1] - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
       }
       ## Deadly Charge
       else if(DCRemain == 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + DCCool - 8000 <= BuffStartTime & k==length(BuffList) | 
@@ -546,11 +650,20 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- DCCool - DealCycle$Time[1]
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        
         DealCycle <- DCATK(DealCycle, "DeadlyCharge", ATKFinal)
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
       }
       ## Claiomh Solais
       else if(CSRemain == 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + CSCool - 8000 <= BuffStartTime & k==length(BuffList) | 
@@ -560,11 +673,20 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         CSRemain <- CSCool - DealCycle$Time[1]
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        
         DealCycle <- DCATK(DealCycle, "ClaiomhSolais", ATKFinal)
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
       }
       ## Shining Cross
       else if(SCRemain == 0) {
@@ -573,11 +695,20 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
+        
         DealCycle <- DCATK(DealCycle, "ShiningCross", ATKFinal)
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
       }
       ## Soul Light Slash 
       else if(DealCycle$SwordofSoulLight[nrow(DealCycle)] - DealCycle$Time[1] >= 0) {
@@ -586,6 +717,10 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
       } 
       ## Soul Assault
       else {
@@ -594,33 +729,35 @@ MikhailCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         CSRemain <- max(0, CSRemain - DealCycle$Time[1])
         DCRemain <- max(0, DCRemain - DealCycle$Time[1])
         RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+        SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+        MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+        LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+        SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
       } 
     }
     
     if(k != length(BuffList)) {
       for(i in 1:length(BuffList[[k]])) {
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
-          if(BuffList[[k]][i]=="SwordofSoulLight") {
-            DealCycle <- DCATK(DealCycle, "SwordofSoulLightAfterimage", ATKFinal)
-            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-            CSRemain <- max(0, CSRemain - DealCycle$Time[1])
-            DCRemain <- max(0, DCRemain - DealCycle$Time[1])
-            RGRemain <- max(0, RGRemain - DealCycle$Time[1])
-          }
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
           CSRemain <- max(0, CSRemain - DealCycle$Time[1])
           DCRemain <- max(0, DCRemain - DealCycle$Time[1])
           RGRemain <- max(0, RGRemain - DealCycle$Time[1])
-          if(DealCycle$Skills[nrow(DealCycle)]=="SwordofSoulLight") {
-            ForceRayDummy <- 0
-          }
+          SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+          MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+          LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+          SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
           CSRemain <- max(0, CSRemain - DealCycle$Time[1])
           DCRemain <- max(0, DCRemain - DealCycle$Time[1])
           RGRemain <- max(0, RGRemain - DealCycle$Time[1])
+          SSLRemain <- max(0, SSLRemain - DealCycle$Time[1])
+          MLRemain <- max(0, MLRemain - DealCycle$Time[1])
+          LCRemain <- max(0, LCRemain - DealCycle$Time[1])
+          SCLRemain <- max(0, SCLRemain - DealCycle$Time[1])
         }
       }
     }
@@ -689,7 +826,7 @@ MikhailDealRatio <- DealRatio(MikhailDealCycle, MikhailFinalDPMwithMax)
 MikhailDealData <- data.frame(MikhailDealCycle$Skills, MikhailDealCycle$Time, MikhailDealCycle$Restraint4, MikhailFinalDPMwithMax)
 colnames(MikhailDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Mikhail", Deal_RR(MikhailDealData))
-set(get(DPMCalcOption$DataName), as.integer(4), "Mikhail", Deal_40s(MikhailDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Mikhail", Deal_40s(MikhailDealData, F, NA, FinishTime=subset(MikhailDealData, MikhailDealData$Skills=="SwordofSoulLight")$Time[1] + 38000))
 
 MikhailSpecMean <- SpecMean("Mikhail", MikhailDealCycleReduction, 
                             DealCalcWithMaxDMR(MikhailDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MikhailSpecOpt, 
