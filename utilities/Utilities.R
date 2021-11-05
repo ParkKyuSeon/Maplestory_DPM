@@ -40,3 +40,18 @@ DamperATK <- function(DealData, ATKSkillData, SummonedSkillData, MAX=T, Min=F, S
     return(unique(DealData))
   }
 }
+
+DealPeak <- function(DealData) {
+  Deal1slist <- c()
+  Deal5slist <- c()
+  Deal10slist <- c()
+  for(i in 2:nrow(DealData)) {
+    Deal1s <- DealData[DealData$Time >= DealData$Time[i] & DealData$Time < DealData$Time[i] + 1000, ]
+    Deal5s <- DealData[DealData$Time >= DealData$Time[i] & DealData$Time < DealData$Time[i] + 5000, ]
+    Deal10s <- DealData[DealData$Time >= DealData$Time[i] & DealData$Time < DealData$Time[i] + 10000, ]
+    Deal1slist <- c(Deal1slist, sum(Deal1s$Deal, na.rm=T))
+    Deal5slist <- c(Deal5slist, sum(Deal5s$Deal, na.rm=T))
+    Deal10slist <- c(Deal10slist, sum(Deal10s$Deal, na.rm=T))
+  }
+  return(data.frame(max1sdeal=max(Deal1slist), max5sdeal=max(Deal5slist), max10sdeal=max(Deal10slist)))
+}

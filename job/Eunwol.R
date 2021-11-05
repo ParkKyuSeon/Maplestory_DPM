@@ -1424,6 +1424,7 @@ EunwolDealDataFGX <- data.frame(EunwolDealCycleFGX$Skills, EunwolDealCycleFGX$Ti
 colnames(EunwolDealDataFGX) <- c("Skills", "Time", "R4", "Deal")
 EunwolDealDataFGO <- data.frame(EunwolDealCycleFGO$Skills, EunwolDealCycleFGO$Time, EunwolDealCycleFGO$Restraint4, EunwolFGODeal)
 colnames(EunwolDealDataFGO) <- c("Skills", "Time", "R4", "Deal")
+EunwolDealData <- EunwolDealDataFGX
 
 set(get(DPMCalcOption$DataName), as.integer(3), "Eunwol", Deal_RR(EunwolDealDataFGX))
 set(get(DPMCalcOption$DataName), as.integer(4), "Eunwol", Deal_40s(EunwolDealDataFGX))
