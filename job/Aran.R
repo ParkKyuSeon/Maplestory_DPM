@@ -504,7 +504,7 @@ AranSkipATK$FinalBlowCommand <- c(T, rep(F, 10), T, rep(F, 14), T, T, rep(F, 5))
 AranSkipATK$Beyonder1 <- c(F, F, T, rep(F, 10), T, rep(F, 19))
 AranSkipATK$Beyonder2 <- c(F, F, F, F, T, rep(F, 11), T, rep(F, 16))
 AranSkipATK$Beyonder3 <- c(F, F, F, F, F, T, rep(F, 11), T, rep(F, 15))
-AranSkipATK$SwingAdrelaine <- c(rep(F, 26), T, T, rep(F, 5))
+AranSkipATK$SwingAdrenaline <- c(rep(F, 26), T, T, rep(F, 5))
 AranSkipATK$FinalBlowCommandAdrenaline <- c(T, rep(F, 10), T, rep(F, 21))
 AranSkipATK$Beyonder1Adrenaline <- c(F, F, T, rep(F, 10), T, rep(F, 19))
 AranSkipATK$Beyonder2Adrenaline <- c(F, F, F, F, T, rep(F, 11), T, rep(F, 16))
@@ -523,182 +523,340 @@ AranDealCycle <- t(rep(0, length(DealCycle)))
 colnames(AranDealCycle) <- DealCycle
 AranDealCycle <- data.frame(AranDealCycle)
 
-AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec) {
-  StartBuff <- c("PolarmBooster", "SnowCharge", "BlessingMaha", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "HeroesOath") 
-  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
-    StartBuff <- c(StartBuff, "UsefulAdvancedBless")
+AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, 
+                      Period=180, CycleTime=720) {
+  BuffSummonedPrior <- c("PolarmBooster", "SnowCharge", "BlessingMaha", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
+                         "AuraWeaponBuff", "MapleWarriors2", "InstallMahaBuff", "SoulContractLink", "Restraint4")
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
+                1, 1, 1, 2, 1)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
   }
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100)  - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime / Period)
+  for(i in 1:length(BuffSummonedPrior)) {
+    SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
+  }
+  
+  SubTimeUniques <- unique(SubTime)
+  SubTimeUniques <- SubTimeUniques[SubTimeUniques > 0]
+  TimeTypes <- c()
+  for(i in 1:length(SubTimeUniques)) {
+    Time <- 0 ; r <- 1
+    while(Time < TotalTime) {
+      Time <- SubTimeUniques[i] * r
+      r <- r + 1
+      TimeTypes <- c(TimeTypes, Time)
+    }
+  }
+  TimeTypes <- TimeTypes[TimeTypes < TotalTime]
+  TimeTypes <- unique(TimeTypes)
+  TimeTypes <- TimeTypes[order(TimeTypes)]
+  
+  Buffs <- data.frame(Buff=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  Buffs <- subset(Buffs, Buffs$SubTime > 0)
+  
+  BuffList <- list()
+  BuffList[[1]] <- BuffSummonedPrior
+  for(i in 1:length(TimeTypes)) {
+    s <- c()
+    for(j in 1:nrow(Buffs)) {
+      if(round(TimeTypes[i] / Buffs[j, 2]) == TimeTypes[i] / Buffs[j, 2]) {
+        s <- c(s, Buffs[j, 1])
+      }
+    }
+    BuffList[[i+1]] <- s
+  }
+  
+  DelayDataB <- data.frame(Name=rownames(BuffFinal), Delay=BuffFinal$Delay)
+  DelayDataS <- data.frame(Name=rownames(SummonedFinal), Delay=SummonedFinal$Delay)
+  DelayData <- rbind(DelayDataB, DelayDataS)
+  
+  BuffDelays <- list()
+  for(i in 1:length(BuffList)) {
+    t <- c()
+    for(j in 1:length(BuffList[[i]])) {
+      for(k in 1:nrow(DelayData)) {
+        if(DelayData$Name[k]==BuffList[[i]][j]) {
+          t <- c(t, k)
+        }
+      }
+    }
+    BuffDelays[[i]] <- DelayData$Delay[t]
+  } 
+  
+  TotalTime <- TotalTime * 1000
   DealCycle <- PreDealCycle
-  DealCycle <- DCBuff(DealCycle, StartBuff, BuffFinal)
-  DealCycle$Combo <- 500
-  BMCoolDown <- 0
-  BMCool <- subset(ATKFinal, rownames(ATKFinal)=="BrandishMahaCommand")$CoolTime * 1000 ; BMCoolIM <- BMCool / 2
-  CycleDummy <- 0 ; ADDummy <- 0
   
-  AranSkillSetA <- c("FinalBlowCommand", "Beyonder1", "Beyonder2", "Beyonder3", "FenrirCrash")
-  
-  while(DealCycle$Combo[nrow(DealCycle)] <= 900) {
-    if(BMCoolDown==0) {
-      DealCycle <- DCATK(DealCycle, "BrandishMahaCommand", ATKFinal)
-      DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 30
-    }
-    if(CycleDummy==0) {
-      DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
-      DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
-      DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 2
-    }
-    for(i in 1:length(AranSkillSetA)) {
-      if(AranSkillSetA[i]=="FinalBlowCommand") {
-        DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-        DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 5
-      } else if(AranSkillSetA[i]=="FenrirCrash") {
-        DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-        DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + subset(ATKFinal, rownames(ATKFinal)=="FenrirCrash")$AttackTimes
-      } else {
-        DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-        DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 6
+  for(i in 1:length(BuffList[[1]])) {
+    if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
+      DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
+      if(BuffList[[1]][i]=="AuraWeaponBuff") {
+        DealCycle <- DCATKSkip(DealCycle, "SpiderInMirror", ATKFinal, SkipStructure)
+        DealCycle <- DCATKSkip(DealCycle, "ZoneofMaha", ATKFinal, SkipStructure)
+        DealCycle <- DCATKSkip(DealCycle, "GatheringCatcherCommand", ATKFinal, SkipStructure)
+        DealCycle <- DCATKSkip(DealCycle, "ZoneofMahaZone", ATKFinal, SkipStructure)
       }
-      CycleDummy <- CycleDummy + 1
-      CycleDummy <- ifelse(CycleDummy==3, 0, CycleDummy)
+    } else {
+      DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
     }
-    BMCoolDown <- max(BMCool - ((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BrandishMahaCommand")$Time)), 0)
   }
   
-  DealCycle <- DCBuff(DealCycle, c("AuraWeaponBuff", "MapleWarriors2"), BuffFinal)
-  DealCycle <- DCATK(DealCycle, c("SpiderInMirror", "ZoneofMaha", "GatheringCatcherCommand", "ZoneofMahaZone"), ATKFinal)
-  DealCycle <- DCBuff(DealCycle, c("SoulContractLink", "InstallMahaBuff"), BuffFinal)
-  DealCycle$AdrenalineBoost[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="AdrenalineBoost")$Duration * 1000
-  DealCycle$Combo[nrow(DealCycle)] <- 0
-  DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
-  DealCycle <- DCATK(DealCycle, c("DireWolfCurseDummy", "BlizardTempest"), ATKFinal)
-  DealCycle$DireWolfCurse[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="DireWolfCurse")$Duration * 1000
-  
-  DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
-  DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
-  DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 2
-  CycleDummy <- 1
-  
-  DealCycle <- DCATK(DealCycle, c("HuntersTargeting"), ATKFinal)
-  
-  ComboF <- function(DealCycle, AddCombo, ADDummy) {
-    if(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & ADDummy == 0) {
-      Combo <- 500
-      DealCycle$AdrenalineBoost[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="AdrenalineBoost")$Duration * 1000
-    } else if(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0) {
-      Combo <- 500
-    } else {
-      Combo <- DealCycle$Combo[nrow(DealCycle)-1] + AddCombo
-      if(Combo >= 1000) {
-        Combo <- 500
-        DealCycle$AdrenalineBoost[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="AdrenalineBoost")$Duration * 1000
+  SubTimeList <- data.frame(Skills=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  NoSubTime <- subset(SubTimeList, SubTimeList$SubTime==0)$Skills
+  NoSubTimeBuff <- c() ; NoSubTimeSummoned <- c()
+  for(i in 1:length(NoSubTime)) {
+    NoSubTimeBuff <- c(NoSubTimeBuff, NoSubTime[i])
+  }
+  ColNums <- c()
+  for(i in 1:length(NoSubTimeBuff)) {
+    for(j in 1:length(colnames(DealCycle))) {
+      if(NoSubTimeBuff[i]==colnames(DealCycle)[j]) {
+        ColNums[i] <- j
       }
     }
-    DealCycle$Combo[nrow(DealCycle)] <- Combo
-    return(DealCycle)
-  }
-  ADDummyF <- function(DealCycle, ADDummy) {
-    if(DealCycle$AdrenalineBoost[nrow(DealCycle)-1] > 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] <= 0) {
-      ADDummy <- ADDummy + 1
-      print(paste("Adrenaline End : ", DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1], sep=""))
-    } else if(DealCycle$AdrenalineBoost[nrow(DealCycle)-1] > 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] == subset(BuffFinal, rownames(BuffFinal)=="AdrenalineBoost")$Duration * 1000) {
-      ADDummy <- ADDummy + 1
-      print(paste("Adrenaline End : ", DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1], sep=""))
-    }
-    return(ADDummy)
   }
   
-  while(ADDummy < 5) {
-    if(DealCycle$HeroesOath[nrow(DealCycle)] - DealCycle$Time[1] < 3000) {
-      DealCycle <- DCBuff(DealCycle, "HeroesOath", BuffFinal)
-      DealCycle <- ComboF(DealCycle, 0, ADDummy)
-    } 
-    else if(CycleDummy == 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & BMCoolDown == 0) {
-      DealCycle <- DCATK(DealCycle, "BrandishMahaCommand", ATKFinal)
-      DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] + 30
-      DealCycle <- ComboF(DealCycle, 30, ADDummy)
-      ADDummy <- ADDummyF(DealCycle, ADDummy)
-    } else if(CycleDummy == 0) {
-      DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
-      DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
-      DealCycle <- ComboF(DealCycle, 2, ADDummy)
-      ADDummy <- ADDummyF(DealCycle, ADDummy)
-      CycleDummy <- ifelse(DealCycle$InstallMaha[nrow(DealCycle)] > 0, 2, 1)
-    } else {
-      for(i in 1:length(AranSkillSetA)) {
-        if(AranSkillSetA[i]=="FinalBlowCommand") {
-          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-          DealCycle <- ComboF(DealCycle, 5, ADDummy)
-          ADDummy <- ADDummyF(DealCycle, ADDummy)
-        } else if(AranSkillSetA[i]=="FenrirCrash") {
-          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-          DealCycle <- ComboF(DealCycle, subset(ATKFinal, rownames(ATKFinal)=="FenrirCrash")$AttackTimes, ADDummy)
-          ADDummy <- ADDummyF(DealCycle, ADDummy)
-        } else {
-          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-          DealCycle <- ComboF(DealCycle, 6, ADDummy)
-          ADDummy <- ADDummyF(DealCycle, ADDummy)
+  BMCool <- subset(ATKFinal, rownames(ATKFinal)=="BrandishMahaCommand")$CoolTime * 1000
+  BMCool_IM <- subset(ATKFinal, rownames(ATKFinal)=="BrandishMahaCommand")$CoolTime * 1000 / 2
+  GNCool <- 240000
+  BMRemain <- 0 ; GNRemain <- 0
+  ADDummy <- 0 ; CycleDummy <- 0
+  DealCycle$Combo[nrow(DealCycle)] <- 1000
+  BuffList[[length(BuffList)+1]] <- BuffList[[1]]
+  BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
+  
+  for(k in 2:length(BuffList)) {
+    CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
+    BuffEndTime <- c()
+    for(i in 1:length(BuffList[[k]])) {
+      a <- subset(DealCycle, BuffList[[k]][i]==DealCycle$Skills)
+      a <- rbind(a, subset(DealCycle, paste(BuffList[[k]][i], "Summoned", sep="")==DealCycle$Skills))
+      for(j in 1:nrow(CycleBuffList)) {
+        if(CycleBuffList$Skills[j]==BuffList[[k]][i]) {
+          Idx <- j
+          break
         }
+      }
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
+        sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
+    }
+    BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
+    BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
+    while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
+      for(i in 1:length(ColNums)) {
+        if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
+          DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1]
+        }
+      }
+      ## Adrenaline Boost
+      if(k != length(BuffList) & ADDummy < 4 & DealCycle$Combo[nrow(DealCycle)] == 1000 | 
+         k == length(BuffList) & ADDummy < 3 & DealCycle$Combo[nrow(DealCycle)] == 1000) {
+        DealCycle <- DCBuff(DealCycle, "AdrenalineBoost", BuffFinal)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- 500
+        ADDummy <- ADDummy + 1
+      }
+      ## Adrenaline Generator
+      else if(GNRemain - DealCycle$Time[1] <= 0 & DealCycle$Combo[nrow(DealCycle)] <= 600 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
+        DealCycle <- DCBuff(DealCycle, "AdrenalineGenerator", BuffFinal)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- GNCool
+        DealCycle$Combo[nrow(DealCycle)] <- 500
+        DealCycle <- DCBuff(DealCycle, "AdrenalineBoost", BuffFinal)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- 500
+        ADDummy <- ADDummy + 1
+      }
+      ## Blizard Tempest
+      else if(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0 & 
+              nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) > nrow(subset(DealCycle, DealCycle$Skills=="BlizardTempest"))) {
+        DealCycle <- DCATKSkip(DealCycle, "DireWolfCurseDummy", ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- 500
+        DealCycle <- DCATKSkip(DealCycle, "BlizardTempest", ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$DireWolfCurse[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="DireWolfCurse")$Duration * 1000
+        DealCycle$Combo[nrow(DealCycle)] <- 500
+      }
+      ## Swing
+      else if(CycleDummy == 0 | DealCycle$SwingBuff[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
+        DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
+        DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 2))
+        CycleDummy <- 1
+      }
+      ## Hunters Targeting
+      else if(nrow(subset(DealCycle, DealCycle$Skills=="AdrenalineBoost")) > nrow(subset(DealCycle, DealCycle$Skills=="HuntersTargeting"))) {
+        DealCycle <- DCATKSkip(DealCycle, c("HuntersTargeting"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        CycleDummy <- CycleDummy + 1
+        CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+        DealCycle$Combo[nrow(DealCycle)] <- 500
+      }
+      ## Spider In Mirror
+      else if(nrow(subset(DealCycle, DealCycle$Skills=="SpiderInMirror")) < 3 & 
+              DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="SpiderInMirror")$Time) >= ATKFinal[rownames(ATKFinal)=="SpiderInMirror", ]$CoolTime * 1000) {
+        DealCycle <- DCATKSkip(DealCycle, c("SpiderInMirror"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        CycleDummy <- CycleDummy + 1
+        CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+        DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1] 
+      }
+      ## Brandish Maha
+      else if(BMRemain - DealCycle$Time[1] <= 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
+        DealCycle <- DCATKSkip(DealCycle, "BrandishMahaCommand", ATKFinal, SkipStructure)
+        BMRemain <- ifelse(DealCycle$InstallMahaBuff[nrow(DealCycle)] > 0, BMCool_IM, BMCool)
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        CycleDummy <- CycleDummy + 1
+        CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+        DealCycle$Combo[nrow(DealCycle)] <- min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 30)
+      }
+      ## General Cycle (Final Blow - Beyonder - Fenrir Crash)
+      else {
+        DealCycle <- DCATKSkip(DealCycle, c("FinalBlowCommand"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 5))
+        
+        DealCycle <- DCATKSkip(DealCycle, c("Beyonder1"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 6))
+        
+        DealCycle <- DCATKSkip(DealCycle, c("Beyonder2"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 6))
+        
+        DealCycle <- DCATKSkip(DealCycle, c("Beyonder3"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 6))
+        
+        DealCycle <- DCATKSkip(DealCycle, c("FenrirCrash"), ATKFinal, SkipStructure)
+        BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+        DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + subset(ATKFinal, rownames(ATKFinal)=="FenrirCrash")$AttackTimes))
+        
         CycleDummy <- CycleDummy + 1
         CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
       }
     }
-    if(max(subset(DealCycle, DealCycle$Skills=="HuntersTargeting")$Time) < 
-       max(subset(DealCycle, DealCycle$AdrenalineBoost==(subset(BuffFinal, rownames(BuffFinal)=="AdrenalineBoost")$Duration * 1000))$Time) & 
-       DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0) {
-      if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) > 
-         subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 & 
-         DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0) {
-        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
-        DealCycle <- ComboF(DealCycle, 0, ADDummy)
-        ADDummy <- ADDummyF(DealCycle, ADDummy)
-      }
-      DealCycle <- DCATK(DealCycle, "HuntersTargeting", ATKFinal)
-      DealCycle <- ComboF(DealCycle, 0, ADDummy)
-      ADDummy <- ADDummyF(DealCycle, ADDummy)
-    }
-    Cool <- ifelse(DealCycle$InstallMaha[nrow(DealCycle)] > 0, BMCoolIM, BMCool)
-    BMCoolDown <- max(Cool - ((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BrandishMahaCommand")$Time)), 0)
-  }
-  
-  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] <= 240000) {
-    if(CycleDummy == 0) {
-      DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
-      DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
-      DealCycle <- ComboF(DealCycle, 2, ADDummy)
-      ADDummy <- ADDummyF(DealCycle, ADDummy)
-      CycleDummy <- ifelse(DealCycle$InstallMaha[nrow(DealCycle)] > 0, 2, 1)
-    } else {
-      for(i in 1:length(AranSkillSetA)) {
-        if(AranSkillSetA[i]=="FinalBlowCommand") {
-          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-          DealCycle <- ComboF(DealCycle, 5, ADDummy)
-          ADDummy <- ADDummyF(DealCycle, ADDummy)
-        } else if(AranSkillSetA[i]=="FenrirCrash") {
-          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-          DealCycle <- ComboF(DealCycle, subset(ATKFinal, rownames(ATKFinal)=="FenrirCrash")$AttackTimes, ADDummy)
-          ADDummy <- ADDummyF(DealCycle, ADDummy)
-        } else {
-          DealCycle <- DCATKSkip(DealCycle, AranSkillSetA[i], ATKFinal, SkipStructure)
-          DealCycle <- ComboF(DealCycle, 6, ADDummy)
-          ADDummy <- ADDummyF(DealCycle, ADDummy)
+    
+    if(sum(k == c(3, 5, 7, 9)) == 1) {
+      while(DealCycle$Combo[nrow(DealCycle)] < 900 & GNRemain - DealCycle$Time[1] > 0) {
+        if(CycleDummy == 0) {
+          DealCycle <- DCATKSkip(DealCycle, "Swing", ATKFinal, SkipStructure)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$SwingBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="SwingBuff")$Duration * 1000
+          DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 2))
+          CycleDummy <- 1
         }
-        CycleDummy <- CycleDummy + 1
-        CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+        else if(BMRemain - DealCycle$Time[1] <= 0 & DealCycle$AdrenalineBoost[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
+          DealCycle <- DCATKSkip(DealCycle, "BrandishMahaCommand", ATKFinal, SkipStructure)
+          BMRemain <- ifelse(DealCycle$InstallMahaBuff[nrow(DealCycle)] > 0, BMCool_IM, BMCool)
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          CycleDummy <- CycleDummy + 1
+          CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+          DealCycle$Combo[nrow(DealCycle)] <- min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 30)
+        }
+        else {
+          DealCycle <- DCATKSkip(DealCycle, c("FinalBlowCommand"), ATKFinal, SkipStructure)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 5))
+          
+          DealCycle <- DCATKSkip(DealCycle, c("Beyonder1"), ATKFinal, SkipStructure)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 6))
+          
+          DealCycle <- DCATKSkip(DealCycle, c("Beyonder2"), ATKFinal, SkipStructure)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 6))
+          
+          DealCycle <- DCATKSkip(DealCycle, c("Beyonder3"), ATKFinal, SkipStructure)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 6))
+          
+          DealCycle <- DCATKSkip(DealCycle, c("FenrirCrash"), ATKFinal, SkipStructure)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + subset(ATKFinal, rownames(ATKFinal)=="FenrirCrash")$AttackTimes))
+          
+          CycleDummy <- CycleDummy + 1
+          CycleDummy <- ifelse(CycleDummy==4, 0, CycleDummy)
+        }
+      }
+    }
+    
+    if(k != length(BuffList)) {
+      for(i in 1:length(BuffList[[k]])) {
+        if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
+          DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
+          BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+          if(BuffList[[k]][i]=="InstallMahaBuff") {
+            DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 100))
+          } else {
+            DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1]
+          }
+          
+          if(BuffList[[k]][i]=="AuraWeaponBuff") {
+            if(nrow(subset(DealCycle, DealCycle$Skills=="AuraWeaponBuff")) > nrow(subset(DealCycle, DealCycle$Skills=="SpiderInMirror")) * 2) {
+              DealCycle <- DCATKSkip(DealCycle, "SpiderInMirror", ATKFinal, SkipStructure)
+              BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+              GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+              DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1]
+            }
+            
+            DealCycle <- DCATKSkip(DealCycle, "ZoneofMaha", ATKFinal, SkipStructure)
+            BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+            GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+            DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 5))
+            
+            DealCycle <- DCATKSkip(DealCycle, "GatheringCatcherCommand", ATKFinal, SkipStructure)
+            BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+            GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+            DealCycle$Combo[nrow(DealCycle)] <- ifelse(DealCycle$AdrenalineBoost[nrow(DealCycle)] > 0, 500, min(1000, DealCycle$Combo[nrow(DealCycle)-1] + 2))
+            
+            DealCycle <- DCATKSkip(DealCycle, "ZoneofMahaZone", ATKFinal, SkipStructure)
+            BMRemain <- max(0, BMRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+            GNRemain <- max(0, GNRemain - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1]))
+            DealCycle$Combo[nrow(DealCycle)] <- DealCycle$Combo[nrow(DealCycle)-1]
+            
+            ADDummy <- 0
+          }
+        } else {
+          DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
+          VPRemain <- max(0, VPRemain - DealCycle$Time[1])
+          RLRemain <- max(0, RLRemain - DealCycle$Time[1])
+          DealCycle$CylinderGauge[nrow(DealCycle)] <- DealCycle$CylinderGauge[nrow(DealCycle)-1]
+        }
       }
     }
   }
-  
-  End <- c()
-  for(i in (nrow(DealCycle)-4):nrow(DealCycle)) {
-    if(DealCycle$Time[i] >= 240000) {
-      End <- c(End, i)
-    }
-  }
-  if(length(End)!=0) {
-    DealCycle <- DealCycle[-End, ]
-  }
-  DealCycle[1, -1] <- subset(ATKFinal, rownames(ATKFinal)==DealCycle$Skills[nrow(DealCycle)])$Delay
-  DealCycle <- DealCycleFinal(DealCycle)
   return(DealCycle)
 }
 AranAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
@@ -849,6 +1007,7 @@ AranDealCycle <- AranCycle(PreDealCycle=AranDealCycle,
                            SummonedFinal=SummonedFinal, 
                            SkipStructure=AranSkipATK, 
                            Spec=AranSpec)
+AranDealCycle <- DealCycleFinal(AranDealCycle)
 AranDealCycle <- AranAddATK(AranDealCycle, ATKFinal, BuffFinal, SummonedFinal)
 AranDealCycle <- DCSpiderInMirror(AranDealCycle, SummonedFinal)
 AranDealCycleReduction <- DealCycleReduction(AranDealCycle)

@@ -488,7 +488,7 @@ KaiserCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   BuffSummonedPrior <- c("BlazeUp", "RegainStrength", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulWindBooster", "UsefulAdvancedBless", 
                          "AuraWeaponBuff", "Petrified", "GuardianofNovaBuff", "BlessofGrandisGoddess", "SoulContractLink", "MajestyofKaiser", "FinalTrans", "DragonBlazeBuff", "Restraint4")
   Times120 <- c(0, 0, 0, 0, 0, 0, 
-                0.5, 2, 1, 0.5, 1, 1, 1/3, 1, 1/6)
+                2/3, 2, 1, 0.5, 1, 1, 1/3, 1, 1/6)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]

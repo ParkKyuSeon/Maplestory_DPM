@@ -319,18 +319,18 @@ HeroDealCycle <- t(rep(0, length(DealCycle)))
 colnames(HeroDealCycle) <- DealCycle
 
 HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                      Period=240, CycleTime=240) {
+                      Period=240, CycleTime=720) {
   BuffSummonedPrior <- c("WeaponBooster", "Fury", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "UsefulAdvancedBless", "EpicAdventure", 
                          "AuraWeaponBuff", "MapleWarriors2", "SwordofBurningSoul", "Valhalla", "SoulContractLink", "ComboInstinct", "Restraint4")
   Times240 <- c(0, 0, 0, 0, 0, 0, 0, 
-                1, 1, 2, 1, 2, 1, 1)
+                4/3, 1, 2, 1, 2, 1, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times240 <- Times240[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
   }
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime / Period)
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times240[i]==0, Inf, Times240[i])
   }
@@ -512,6 +512,34 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           RURemain <- max(0, RURemain - DealCycle$Time[1])
           SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+          if(BuffList[[k]][i]=="AuraWeaponBuff" & k==5) {
+            DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+          } else if(BuffList[[k]][i]=="Valhalla") {
+            DealCycle <- DCBuff(DealCycle, "PanicBuff", BuffFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+            DealCycle <- DCATK(DealCycle, "Panic", ATKFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+            DealCycle <- DCBuff(DealCycle, "IncisingBuff", BuffFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+            DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+          } else if(BuffList[[k]][i]=="SoulContractLink") {
+            DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+            DealCycle <- DCBuff(DealCycle, "ComboDeathfaultBuff", BuffFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+            DealCycle <- DCATK(DealCycle, "ComboDeathfault", ATKFinal)
+            RURemain <- max(0, RURemain - DealCycle$Time[1])
+            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+          }
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           RURemain <- max(0, RURemain - DealCycle$Time[1])
@@ -530,7 +558,7 @@ HeroDealCycle <- HeroCycle(PreDealCycle=HeroDealCycle,
                                    SummonedFinal=SummonedFinal, 
                                    Spec=HeroSpec,
                                    Period=240, 
-                                   CycleTime=240)
+                                   CycleTime=720)
 HeroDealCycle <- DealCycleFinal(HeroDealCycle)
 HeroDealCycle <- DCSummonedATKs(HeroDealCycle, "SwordofBurningSoul", SummonedFinal)
 HeroDealCycle <- SwordIllusionCycle(HeroDealCycle, ATKFinal)

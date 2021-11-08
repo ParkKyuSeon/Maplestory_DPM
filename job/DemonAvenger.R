@@ -487,25 +487,24 @@ colnames(DemonAvengerDealCycle) <- DealCycle
 DemonAvengerDealCycle <- data.frame(DemonAvengerDealCycle)
 
 DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                              Period=c(120), CycleTime=c(240), DimensionSwordType=c("Normal", "Fast", "Fusion"), FrenzyStack=c(0, 1, 2), ForbiddenContractUse=c(T, F), BloodFeastUse=c(T, F)) {
+                              Period=c(240), CycleTime=c(720), DimensionSwordType=c("Normal", "Fast", "Fusion"), FrenzyStack=c(0, 1, 2), ForbiddenContractUse=c(T, F), BloodFeastUse=c(T, F)) {
   if(FrenzyStack != 0) {
     BuffSummonedPrior <- c("DemonBooster", "RefractEvil", "DiabolicRecovery", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "DemonicFortitude", 
-                           "ArmorBreakBuff", "ReleaseOverloadBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
-    Times120 <- c(0.5, 0.5, 0.5, 0, 0, 0, 0, 
-                  0, 1.5, 0.5, 0.5, 1, 0.5, 1, 0.5)
+                           "ArmorBreakBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
+    Times240 <- c(1, 1, 1, 0, 0, 0, 0, 
+                  0, 1, 4/3, 2, 1, 2, 1)
   } else {
     BuffSummonedPrior <- c("DemonBooster", "RefractEvil", "DiabolicRecovery", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "DemonicFortitude", 
-                           "ArmorBreakBuff", "ReleaseOverloadBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
-    Times120 <- c(0.5, 0.5, 0.5, 0, 0, 0, 0, 
-                  0, 1.5, 0.5, 0.5, 1, 0.5, 1, 0.5)
+                           "ArmorBreakBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
+    Times240 <- c(1, 1, 1, 0, 0, 0, 0, 
+                  0, 1, 4/3, 2, 1, 2, 1)
   }
   
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100)  - Spec$CoolReduce * (Period/CycleTime), length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100)  - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime / Period)
   for(i in 1:length(BuffSummonedPrior)) {
-    SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
+    SubTime[i] <- SubTime[i] / ifelse(Times240[i]==0, Inf, Times240[i])
   }
-  
   SubTimeUniques <- unique(SubTime)
   SubTimeUniques <- SubTimeUniques[SubTimeUniques > 0]
   TimeTypes <- c()
@@ -551,7 +550,7 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
       }
     }
     BuffDelays[[i]] <- DelayData$Delay[t]
-  } 
+  }
   
   DealCycle <- DCATK(DealCycle, "DemonFrenzyDummy", ATKFinal)
   DealCycle$ExceedStack[2] <- 18
@@ -600,6 +599,10 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
       }
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
       DealCycle <- DAStack(DealCycle)
+      if(BuffList[[1]][i]=="ArmorBreakBuff") {
+        DealCycle <- DCBuff(DealCycle, "ReleaseOverloadBuff", BuffFinal)
+        DealCycle <- DAStack(DealCycle)
+      }
     } else {
       DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
       DealCycle <- DAStack(DealCycle)
@@ -669,8 +672,16 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
       ##  BFRemain <- max(0, BFRemain - DealCycle$Time[1])
       ##  FCRemain <- max(0, FCCool - DealCycle$Time[1])
       ## }
+      ## Release Overload Buff
+      if(DealCycle$ReleaseOverloadBuff[nrow(DealCycle)] - DealCycle$Time[1] < 3000 & DealCycle$ExceedStack[nrow(DealCycle)] == 18) {
+        DealCycle <- DCBuff(DealCycle, "ReleaseOverloadBuff", BuffFinal)
+        DealCycle <- DAStack(DealCycle)
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        BFRemain <- max(0, BFRemain - DealCycle$Time[1])
+        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
+      }
       ## Dimension Sword
-      if(nrow(subset(DealCycle, DealCycle$Skills=="DimensionSword")) + nrow(subset(DealCycle, DealCycle$Skills=="DimensionSwordFast")) < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink"))) {
+      else if(nrow(subset(DealCycle, DealCycle$Skills=="DimensionSword")) + nrow(subset(DealCycle, DealCycle$Skills=="DimensionSwordFast")) < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink"))) {
         if(DimensionSwordType=="Normal" | DimensionSwordType=="Fusion" & DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
           DealCycle <- DCATK(DealCycle, "DimensionSword", ATKFinal)
           DealCycle <- DAStack(DealCycle)
@@ -736,6 +747,13 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
           BFRemain <- max(0, BFRemain - DealCycle$Time[1])
           FCRemain <- max(0, FCRemain - DealCycle$Time[1])
+          if(BuffList[[k]][i]=="AuraWeaponBuff" & k==5) {
+            DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
+            DealCycle <- DAStack(DealCycle)
+            SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+            BFRemain <- max(0, BFRemain - DealCycle$Time[1])
+            FCRemain <- max(0, FCRemain - DealCycle$Time[1])
+          }
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           DealCycle <- DAStack(DealCycle)
@@ -1082,7 +1100,7 @@ DemonAvengerDealCycle <- DemonAvengerCycle(DemonAvengerDealCycle,
                                            BuffFinal, 
                                            SummonedFinal, 
                                            DemonAvengerSpec,
-                                           120, 240, "Fusion", 1, T, T)
+                                           240, 720, "Fusion", 1, T, T)
 DemonAvengerDealCycle <- DealCycleFinal(DemonAvengerDealCycle)
 DemonAvengerDealCycle <- DemonAvengerAddATK(DemonAvengerDealCycle, 
                                             ATKFinal, 
@@ -1155,7 +1173,7 @@ DemonAvengerDealCycle2 <- DemonAvengerCycle(DemonAvengerDealCycle2,
                                             BuffFinal, 
                                             SummonedFinal, 
                                             DemonAvengerSpec,
-                                            120, 240, "Fusion", 2, T, T)
+                                            240, 720, "Fusion", 2, T, T)
 DemonAvengerDealCycle2 <- DealCycleFinal(DemonAvengerDealCycle2)
 DemonAvengerDealCycle2 <- DemonAvengerAddATK(DemonAvengerDealCycle2, 
                                              ATKFinal, 
@@ -1207,7 +1225,7 @@ DemonAvengerDealCycle0 <- DemonAvengerCycle(DemonAvengerDealCycle0,
                                             BuffFinal, 
                                             SummonedFinal, 
                                             DemonAvengerSpec,
-                                            120, 240, "Fusion", 0, T, T)
+                                            240, 720, "Fusion", 0, T, T)
 DemonAvengerDealCycle0 <- DealCycleFinal(DemonAvengerDealCycle0)
 DemonAvengerDealCycle0 <- DemonAvengerAddATK(DemonAvengerDealCycle0, 
                                              ATKFinal2, 
@@ -1238,7 +1256,7 @@ DemonAvengerDealCycle1_off <- DemonAvengerCycle(DemonAvengerDealCycle1_off,
                                                 BuffFinal, 
                                                 SummonedFinal, 
                                                 DemonAvengerSpec,
-                                                120, 240, "Normal", 1, T, F)
+                                                240, 720, "Normal", 1, T, F)
 DemonAvengerDealCycle1_off <- DealCycleFinal(DemonAvengerDealCycle1_off)
 DemonAvengerDealCycle1_off <- DemonAvengerAddATK(DemonAvengerDealCycle1_off, 
                                                  ATKFinal2, 
