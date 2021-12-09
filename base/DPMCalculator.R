@@ -1,4 +1,29 @@
-## Options Setting
+## Options Setting (Default)
+DPMCalcOption <- data.frame(SpecSet = "SpecDefault", 
+                            ZeroSpecSet = "SpecDefaultZero", 
+                            XenonSpecSet = "SpecDefaultXenon_A6S6", 
+                            XenonSpecSetAlt = "SpecDefaultXenon_A6A3", 
+                            DemonAvengerSpecSet = "SpecDefaultDemonAvenger", 
+                            MobSet = "MobDefault", 
+                            MonsterLifeLevel = 2, ## Not a Monster Life Farm Level
+                            WeaponSF = 17, 
+                            DemonAvengerSF = 264, ## 264 : Unique, 330 : Legendry
+                            Optimization = F, 
+                            OptdataDelete = T,
+                            DataName = "DPM12352", 
+                            
+                            DualBladeBladeType = "AB", 
+                            stringsAsFactors=F)
+CSVExportOption <- data.frame(Leakage = F, 
+                              OrderBy = "DPM", ## Default, JobName, DPM, Restratint, 40s
+                              RatioStandard = "Bishop", ## Bishop, Minimum, Maximum
+                              FileName = "DPM12356",
+                              
+                              stringsAsFactors=F)
+JobOption <- data.frame()
+
+
+## Options Setting (Legendry)
 DPMCalcOption <- data.frame(SpecSet = "SpecLegendry", 
                             ZeroSpecSet = "SpecLegendryZero", 
                             XenonSpecSet = "SpecLegendryXenon_A15S9", 
@@ -21,6 +46,7 @@ CSVExportOption <- data.frame(Leakage = F,
                               
                               stringsAsFactors=F)
 JobOption <- data.frame()
+
 
 
 ## DPM Data Frame Make

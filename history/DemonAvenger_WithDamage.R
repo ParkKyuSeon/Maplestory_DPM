@@ -1139,7 +1139,7 @@ DemonAvengerDealCycle <- DemonAvengerAddATK(DemonAvengerDealCycle,
                                             SummonedFinal, 
                                             DemonAvengerSpec, 
                                             "Fusion", 1, GetCoreLv(DemonAvengerCore, "CallMastema"), GetCoreLv(DemonAvengerCore, "DemonFrenzy"), GetCoreLv(DemonAvengerCore, "BlessofIsekaiGoddess"), 
-                                            T, .49, 1000, 9)
+                                            T, .49, 1000, 35)
 DemonAvengerDealCycleReduction <- DealCycleReduction(DemonAvengerDealCycle, c("ReleaseOverloadFDR", "DemonFrenzyFDR"))
 
 Idx1 <- c() ; Idx2 <- c()
@@ -1213,7 +1213,7 @@ DemonAvengerDealCycle2 <- DemonAvengerAddATK(DemonAvengerDealCycle2,
                                              SummonedFinal, 
                                              DemonAvengerSpec, 
                                              "Fusion", 2, GetCoreLv(DemonAvengerCore, "CallMastema"), GetCoreLv(DemonAvengerCore, "DemonFrenzy"), GetCoreLv(DemonAvengerCore, "BlessofIsekaiGoddess"), 
-                                             T, .49, 1000, 9)
+                                             T, .49, 1000, 35)
 
 DemonAvengerFinalDPM2Stack <- DealCalcWithMaxDMR(DemonAvengerDealCycle2, ATKFinal, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
                                                  NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
@@ -1266,7 +1266,7 @@ DemonAvengerDealCycle0 <- DemonAvengerAddATK(DemonAvengerDealCycle0,
                                              SummonedFinal, 
                                              DemonAvengerSpec, 
                                              "Fusion", 0, GetCoreLv(DemonAvengerCore2, "CallMastema"), GetCoreLv(DemonAvengerCore2, "DemonFrenzy"), GetCoreLv(DemonAvengerCore2, "BlessofIsekaiGoddess"), 
-                                             T, .49, 1000, 9)
+                                             T, .49, 1000, 35)
 
 DemonAvengerFinalDPM0Stack <- DealCalcWithMaxDMR(DemonAvengerDealCycle0, ATKFinal2, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
                                                  NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
@@ -1298,7 +1298,7 @@ DemonAvengerDealCycle1_off <- DemonAvengerAddATK(DemonAvengerDealCycle1_off,
                                                  SummonedFinal, 
                                                  DemonAvengerSpec, 
                                                  "Normal", 1, GetCoreLv(DemonAvengerCore2, "CallMastema"), GetCoreLv(DemonAvengerCore2, "DemonFrenzy"), GetCoreLv(DemonAvengerCore2, "BlessofIsekaiGoddess"), 
-                                                 T, .49, 1000, 9)
+                                                 T, .49, 1000, 35)
 
 DemonAvengerFinalDPM1_off <- DealCalcWithMaxDMR(DemonAvengerDealCycle1_off, ATKFinal2, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
                                                 NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))

@@ -55,3 +55,64 @@ DealPeak <- function(DealData) {
   }
   return(data.frame(max1sdeal=max(Deal1slist), max5sdeal=max(Deal5slist), max10sdeal=max(Deal10slist)))
 }
+
+GuardianSlime <- function(DealData) {
+  DealData$SlimeDeal <- 0
+  if(nrow(DealData[DealData$Skills == "Restraint4", ]) == 1) {
+    RRTime <- DealData[DealData$Skills == "Restraint4", ]$Time
+    for(i in 2:nrow(DealData)) {
+      if(DealData$R4[i] > 0) {
+        DealData$SlimeDeal[i] <- DealData$Deal[i] * 1.1 / 1.5  ## Groggy Time, Divide By 1.5 : ArcaneForce FDR Not Applied
+      } else if(DealData$R4[i] == 0 & DealData$Time[i] < RRTime + 160000 & DealData$Time[i] > RRTime) {
+        DealData$SlimeDeal[i] <- DealData$Deal[i] * 0.7 / 1.5  ## Normal Time
+      } else {
+        DealData$SlimeDeal[i] <- 0  ## Pattern Time
+      }
+    }
+  } else {
+    ## Time Adjustment for Pattern (SubTime : 190s)
+    RRTime <- DealData[DealData$Skills == "Restraint4", ]$Time
+    RRTime <- c(RRTime, max(DealData$Time) + RRTime[1])
+    
+    LineNumbers <- as.numeric(rownames(DealData[DealData$Skills == "Restraint4", ]))
+    LineNumbers <- c(LineNumbers, nrow(DealData))
+    
+    RRDiff <- diff(RRTime)
+    AddedTime <- c()
+    for(i in 1:length(RRDiff)) {
+      if(RRDiff[i] < 190000) {
+        AddedTime[i] <- 190000 - RRDiff[i]
+      } else {
+        AddedTime[i] <- 0
+      }
+    }
+    
+    for(i in length(AddedTime):2) {
+      AddedTime[i] <- sum(AddedTime[1:i])
+    }
+    
+    for(i in 1:(length(AddedTime)-1)) {
+      DealData$Time[LineNumbers[i+1] : (LineNumbers[i+2]-1)] <- DealData$Time[LineNumbers[i+1] : (LineNumbers[i+2]-1)] + AddedTime[i]
+    }
+    DealData$Time[nrow(DealData)] <- DealData$Time[nrow(DealData)] + AddedTime[length(AddedTime)]
+    
+    RRTime <- DealData[DealData$Skills == "Restraint4", ]$Time
+    for(i in 2:nrow(DealData)) {
+      if(DealData$R4[i] > 0) {
+        DealData$SlimeDeal[i] <- DealData$Deal[i] * 1.1 / 1.5  ## Groggy Time, Divide By 1.5 : ArcaneForce FDR Not Applied
+      } else {
+        ind <- 0
+        for(j in 1:length(RRTime)) {
+          if(DealData$R4[i] == 0 & DealData$Time[i] < RRTime[j] + 160000 & DealData$Time[i] > RRTime[j]) {
+            DealData$SlimeDeal[i] <- DealData$Deal[i] * 0.7 / 1.5  ## Normal Time
+            ind <- 1
+          } 
+        }
+        if(ind == 0) { 
+          DealData$SlimeDeal[i] <- 0  ## Pattern Time
+        }
+      }
+    }
+  }
+  return(sum(DealData$SlimeDeal) / max(DealData$Time) * 60000)
+}
