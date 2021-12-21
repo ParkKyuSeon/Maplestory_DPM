@@ -556,7 +556,7 @@ MechanicCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   MMCool <- subset(ATKFinal, rownames(ATKFinal)=="MicroMissileContainer")$CoolTime * 1000
   DTCool <- subset(ATKFinal, rownames(ATKFinal)=="DistortionField")$CoolTime * 1000
   MMRemain <- 0 ; DTRemain <- 0
-  MMCount <- 0 ; MMMax <- floor(TotalTime / MMCool)
+  MMCount <- 0 ; MMMax <- ceiling(TotalTime / MMCool - 1)
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
   TimeTypes <- c(0, TimeTypes, TotalTime/1000)

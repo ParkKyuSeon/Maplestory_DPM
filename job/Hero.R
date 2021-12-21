@@ -464,7 +464,8 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         SIRemain <- max(0, SIRemain - DealCycle$Time[1])
       }
       ## Sword Illusion + Combo Deathfault & Incising + Rage Uprising
-      else if(SIRemain==0 & DealCycle$ComboInstinct[nrow(DealCycle)]==0) {
+      else if(SIRemain==0 & DealCycle$ComboInstinct[nrow(DealCycle)]==0 & 
+              nrow(subset(DealCycle, DealCycle$Skills=="SwordIllusion")) < nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) * ifelse(Spec$CoolReduce >= 2, 8, 7)) {
         DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
         RURemain <- max(0, RURemain - DealCycle$Time[1])
         SIRemain <- SICool - DealCycle$Time[1]
@@ -529,10 +530,10 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
             RURemain <- max(0, RURemain - DealCycle$Time[1])
             SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-          } else if(BuffList[[k]][i]=="SoulContractLink") {
+          } else if(BuffList[[k]][i]=="SoulContractLink" & SIRemain == 0) {
             DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
             RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+            SIRemain <- SICool - DealCycle$Time[1]
             DealCycle <- DCBuff(DealCycle, "ComboDeathfaultBuff", BuffFinal)
             RURemain <- max(0, RURemain - DealCycle$Time[1])
             SIRemain <- max(0, SIRemain - DealCycle$Time[1])
