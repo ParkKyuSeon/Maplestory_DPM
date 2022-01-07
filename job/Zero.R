@@ -1861,7 +1861,7 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
     if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "ThrowingWeapon", "TurningDrive", "WhirlWind", "GigaCrash", 
                                                           "JumpingCrash", "JumpingCrashShockwave", "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor"))==1) {
       DealCycle$BetaTargetBDR[i] <- 5 * 8
-    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("ShadowRainBeta", "LimitBreak", "LimitBreakLast", "ShadowFlashAlphaExp", "ShadowFlashBetaExp", "SpiderInMirror"))==1) {
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("LimitBreak", "LimitBreakLast", "ShadowFlashAlphaExp", "ShadowFlashBetaExp", "SpiderInMirror"))==1) {
       DealCycle$BetaTargetBDR[i] <- 14 * 8
     } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("JointAttack1", "JointAttack2", "JointAttack3", "JointAttackLast"))==1) {
       DealCycle$BetaTargetBDR[i] <- 11 * 8
