@@ -55,10 +55,15 @@ AddoptionHP <- function(ReqLv, AddOption=T, BossItem=T, HP=4, Allstat=0, Single=
 ## Upgrade Function
 ### UpgradeOption : "1" : 30%, "2" : Miracle(ATK+2.3), "3" : AccScroll(ATK+2.5), 
 ### UpgradeOption : "4", PremiumAccScroll(ATK+4.2), "5", Iggdrasil(Stat+10, ReqLv>=120), "6" : Chaos(ATK+6)
-Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHammerAvailable=T, UpgradeOption, InitialATK, DA=F, XenonSubStat2=F) {
+Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHammerAvailable=T, UpgradeOption, InitialATK, DA=F, XenonAllStat=F) {
   Times <- Upgrade + ifelse(GoldHammerAvailable==T, 1, 0)
-  Option1s <- ifelse(ReqLv<120, ifelse(ItemType=="Acc", 4, ifelse(ItemType=="Armor", 5, 0)), 
-                     ifelse(ItemType=="Acc", 5, ifelse(ItemType=="Armor", 7, 0)))
+  if(XenonAllStat==F) {
+    Option1s <- ifelse(ReqLv<120, ifelse(ItemType=="Acc", 4, ifelse(ItemType=="Armor", 5, 0)), 
+                       ifelse(ItemType=="Acc", 5, ifelse(ItemType=="Armor", 7, 0)))
+  } else {
+    Option1s <- ifelse(ReqLv<120, ifelse(ItemType=="Acc", 1, ifelse(ItemType=="Armor", 1, 0)), 
+                       ifelse(ItemType=="Acc", 3, ifelse(ItemType=="Armor", 3, 0)))
+  }
   Option1h <- ifelse(ReqLv<120, ifelse(ItemType=="Acc", 200, ifelse(ItemType=="Armor", 320, 0)), 
                      ifelse(ItemType=="Acc", 250, ifelse(ItemType=="Armor", 470, 0)))
   Option1a <- ifelse(ItemType=="Gloves", 3, 0)
@@ -68,6 +73,7 @@ Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHa
   Option5 <- ifelse(ReqLv>=120, 10, NA)
   if(length(UpgradeOption)==Times) {
     MainStat <- 0
+    SubStat1 <- 0
     SubStat2 <- 0
     HP <- 0
     ATK <- InitialATK
@@ -77,12 +83,13 @@ Upgrade <- function(ReqLv, ItemType=c("Acc", "Armor", "Gloves"), Upgrade, GoldHa
       s <- c(Option1s, 0, 0, 0, Option5, 0)
       a <- c(Option1a, Option2, Option3, Option4, 0, Option6)
       HP <- HP + h[UpgradeOption[i]]
-      MainStat <- ifelse(XenonSubStat2==F, MainStat + s[UpgradeOption[i]], MainStat)
-      SubStat2 <- ifelse(XenonSubStat2==T, SubStat2 + s[UpgradeOption[i]], SubStat2)
+      MainStat <- MainStat + s[UpgradeOption[i]]
+      SubStat1 <- ifelse(XenonAllStat==T, SubStat1 + s[UpgradeOption[i]], SubStat1)
+      SubStat2 <- ifelse(XenonAllStat==T, SubStat2 + s[UpgradeOption[i]], SubStat2)
       ATK <- ATK + a[UpgradeOption[i]] + ifelse(i==4&ItemType=="Armor"&UpgradeOption[i]==1, 1, 0)
     }
     if(is.na(MainStat)==F & is.na(ATK)==F & DA==F) {
-      Result <- as.data.frame(t(c(floor(ATK-InitialATK), 0, MainStat, 0, SubStat2)))
+      Result <- as.data.frame(t(c(floor(ATK-InitialATK), 0, MainStat, SubStat1, SubStat2)))
       colnames(Result) <- c("ATK", "ATKSub", "MainStat", "SubStat1", "SubStat2")
       return(Result)
     } else if(is.na(MainStat)==F & is.na(ATK)==F & DA==T) {
@@ -1167,23 +1174,26 @@ DCSummonedATKs <- function(DealCycle, Skills, SummonedSkillList) {
   rownames(SkillInd) <- 1:nrow(SkillInd)
   for(i in 1:ncol(SkillInd)) {
     DC <- DealCycle[SkillInd[, i], ]
-    for(j in 1:nrow(DC)) {
-      DC1 <- rbind(DC[j, ], DC[j, ])
-      DC1[2, 1] <- Skills[i]
-      DC1[2, 2] <- DC1[2, 2] + SummonedSkillList$SubTime[k[i]]
-      
-      p <- 1
-      t <- SummonedSkillList$SubTime[k[i]] * 2
-      while(t <= SummonedSkillList$Duration[k[i]]*1000 & t <= ifelse(is.na(DC[j+1, 2])==F, DC[j+1, 2]-DC[j, 2], Inf)) {
-        DC1 <- rbind(DC1, DC1[1, ])
-        DC1[p+2, 1] <- Skills[i]
-        DC1[p+2, 2] <- DC1[p+1, 2] + SummonedSkillList$SubTime[k[i]]
-        t <- t + SummonedSkillList$SubTime[k[i]]
-        p <- p + 1
-      }
-      DC1 <- subset(DC1, DC1$Time<=maxtime)
-      if(nrow(DC1)>1) {
-        DealCycleNew <- rbind(DealCycleNew, DC1[2:nrow(DC1), ])
+    DC <- rbind(DC, DealCycle[nrow(DealCycle), ])
+    for(j in 1:(nrow(DC)-1)) {
+      if(DC$Time[j+1] - DC$Time[j] >= SummonedSkillList$SubTime[k[i]]) {
+        DC1 <- rbind(DC[j, ], DC[j, ])
+        DC1[2, 1] <- Skills[i]
+        DC1[2, 2] <- DC1[2, 2] + SummonedSkillList$SubTime[k[i]]
+        
+        p <- 1
+        t <- SummonedSkillList$SubTime[k[i]] * 2
+        while(t <= SummonedSkillList$Duration[k[i]]*1000 & t <= ifelse(is.na(DC[j+1, 2])==F, DC[j+1, 2]-DC[j, 2], Inf)) {
+          DC1 <- rbind(DC1, DC1[1, ])
+          DC1[p+2, 1] <- Skills[i]
+          DC1[p+2, 2] <- DC1[p+1, 2] + SummonedSkillList$SubTime[k[i]]
+          t <- t + SummonedSkillList$SubTime[k[i]]
+          p <- p + 1
+        }
+        DC1 <- subset(DC1, DC1$Time<=maxtime)
+        if(nrow(DC1)>1) {
+          DealCycleNew <- rbind(DealCycleNew, DC1[2:nrow(DC1), ])
+        }
       }
     }
   }
@@ -3196,10 +3206,11 @@ JobSpec <- function(JobBase,
   } else if(JobBase$Job=="DemonAvenger") {
     MainStatWithoutStatP <- MainStat
   }
-  MainStat <- floor(MainStat * MainStatP) + floor(UneffMainStat) + ifelse(JobBase$Job!="Xenon", JobBase$ArcaneForceStat, JobBase$ArcaneForceStat / 100 * 39) + 
-    ifelse(JobBase$Job!="Xenon", JobBase$AuthenticForceStat, JobBase$AuthenticForceStat / 100 * 39)
-  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39) + ifelse(JobBase$Job!="Xenon", 0, JobBase$AuthenticForceStat / 100 * 39)
-  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 39) + ifelse(JobBase$Job!="Xenon", 0, JobBase$AuthenticForceStat / 100 * 39)
+  MainStat <- floor(MainStat * MainStatP) + floor(UneffMainStat) + 
+    ifelse(JobBase$Job!="Xenon", ifelse(JobBase$Job!="DemonAvenger", JobBase$ArcaneForceStat, JobBase$ArcaneForceStat / 100 * 120), JobBase$ArcaneForceStat / 100 * 48) + 
+    ifelse(JobBase$Job!="Xenon", ifelse(JobBase$Job!="DemonAvenger", JobBase$AuthenticForceStat, JobBase$AuthenticForceStat / 100 * 120), JobBase$AuthenticForceStat / 100 * 48)
+  SubStat1 <- floor(SubStat1 * AllstatP) + UneffSubStat1 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 48) + ifelse(JobBase$Job!="Xenon", 0, JobBase$AuthenticForceStat / 100 * 48)
+  SubStat2 <- floor(SubStat2 * AllstatP) + UneffSubStat2 + ifelse(JobBase$Job!="Xenon", 0, JobBase$ArcaneForceStat / 100 * 48) + ifelse(JobBase$Job!="Xenon", 0, JobBase$AuthenticForceStat / 100 * 48)
   SubStat2 <- ifelse(is.na(JobBase$SubStat2)==T, 0, SubStat2)
   CRR <- ifelse(JobBase$CRROver==T, CRR, min(100, CRR))
   FDR <- FDRCalc(c(FDR, ArcaneForceFDR(JobBase$ArcaneForce, MobInfo$Basic$Arc), LevelFDR(JobBase$ChrLv, MobInfo$Basic$Lv), 
@@ -3244,6 +3255,12 @@ Deal_RR <- function(DealData) {
   } else {
     return(sum(RR[1:(Idx[2]-1), ]$Deal))
   }
+}
+Deal_BishopRR <- function(DealData) {
+  StartTime <- subset(DealData, DealData$Skills=="HolyBlood")$Time[1]
+  DealData <- DealData[DealData$Time >= StartTime, ]
+  DealData <- DealData[DealData$Time < StartTime + 15000, ]
+  return(sum(DealData$Deal))
 }
 Deal_40s <- function(DealData, StartWithRR=T, StartTime=NA, FinishTime=NA) {
   if(StartWithRR==T) {
@@ -3343,4 +3360,14 @@ DealCycleCollapse <- function(DealCycle, SkillList, Cores=detectCores(logical=F)
   DealCycleSkillList <- mcmapply(CollapseEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
   DealCycle$Skills <- DealCycleSkillList
   return(DealCycle)
+}
+
+
+## Utility Functions
+GetList <- function(ComponentNames) {
+  finallist <- list()
+  for(i in 1:length(ComponentNames)) {
+    finallist[[i]] <- get(ComponentNames[i])
+  }
+  return(finallist)
 }

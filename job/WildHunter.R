@@ -40,7 +40,11 @@ WildHunterBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## WildHunter - Passive
-{option <- factor(c("CRR"), levels=PSkill)
+{option <- factor("ATK", levels=PSkill)
+value <- c(9)
+TitaniumArrow <- data.frame(option, value)
+
+option <- factor(c("CRR"), levels=PSkill)
 value <- c(5)
 Jayla <- data.frame(option, value)
 
@@ -60,6 +64,10 @@ option <- factor(c("BDR"), levels=PSkill)
 value <- c(10)
 CrossbowMastery <- data.frame(option, value)
 
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(20)
+SoulArrow <- data.frame(option, value)
+
 option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
 value <- c(2, 20)
 CrossbowAcceleration <- data.frame(option, value)
@@ -67,6 +75,10 @@ CrossbowAcceleration <- data.frame(option, value)
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
+
+option <- factor(c("ATKP", "ATKSpeed", "FDR"), levels=PSkill)
+value <- c(25, 1, 10)
+BeastForm <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(40)
@@ -104,9 +116,9 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(WildHunterCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-WildHunterPassive <- Passive(list(Jayla=Jayla, SummonJaguar=SummonJaguar, AutomaticShootingDevice=AutomaticShootingDevice, NaturesWrath=NaturesWrath, 
-                                  CrossbowMastery=CrossbowMastery, CrossbowAcceleration=CrossbowAcceleration, 
-                                  PhysicalTraining=PhysicalTraining, Flurry=Flurry, JaguarLink=JaguarLink, ExtendMagazine=ExtendMagazine, CrossbowExpert=CrossbowExpert, WildInstinct=WildInstinct, 
+WildHunterPassive <- Passive(list(TitaniumArrow=TitaniumArrow, Jayla=Jayla, SummonJaguar=SummonJaguar, AutomaticShootingDevice=AutomaticShootingDevice, NaturesWrath=NaturesWrath, 
+                                  CrossbowMastery=CrossbowMastery, SoulArrow=SoulArrow, CrossbowAcceleration=CrossbowAcceleration, 
+                                  PhysicalTraining=PhysicalTraining, BeastForm=BeastForm, Flurry=Flurry, JaguarLink=JaguarLink, ExtendMagazine=ExtendMagazine, CrossbowExpert=CrossbowExpert, WildInstinct=WildInstinct, 
                                   AdvancedFinalAttack=AdvancedFinalAttack, JaguarStormPassive=JaguarStormPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
@@ -118,26 +130,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AnotherBiteDebuffStack <- rbind(data.frame(option, value), info)
 
-option <- factor("ATK", levels=BSkill)
-value <- c(20)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SoulArrow <- rbind(data.frame(option, value), info)
-
 option <- factor("ATKP", levels=BSkill)
 value <- c(10)
 info <- c(300, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Hawling <- rbind(data.frame(option, value), info)
-
-option <- factor(c("ATKP", "ATKSpeed"), levels=BSkill)
-value <- c(25, 1)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-BeastForm <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "CDMR"), levels=BSkill)
 value <- c(20 + ceiling(WildHunterBase$SkillLv/2), 15 + ceiling(WildHunterBase$SkillLv/2))
@@ -210,12 +208,12 @@ MapleWarriors2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CDMR"), levels=BSkill)
 value <- c(-8)
-info <- c(0.66 + 0.03 + 7.74, 120, 0, F, T, F, F)
+info <- c(0.66 + 0.03 + 5.54, 120, 0, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 JaguarMaximumCDMR <- rbind(data.frame(option, value), info)}
 
-WildHunterBuff <- list(AnotherBiteDebuffStack=AnotherBiteDebuffStack, SoulArrow=SoulArrow, Hawling=Hawling, BeastForm=BeastForm, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, 
+WildHunterBuff <- list(AnotherBiteDebuffStack=AnotherBiteDebuffStack, Hawling=Hawling, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, 
                        WillofLiberty=WillofLiberty, SilentRampage=SilentRampage, UsefulCombatOrders=UsefulCombatOrders, JaguarStorm=JaguarStorm, 
                        WildGrenadePrep=WildGrenadePrep, WildGrenadeStack=WildGrenadeStack, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, JaguarMaximumCDMR=JaguarMaximumCDMR,
                        Restraint4=Restraint4, SoulContractLink=SoulContractLink)
@@ -250,7 +248,7 @@ info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-WildHunterBuff <- list(AnotherBiteDebuffStack=AnotherBiteDebuffStack, SoulArrow=SoulArrow, Hawling=Hawling, BeastForm=BeastForm, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, 
+WildHunterBuff <- list(AnotherBiteDebuffStack=AnotherBiteDebuffStack, Hawling=Hawling, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier, 
                        WillofLiberty=WillofLiberty, SilentRampage=SilentRampage, UsefulCombatOrders=UsefulCombatOrders, JaguarStorm=JaguarStorm, 
                        WildGrenadePrep=WildGrenadePrep, WildGrenadeStack=WildGrenadeStack, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, JaguarMaximumCDMR=JaguarMaximumCDMR,
                        Restraint4=Restraint4, SoulContractLink=SoulContractLink)
@@ -375,7 +373,7 @@ WildVulcanTypeXPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(20)
-info <- c(525 + 21 * GetCoreLv(WildHunterCore, "WildVulcanTypeX"), 5, 6660, 100, 120, T, F, F)
+info <- c(605 + 20 * GetCoreLv(WildHunterCore, "WildVulcanTypeX"), 7, 4460, 120, 120, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 WildVulcanTypeXLoop <- rbind(data.frame(option, value), info)
@@ -424,7 +422,7 @@ WildHunterATK <- Attack(list(WildVulcan=WildVulcan, AnotherBite=AnotherBite, Sum
 ## WildHunter - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * GetCoreLv(WildHunterCore, "GuidedArrow"), 1, 720, 500, 0.5*89+0.51, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(WildHunterCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)
@@ -461,10 +459,10 @@ WildHunterDealCycle <- t(rep(0, length(DealCycle)))
 colnames(WildHunterDealCycle) <- DealCycle
 
 WildHunterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, CycleTime=240) {
-  BuffSummonedPrior <- c("SoulArrow", "Hawling", "BeastForm", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "WillofLiberty", 
+  BuffSummonedPrior <- c("Hawling", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "WillofLiberty", 
                          "GuidedArrow", "ResistanceLineInfantry", "SilentRampage", "JaguarStorm", "MapleWarriors2", "CriticalReinforce", "SoulContractLink", "Restraint4")
-  Times120 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
-                2, 5, 1, 1, 0.5, 1, 1, 0.5)
+  Times120 <- c(0, 0, 0, 0, 0, 0, 
+                0, 5, 1, 1, 0.5, 1, 1, 0.5)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -1238,7 +1236,7 @@ WildHunterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   
   ## Drill Container, Wild Vulcan Type X, Jaguar Maximum
   DealCycle <- RepATKCycle(DealCycle, "DrillContainer", 55, 1200, ATKFinal)
-  DealCycle <- RepATKCycle(DealCycle, "WildVulcanTypeXLoop", 56, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "WildVulcanTypeXLoop", 38, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "JaguarMaximum", 9, 990, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "JaguarMaximumEnd", 4, 2160 - 30 + 360, ATKFinal)
   
@@ -1357,32 +1355,3 @@ set(get(DPMCalcOption$DataName), as.integer(4), "WildHunter", Deal_40s(WildHunte
 WildHunterSpecMean <- SpecMean("WildHunter", WildHunterDealCycleReduction, 
                                DealCalcWithMaxDMR(WildHunterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt), 
                                ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt)
-
-
-## Jaguar Storm 2 Hits
-DealCycle <- c("Skills", "Time", rownames(WildHunterBuff))
-WildHunterDealCycleStorm2Hit <- t(rep(0, length(DealCycle)))
-colnames(WildHunterDealCycleStorm2Hit) <- DealCycle
-
-WildHunterDealCycleStorm2Hit <- WildHunterCycle(WildHunterDealCycleStorm2Hit, 
-                                       ATKFinal, 
-                                       BuffFinal, 
-                                       SummonedFinal, 
-                                       Spec=WildHunterSpec, 
-                                       CycleTime=240)
-WildHunterDealCycleStorm2Hit <- WildHunterAddATK(WildHunterDealCycleStorm2Hit, 
-                                        ATKFinal, 
-                                        BuffFinal,
-                                        SummonedFinal, 
-                                        Spec=WildHunterSpec, 
-                                        StormHits=2)
-Storm2Hit <- DealCalc(WildHunterDealCycleStorm2Hit, ATKFinal, BuffFinal, SummonedFinal, WildHunterSpecOpt, Collapse=F)
-Storm2HitDPM <- sum(na.omit(Storm2Hit)) / (max(WildHunterDealCycleStorm2Hit$Time)/ 60000)
-
-Storm2HitDealData <- data.frame(WildHunterDealCycleStorm2Hit$Skills, WildHunterDealCycleStorm2Hit$Time, WildHunterDealCycleStorm2Hit$Restraint4, Storm2Hit)
-colnames(Storm2HitDealData) <- c("Skills", "Time", "R4", "Deal")
-
-Storm2HitRR <- Deal_RR(Storm2HitDealData)
-Storm2Hit40s <- Deal_40s(Storm2HitDealData)
-
-print(data.frame(Storm2HitDPM=Storm2HitDPM, Storm2HitRR=Storm2HitRR, Storm2Hit40s=Storm2Hit40s))

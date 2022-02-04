@@ -64,6 +64,10 @@ option <- factor(c("MainStat"), levels=PSkill)
 value <- c(40)
 HighWisdom <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+MagicAcceleration <- data.frame(option, value)
+
 option <- factor(c("CRR", "ATK"), levels=PSkill)
 value <- c(15 + ifelse(EvanWeaponType=="Wand", 5, 0), 10)
 SpellMastery <- data.frame(option, value)
@@ -108,8 +112,8 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(EvanCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-EvanPassive <- Passive(list(DragonEquip, InheritedWill, LinkedMagic, HighWisdom, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential, MagicMastery, DragonFury, HighDragonPotential, 
-                            SpiralofManaPassive, BlinkPassive, RopeConnectPassive))
+EvanPassive <- Passive(list(DragonEquip, InheritedWill, LinkedMagic, HighWisdom, MagicAcceleration, SpellMastery, ElementalReset, CriticalMagic, MagicAmplification, DragonPotential, MagicMastery, DragonFury, 
+                            HighDragonPotential, SpiralofManaPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Evan - Buff
@@ -157,7 +161,7 @@ FusionSkill <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(0, 2, 30, F, T, T, F)
+info <- c(0, 0, 30, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Return <- rbind(data.frame(option, value), info)
@@ -182,13 +186,6 @@ info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SpiralofManaRedBuff <- rbind(data.frame(option, value), info)
-
-option <- factor(c("ATKSpeed"), levels=BSkill)
-value <- c(2)
-info <- c(180, 0, 0, T, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-MagicBooster <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ImmuneIgnore"), levels=BSkill)
 value <- c(10)
@@ -262,13 +259,13 @@ MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
 EvanBuff <- list(MagicFragmentStack=MagicFragmentStack, Communion=Communion, ElementalBlastBuff=ElementalBlastBuff, ElementalBlastFDR=ElementalBlastFDR, MirSkill=MirSkill, FusionSkill=FusionSkill, Return=Return, 
                  JodiacRayStack=JodiacRayStack, JodiacRayRemained=JodiacRayRemained, SpiralofManaRedBuff=SpiralofManaRedBuff,
-                 MagicBooster=MagicBooster, ElementalReset=ElementalReset, BlessofOnix=BlessofOnix, MapleSoldier=MapleSoldier, 
+                 ElementalReset=ElementalReset, BlessofOnix=BlessofOnix, MapleSoldier=MapleSoldier, 
                  SwiftReturnDebuff=SwiftReturnDebuff, DiveReturnBuff=DiveReturnBuff, DarkFogBuff=DarkFogBuff, 
                  HeroesOath=HeroesOath, 
                  UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                  OverloadMana=OverloadMana, MapleWarriors2=MapleWarriors2, 
                  Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-## PetBuff : MagicBooster(1020ms), ElementalReset(630ms), BlessofOnix(600ms), UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
+## PetBuff : ElementalReset(630ms), BlessofOnix(600ms), UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   EvanBuff[[length(EvanBuff)+1]] <- UsefulAdvancedBless
   names(EvanBuff)[[length(EvanBuff)]] <- "UsefulAdvancedBless"
@@ -491,7 +488,7 @@ DragonBreak <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * GetCoreLv(EvanCore, "DragonBreak"), 7, 0, 240, NA, NA, NA, F)
+info <- c(550 + 20 * GetCoreLv(EvanCore, "DragonBreak"), 7, 0, 240, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ImperialBreath <- rbind(data.frame(option, value), info)
@@ -505,7 +502,7 @@ BreakReturn <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(400 + 16 * GetCoreLv(EvanCore, "JodiacRay"), 6, 780, 180, 180, T, F, F)
+info <- c(580 + 16 * GetCoreLv(EvanCore, "JodiacRay"), 6, 780, 180, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 JodiacRay <- rbind(data.frame(option, value), info)
@@ -572,9 +569,9 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 
 EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=c(180), CycleTime=c(360), DealCycleType=c("DoE-DB-BoW", "SoT-DoE-DB"), ActiveCoreData=EvanCore[[2]], BoWBoE=c("BoW", "BoE", "NA")) {
-  BuffSummonedPrior <- c("MagicBooster", "ElementalReset", "BlessofOnix", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
+  BuffSummonedPrior <- c("ElementalReset", "BlessofOnix", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
                          "SummonOnixDragon", "MapleWarriors2")
-  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 
                 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -751,7 +748,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
   }
   
-  RTCool <- subset(BuffFinal, rownames(BuffFinal)=="Return")$CoolTime * 1000
   DFCool <- subset(ATKFinal, rownames(ATKFinal)=="DarkFog")$CoolTime * 1000
   R4Cool <- subset(BuffFinal, rownames(BuffFinal)=="Restraint4")$CoolTime * 1000
   SCCool <- subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000
@@ -763,7 +759,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   JRCool <- subset(ATKFinal, rownames(ATKFinal)=="JodiacRay")$CoolTime * 1000
   SMCool <- 7780
   
-  RTRemain <- max(0, RTCool - subset(DealCycle, DealCycle$Skills=="Return")$Time - DealCycle$Time[1])
   DDRemain <- max(0, DDCool - subset(DealCycle, DealCycle$Skills=="DragonDive")$Time - DealCycle$Time[1])
   DFRemain <- max(0, DFCool - subset(DealCycle, DealCycle$Skills=="DarkFogBuff")$Time - DealCycle$Time[1])
   R4Remain <- 0 ; SCRemain <- 0
@@ -798,7 +793,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
           DealCycle <- DragonBuff(DealCycle)
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -816,7 +810,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- DCATK(DealCycle, "JodiacRay", ATKFinal)
         DealCycle$JodiacRayRemained[nrow(DealCycle)] <- (14 + floor(ActiveCoreData[ActiveCoreData$Active=="JodiacRay", 2] / 10)) * 1000
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -837,7 +830,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
 
         DealCycle <- DCATK(DealCycle, "JodiacRayDelay", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -858,7 +850,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCATK(DealCycle, "JodiacRayDelay", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -872,7 +863,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCBuff(DealCycle, "Return", BuffFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTCool - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -890,7 +880,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCATK(DealCycle, "JodiacRayDelay", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -910,7 +899,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCATK(DealCycle, "CircleofEarth", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -925,7 +913,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCATK(DealCycle, "CircleofThunder", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -942,7 +929,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       else if(SCRemain <= 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) < nrow(subset(DealCycle, DealCycle$Skills=="JodiacRay")) * 2) {
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCCool - DealCycle$Time[1]
@@ -958,7 +944,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       else if(R4Remain <= 0 & nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) < nrow(subset(DealCycle, DealCycle$Skills=="JodiacRay"))) {
         DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Cool - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -980,7 +965,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCATK(DealCycle, "ElementalBlast", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1020,41 +1004,40 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       }
       ## Break - Return, Breath - Return, Dive - Return
       else if(### Break - Return
-              RTRemain <= 0 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 40030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40780 | 
-              RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 410030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 412220 | 
+              DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 40030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40780 | 
+              DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 410030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 412220 | 
               ### Breath - Return
-              DealCycleType == "SoT-DoE-DB" & RTRemain <= 0 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 30780 | 
-              RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 310600 | 
-              RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320720 | 
+              DealCycleType == "SoT-DoE-DB" & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 30780 | 
+              DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 310600 | 
+              DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320720 | 
               ### Breath - Return (Swift Buff) 
-              RTRemain <= 0 & DealCycle$SwiftReturnDebuff[nrow(DealCycle)] - DealCycle$Time[1] < 10000 & 
+              DealCycle$SwiftReturnDebuff[nrow(DealCycle)] - DealCycle$Time[1] < 10000 & 
               DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 400000 | 
               ### Breath - Return (If Dragon Break CoolTime is 0 or Dragon Dive CoolTime is -1000)
-              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40000 | 
-              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320000 | 
-              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 330000 | 
-              RTRemain <= 0 & DDRemain <= -1000 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40000 | 
-              RTRemain <= 0 & DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320000 | 
-              RTRemain <= 0 & DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 330000 | 
+              DBKRemain <= 0 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40000 | 
+              DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320000 | 
+              DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 330000 | 
+              DDRemain <= -1000 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 30030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 40000 | 
+              DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 310030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 320000 | 
+              DDRemain <= -1000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 320030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 330000 | 
               ### Dive - Return
-              RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 211140 | 
+              DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 211140 | 
               ### Dive - Return (If Dragon Break CoolTime is 0)
-              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 300000 | 
+              DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 300000 | 
               ### Swift - Return (SoT-DoE-DB Only)
-              DealCycleType == "SoT-DoE-DB" & RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 120030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 121320 | 
+              DealCycleType == "SoT-DoE-DB" & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 120030 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 121320 | 
               ### Swift - Return (for Buff)
-              DealCycleType == "DoE-DB-BoW" & RTRemain <= 0 & DealCycle$SwiftReturnDebuff[nrow(DealCycle)] - DealCycle$Time[1] < 10000 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 10030 & 
+              DealCycleType == "DoE-DB-BoW" & DealCycle$SwiftReturnDebuff[nrow(DealCycle)] - DealCycle$Time[1] < 10000 & DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] > 10030 & 
               DealCycle$MirSkill[nrow(DealCycle)] - DealCycle$Time[1] < 20000 | 
-              DealCycleType == "DoE-DB-BoW" & RTRemain <= 0 & DealCycle$SwiftReturnDebuff[nrow(DealCycle)] - DealCycle$Time[1] < 10000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 110030 & 
+              DealCycleType == "DoE-DB-BoW" & DealCycle$SwiftReturnDebuff[nrow(DealCycle)] - DealCycle$Time[1] < 10000 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 110030 & 
               DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 200000 |
               ### Swift - Return (If Dragon Break CoolTime is 0)
-              RTRemain <= 0 & DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 110030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 200000) {
+              DBKRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 110030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 200000) {
         ### Dark Fog Return Cancel
         if(DFRemain <= 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + DFCool <= TotalTime) {
           DealCycle <- DCBuff(DealCycle, "DarkFogBuff", BuffFinal)
           DealCycle[1, 2:ncol(DealCycle)] <- 30
           DealCycle <- DragonBuff(DealCycle)
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFCool - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1069,7 +1052,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         
         DealCycle <- DCBuff(DealCycle, "Return", BuffFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTCool - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1087,7 +1069,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- DCATK(DealCycle, "CircleofMana1", ATKFinal)
         DealCycle <- DragonBuff(DealCycle)
         DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 1000
-        RTRemain <- RTRemain - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1137,7 +1118,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DCATK(DealCycle, "SpiralofMana", ATKFinal)
           DealCycle <- DragonBuff(DealCycle)
           DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 0
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1154,7 +1134,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DCATK(DealCycle, "CircleofMana2", ATKFinal)
           DealCycle <- DragonBuff(DealCycle)
           DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 1000
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1176,13 +1155,12 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DragonBuff(DealCycle)
           DDRemain <- DDCool - DealCycle$Time[1]
         } 
-        else if(RTRemain <= 0 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 211140) {
+        else if(DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] > 210030 & DealCycle$FusionSkill[nrow(DealCycle)] - DealCycle$Time[1] < 211140) {
           ### Dark Fog Return Cancel
           if(DFRemain <= 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] + DFCool <= TotalTime) {
             DealCycle <- DCBuff(DealCycle, "DarkFogBuff", BuffFinal)
             DealCycle[1, 2:ncol(DealCycle)] <- 30
             DealCycle <- DragonBuff(DealCycle)
-            RTRemain <- RTRemain - DealCycle$Time[1]
             DFRemain <- DFCool - DealCycle$Time[1]
             R4Remain <- R4Remain - DealCycle$Time[1]
             SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1197,7 +1175,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           
           DealCycle <- DCBuff(DealCycle, "Return", BuffFinal)
           DealCycle <- DragonBuff(DealCycle)
-          RTRemain <- RTCool - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1215,7 +1192,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DCATK(DealCycle, "CircleofMana1", ATKFinal)
           DealCycle <- DragonBuff(DealCycle)
           DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 1000
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1265,7 +1241,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             DealCycle <- DCATK(DealCycle, "SpiralofMana", ATKFinal)
             DealCycle <- DragonBuff(DealCycle)
             DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 0
-            RTRemain <- RTRemain - DealCycle$Time[1]
             DFRemain <- DFRemain - DealCycle$Time[1]
             R4Remain <- R4Remain - DealCycle$Time[1]
             SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1282,7 +1257,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             DealCycle <- DCATK(DealCycle, "CircleofMana2", ATKFinal)
             DealCycle <- DragonBuff(DealCycle)
             DealCycle$SpiralofManaRedBuff[nrow(DealCycle)] <- 1000
-            RTRemain <- RTRemain - DealCycle$Time[1]
             DFRemain <- DFRemain - DealCycle$Time[1]
             R4Remain <- R4Remain - DealCycle$Time[1]
             SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1300,7 +1274,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       if(DealCycle$FusionSkill[nrow(DealCycle)] > 0 | DealCycle$MirSkill[nrow(DealCycle)] > 0) {
         DealCycle <- DCBuff(DealCycle, "Return", BuffFinal)
         DealCycle <- DragonBuff(DealCycle)
-        RTRemain <- RTCool - DealCycle$Time[1]
         DFRemain <- DFRemain - DealCycle$Time[1]
         R4Remain <- R4Remain - DealCycle$Time[1]
         SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1319,7 +1292,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           DealCycle <- DragonBuff(DealCycle)
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1333,7 +1305,6 @@ EvanCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           DealCycle <- DragonBuff(DealCycle)
-          RTRemain <- RTRemain - DealCycle$Time[1]
           DFRemain <- DFRemain - DealCycle$Time[1]
           R4Remain <- R4Remain - DealCycle$Time[1]
           SCRemain <- SCRemain - DealCycle$Time[1]
@@ -1764,6 +1735,7 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
                               SummonedFinal, 
                               Spec, 
                               "DoE-DB-BoW", 4, 3, F, "BoW")
+  EvanDealCycleHPReduction <- DealCycleReduction(EvanDealCycleHP, c("ElementalBlastFDR"))
   
   Idx1 <- c() ; Idx2 <- c()
   for(i in 1:length(PotentialOpt)) {
@@ -1777,7 +1749,7 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
     }
   }
   if(DPMCalcOption$Optimization==T) {
-    EvanSpecOpt1 <- EvanOptimization1(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpec, EvanUnionRemained, 
+    EvanSpecOpt1 <- EvanOptimization1(EvanDealCycleReduction, EvanDealCycleHPReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpec, EvanUnionRemained, 
                                       NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
     PotentialOpt[[Idx1]][Idx2, ] <- EvanSpecOpt1[1, 1:3]
   } else {
@@ -1786,7 +1758,7 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
   EvanSpecOpt <- OptDataAdd(EvanSpec, EvanSpecOpt1, "Potential", EvanBase$CRROver, DemonAvenger=F)
   
   if(DPMCalcOption$Optimization==T) {
-    EvanSpecOpt2 <- EvanOptimization2(EvanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, EvanHyperStatBase, EvanBase$ChrLv, EvanBase$CRROver, 
+    EvanSpecOpt2 <- EvanOptimization2(EvanDealCycleReduction, EvanDealCycleHPReduction, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, EvanHyperStatBase, EvanBase$ChrLv, EvanBase$CRROver, 
                                       NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
     HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- EvanSpecOpt2[1, ]
   } else {
@@ -1810,7 +1782,7 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
   EvanDeal2 <- DealCalc(EvanDealCycleHP, ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, Collapse=F, 
                         NotBuffCols=c("ElementalBlastFDR"), NotBuffColOption=c("FDR"))
   EvanDealRatio <- ResetDealRatio(list(EvanDealCycle, EvanDealCycleHP), list(EvanDeal1, EvanDeal2), 
-                                  rep(max(EvanDealCycle$Time), 2), c(0.6564, 0.3436))
+                                  rep(max(EvanDealCycle$Time), 2), c(0.6592, 0.3408))
   
   set(get(DPMCalcOption$DataName), as.integer(3), "Evan", Deal_RR(EvanDealData))
   set(get(DPMCalcOption$DataName), as.integer(4), "Evan", Deal_40s(EvanDealData))

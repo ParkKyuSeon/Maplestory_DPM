@@ -41,25 +41,29 @@ HeroBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## Hero - Passive
-{option <- factor(c("FDR", "BDR", "ATKSpeed"), levels=PSkill)
+{option <- factor(c("FDR", "BDR", "ATKSpeed"), levels=PSkill) ## Axe
 value <- c(10, 5, 1)
 WeaponMastery <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 10)
+WeaponAcceleration <- data.frame(option, value)
 
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
-option <- factor("CRR", levels=PSkill)
-value <- c(20)
-ChanceAttack <- data.frame(option, value) ## FDR - Buff
+option <- factor(c("CRR", "FDR"), levels=PSkill)
+value <- c(20, 25)
+ChanceAttack <- data.frame(option, value)
 
 option <- factor(c("FDR", "CDMR"), levels=PSkill)
 value <- c(25, 20)
 Enrage <- data.frame(option, value)
 
-option <- factor(c("Mastery"), levels=PSkill)
-value <- c(70)
-AdvancedCombo <- data.frame(option, value) ## Combo - Logic
+option <- factor(c("Mastery", "FDR", "BDR", "ATK"), levels=PSkill)
+value <- c(70, (12 + ceiling(HeroBase$PSkillLv / 6)) * 10, 2 * 10, 2 * 10)
+AdvancedCombo <- data.frame(option, value) ## 10 Combo
 
 option <- factor(c("IGR"), levels=PSkill)
 value <- c(50 + HeroBase$PSkillLv)
@@ -68,6 +72,10 @@ CombatMastery <- data.frame(option, value)
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30 + HeroBase$PSkillLv)
 AdvancedFinalAttack <- data.frame(option, value)
+
+option <- factor(c("FDR", "CDMR"), levels=PSkill)
+value <- c(25, 20)
+Enrage <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(GetCoreLv(HeroCore, "BodyofSteel"))
@@ -81,34 +89,27 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(HeroCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-HeroPassive <- Passive(list(WeaponMastery, PhysicalTraining, ChanceAttack, Enrage, AdvancedCombo, CombatMastery, AdvancedFinalAttack, BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
+HeroPassive <- Passive(list(WeaponMastery, WeaponAcceleration, PhysicalTraining, ChanceAttack, Enrage, AdvancedCombo, CombatMastery, AdvancedFinalAttack, BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Hero - Buff
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-WeaponBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("ATK", levels=BSkill)
+{option <- factor("ATK", levels=BSkill)
 value <- c(30)
 info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-Fury <- rbind(data.frame(option, value), info)
+SpiritBlade <- rbind(data.frame(option, value), info)
 
-option <- factor("FDR", levels=BSkill)
-value <- c(25)
-info <- c(40, NA, 0, F, NA, NA, F)
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-PanicBuff <- rbind(data.frame(option, value), info)
+ScaringSword <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(25 + ceiling(HeroBase$SkillLv/2))
-info <- c(30, 31, 0, F, NA, NA, F)
+info <- c(60, 61, 0, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 IncisingBuff <- rbind(data.frame(option, value), info)
@@ -136,24 +137,35 @@ EpicAdventure <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(50)
-info <- c(30, 150, 900, F, F, F, T)
+info <- c(30, 120, 900, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Valhalla <- rbind(data.frame(option, value), info)
 
-option <- factor("ATKSkill", levels=BSkill)
-value <- c(1)
+option <- factor(c("ATKSkill", "FDR", "BDR", "ATK"), levels=BSkill)
+value <- c(1, 
+           (((12 + ceiling(HeroBase$PSkillLv / 6)) * 10 * (1.05 + 0.01 * floor(GetCoreLv(HeroCore, "ComboInstinct")/2)) + 100) / ((12 + ceiling(HeroBase$PSkillLv / 6)) * 10 + 100) - 1) * 100, 
+           2 * 10 * (0.05 + 0.01 * floor(GetCoreLv(HeroCore, "ComboInstinct")/2)), 
+           2 * 10 * (0.05 + 0.01 * floor(GetCoreLv(HeroCore, "ComboInstinct")/2)))
 info <- c(30, 240, 450, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-ComboInstinct <- rbind(data.frame(option, value), info) ## Combo Data
+ComboInstinct <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=BSkill)
-value <- c()
+option <- factor("FDR", levels=BSkill)
+value <- c(((100 + (12 + ceiling(HeroBase$PSkillLv / 6)) * 16) / (100 + (12 + ceiling(HeroBase$PSkillLv / 6)) * 10) - 1) * 100)
 info <- c(5, 20, 0, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ComboDeathfaultBuff <- rbind(data.frame(option, value), info)
+
+option <- factor("FDR", levels=BSkill)
+value <- c((floor(100 + (12 + ceiling(HeroBase$PSkillLv / 6)) * 16 * (1.05 + 0.01 * floor(GetCoreLv(HeroCore, "ComboInstinct")/2))) / 
+             (100 + (12 + ceiling(HeroBase$PSkillLv / 6)) * 10 * (1.05 + 0.01 * floor(GetCoreLv(HeroCore, "ComboInstinct")/2))) - 1) * 100)
+info <- c(5, 20, 0, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+ComboDeathfaultBuffInstinct <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR", "ATKSkill"), levels=BSkill)
 value <- c(10 + floor(GetCoreLv(HeroCore, "AuraWeapon")/5), ceiling(GetCoreLv(HeroCore, "AuraWeapon")/5), 1)
@@ -169,11 +181,11 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-HeroBuff <- list(WeaponBooster=WeaponBooster, Fury=Fury, PanicBuff=PanicBuff, IncisingBuff=IncisingBuff, MapleSoldier=MapleSoldier,
+HeroBuff <- list(SpiritBlade=SpiritBlade, ScaringSword=ScaringSword, IncisingBuff=IncisingBuff, MapleSoldier=MapleSoldier,
                  UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, 
-                 Valhalla=Valhalla, ComboInstinct=ComboInstinct, ComboDeathfaultBuff=ComboDeathfaultBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
+                 Valhalla=Valhalla, ComboInstinct=ComboInstinct, ComboDeathfaultBuff=ComboDeathfaultBuff, ComboDeathfaultBuffInstinct=ComboDeathfaultBuffInstinct, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
                  Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), Fury(1080ms), WeaponBooster(990ms), (UsefulAdvancedBless)
+## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), SpiritBlade(1080ms), ScaringSword(1080ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   HeroBuff[[length(HeroBuff)+1]] <- UsefulAdvancedBless
   names(HeroBuff)[[length(HeroBuff)]] <- "UsefulAdvancedBless"
@@ -211,14 +223,7 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Hero - Attacks
-{option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(HeroCore, "Panic")>=40, 20, 0), 3 * GetCoreLv(HeroCore, "Panic"))
-info <- c(1150, 1, 840, NA, NA, NA, NA, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-Panic <- rbind(data.frame(option, value), info)
-
-option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+{option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(HeroCore, "RagingBlow")>=40, 20, 0), 20, 2 * GetCoreLv(HeroCore, "RagingBlow"))
 info <- c(215 + HeroSpec$SkillLv * 3, 8, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
@@ -227,7 +232,7 @@ RagingBlow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(HeroCore, "Incising")>=40, 20, 0), 2 * GetCoreLv(HeroCore, "Incising"))
-info <- c(576 + HeroSpec$SkillLv * 7, 4, 870, NA, NA, NA, NA, F)
+info <- c(400 + HeroSpec$SkillLv * 3, 4, 870, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Incising <- rbind(data.frame(option, value), info)
@@ -240,8 +245,15 @@ colnames(info) <- c("option", "value")
 AdvancedFinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(HeroCore, "Valhalla")>=40, 20, 0), 2 * GetCoreLv(HeroCore, "Valhalla"))
+info <- c(370, 2 * 3, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+ValhallaATK <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(HeroCore, "RageUprising")>=40, 20, 0), 2 * GetCoreLv(HeroCore, "RageUprising"))
-info <- c(500, 8, 990, NA, 10, F, F, F)
+info <- c(500, 8, 900, NA, 10, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RageUprising <- rbind(data.frame(option, value), info)
@@ -281,7 +293,7 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
 
-HeroATK <- Attack(list(Panic=Panic, RagingBlow=RagingBlow, Incising=Incising, AdvancedFinalAttack=AdvancedFinalAttack, RageUprising=RageUprising, 
+HeroATK <- Attack(list(RagingBlow=RagingBlow, Incising=Incising, AdvancedFinalAttack=AdvancedFinalAttack, ValhallaATK=ValhallaATK, RageUprising=RageUprising, 
                        ComboDeathfault=ComboDeathfault, ScarofSpace=ScarofSpace, SwordIllusion=SwordIllusion, SwordIllusionExplosion=SwordIllusionExplosion, AuraWeapon=AuraWeapon, 
                        SpiderInMirror=SpiderInMirror))
 
@@ -320,17 +332,17 @@ colnames(HeroDealCycle) <- DealCycle
 
 HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                       Period=240, CycleTime=720) {
-  BuffSummonedPrior <- c("WeaponBooster", "Fury", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "UsefulAdvancedBless", "EpicAdventure", 
+  BuffSummonedPrior <- c("SpiritBlade", "ScaringSword", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "UsefulAdvancedBless", "EpicAdventure", 
                          "AuraWeaponBuff", "MapleWarriors2", "SwordofBurningSoul", "Valhalla", "SoulContractLink", "ComboInstinct", "Restraint4")
   Times240 <- c(0, 0, 0, 0, 0, 0, 0, 
-                4/3, 1, 2, 1, 2, 1, 1)
+                4/3, 1, 2, 2, 2, 1, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times240 <- Times240[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
   }
   
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime / Period)
+  SubTime <- rep(Period, length(BuffSummonedPrior))
+  TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times240[i]==0, Inf, Times240[i])
   }
@@ -390,15 +402,14 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       if(BuffList[[1]][i]=="EpicAdventure") {
         DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
       } else if(BuffList[[1]][i]=="Valhalla") {
-        DealCycle <- DCBuff(DealCycle, "PanicBuff", BuffFinal)
-        DealCycle <- DCATK(DealCycle, "Panic", ATKFinal)
         DealCycle <- DCBuff(DealCycle, "IncisingBuff", BuffFinal)
         DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
-      } else if(BuffList[[1]][i]=="SoulContractLink") {
-        DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
-        DealCycle <- DCBuff(DealCycle, "ComboDeathfaultBuff", BuffFinal)
-        DealCycle <- DCATK(DealCycle, "ComboDeathfault", ATKFinal)
-      }
+      } 
+      ## else if(BuffList[[1]][i]=="SoulContractLink") {
+      ##   DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
+      ##   DealCycle <- DCBuff(DealCycle, "ComboDeathfaultBuff", BuffFinal)
+      ##   DealCycle <- DCATK(DealCycle, "ComboDeathfault", ATKFinal)
+      ## }
     } else {
       DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
     }
@@ -421,7 +432,8 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   RUCool <- subset(ATKFinal, rownames(ATKFinal)=="RageUprising")$CoolTime * 1000
   SICool <- subset(ATKFinal, rownames(ATKFinal)=="SwordIllusion")$CoolTime * 1000
   RURemain <- 0 ; RUDummy <- 0
-  SIRemain <- subset(ATKFinal, rownames(ATKFinal)=="SwordIllusion")$CoolTime * 1000 - subset(DealCycle, DealCycle$Skills=="SwordIllusion")$Time - DealCycle$Time[1]
+  ## SIRemain <- subset(ATKFinal, rownames(ATKFinal)=="SwordIllusion")$CoolTime * 1000 - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - subset(DealCycle, DealCycle$Skills=="SwordIllusion")$Time)
+  SIRemain <- 0
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
   TimeTypes <- c(0, TimeTypes, TotalTime/1000)
@@ -454,18 +466,8 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           SIRemain <- max(0, SIRemain - DealCycle$Time[1])
         }
       }
-      ## Panic
-      if(DealCycle$PanicBuff[nrow(DealCycle)] - DealCycle$Time[1] <= 2000 & DealCycle$ComboInstinct[nrow(DealCycle)]==0) {
-        DealCycle <- DCBuff(DealCycle, "PanicBuff", BuffFinal)
-        RURemain <- max(0, RURemain - DealCycle$Time[1])
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "Panic", ATKFinal)
-        RURemain <- max(0, RURemain - DealCycle$Time[1])
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-      }
-      ## Sword Illusion + Combo Deathfault & Incising + Rage Uprising
-      else if(SIRemain==0 & DealCycle$ComboInstinct[nrow(DealCycle)]==0 & 
-              nrow(subset(DealCycle, DealCycle$Skills=="SwordIllusion")) < nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) * ifelse(Spec$CoolReduce >= 2, 8, 7)) {
+      ## Sword Illusion + Combo Deathfault & Rage Uprising
+      if(SIRemain==0 & nrow(subset(DealCycle, DealCycle$Skills=="SwordIllusion")) < floor(TotalTime / SICool)) {
         DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
         RURemain <- max(0, RURemain - DealCycle$Time[1])
         SIRemain <- SICool - DealCycle$Time[1]
@@ -475,22 +477,12 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         DealCycle <- DCATK(DealCycle, "ComboDeathfault", ATKFinal)
         RURemain <- max(0, RURemain - DealCycle$Time[1])
         SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        DealCycle <- DCBuff(DealCycle, "IncisingBuff", BuffFinal)
-        RURemain <- max(0, RURemain - DealCycle$Time[1])
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
-        RURemain <- max(0, RURemain - DealCycle$Time[1])
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        DealCycle <- DCBuff(DealCycle, "IncisingBuff", BuffFinal)
-        RURemain <- max(0, RURemain - DealCycle$Time[1])
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
-        RURemain <- max(0, RURemain - DealCycle$Time[1])
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "RageUprising", ATKFinal)
-        RURemain <- RUCool - DealCycle$Time[1]
-        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-        RUDummy <- 0
+        if(DealCycle$ComboInstinct[nrow(DealCycle)]==0) {
+          DealCycle <- DCATK(DealCycle, "RageUprising", ATKFinal)
+          RURemain <- RUCool - DealCycle$Time[1]
+          SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+          RUDummy <- 0
+        }
       }
       ## Rage Uprising
       else if(RURemain==0 & RUDummy==0 & DealCycle$ComboInstinct[nrow(DealCycle)]==0) {
@@ -498,6 +490,15 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         RURemain <- RUCool - DealCycle$Time[1]
         SIRemain <- max(0, SIRemain - DealCycle$Time[1])
         RUDummy <- 1
+      }
+      ## Incising
+      else if(DealCycle$IncisingBuff[nrow(DealCycle)] <= 3000) {
+        DealCycle <- DCBuff(DealCycle, "IncisingBuff", BuffFinal)
+        RURemain <- max(0, RURemain - DealCycle$Time[1])
+        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
+        RURemain <- max(0, RURemain - DealCycle$Time[1])
+        SIRemain <- max(0, SIRemain - DealCycle$Time[1])
       }
       ## Raging Blow
       else {
@@ -513,31 +514,8 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           RURemain <- max(0, RURemain - DealCycle$Time[1])
           SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-          if(BuffList[[k]][i]=="AuraWeaponBuff" & k==5) {
+          if(BuffList[[k]][i]=="MapleWarriors2") {
             DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-          } else if(BuffList[[k]][i]=="Valhalla") {
-            DealCycle <- DCBuff(DealCycle, "PanicBuff", BuffFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-            DealCycle <- DCATK(DealCycle, "Panic", ATKFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-            DealCycle <- DCBuff(DealCycle, "IncisingBuff", BuffFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-            DealCycle <- DCATK(DealCycle, "Incising", ATKFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-          } else if(BuffList[[k]][i]=="SoulContractLink" & SIRemain == 0) {
-            DealCycle <- DCATK(DealCycle, "SwordIllusion", ATKFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- SICool - DealCycle$Time[1]
-            DealCycle <- DCBuff(DealCycle, "ComboDeathfaultBuff", BuffFinal)
-            RURemain <- max(0, RURemain - DealCycle$Time[1])
-            SIRemain <- max(0, SIRemain - DealCycle$Time[1])
-            DealCycle <- DCATK(DealCycle, "ComboDeathfault", ATKFinal)
             RURemain <- max(0, RURemain - DealCycle$Time[1])
             SIRemain <- max(0, SIRemain - DealCycle$Time[1])
           }
@@ -551,6 +529,120 @@ HeroCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   }
   return(DealCycle)
 }
+HeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
+  ## Sword of Burning Soul
+  DealCycle <- DCSummonedATKs(DealCycle, "SwordofBurningSoul", SummonedFinal)
+  
+  
+  ## Sword Illusion
+  DealCycle <- RepATKCycle(DealCycle, c("SwordIllusion"), 13, 1300, ATKFinal)
+  DC1 <- subset(DealCycle, DealCycle$Skills=="SwordIllusion")
+  DC2 <- subset(DealCycle, DealCycle$Skills!="SwordIllusion")
+  
+  t <- floor(nrow(DC1) / 13)
+  t <- 1 : t
+  t <- 13 * t
+  DC1[t, 1] <- "SwordIllusionExplosion"
+  
+  DealCycle <- rbind(DC1, DC2)
+  DealCycle <- DealCycle[order(DealCycle$Time), ]
+  DealCycle <- RepATKCycle(DealCycle, c("SwordIllusionExplosion"), 5, 0, ATKFinal)
+
+  
+  ## Advanced Final Attack, Combo Instinct Scar of Space
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="Incising" | DealCycle$Skills[i]=="RageUprising" | 
+       DealCycle$Skills[i]=="ComboDeathfault" | DealCycle$Skills[i]=="SwordIllusion" | DealCycle$Skills[i]=="SwordIllusionExplosion") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttack")
+    } else if(DealCycle$Skills[i]=="RagingBlow") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttack")
+    }
+    
+    if(DealCycle$Skills[i]=="RagingBlow" & DealCycle$ComboInstinct[i]>0) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("ScarofSpace")
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ]
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  
+  ## Combo Deathfault Buff Adjust
+  DealCycle[DealCycle$Skills=="ComboDeathfault", ]$ComboDeathfaultBuff <- 0
+  
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$ComboDeathfaultBuff[i] > 0 & DealCycle$ComboInstinct[i] > 0) {
+      DealCycle$ComboDeathfaultBuffInstinct[i] <- DealCycle$ComboDeathfaultBuff[i]
+      DealCycle$ComboDeathfaultBuff[i] <- 0
+    }
+  }
+  
+  
+  ## Aura Weapon
+  AW <- subset(DealCycle, DealCycle$Skills=="AuraWeaponBuff")
+  Ind <- rownames(AW)
+  Ind[length(Ind)+1] <- nrow(DealCycle)
+  Ind <- as.numeric(Ind)
+  
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    
+    time <- DealCycle[p, 2] - DealCycle[p-1, 2]
+    while(p < Ind[i+1] & DealCycle$AuraWeaponBuff[p] > 0) {
+      if(time>5000 & max(DealCycle$Skills[p]==c("RagingBlow", "Incising", "RageUprising", "ComboDeathfault", "SwordIllusionStart"))==1) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("AuraWeapon")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  
+  ## Valhalla
+  VH <- subset(DealCycle, DealCycle$Skills=="Valhalla")
+  Ind <- rownames(VH)
+  Ind[length(Ind)+1] <- nrow(DealCycle)
+  Ind <- as.numeric(Ind)
+  
+  for(i in 1:(length(Ind)-1)) {
+    DC <- data.frame(t(rep(0, ncol(DealCycle))))
+    colnames(DC) <- colnames(DealCycle)
+    p <- Ind[i] + 1
+    t <- 0
+    
+    time <- 901
+    while(p < Ind[i+1] & DealCycle$Valhalla[p] > 0 & t < 12) {
+      if(time > 900 & max(DealCycle$Skills[p]==c("RagingBlow", "Incising", "RageUprising", "ComboDeathfault", "SwordIllusionStart"))==1) {
+        DC <- rbind(DC, DealCycle[p, ])
+        DC[nrow(DC), 1] <- c("ValhallaATK")
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
+        t <- t + 1
+      } else {
+        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
+      }
+      p <- p + 1
+    }
+    DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  
+  ## Spider In Mirror
+  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
+  
+  return(DealCycle)
+}
       
 
 HeroDealCycle <- HeroCycle(PreDealCycle=HeroDealCycle, 
@@ -561,13 +653,8 @@ HeroDealCycle <- HeroCycle(PreDealCycle=HeroDealCycle,
                                    Period=240, 
                                    CycleTime=720)
 HeroDealCycle <- DealCycleFinal(HeroDealCycle)
-HeroDealCycle <- DCSummonedATKs(HeroDealCycle, "SwordofBurningSoul", SummonedFinal)
-HeroDealCycle <- SwordIllusionCycle(HeroDealCycle, ATKFinal)
-HeroDealCycle <- AddATKsCycleHero(HeroDealCycle)
-HeroDealCycle <- AuraWeaponCycleHero(HeroDealCycle)
-HeroDealCycle <- DCSpiderInMirror(HeroDealCycle, SummonedFinal)
-HeroDealCycle <- HeroCombo(HeroDealCycle)
-HeroDealCycleReduction <- DealCycleReduction(HeroDealCycle, c("ComboFDR", "ComboBDR", "ComboATK"))
+HeroDealCycle <- HeroAddATK(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpec)
+HeroDealCycleReduction <- DealCycleReduction(HeroDealCycle)
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {
@@ -581,8 +668,7 @@ for(i in 1:nrow(PotentialOpt[[Idx1]])) {
   }
 }
 if(DPMCalcOption$Optimization==T) {
-  HeroSpecOpt1 <- Optimization1(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpec, HeroUnionRemained, 
-                                NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK"))
+  HeroSpecOpt1 <- Optimization1(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpec, HeroUnionRemained)
   PotentialOpt[[Idx1]][Idx2, ] <- HeroSpecOpt1[1, 1:3]
 } else {
   HeroSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
@@ -590,18 +676,15 @@ if(DPMCalcOption$Optimization==T) {
 HeroSpecOpt <- OptDataAdd(HeroSpec, HeroSpecOpt1, "Potential", HeroBase$CRROver, DemonAvenger=F)
 
 if(DPMCalcOption$Optimization==T) {
-  HeroSpecOpt2 <- Optimization2(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, HeroHyperStatBase, HeroBase$ChrLv, HeroBase$CRROver, 
-                                NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK"))
+  HeroSpecOpt2 <- Optimization2(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, HeroHyperStatBase, HeroBase$ChrLv, HeroBase$CRROver)
   HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- HeroSpecOpt2[1, ]
 } else {
   HeroSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
 }
 HeroSpecOpt <- OptDataAdd(HeroSpecOpt, HeroSpecOpt2, "HyperStat", HeroBase$CRROver, DemonAvenger=F)
 
-HeroFinalDPM <- DealCalc(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, Collapse=F, 
-                         NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK"))
-HeroFinalDPMwithMax <- DealCalcWithMaxDMR(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, 
-                                          NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK"))
+HeroFinalDPM <- DealCalc(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, Collapse=F)
+HeroFinalDPMwithMax <- DealCalcWithMaxDMR(HeroDealCycle, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt)
 
 set(get(DPMCalcOption$DataName), as.integer(1), "Hero", sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000))
 set(get(DPMCalcOption$DataName), as.integer(2), "Hero", sum(na.omit(HeroFinalDPM)) / (max(HeroDealCycle$Time) / 60000) - sum(na.omit(HeroFinalDPMwithMax)) / (max(HeroDealCycle$Time) / 60000))
@@ -614,7 +697,5 @@ set(get(DPMCalcOption$DataName), as.integer(3), "Hero", Deal_RR(HeroDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Hero", Deal_40s(HeroDealData, F, StartTime=subset(HeroDealData, HeroDealData$Skills=="SwordIllusionStart")$Time[1]))
 
 HeroSpecMean <- SpecMean("Hero", HeroDealCycleReduction, 
-                         DealCalcWithMaxDMR(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, 
-                                            NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK")), 
-                         ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt, 
-                         NotBuffCols=c("ComboFDR", "ComboBDR", "ComboATK"), NotBuffColOption=c("FDR", "BDR", "ATK"))
+                         DealCalcWithMaxDMR(HeroDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt), 
+                         ATKFinal, BuffFinal, SummonedFinal, HeroSpecOpt)

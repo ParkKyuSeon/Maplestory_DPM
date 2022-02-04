@@ -50,6 +50,10 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+WeaponAcceleration <- data.frame(option, value)
+
 option <- factor("ATK", levels=PSkill)
 value <- c(20)
 ParashockGuard <- data.frame(option, value)
@@ -64,7 +68,7 @@ BlessingArmor <- data.frame(option, value)
 
 option <- factor(c("BDR", "ATK"), levels=PSkill)
 value <- c(25, 60)
-AdvancedCharge <- data.frame(option, value)
+AdvancedHolyCharge <- data.frame(option, value)
 
 option <- factor(c("Mastery", "CRR", "CDMR", "IGR", "FDR"), levels=PSkill)
 value <- c(71, 42, 20, 37.9, 42)
@@ -82,18 +86,12 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(PalladinCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedCharge, PalladinExpert, BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
+PalladinPassive <- Passive(list(WeaponMastery, PhysicalTraining, WeaponAcceleration, ParashockGuard, ShieldMastery, BlessingArmor, AdvancedHolyCharge, PalladinExpert, 
+                                BodyofSteelPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Palladin - Buff
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-WeaponBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("SkillLv", levels=BSkill)
+{option <- factor("SkillLv", levels=BSkill)
 value <- c(2)
 info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -105,14 +103,14 @@ value <- c(50)
 info <- c(80, NA, 720, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-Threat <- rbind(data.frame(option, value), info)
+NobleDemand <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
 value <- c(21)
 info <- c(206, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-ElementalForce <- rbind(data.frame(option, value), info)
+DivineBlessing <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
 value <- c(floor((PalladinBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(PalladinBase$SkillLv/2))))
@@ -136,14 +134,14 @@ EpicAdventure <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR", "ATKSkill"), levels=BSkill)
 value <- c(10 + floor(GetCoreLv(PalladinCore, "AuraWeapon")/5), ceiling(GetCoreLv(PalladinCore, "AuraWeapon")/5), 1)
-info <- c(80 + 2 * GetCoreLv(PalladinCore, "AuraWeapon"), 180, 720, F, T, NA, T)
+info <- c(80 + 2 * GetCoreLv(PalladinCore, "AuraWeapon"), 180, 720, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeaponBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(35 + floor(GetCoreLv(PalladinCore, "HolyUnity")/2))
-info <- c(40 + GetCoreLv(PalladinCore, "HolyUnity"), 120, 600, F, T, NA, T)
+value <- c(60 + floor(GetCoreLv(PalladinCore, "HolyUnity")/2))
+info <- c(30 + floor(GetCoreLv(PalladinCore, "HolyUnity")/2), 90, 600, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HolyUnity <- rbind(data.frame(option, value), info)
@@ -153,13 +151,20 @@ value <- c(floor(((1 + 0.1 * GetCoreLv(PalladinCore, "MapleWarriors2")) * MapleS
 info <- c(60, 180, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-MapleWarriors2 <- rbind(data.frame(option, value), info)}
+MapleWarriors2 <- rbind(data.frame(option, value), info)
 
-PalladinBuff <- list(WeaponBooster=WeaponBooster, CombatOrders=CombatOrders, Threat=Threat, ElementalForce=ElementalForce, MapleSoldier=MapleSoldier, 
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(0, 1, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+DivineJudgementStack <- rbind(data.frame(option, value), info)}
+
+PalladinBuff <- list(CombatOrders=CombatOrders, NobleDemand=NobleDemand, DivineBlessing=DivineBlessing, MapleSoldier=MapleSoldier, 
                      UsefulSharpEyes=UsefulSharpEyes, EpicAdventure=EpicAdventure, 
-                     AuraWeaponBuff=AuraWeaponBuff, HolyUnity=HolyUnity, MapleWarriors2=MapleWarriors2, 
+                     AuraWeaponBuff=AuraWeaponBuff, HolyUnity=HolyUnity, MapleWarriors2=MapleWarriors2, DivineJudgementStack=DivineJudgementStack, 
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-## PetBuff : WeaponBooster(990ms), CombatOrders(990ms), ElementalForce(810ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
+## PetBuff : CombatOrders(990ms), DivineBlessing(810ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), UsefulAdvancedBless(600ms)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   PalladinBuff[[length(PalladinBuff)+1]] <- UsefulAdvancedBless
   names(PalladinBuff)[[length(PalladinBuff)]] <- "UsefulAdvancedBless"
@@ -204,50 +209,57 @@ colnames(info) <- c("option", "value")
 FinalAttack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(PalladinCore, "LightningCharge")>=40, 20, 0), 2 * GetCoreLv(PalladinCore, "LightningCharge"))
-info <- c(462, 5, 810, NA, NA, NA, NA, F)
+value <- c(ifelse(GetCoreLv(PalladinCore, "DivineStigma_DivineJudgement")>=40, 20, 0), 2 * GetCoreLv(PalladinCore, "DivineStigma_DivineJudgement"))
+info <- c(428, 7, 810, NA, 7, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-LightningCharge <- rbind(data.frame(option, value), info)
+DivineStigma <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(PalladinCore, "DivineCharge")>=40, 20, 0), 2 * GetCoreLv(PalladinCore, "DivineCharge"))
-info <- c(462, 5, 810, NA, NA, NA, NA, F)
+value <- c(ifelse(GetCoreLv(PalladinCore, "DivineStigma_DivineJudgement")>=40, 20, 0), 2 * GetCoreLv(PalladinCore, "DivineStigma_DivineJudgement"))
+info <- c(296, 5, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-DivineCharge <- rbind(data.frame(option, value), info)
+StigmaExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(PalladinCore, "Blast")>=40, 20, 0), 20, 2 * GetCoreLv(PalladinCore, "Blast"))
-info <- c(291, 12, 840, NA, NA, NA, NA, F)
+info <- c(291, 12, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Blast <- rbind(data.frame(option, value), info)
 
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(IGRCalc(c(20, ifelse(GetCoreLv(PalladinCore, "DivineStigma_DivineJudgement")>=40, 20, 0))), 2 * GetCoreLv(PalladinCore, "DivineStigma_DivineJudgement"))
+info <- c(506, 10, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+DivineJudgement <- rbind(data.frame(option, value), info)
+
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(PalladinCore, "Sanctuary")>=40, 20, 0), 30, 2 * GetCoreLv(PalladinCore, "Sanctuary"))
-info <- c(580, 8, 990, NA, Cooldown(15, T, PalladinBase$UnionChrs$CoolReduceP + 30, PalladinBase$CoolReduce), F, T, F)
+value <- c(ifelse(GetCoreLv(PalladinCore, "Sanctuary")>=40, 20, 0), 50, 2 * GetCoreLv(PalladinCore, "Sanctuary"))
+info <- c(580, 10, 990, NA, Cooldown(14, T, PalladinBase$UnionChrs$CoolReduceP + 30, PalladinBase$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Sanctuary <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 900, NA, 150, T, F, F)
+info <- c(0, 0, 900, NA, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(175 + 7 * GetCoreLv(PalladinCore, "GrandCross"), 12, 2600, 210, 150, T, F, F)
+info <- c(270 + 13 * GetCoreLv(PalladinCore, "GrandCross"), 12, 1300, 210, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(100, 100)
-info <- c(300 + 12 * GetCoreLv(PalladinCore, "GrandCross"), 12, 6500, 150, 150, T, F, F)
+info <- c(490 + 22 * GetCoreLv(PalladinCore, "GrandCross"), 12, 3800, 120, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 GrandCrossBig <- rbind(data.frame(option, value), info)
@@ -280,7 +292,7 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
 
-PalladinATK <- Attack(list(FinalAttack=FinalAttack, LightningCharge=LightningCharge, DivineCharge=DivineCharge, Blast=Blast, Sanctuary=Sanctuary, 
+PalladinATK <- Attack(list(FinalAttack=FinalAttack, DivineStigma=DivineStigma, StigmaExplosion=StigmaExplosion, Blast=Blast, DivineJudgement=DivineJudgement, Sanctuary=Sanctuary, 
                            GrandCrossPre=GrandCrossPre, GrandCrossSmall=GrandCrossSmall, GrandCrossBig=GrandCrossBig, GrandCrossEnd=GrandCrossEnd, 
                            MightyMjolnir=MightyMjolnir, MightyMjolnirExplosion=MightyMjolnirExplosion, AuraWeapon=AuraWeapon, 
                            SpiderInMirror=SpiderInMirror))
@@ -289,26 +301,19 @@ PalladinATK <- Attack(list(FinalAttack=FinalAttack, LightningCharge=LightningCha
 ## Palladin - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(250 + 10 * GetCoreLv(PalladinCore, "BlessedHammer"), 2, 0, 600, 60, 60, F, T, F, F)
+info <- c(525 + 21 * GetCoreLv(PalladinCore, "BlessedHammer"), 4, 360, 600, 30 + General$General$Serverlag, 60, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-BlessedHammerSmall <- rbind(data.frame(option, value), info)
+BlessedHammer <- rbind(data.frame(option, value), info)}
 
-option <- factor(levels=SSkill)
-value <- c()
-info <- c(525 + 21 * GetCoreLv(PalladinCore, "BlessedHammer"), 3, 360, 600, 30 + General$General$Serverlag, 60, F, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-BlessedHammerBig <- rbind(data.frame(option, value), info)}
-
-PalladinSummoned <- Summoned(list(BlessedHammerSmall=BlessedHammerSmall, BlessedHammerBig=BlessedHammerBig, SpiderInMirrorStart=SpiderInMirrorStart,
+PalladinSummoned <- Summoned(list(BlessedHammer=BlessedHammer, SpiderInMirrorStart=SpiderInMirrorStart,
                                   SpiderInMirror1=SpiderInMirror1, SpiderInMirror2=SpiderInMirror2, SpiderInMirror3=SpiderInMirror3, 
                                   SpiderInMirror4=SpiderInMirror4, SpiderInMirror5=SpiderInMirror5, SpiderInMirrorWait=SpiderInMirrorWait))
 
 
 ## Palladin - DealCycle
 ATKFinal <- data.frame(PalladinATK)
-ATKFinal$Delay[c(1:5, 10:13)] <- Delay(ATKFinal$Delay, PalladinSpec$ATKSpeed)[c(1:5, 10:13)]
+ATKFinal$Delay[c(1:6, 11:14)] <- Delay(ATKFinal$Delay, PalladinSpec$ATKSpeed)[c(1:6, 11:14)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, PalladinSpec$CoolReduceP, PalladinSpec$CoolReduce)
 
 BuffFinal <- data.frame(PalladinBuff)
@@ -325,12 +330,11 @@ PalladinDealCycle <- t(rep(0, length(DealCycle)))
 colnames(PalladinDealCycle) <- DealCycle
 
 PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                          Period=c(150, 180), CycleTime=360) {
-  BuffSummonedPrior <- c("WeaponBooster", "CombatOrders", "ElementalForce", "MapleSoldier", "UsefulSharpEyes", "UsefulAdvancedBless", "EpicAdventure", 
-                         "Threat", "AuraWeaponBuff", "MapleWarriors2", "BlessedHammerBig", "SoulContractLink", "HolyUnity", "Restraint4")
-  Times150 <- c()
-  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
-                2.5, 1, 1, 3, 2, 1.5, 1)
+                          Period=c(180), CycleTime=360) {
+  BuffSummonedPrior <- c("CombatOrders", "DivineBlessing", "MapleSoldier", "UsefulSharpEyes", "UsefulAdvancedBless", "EpicAdventure", 
+                         "NobleDemand", "AuraWeaponBuff", "MapleWarriors2", "BlessedHammer", "SoulContractLink", "HolyUnity", "Restraint4")
+  Times180 <- c(0, 0, 0, 0, 0, 0, 
+                2.5, 1, 1, 3, 2, 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -339,11 +343,7 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100), length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)
   for(i in 1:length(BuffSummonedPrior)) {
-    if(Period==150) {
-      SubTime[i] <- SubTime[i] / ifelse(Times150[i]==0, Inf, Times150[i])
-    } else if(Period==180) {
-      SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
-    }
+    SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
   
   SubTimeUniques <- unique(SubTime)
@@ -399,7 +399,6 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
       if(BuffList[[1]][i]=="EpicAdventure") {
-        DealCycle <- DCATK(DealCycle, "DivineCharge", ATKFinal)
         DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
       }
     } else {
@@ -421,10 +420,10 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       }
     }
   }
-  ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - (DealCycle$Time[nrow(DealCycle)] - subset(DealCycle, DealCycle$Skills=="DivineCharge")$Time + DealCycle$Time[1])
+  DSCool <- subset(ATKFinal, rownames(ATKFinal)=="DivineStigma")$CoolTime * 1000
   STCool <- subset(ATKFinal, rownames(ATKFinal)=="Sanctuary")$CoolTime * 1000
   MMCool <- subset(ATKFinal, rownames(ATKFinal)=="MightyMjolnir")$CoolTime * 1000
-  STRemain <- 0 ; MMRemain <- 0
+  DSRemain <- 0 ; STRemain <- 0 ; MMRemain <- 0
   GCSubTime <- Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
@@ -454,65 +453,76 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+          DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
         }
       }
       ## Grand Cross
       if(nrow(subset(DealCycle, DealCycle$Skills=="GrandCrossPre"))==0) {
         DealCycle <- DCATK(DealCycle, "MightyMjolnir", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "MightyMjolnirExplosion", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossPre", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossSmall", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossBig", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossEnd", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
-        STRemain <- 0 ; MMRemain <- 0
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
+        MMRemain <- 0
       } else if(nrow(subset(DealCycle, DealCycle$Skills=="GrandCrossPre")) > 0 & 
                 DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="GrandCrossPre")$Time) > GCSubTime * 1000) {
         DealCycle <- DCATK(DealCycle, "MightyMjolnir", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "MightyMjolnirExplosion", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossPre", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossSmall", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossBig", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "GrandCrossEnd", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
-        STRemain <- 0 ; MMRemain <- 0
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        STRemain <- max(0, STRemain - DealCycle$Time[1])
+        MMRemain <- 0
       } 
-      ## Charge Buff
-      else if(ChargeBuffRemain <= 2000) {
-        if(nrow(subset(DealCycle, DealCycle$Skills=="LightningCharge"))==0) {
-          DealCycle <- DCATK(DealCycle, "LightningCharge", ATKFinal)
-          ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - DealCycle$Time[1]
-          STRemain <- max(0, STRemain - DealCycle$Time[1])
-          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
-        } else if(max(subset(DealCycle, DealCycle$Skills=="DivineCharge")$Time) > max(subset(DealCycle, DealCycle$Skills=="LightningCharge")$Time)) {
-          DealCycle <- DCATK(DealCycle, "LightningCharge", ATKFinal)
-          ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - DealCycle$Time[1]
-          STRemain <- max(0, STRemain - DealCycle$Time[1])
-          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
-        } else {
-          DealCycle <- DCATK(DealCycle, "DivineCharge", ATKFinal)
-          ChargeBuffRemain <- 30000 * (100 + Spec$BuffDuration) / 100 - DealCycle$Time[1]
-          STRemain <- max(0, STRemain - DealCycle$Time[1])
-          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
-        }
-      }
       ## Mighty Mjolnir
       else if(MMRemain==0) {
         DealCycle <- DCATK(DealCycle, "MightyMjolnir", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
         STRemain <- max(0, STRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "MightyMjolnirExplosion", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
         STRemain <- max(0, STRemain - DealCycle$Time[1])
         if(sum(BuffList[[k]]=="Restraint4")==1 & BuffEndTime - DealCycle$Time[nrow(DealCycle)] >= 20000 & BuffEndTime - DealCycle$Time[nrow(DealCycle)] <= 35000) {
           MMRemain <- BuffEndTime - DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[1]
@@ -523,16 +533,40 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       ## Sanctuary
       else if(STRemain==0) {
         DealCycle <- DCATK(DealCycle, "Sanctuary", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
         MMRemain <- max(0, MMRemain - DealCycle$Time[1])
         STRemain <- STCool - DealCycle$Time[1]
       }
+      ## Divine Stigma
+      ## else if(DSRemain==0) {
+      ##   DealCycle <- DCATK(DealCycle, "StigmaExplosion", ATKFinal)
+      ##   DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+      ##   DSRemain <- DSCool - DealCycle$Time[1]
+      ##   MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+      ##   STRemain <- max(0, STRemain - DealCycle$Time[1])
+        
+      ##   DealCycle <- DCATK(DealCycle, "DivineStigma", ATKFinal)
+      ##   DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+      ##   DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+      ##   MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+      ##   STRemain <- max(0, STRemain - DealCycle$Time[1])
+      ## }
       ## Blast
       else {
         DealCycle <- DCATK(DealCycle, "Blast", ATKFinal)
-        ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+        DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1] + 1
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
         MMRemain <- max(0, MMRemain - DealCycle$Time[1])
         STRemain <- max(0, STRemain - DealCycle$Time[1])
+        if(DealCycle$DivineJudgementStack[nrow(DealCycle)] == 5) {
+          DealCycle$DivineJudgementStack[nrow(DealCycle)] <- 0
+          DealCycle <- DCATK(DealCycle, "DivineJudgement", ATKFinal)
+          DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          MMRemain <- max(0, MMRemain - DealCycle$Time[1])
+          STRemain <- max(0, STRemain - DealCycle$Time[1])
+        }
       }
     }
     
@@ -540,12 +574,14 @@ PalladinCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       for(i in 1:length(BuffList[[k]])) {
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
-          ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+          DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
           MMRemain <- max(0, MMRemain - DealCycle$Time[1])
           STRemain <- max(0, STRemain - DealCycle$Time[1])
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
-          ChargeBuffRemain <- max(0, ChargeBuffRemain - DealCycle$Time[1])
+          DealCycle$DivineJudgementStack[nrow(DealCycle)] <- DealCycle$DivineJudgementStack[nrow(DealCycle)-1]
+          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
           MMRemain <- max(0, MMRemain - DealCycle$Time[1])
           STRemain <- max(0, STRemain - DealCycle$Time[1])
         }
@@ -566,10 +602,10 @@ PalladinDealCycle <- PalladinCycle(PreDealCycle=PalladinDealCycle,
 PalladinDealCycle <- DealCycleFinal(PalladinDealCycle)
 PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("MightyMjolnir"), 4, 630, ATKFinal)
 PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("MightyMjolnirExplosion"), 4, 630, ATKFinal)
-PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("GrandCrossSmall"), 13, 0, ATKFinal)
-PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("GrandCrossBig"), 43, 0, ATKFinal)
-PalladinDealCycle <- DCSummonedATKs(PalladinDealCycle, Skill=c("BlessedHammerBig"), SummonedFinal)
-PalladinDealCycle <- BlessedHammerCycle(PalladinDealCycle)
+PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("GrandCrossSmall"), 7, 0, ATKFinal)
+PalladinDealCycle <- RepATKCycle(PalladinDealCycle, c("GrandCrossBig"), 31, 170, ATKFinal)
+PalladinDealCycle <- DCSummonedATKs(PalladinDealCycle, Skill=c("BlessedHammer"), SummonedFinal)
+## PalladinDealCycle <- BlessedHammerCycle(PalladinDealCycle)
 PalladinDealCycle <- AddATKsCyclePalladin(PalladinDealCycle)
 PalladinDealCycle <- AuraWeaponCycle(PalladinDealCycle)
 PalladinDealCycle <- DCSpiderInMirror(PalladinDealCycle, SummonedFinal)

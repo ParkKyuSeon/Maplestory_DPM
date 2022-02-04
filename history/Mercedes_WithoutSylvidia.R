@@ -1,8 +1,28 @@
 ## Mercedes - Data
 ## Mercedes - VMatrix
-MercedesCoreBase <- CoreBuilder(ActSkills=c("ElementalGhost", "BreathofIrkalla", "Sylvidia", "RoyalKnights",
+## Mercedes
+MercedesVPassive <- list()
+MercedesVPassive$N4 <- data.frame(Skills=c("RingofIshtar", "AdvancedStrikeDualShot_AdvancedFinalAttack", "LeafTornado_GustDive", "ElementalKnight", "WrathofEnlil", "UnicornSpike"), 
+                                  Lv=c(50, 50, 50, 50, 50, 50), 
+                                  stringsAsFactors=F)
+MercedesVPassive$N5 <- data.frame(Skills=c("RingofIshtar", "AdvancedStrikeDualShot_AdvancedFinalAttack", "LeafTornado_GustDive", "ElementalKnight", "WrathofEnlil", "UnicornSpike", "LegendrySpear", "RollingMoonsault"), 
+                                  Lv=c(50, 50, 50, 50, 50, 50, 50, 25), 
+                                  stringsAsFactors=F)
+MercedesVPrior <- list()
+MercedesVPrior$N4 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", "RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", 
+                       "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
+                       "LeafTornado_GustDive-ElementalKnight-UnicornSpike", "LeafTornado_GustDive-ElementalKnight-UnicornSpike", 
+                       "Blink", "SpiderInMirror", "RopeConnect", "FreudBlessing")
+MercedesVPrior$N5 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", "RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", 
+                       "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
+                       "LegendrySpear-ElementalKnight-UnicornSpike", "LeafTornado_GustDive-ElementalKnight-UnicornSpike", 
+                       "Blink", "SpiderInMirror", 
+                       "LegendrySpear-LeafTornado_GustDive-RollingMoonsault", 
+                       "RopeConnect", "FreudBlessing")
+
+MercedesCoreBase <- CoreBuilder(ActSkills=c("ElementalGhost", "BreathofIrkalla", "RoyalKnights",
                                             CommonV("Bowman", "Heroes")), 
-                                ActSkillsLv=c(25, 25, 25, 25, 25, 25, 1, 25, 25), 
+                                ActSkillsLv=c(25, 25, 25, 25, 25, 1, 25, 25), 
                                 UsefulSkills=c("SharpEyes", "CombatOrders"), 
                                 SpecSet=get(DPMCalcOption$SpecSet), 
                                 VPassiveList=MercedesVPassive, 
@@ -41,56 +61,56 @@ MercedesBase <- JobBase(ChrInfo=ChrInfo,
 
 ## Mercedes - Passive
 {option <- factor(c("ATKSpeed"), levels=PSkill)
-  value <- c(1)
-  ElfQueen <- data.frame(option, value)
-  
-  option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
-  value <- c(2, 20)
-  DualBowgunAcceleration <- data.frame(option, value)
-  
-  option <- factor(c("BDR"), levels=PSkill)
-  value <- c(20)
-  PotentialPower <- data.frame(option, value)
-  
-  option <- factor(c("CRR"), levels=PSkill)
-  value <- c(40)
-  SharpAiming <- data.frame(option, value)
-  
-  option <- factor(c("BDR", "CRR"), levels=PSkill)
-  value <- c(30, 15)
-  SpiritInfusion <- data.frame(option, value)
-  
-  option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
-  value <- c(30, 30)
-  PhysicalTraining <- data.frame(option, value)
-  
-  option <- factor(c("FDR", "ATK"), levels=PSkill)
-  value <- c(25, 40)
-  IgnisRoar <- data.frame(option, value)
-  
-  option <- factor(c("CDMR", "ATK", "Mastery"), levels=PSkill)
-  value <- c(10 + ceiling(MercedesBase$PSkillLv/3), 30 + MercedesBase$PSkillLv, 70 + ceiling(MercedesBase$PSkillLv/2))
-  DualBowgunExpert <- data.frame(option, value)
-  
-  option <- factor(c("IGR", "FDR", "BDR", "CDMR"), levels=PSkill)
-  value <- c(25 + MercedesBase$PSkillLv, 20 + MercedesBase$PSkillLv, 20, 20)
-  DefenceBreak <- data.frame(option, value)
-  
-  option <- factor(c("ATK"), levels=PSkill)
-  value <- c(20 + ceiling(MercedesBase$PSkillLv/2))
-  AdvancedFinalAttack <- data.frame(option, value)
-  
-  option <- factor(c("FDR"), levels=PSkill)
-  value <- c(5)
-  ElfishBlessingPassive <- data.frame(option, value)
-  
-  option <- factor(c("ATK"), levels=PSkill)
-  value <- c(GetCoreLv(MercedesCore, "Blink"))
-  BlinkPassive <- data.frame(option, value)
-  
-  option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
-  value <- c(rep(GetCoreLv(MercedesCore, "RopeConnect"), 2))
-  RopeConnectPassive <- data.frame(option, value)}
+value <- c(1)
+ElfQueen <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 10)
+DualBowgunAcceleration <- data.frame(option, value)
+
+option <- factor(c("BDR"), levels=PSkill)
+value <- c(20)
+PotentialPower <- data.frame(option, value)
+
+option <- factor(c("CRR"), levels=PSkill)
+value <- c(40)
+SharpAiming <- data.frame(option, value)
+
+option <- factor(c("BDR", "CRR"), levels=PSkill)
+value <- c(30, 15)
+SpiritInfusion <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(30, 30)
+PhysicalTraining <- data.frame(option, value)
+
+option <- factor(c("FDR", "ATK"), levels=PSkill)
+value <- c(25, 40)
+IgnisRoar <- data.frame(option, value)
+
+option <- factor(c("CDMR", "ATK", "Mastery"), levels=PSkill)
+value <- c(10 + ceiling(MercedesBase$PSkillLv/3), 30 + MercedesBase$PSkillLv, 70 + ceiling(MercedesBase$PSkillLv/2))
+DualBowgunExpert <- data.frame(option, value)
+
+option <- factor(c("IGR", "FDR", "BDR", "CDMR"), levels=PSkill)
+value <- c(25 + MercedesBase$PSkillLv, 20 + MercedesBase$PSkillLv, 20, 20)
+DefenceBreak <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(20 + ceiling(MercedesBase$PSkillLv/2))
+AdvancedFinalAttack <- data.frame(option, value)
+
+option <- factor(c("FDR"), levels=PSkill)
+value <- c(5)
+ElfishBlessingPassive <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(GetCoreLv(MercedesCore, "Blink"))
+BlinkPassive <- data.frame(option, value)
+
+option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
+value <- c(rep(GetCoreLv(MercedesCore, "RopeConnect"), 2))
+RopeConnectPassive <- data.frame(option, value)}
 
 MercedesPassive <- Passive(list(ElfQueen=ElfQueen, DualBowgunAcceleration=DualBowgunAcceleration, PotentialPower=PotentialPower, SharpAiming=SharpAiming, SpiritInfusion=SpiritInfusion, 
                                 PhysicalTraining=PhysicalTraining, IgnisRoar=IgnisRoar, DualBowgunExpert=DualBowgunExpert, DefenceBreak=DefenceBreak, 
@@ -99,106 +119,99 @@ MercedesPassive <- Passive(list(ElfQueen=ElfQueen, DualBowgunAcceleration=DualBo
 
 ## Mercedes - Buff
 {option <- factor("FDR", levels=BSkill)
-  value <- c(20)
-  info <- c(15, 16, 0, F, NA, NA, F)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  IgnisRoarStack <- rbind(data.frame(option, value), info)
-  
-  option <- factor("BDR", levels=BSkill)
-  value <- c(30)
-  info <- c(30, 31, 0, F, NA, NA, F)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  UnicornSpikeDebuff <- rbind(data.frame(option, value), info)
-  
-  option <- factor("IGR", levels=BSkill)
-  value <- c(50 + MercedesBase$SkillLv)
-  info <- c(30, 31, 0, F, NA, NA, F)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  LegendrySpearDebuff <- rbind(data.frame(option, value), info)
-  
-  option <- factor("ATKP", levels=BSkill)
-  value <- c(30 + MercedesBase$SkillLv)
-  info <- c(200 + 5 * MercedesBase$SkillLv, NA, 0, T, NA, NA, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  AncientSpirit <- rbind(data.frame(option, value), info)
-  
-  option <- factor("MainStat", levels=BSkill)
-  value <- c(floor((MercedesBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(MercedesBase$SkillLv/2))))
-  info <- c(900 + 30 * MercedesBase$SkillLv, NA, 0, T, NA, NA, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  MapleSoldier <- rbind(data.frame(option, value), info)
-  
-  option <- factor("BDR", levels=BSkill)
-  value <- c(5)
-  info <- c(120, 120, 0, F, F, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  HeroesOath <- rbind(data.frame(option, value), info)
-  
-  option <- factor("ATK", levels=BSkill)
-  value <- c(80)
-  info <- c(120, 180, 900, F, F, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  ElfishBlessing <- rbind(data.frame(option, value), info)
-  
-  Useful <- UsefulSkills(MercedesCore)
-  UsefulSharpEyes <- Useful$UsefulSharpEyes
-  UsefulCombatOrders <- Useful$UsefulCombatOrders
-  if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
-    UsefulAdvancedBless <- Useful$UsefulAdvancedBless
-  }
-  
-  option <- factor(levels=BSkill)
-  value <- c()
-  info <- c(60 + GetCoreLv(MercedesCore, "ElementalGhost"), 180, 720, F, T, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  ElementalGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor("ATKP", levels=BSkill)
-  value <- c(5 + floor(GetCoreLv(MercedesCore, "Sylvidia")/2))
-  info <- c(15 + floor(GetCoreLv(MercedesCore, "Sylvidia")/3), 90, 180, F, T, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  Sylvidia <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=BSkill)
-  value <- c()
-  info <- c(30, 180, 1680, F, T, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  RoyalKnights <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=BSkill)
-  value <- c()
-  info <- c(30, 120, 780, F, T, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  CriticalReinforce <- rbind(data.frame(option, value), info) ## Update Needed
-  
-  option <- factor(c("MainStat", "BDR"), levels=BSkill)
-  value <- c(floor(((1 + 0.1 * GetCoreLv(MercedesCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * MercedesBase$MainStatP), 5 + floor(GetCoreLv(MercedesCore, "MapleWarriors2")/2))
-  info <- c(60, 180, 630, F, T, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  MapleWarriors2 <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=BSkill)
-  value <- c()
-  info <- c(0, 1, 0, F, F, F, F)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  SkipDummy <- rbind(data.frame(option, value), info)}
+value <- c(20)
+info <- c(15, 16, 0, F, NA, NA, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+IgnisRoarStack <- rbind(data.frame(option, value), info)
+
+option <- factor("BDR", levels=BSkill)
+value <- c(30)
+info <- c(30, 31, 0, F, NA, NA, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+UnicornSpikeDebuff <- rbind(data.frame(option, value), info)
+
+option <- factor("IGR", levels=BSkill)
+value <- c(50 + MercedesBase$SkillLv)
+info <- c(30, 31, 0, F, NA, NA, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LegendrySpearDebuff <- rbind(data.frame(option, value), info)
+
+option <- factor("ATKP", levels=BSkill)
+value <- c(30 + MercedesBase$SkillLv)
+info <- c(200 + 5 * MercedesBase$SkillLv, NA, 0, T, NA, NA, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+AncientSpirit <- rbind(data.frame(option, value), info)
+
+option <- factor("MainStat", levels=BSkill)
+value <- c(floor((MercedesBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(MercedesBase$SkillLv/2))))
+info <- c(900 + 30 * MercedesBase$SkillLv, NA, 0, T, NA, NA, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+MapleSoldier <- rbind(data.frame(option, value), info)
+
+option <- factor("BDR", levels=BSkill)
+value <- c(5)
+info <- c(120, 120, 0, F, F, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+HeroesOath <- rbind(data.frame(option, value), info)
+
+option <- factor("ATK", levels=BSkill)
+value <- c(80)
+info <- c(120, 180, 900, F, F, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+ElfishBlessing <- rbind(data.frame(option, value), info)
+
+Useful <- UsefulSkills(MercedesCore)
+UsefulSharpEyes <- Useful$UsefulSharpEyes
+UsefulCombatOrders <- Useful$UsefulCombatOrders
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
+}
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(60 + GetCoreLv(MercedesCore, "ElementalGhost"), 180, 720, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+ElementalGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(30, 180, 1680, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+RoyalKnights <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(30, 120, 780, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+CriticalReinforce <- rbind(data.frame(option, value), info) ## Update Needed
+
+option <- factor(c("MainStat", "BDR"), levels=BSkill)
+value <- c(floor(((1 + 0.1 * GetCoreLv(MercedesCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * MercedesBase$MainStatP), 5 + floor(GetCoreLv(MercedesCore, "MapleWarriors2")/2))
+info <- c(60, 180, 630, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+MapleWarriors2 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(0, 1, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+SkipDummy <- rbind(data.frame(option, value), info)}
 
 MercedesBuff <- list(IgnisRoarStack=IgnisRoarStack, UnicornSpikeDebuff=UnicornSpikeDebuff, LegendrySpearDebuff=LegendrySpearDebuff, AncientSpirit=AncientSpirit, MapleSoldier=MapleSoldier, 
                      HeroesOath=HeroesOath, ElfishBlessing=ElfishBlessing, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                     ElementalGhost=ElementalGhost, Sylvidia=Sylvidia, RoyalKnights=RoyalKnights, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, SkipDummy=SkipDummy,
+                     ElementalGhost=ElementalGhost, RoyalKnights=RoyalKnights, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, SkipDummy=SkipDummy,
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## Petbuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), DualBowgunBooster(600ms), WaterShield(990ms), AncientSpirit(1080ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
@@ -226,14 +239,15 @@ MercedesSpec <- MercedesSpec$Spec
 
 ## Mercedes - Critical Reinforce(RE)
 {option <- factor("CDMR", levels=BSkill)
-  value <- c(MercedesSpec$CRR * (0.2 + 0.01 * GetCoreLv(MercedesCore, "CriticalReinforce")))
-  info <- c(30, 120, 780, F, T, F, T)
-  info <- data.frame(BInfo, info)
-  colnames(info) <- c("option", "value")
-  CriticalReinforce <- rbind(data.frame(option, value), info)}
-MercedesBuff <- list(IgnisRoarStack=IgnisRoarStack, UnicornSpikeDebuff=UnicornSpikeDebuff, LegendrySpearDebuff=LegendrySpearDebuff, AncientSpirit=AncientSpirit, MapleSoldier=MapleSoldier, 
+value <- c(MercedesSpec$CRR * (0.2 + 0.01 * GetCoreLv(MercedesCore, "CriticalReinforce")))
+info <- c(30, 120, 780, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+CriticalReinforce <- rbind(data.frame(option, value), info)}
+MercedesBuff <- list(DualBowgunBooster=DualBowgunBooster, WaterShield=WaterShield, IgnisRoarStack=IgnisRoarStack, 
+                     UnicornSpikeDebuff=UnicornSpikeDebuff, LegendrySpearDebuff=LegendrySpearDebuff, AncientSpirit=AncientSpirit, MapleSoldier=MapleSoldier, 
                      HeroesOath=HeroesOath, ElfishBlessing=ElfishBlessing, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                     ElementalGhost=ElementalGhost, Sylvidia=Sylvidia, RoyalKnights=RoyalKnights, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, SkipDummy=SkipDummy,
+                     ElementalGhost=ElementalGhost, RoyalKnights=RoyalKnights, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, SkipDummy=SkipDummy,
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   MercedesBuff[[length(MercedesBuff)+1]] <- UsefulAdvancedBless
@@ -256,190 +270,183 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 ## Mercedes - Attacks
 {option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "UnicornSpike")>=40, 20, 0), 3 * GetCoreLv(MercedesCore, "UnicornSpike"))
-  info <- c(345 + 100 + 2 * MercedesSpec$SkillLv, 5, 1290, NA, 10, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  UnicornSpike <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
-  info <- c(260 + 130 + 3 * MercedesSpec$SkillLv, 4, 750, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  LeafTornado <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
-  info <- c(260 + 170 + 3 * MercedesSpec$SkillLv, 4, 780, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  GustDive <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "LegendrySpear")>=40, 20, 0), 20, 2 * GetCoreLv(MercedesCore, "LegendrySpear"))
-  info <- c(700 + 10 * MercedesSpec$SkillLv, 3, 870, NA, 5, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  LegendrySpear <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "RollingMoonsault")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "RollingMoonsault"))
-  info <- c(300 + 2 * MercedesSpec$SkillLv, 6, 840, NA, 4, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  RollingMoonsault <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR", "BDR"), levels=ASkill)
-  value <- c(IGRCalc(c(ifelse(GetCoreLv(MercedesCore, "RingofIshtar")>=40, 20, 0), 20)), 2 * GetCoreLv(MercedesCore, "RingofIshtar"), 20)
-  info <- c(245 + 1 * MercedesSpec$SkillLv, 2, 120, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  RingofIshtar <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(380, 4, 630, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  AdvancedStrikeDualShot <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "WrathofEnlil")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "WrathofEnlil"))
-  info <- c(460, 10, 900, NA, 8, F, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  WrathofEnlil <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c(450 + 15 * GetCoreLv(MercedesCore, "ElementalGhost"), 8, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  ElementalGhostTree <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c(0, 0, 840, NA, 180, T, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BreathofIrkallaPre <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c(400 + 16 * GetCoreLv(MercedesCore, "BreathofIrkalla"), 12, 5160, 120, 180, T, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BreathofIrkalla <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c((400 + 16 * GetCoreLv(MercedesCore, "BreathofIrkalla")) * (1 + 0.646875 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost"))), 12, 5160, 120, 180, T, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BreathofIrkallaSylvidia <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c(0, 0, 270 + 420, NA, 180, T, F, F) ## Plus Sylvidia Off Delay
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BreathofIrkallaEnd <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c(350 + 15 * GetCoreLv(MercedesCore, "RoyalKnights"), 16, 0, 1400, 150, T, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  RoyalKnightsKnight <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv), 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  AdvancedFinalAttack <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "UnicornSpike")>=40, 20, 0), 3 * GetCoreLv(MercedesCore, "UnicornSpike"))
-  info <- c((345 + 100 + 2 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 5 * 1.845, 0, NA, 10, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  UnicornSpikeGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
-  info <- c((260 + 130 + 3 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  LeafTornadoGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
-  info <- c((260 + 170 + 3 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  GustDiveGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "LegendrySpear")>=40, 20, 0), 20, 2 * GetCoreLv(MercedesCore, "LegendrySpear"))
-  info <- c((700 + 10 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 3 * 1.845, 0, NA, 5, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  LegendrySpearGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "RollingMoonsault")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "RollingMoonsault"))
-  info <- c((300 + 2 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 6 * 1.845, 0, NA, 4, T, T, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  RollingMoonsaultGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR", "BDR"), levels=ASkill)
-  value <- c(IGRCalc(c(ifelse(GetCoreLv(MercedesCore, "RingofIshtar")>=40, 20, 0), 20)), 2 * GetCoreLv(MercedesCore, "RingofIshtar"), 20)
-  info <- c((245 + 1 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 2 * 0.646875, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  RingofIshtarGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(380 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  AdvancedStrikeDualShotGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "WrathofEnlil")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "WrathofEnlil"))
-  info <- c(460 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 10 * 1.845, 0, NA, 8, F, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  WrathofEnlilGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(levels=ASkill)
-  value <- c()
-  info <- c((400 + 16 * GetCoreLv(MercedesCore, "BreathofIrkalla")) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 12 * 0.646875, 0, 150, 150, T, F, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  BreathofIrkallaGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.646875, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  AdvancedFinalAttackIshtarGhost <- rbind(data.frame(option, value), info)
-  
-  option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-  value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 1.845, 0, NA, NA, NA, NA, F)
-  info <- data.frame(AInfo, info)
-  colnames(info) <- c("option", "value")
-  AdvancedFinalAttackEnlilGhost <- rbind(data.frame(option, value), info)}
+value <- c(ifelse(GetCoreLv(MercedesCore, "UnicornSpike")>=40, 20, 0), 3 * GetCoreLv(MercedesCore, "UnicornSpike"))
+info <- c(345 + 100 + 2 * MercedesSpec$SkillLv, 5, 1290, NA, 10, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+UnicornSpike <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
+info <- c(260 + 130 + 3 * MercedesSpec$SkillLv, 4, 750, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+LeafTornado <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
+info <- c(260 + 170 + 3 * MercedesSpec$SkillLv, 4, 1080, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+GustDive <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "LegendrySpear")>=40, 20, 0), 20, 2 * GetCoreLv(MercedesCore, "LegendrySpear"))
+info <- c(700 + 10 * MercedesSpec$SkillLv, 3, 870, NA, 5, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+LegendrySpear <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "RollingMoonsault")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "RollingMoonsault"))
+info <- c(300 + 2 * MercedesSpec$SkillLv, 6, 840, NA, 4, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+RollingMoonsault <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR", "BDR"), levels=ASkill)
+value <- c(IGRCalc(c(ifelse(GetCoreLv(MercedesCore, "RingofIshtar")>=40, 20, 0), 20)), 2 * GetCoreLv(MercedesCore, "RingofIshtar"), 20)
+info <- c(245 + 1 * MercedesSpec$SkillLv, 2, 120, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+RingofIshtar <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
+info <- c(380, 4, 630, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+AdvancedStrikeDualShot <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "WrathofEnlil")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "WrathofEnlil"))
+info <- c(460, 10, 900, NA, 8, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+WrathofEnlil <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill)
+value <- c()
+info <- c(450 + 15 * GetCoreLv(MercedesCore, "ElementalGhost"), 8, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+ElementalGhostTree <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill)
+value <- c()
+info <- c(0, 0, 840, NA, 180, T, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BreathofIrkallaPre <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill)
+value <- c()
+info <- c(400 + 16 * GetCoreLv(MercedesCore, "BreathofIrkalla"), 12, 5160, 120, 180, T, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BreathofIrkalla <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill)
+value <- c()
+info <- c(0, 0, 270, NA, 180, T, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BreathofIrkallaEnd <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill)
+value <- c()
+info <- c(350 + 15 * GetCoreLv(MercedesCore, "RoyalKnights"), 16, 0, 1400, 150, T, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+RoyalKnightsKnight <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
+info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv), 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+AdvancedFinalAttack <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "UnicornSpike")>=40, 20, 0), 3 * GetCoreLv(MercedesCore, "UnicornSpike"))
+info <- c((345 + 100 + 2 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 5 * 1.845, 0, NA, 10, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+UnicornSpikeGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
+info <- c((260 + 130 + 3 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+LeafTornadoGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
+info <- c((260 + 170 + 3 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+GustDiveGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "LegendrySpear")>=40, 20, 0), 20, 2 * GetCoreLv(MercedesCore, "LegendrySpear"))
+info <- c((700 + 10 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 3 * 1.845, 0, NA, 5, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+LegendrySpearGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "RollingMoonsault")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "RollingMoonsault"))
+info <- c((300 + 2 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 6 * 1.845, 0, NA, 4, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+RollingMoonsaultGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR", "BDR"), levels=ASkill)
+value <- c(IGRCalc(c(ifelse(GetCoreLv(MercedesCore, "RingofIshtar")>=40, 20, 0), 20)), 2 * GetCoreLv(MercedesCore, "RingofIshtar"), 20)
+info <- c((245 + 1 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 2 * 0.646875, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+RingofIshtarGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
+info <- c(380 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+AdvancedStrikeDualShotGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "WrathofEnlil")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "WrathofEnlil"))
+info <- c(460 * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 10 * 1.845, 0, NA, 8, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+WrathofEnlilGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=ASkill)
+value <- c()
+info <- c((400 + 16 * GetCoreLv(MercedesCore, "BreathofIrkalla")) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 12 * 0.646875, 0, 150, 150, T, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BreathofIrkallaGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
+info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.646875, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+AdvancedFinalAttackIshtarGhost <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
+info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 1.845, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+AdvancedFinalAttackEnlilGhost <- rbind(data.frame(option, value), info)}
 
 MercedesATK <- Attack(list(UnicornSpike=UnicornSpike, LeafTornado=LeafTornado, GustDive=GustDive, 
                            LegendrySpear=LegendrySpear, RingofIshtar=RingofIshtar, AdvancedStrikeDualShot=AdvancedStrikeDualShot, RollingMoonsault=RollingMoonsault, WrathofEnlil=WrathofEnlil, 
-                           ElementalGhostTree=ElementalGhostTree, BreathofIrkallaPre=BreathofIrkallaPre, BreathofIrkalla=BreathofIrkalla, BreathofIrkallaSylvidia=BreathofIrkallaSylvidia, BreathofIrkallaEnd=BreathofIrkallaEnd, 
+                           ElementalGhostTree=ElementalGhostTree, BreathofIrkallaPre=BreathofIrkallaPre, BreathofIrkalla=BreathofIrkalla, BreathofIrkallaEnd=BreathofIrkallaEnd, 
                            RoyalKnightsKnight=RoyalKnightsKnight, AdvancedFinalAttack=AdvancedFinalAttack, 
                            UnicornSpikeGhost=UnicornSpikeGhost, LeafTornadoGhost=LeafTornadoGhost, GustDiveGhost=GustDiveGhost,
                            LegendrySpearGhost=LegendrySpearGhost, RollingMoonsaultGhost=RollingMoonsaultGhost, RingofIshtarGhost=RingofIshtarGhost, AdvancedStrikeDualShotGhost=AdvancedStrikeDualShotGhost, 
@@ -449,25 +456,25 @@ MercedesATK <- Attack(list(UnicornSpike=UnicornSpike, LeafTornado=LeafTornado, G
 
 ## Mercedes - Summoned
 {option <- factor(c("FDR", "IGR"), levels=SSkill)
-  value <- c(3 * GetCoreLv(MercedesCore, "ElementalKnight"), ifelse(GetCoreLv(MercedesCore, "ElementalKnight")>=40, 20, 0))
-  info <- c(385, 4/3, 0, 1500, 210, 120, T, T, T, F)
-  info <- data.frame(SInfo, info)
-  colnames(info) <- c("option", "value")
-  ElementalKnightIF <- rbind(data.frame(option, value), info) 
-  
-  option <- factor(c("FDR", "IGR"), levels=SSkill)
-  value <- c(3 * GetCoreLv(MercedesCore, "ElementalKnight"), ifelse(GetCoreLv(MercedesCore, "ElementalKnight")>=40, 20, 0))
-  info <- c(485, 2/3, 0, 1500, 210, 120, T, T, T, F)
-  info <- data.frame(SInfo, info)
-  colnames(info) <- c("option", "value")
-  ElementalKnightD <- rbind(data.frame(option, value), info) 
-  
-  option <- factor(levels=SSkill)
-  value <- c()
-  info <- c(400 + 16 * GetCoreLv(MercedesCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
-  info <- data.frame(SInfo, info)
-  colnames(info) <- c("option", "value")
-  GuidedArrow <- rbind(data.frame(option, value), info)}
+value <- c(3 * GetCoreLv(MercedesCore, "ElementalKnight"), ifelse(GetCoreLv(MercedesCore, "ElementalKnight")>=40, 20, 0))
+info <- c(385, 4/3, 0, 1500, 210, 120, T, T, T, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+ElementalKnightIF <- rbind(data.frame(option, value), info) 
+
+option <- factor(c("FDR", "IGR"), levels=SSkill)
+value <- c(3 * GetCoreLv(MercedesCore, "ElementalKnight"), ifelse(GetCoreLv(MercedesCore, "ElementalKnight")>=40, 20, 0))
+info <- c(485, 2/3, 0, 1500, 210, 120, T, T, T, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+ElementalKnightD <- rbind(data.frame(option, value), info) 
+
+option <- factor(levels=SSkill)
+value <- c()
+info <- c(400 + 16 * GetCoreLv(MercedesCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+GuidedArrow <- rbind(data.frame(option, value), info)}
 
 MercedesSummoned <- Summoned(list(ElementalKnightIF=ElementalKnightIF, ElementalKnightD=ElementalKnightD, GuidedArrow=GuidedArrow, SpiderInMirrorStart=SpiderInMirrorStart, 
                                   SpiderInMirror1=SpiderInMirror1, SpiderInMirror2=SpiderInMirror2, SpiderInMirror3=SpiderInMirror3, 
@@ -476,7 +483,7 @@ MercedesSummoned <- Summoned(list(ElementalKnightIF=ElementalKnightIF, Elemental
 
 ## Mercedes - DealCycle & Deal Calculation
 ATKFinal <- data.frame(MercedesATK)
-ATKFinal$Delay[c(-3, -5, -10, -11, -12, -13)] <- Delay(ATKFinal$Delay, MercedesSpec$ATKSpeed)[c(-3, -5, -10, -11, -12, -13)]
+ATKFinal$Delay[c(-3, -5, -10, -11, -12)] <- Delay(ATKFinal$Delay, MercedesSpec$ATKSpeed)[c(-3, -5, -10, -11, -12)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, MercedesSpec$CoolReduceP, MercedesSpec$CoolReduce)
 
 BuffFinal <- data.frame(MercedesBuff)
@@ -494,15 +501,15 @@ MercedesSkipATK <- matrix(rep(F, nrow(ATKFinal) * (nrow(ATKFinal)+1)), nrow=nrow
 MercedesSkipATK <- data.frame(MercedesSkipATK, row.names=c(rownames(ATKFinal)))
 colnames(MercedesSkipATK) <- c(rownames(ATKFinal), "SkippedDelay")
 
-MercedesSkipATK$UnicornSpike <- c(F, F, T, F, F, T, F, T, rep(F, 19))
-MercedesSkipATK$LeafTornado <- c(F, F, F, T, F, F, T, F, rep(F, 19))
-MercedesSkipATK$GustDive <- c(F, T, F, T, F, F, T, F, rep(F, 19))
-MercedesSkipATK$LegendrySpear <- c(T, T, T, F, F, T, T, T, rep(F, 19))
-MercedesSkipATK$AdvancedStrikeDualShot <- c(T, F, T, F, F, F, F, T, rep(F, 19))
-MercedesSkipATK$RollingMoonsault <- c(F, T, F, T, F, F, F, F, rep(F, 19))
-MercedesSkipATK$WrathofEnlil <- c(T, T, T, T, F, T, T, F, rep(F, 19))
-MercedesSkipATK$SkippedDelay <- c(Delay(600, MercedesSpec$ATKSpeed), Delay(480, MercedesSpec$ATKSpeed), 480, 
-                                  Delay(870, MercedesSpec$ATKSpeed), 0, Delay(450, MercedesSpec$ATKSpeed), Delay(630, MercedesSpec$ATKSpeed), Delay(270, MercedesSpec$ATKSpeed), rep(0, 19))
+MercedesSkipATK$UnicornSpike <- c(F, F, T, F, F, T, F, T, rep(F, 18))
+MercedesSkipATK$LeafTornado <- c(F, F, F, T, F, F, T, F, rep(F, 18))
+MercedesSkipATK$GustDive <- c(F, T, F, T, F, F, T, F, rep(F, 18))
+MercedesSkipATK$LegendrySpear <- c(T, T, T, F, F, T, T, T, rep(F, 18))
+MercedesSkipATK$AdvancedStrikeDualShot <- c(T, F, T, F, F, F, F, T, rep(F, 18))
+MercedesSkipATK$RollingMoonsault <- c(F, T, F, T, F, F, F, F, rep(F, 18))
+MercedesSkipATK$WrathofEnlil <- c(T, T, T, T, F, T, T, F, rep(F, 18))
+MercedesSkipATK$SkippedDelay <- c(Delay(600, MercedesSpec$ATKSpeed), Delay(480, MercedesSpec$ATKSpeed), 540, 
+                                  Delay(870, MercedesSpec$ATKSpeed), 0, Delay(450, MercedesSpec$ATKSpeed), Delay(630, MercedesSpec$ATKSpeed), Delay(270, MercedesSpec$ATKSpeed), rep(0, 18))
 MercedesSkipATK <- subset(MercedesSkipATK, MercedesSkipATK$SkippedDelay>0)
 
 
@@ -766,21 +773,17 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
         IgnisDummy <- ifelse(DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] > 0, 0, IgnisDummy + DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] + DealCycle$Time[1])
       }
       if(nrow(subset(DealCycle, DealCycle$Skills=="BreathofIrkallaPre"))==0) {
-        DealCycle <- DCBuff(DealCycle, "Sylvidia", BuffFinal)
         DealCycle <- DCATK(DealCycle, "BreathofIrkallaPre", ATKFinal)
-        DealCycle <- DCATK(DealCycle, "BreathofIrkallaSylvidia", ATKFinal)
+        DealCycle <- DCATK(DealCycle, "BreathofIrkalla", ATKFinal)
         DealCycle <- DCATK(DealCycle, "BreathofIrkallaEnd", ATKFinal)
-        DealCycle$Sylvidia[nrow(DealCycle)] <- 1
         DebuffDummy <- DebuffDummy - 1
         IgnisDummy <- 0
       }
       if(nrow(subset(DealCycle, DealCycle$Skills=="BreathofIrkallaPre")) > 0) {
         if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="BreathofIrkallaPre")$Time) > IrkallaSubTime * 1000) {
-          DealCycle <- DCBuff(DealCycle, "Sylvidia", BuffFinal)
           DealCycle <- DCATK(DealCycle, "BreathofIrkallaPre", ATKFinal)
-          DealCycle <- DCATK(DealCycle, "BreathofIrkallaSylvidia", ATKFinal)
+          DealCycle <- DCATK(DealCycle, "BreathofIrkalla", ATKFinal)
           DealCycle <- DCATK(DealCycle, "BreathofIrkallaEnd", ATKFinal)
-          DealCycle$Sylvidia[nrow(DealCycle)] <- 1
           DebuffDummy <- DebuffDummy - 1
           IgnisDummy <- 0
         }
@@ -830,7 +833,7 @@ MercedesAddATK <- function(DealCycle) {
   GhostCoolDown <- 0
   for(i in 1:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "RingofIshtar", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil", 
-                                  "BreathofIrkallaSylvidia", "SpiderInMirror", "GuidedArrow")) > 0 & 
+                                  "BreathofIrkalla", "SpiderInMirror", "GuidedArrow")) > 0 & 
        DealCycle$ElementalGhost[i] > 0 & GhostCoolDown == 0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("ElementalGhostTree")
@@ -848,7 +851,7 @@ MercedesAddATK <- function(DealCycle) {
   RoyalKnightsCoolDown <- 0
   for(i in 1:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "RingofIshtar", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil", 
-                                  "BreathofIrkallaSylvidia", "SpiderInMirror", "GuidedArrow")) > 0 & 
+                                  "BreathofIrkalla", "SpiderInMirror", "GuidedArrow")) > 0 & 
        DealCycle$RoyalKnights[i] > 0 & RoyalKnightsCoolDown == 0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("RoyalKnightsKnight")
@@ -860,27 +863,27 @@ MercedesAddATK <- function(DealCycle) {
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
   for(i in 1:(nrow(DealCycle)-1)) {
-    if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "RingofIshtar", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil", "BreathofIrkallaSylvidia")) > 0) {
+    if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "RingofIshtar", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil", "BreathofIrkalla")) > 0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttack")
-      if(DealCycle$ElementalGhost[i] > 0 & DealCycle$Skills[i]!="BreathofIrkallaSylvidia") {
+      if(DealCycle$ElementalGhost[i] > 0) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- paste(DealCycle$Skills[i], "Ghost", sep="")
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil")) > 0) {
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackEnlilGhost")
-        } else if(sum(DealCycle$Skills[i]==c("RingofIshtar")) > 0) {
+        } else {
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackIshtarGhost")
         }
       }
     }
   }
-  DealCycle <- DealCycle[order(DealCycle$Time), ]
-  rownames(DealCycle) <- 1:nrow(DealCycle)
+    DealCycle <- DealCycle[order(DealCycle$Time), ]
+    rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
 
-
+  
 MercedesDealCycle <- MercedesCycle(PreDealCycle = MercedesDealCycle, 
                                    ATKFinal = ATKFinal, 
                                    BuffFinal = BuffFinal, 
@@ -892,7 +895,7 @@ MercedesDealCycle <- MercedesCycle(PreDealCycle = MercedesDealCycle,
                                    SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)), 
                                    CycleType="Default")
 MercedesDealCycle <- DCSummonedATKs(MercedesDealCycle, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
-MercedesDealCycle <- RepATKCycle(MercedesDealCycle, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
+MercedesDealCycle <- RepATKCycle(MercedesDealCycle, c("BreathofIrkalla"), 44, 0, ATKFinal)
 MercedesDealCycle <- MercedesAddATK(MercedesDealCycle)
 MercedesDealCycle <- DCSpiderInMirror(MercedesDealCycle, SummonedFinal)
 MercedesDealCycleReduction <- DealCycleReduction(MercedesDealCycle)
@@ -913,7 +916,7 @@ MercedesDealCycle2 <- MercedesCycle(PreDealCycle = MercedesDealCycle2,
                                     SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)), 
                                     CycleType="UseGustDive")
 MercedesDealCycle2 <- DCSummonedATKs(MercedesDealCycle2, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
-MercedesDealCycle2 <- RepATKCycle(MercedesDealCycle2, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
+MercedesDealCycle2 <- RepATKCycle(MercedesDealCycle2, c("BreathofIrkalla"), 44, 0, ATKFinal)
 MercedesDealCycle2 <- MercedesAddATK(MercedesDealCycle2)
 MercedesDealCycle2 <- DCSpiderInMirror(MercedesDealCycle2, SummonedFinal)
 
@@ -933,7 +936,7 @@ MercedesDealCycle3 <- MercedesCycle(PreDealCycle = MercedesDealCycle3,
                                     SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)), 
                                     CycleType="NotUseGustDive")
 MercedesDealCycle3 <- DCSummonedATKs(MercedesDealCycle3, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
-MercedesDealCycle3 <- RepATKCycle(MercedesDealCycle3, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
+MercedesDealCycle3 <- RepATKCycle(MercedesDealCycle3, c("BreathofIrkalla"), 44, 0, ATKFinal)
 MercedesDealCycle3 <- MercedesAddATK(MercedesDealCycle3)
 MercedesDealCycle3 <- DCSpiderInMirror(MercedesDealCycle3, SummonedFinal)
 

@@ -44,9 +44,13 @@ ShadowerBase <- JobBase(ChrInfo=ChrInfo,
 value <- c(20)
 NimbleBody <- data.frame(option, value)
 
-option <- factor(c("CDMR"), levels=PSkill)
-value <- c(4)
-CriticalGrowing <- data.frame(option, value)
+option <- factor(c("CDMR", "CRR"), levels=PSkill)
+value <- c(5, 25)
+CriticalEdge <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+DaggerAcceleration <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30)
@@ -61,24 +65,28 @@ value <- c(15)
 ShieldMastery <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(5)
+value <- c(25)
 Grid <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
 value <- c(25 + floor(ShadowerBase$SkillLv/3) * 2)
-BoomerangStabPassive <- data.frame(option, value)
+CruelStabPassive <- data.frame(option, value)
 
 option <- factor(c("MainStat", "CDMR"), levels=PSkill)
 value <- c(10, 20)
-PrimaCritical <- data.frame(option, value)
+BloodyPocketPassive <- data.frame(option, value)
 
-option <- factor(c("IGR"), levels=PSkill)
-value <- c(20 + ShadowerBase$SkillLv)
-ShadowerInstinctPassive <- data.frame(option, value)
+option <- factor(c("ATK", "FDR", "IGR"), levels=PSkill)
+value <- c(50 + 2 * ShadowerBase$PSkillLv, 15 + ceiling(ShadowerBase$PSkillLv/2), 20 + ShadowerBase$PSkillLv)
+ShadowerInstinct <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
 value <- c(70 + ceiling(ShadowerBase$SkillLv/2), 40 + ShadowerBase$SkillLv, 15 + floor(ShadowerBase$SkillLv/3))
 DaggerExpert <- data.frame(option, value)
+
+option <- factor(c("BDR", "CRR"), levels=PSkill)
+value <- c(25, 25)
+FlipTheCoin <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(ShadowerCore, "ReadyToDie"))
@@ -92,48 +100,32 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(ShadowerCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-ShadowerPassive <- Passive(list(NimbleBody, CriticalGrowing, Karma, PhysicalTraining, ShieldMastery, Grid, BoomerangStabPassive, PrimaCritical, ShadowerInstinctPassive, DaggerExpert, 
+ShadowerPassive <- Passive(list(NimbleBody, CriticalEdge, DaggerAcceleration, Karma, PhysicalTraining, ShieldMastery, Grid, CruelStabPassive, BloodyPocketPassive, ShadowerInstinct, DaggerExpert, FlipTheCoin, 
                                 ReadyToDie, BlinkPassive, RopeConnectPassive))
 
 
 ## Shadower - Buff
-## Haste, Meso Guard : Not Used
-Assassination1KPFDR <- 85
-Assassination2KPFDR <- 100
+## Haste : Not Used
 {option <- factor(levels=BSkill)
 value <- c()
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MesoStack <- rbind(data.frame(option, value), info)
-  
+
 option <- factor("FDR", levels=BSkill)
-value <- c(5)
+value <- c(15)
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AdvancedDarkSightDummy <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(Assassination1KPFDR)
-info <- c(0, 1, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Assassination1KP <- rbind(data.frame(option, value), info)
-
-option <- factor("FDR", levels=BSkill)
-value <- c(Assassination2KPFDR)
+value <- c(50)
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Assassination2KP <- rbind(data.frame(option, value), info)
-
-option <- factor("BDR", levels=BSkill)
-value <- c(150 + 4 * ShadowerBase$SkillLv)
-info <- c(0, 1, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-AssassinationADS <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(30)
@@ -141,13 +133,6 @@ info <- c(180, 1800, 810/0.49, T, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 StealBuff <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, 0, 600, T, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-DaggerBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("AddATKRate", levels=BSkill)
 value <- c(70)
@@ -163,16 +148,9 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
-option <- factor("ATK", levels=BSkill)
-value <- c(70 + 2 * ShadowerBase$SkillLv)
-info <- c(200 + 6 * ShadowerBase$SkillLv, 0, 900, T, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-ShadowerInstinct <- rbind(data.frame(option, value), info)
-
 option <- factor("CDMR", levels=BSkill)
 value <- c(20 + 2 * ceiling(ShadowerBase$SkillLv/3))
-info <- c(30, 150 - ShadowerBase$SkillLv, 900, F, T, F, F)
+info <- c(30, 150 - 2 * ShadowerBase$SkillLv, 900, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SmokeShell <- rbind(data.frame(option, value), info)
@@ -190,13 +168,6 @@ info <- c(120, 120, 0, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 EpicAdventure <- rbind(data.frame(option, value), info)
-
-option <- factor(c("BDR", "CRR"), levels=BSkill)
-value <- c(25, 50)
-info <- c(120, 0, 0, F, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-FlipTheCoin <- rbind(data.frame(option, value), info)
 
 Useful <- UsefulSkills(ShadowerCore)
 UsefulSharpEyes <- Useful$UsefulSharpEyes
@@ -220,7 +191,7 @@ colnames(info) <- c("option", "value")
 ReadyToDie2Stack <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(((115 + floor(GetCoreLv(ShadowerCore, "UltimateDarkSight")/5)) / 105 - 1) * 100)
+value <- c(((125 + floor(GetCoreLv(ShadowerCore, "UltimateDarkSight")/5)) / 115 - 1) * 100)
 info <- c(30, 220 - GetCoreLv(ShadowerCore, "UltimateDarkSight"), 750, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -233,16 +204,19 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-ShadowerBuff <- list(MesoStack=MesoStack, AdvancedDarkSightDummy=AdvancedDarkSightDummy, Assassination1KP=Assassination1KP, Assassination2KP=Assassination2KP, AssassinationADS=AssassinationADS, 
-                     DaggerBooster=DaggerBooster, ShadowPartner=ShadowPartner, MapleSoldier=MapleSoldier, ShadowerInstinct=ShadowerInstinct, 
-                     SmokeShell=SmokeShell, VeilofShadowBuff=VeilofShadowBuff, 
-                     EpicAdventure=EpicAdventure, FlipTheCoin=FlipTheCoin, 
+ShadowerBuff <- list(MesoStack=MesoStack, AdvancedDarkSightDummy=AdvancedDarkSightDummy, Assassination2KP=Assassination2KP, 
+                     ShadowPartner=ShadowPartner, MapleSoldier=MapleSoldier, SmokeShell=SmokeShell, 
+                     VeilofShadowBuff=VeilofShadowBuff, EpicAdventure=EpicAdventure, 
                      UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                      ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, UltimateDarkSight=UltimateDarkSight, MapleWarriors2=MapleWarriors2, 
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## Petbuff : NA -> Not Use Useful Advanced Bless
 ShadowerBuff <- Buff(ShadowerBuff)
 ShadowerAllTimeBuff <- AllTimeBuff(ShadowerBuff)
+## Useful Skill Delay
+ShadowerBuff <- data.frame(ShadowerBuff)
+ShadowerBuff[rownames(ShadowerBuff)=="UsefulSharpEyes", ]$Delay <- 900
+ShadowerBuff[rownames(ShadowerBuff)=="UsefulCombatOrders", ]$Delay <- 1500
 
 
 ## Shadower - Union & HyperStat & SoulWeapon
@@ -276,20 +250,20 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Hyper : Meso Explosion - Reinforce / Enhance, Assassination - Reinforce / Boss Killer / Ignore Guard
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, IGRCalc(c(10, ifelse(GetCoreLv(ShadowerCore, "Assassination")>=40, 20, 0))), 2 * GetCoreLv(ShadowerCore, "Assassination"))
-info <- c(275 + 4 * ShadowerSpec$SkillLv, 6, 840, NA, NA, NA, NA, F)
+info <- c(270 + 3 * ShadowerSpec$SkillLv, 6, 690, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Assassination1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(ShadowerCore, "Assassination")>=40, 20, 0), 2 * GetCoreLv(ShadowerCore, "Assassination"))
-info <- c(350 + 5 * ShadowerSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
+info <- c(490 + 5 * ShadowerSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Assassination2 <- rbind(data.frame(option, value), info) ## Delay Skipped By Jeolgae : 480ms
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(10, ifelse(GetCoreLv(ShadowerCore, "MesoExplosion")>=40, 20, 0))), 3 * GetCoreLv(ShadowerCore, "MesoExplosion"))
+value <- c(50, IGRCalc(c(10, ifelse(GetCoreLv(ShadowerCore, "MesoExplosion")>=40, 20, 0))), 3 * GetCoreLv(ShadowerCore, "MesoExplosion"))
 info <- c(120, 2 * 0.4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -311,14 +285,14 @@ ShadowAssault <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(475 + 19 * GetCoreLv(ShadowerCore, "Eviscerate"), 7, 570, 60, 14, T, F, F)
+info <- c(675 + 27 * GetCoreLv(ShadowerCore, "Eviscerate"), 7, 570, 60, 20, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Eviscerate <- rbind(data.frame(option, value), info) ## StartATK : 150ms
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
-info <- c(500 + 20 * GetCoreLv(ShadowerCore, "SonicBlow"), 7, 2550, 120, 80, T, F, F)
+info <- c(500 + 20 * GetCoreLv(ShadowerCore, "SonicBlow"), 7, 2550, 120, 45, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SonicBlow <- rbind(data.frame(option, value), info) ## StartATK : 780ms
@@ -331,14 +305,14 @@ colnames(info) <- c("option", "value")
 SonicBlowEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
-value <- c(20)
+value <- c(100)
 info <- c(425 + 17 * GetCoreLv(ShadowerCore, "Myeolgwichamyeongjin"), 8, 0, 0, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Myeolgwichamyeongjin <- rbind(data.frame(option, value), info) ## 150ms, 900ms, 1680ms, 2460ms, 3120ms, 3600ms, 3960ms, 4200ms, 4440ms, 4620ms, 4800ms, 4920ms (11 Times)
 
 option <- factor(c("IGR"), levels=ASkill)
-value <- c(20)
+value <- c(100)
 info <- c(625 + 25 * GetCoreLv(ShadowerCore, "Myeolgwichamyeongjin"), 15, 0, 90, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -390,9 +364,10 @@ ShadowerSkipATK <- matrix(rep(F, nrow(ATKFinal) * (nrow(ATKFinal)+1)), nrow=nrow
 ShadowerSkipATK <- data.frame(ShadowerSkipATK, row.names=c(rownames(ATKFinal)))
 colnames(ShadowerSkipATK) <- c(rownames(ATKFinal), "SkippedDelay")
 
+ShadowerSkipATK$MesoExplosion <- c(F, T, rep(F, 10))
 ShadowerSkipATK$Eviscerate <- c(F, T, rep(F, 10))
 
-ShadowerSkipATK$SkippedDelay <- c(NA, Delay(480, ShadowerSpec$ATKSpeed), rep(NA, 10))
+ShadowerSkipATK$SkippedDelay <- c(NA, Delay(360, ShadowerSpec$ATKSpeed), rep(NA, 10))
 ShadowerSkipATK <- subset(ShadowerSkipATK, ShadowerSkipATK$SkippedDelay>0)
 
 
@@ -406,11 +381,11 @@ colnames(ShadowerDealCycle) <- DealCycle
 ShadowerDealCycle <- data.frame(ShadowerDealCycle)
 
 ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
-                         Period=c(180.5), CycleTime=c(361)) {
-  BuffSummonedPrior <- c("DaggerBooster", "ShadowPartner", "MapleSoldier", "ShadowerInstinct", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "DarkFlare",
+                         Period=c(180.5), CycleTime=c(361), AddDelay=0) {
+  BuffSummonedPrior <- c("ShadowPartner", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "DarkFlare",
                          "MapleWarriors2", "SoulContractLink", "UltimateDarkSight", "ReadyToDie2Stack")
   
-  Times180 <- c(1, 1, 1, 1, 1, 1, 0, 3, 
+  Times180 <- c(1, 1, 1, 1, 0, 3, 
                 1, 2, 1, 2)
   SubTime <- rep(Period - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime - (CycleTime/Period) * Spec$CoolReduce
@@ -465,8 +440,6 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
     BuffDelays[[i]] <- DelayData$Delay[t]
   } 
   
-  DealCycle <- DCBuff(DealCycle, "FlipTheCoin", BuffFinal)
-  
   TotalTime <- TotalTime * 1000
   for(i in 1:length(BuffList[[1]])) {
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
@@ -474,8 +447,9 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
       if(BuffList[[1]][i]=="EpicAdventure") {
         DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
         DealCycle <- DCATKSkip(DealCycle, "Assassination1", ATKFinal, SkipStructure)
-        DealCycle <- DCATKSkip(DealCycle, "MesoExplosion", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
+        DealCycle <- DCATKSkip(DealCycle, "MesoExplosion", ATKFinal, SkipStructure)
+        
       }
     } else {
       DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
@@ -519,6 +493,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
   
   VSRemain <- 0 ; EVRemain <- 0 ; SBRemain <- 0 ; SSRemain <- 0 ; MYRemain <- 0
   WoundStack <- 3
+  EVDummy <- 0
   
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
@@ -565,7 +540,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
       }
       ## Eviscerate
-      else if(EVRemain <= 630 + 360 & WoundStack >= 2) {
+      else if(EVRemain <= 540 + 270 & WoundStack >= 2) {
         if(nrow(subset(DealCycle, DealCycle$Skills=="Myeolgwichamyeongjin")) < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) & MYRemain == 0) {
           DealCycle <- DCATKSkip(DealCycle, "Myeolgwichamyeongjin", ATKFinal, SkipStructure)
           DealCycle <- DCATKSkip(DealCycle, "MyeolgwichamyeongjinLast", ATKFinal, SkipStructure)
@@ -587,11 +562,11 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
         
         DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
-        VSRemain <- max(0, VSRemain - DealCycle$Time[1]) + 60
-        EVRemain <- max(0, EVRemain - DealCycle$Time[1]) + 60
-        SBRemain <- max(0, max(0, SBRemain - DealCycle$Time[1]) + 60 - 1500)
-        SSRemain <- max(0, SSRemain - DealCycle$Time[1]) + 60
-        MYRemain <- max(0, MYRemain - DealCycle$Time[1]) + 60
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        EVRemain <- max(0, EVRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        SBRemain <- max(0, SBRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        MYRemain <- max(0, MYRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
         
         DealCycle <- DCATKSkip(DealCycle, "Eviscerate", ATKFinal, SkipStructure)
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
@@ -600,9 +575,13 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
         WoundStack <- 0
+        EVDummy <- 1
       }
       ## Sonic Blow
-      else if(SBRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SonicBlow")) < 10) {
+      else if(SBRemain == 0 & sum(nrow(subset(DealCycle, DealCycle$Skills=="SonicBlow")) == c(0, 4)) >= 1 & DealCycle$Restraint4[nrow(DealCycle)] > 0 | 
+              SBRemain == 0 & sum(nrow(subset(DealCycle, DealCycle$Skills=="SonicBlow")) == c(1, 5)) >= 1 & DealCycle$SmokeShell[nrow(DealCycle)] > 0 | 
+              SBRemain == 0 & sum(nrow(subset(DealCycle, DealCycle$Skills=="SonicBlow")) == c(0, 1, 4, 5)) == 0 & 
+              nrow(subset(DealCycle, DealCycle$Skills=="SonicBlow")) < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) * 2) {
         DealCycle <- DCATKSkip(DealCycle, "SonicBlow", ATKFinal, SkipStructure)
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
         EVRemain <- max(0, EVRemain - DealCycle$Time[1])
@@ -617,20 +596,8 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
       }
-      ## Flip The Coin
-      else if(DealCycle$FlipTheCoin[nrow(DealCycle)] - DealCycle$Time[1] < 90000 & 
-         DealCycle$UltimateDarkSight[nrow(DealCycle)] - DealCycle$Time[1] < 0 & 
-         DealCycle$VeilofShadowBuff[nrow(DealCycle)] - DealCycle$Time[1] < 0 & 
-         DealCycle$SmokeShell[nrow(DealCycle)] - DealCycle$Time[1] < 0) {
-        DealCycle <- DCBuff(DealCycle, "FlipTheCoin", BuffFinal)
-        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
-        EVRemain <- max(0, EVRemain - DealCycle$Time[1])
-        SBRemain <- max(0, SBRemain - DealCycle$Time[1])
-        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-        MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-      }
       ## Veil of Shadow
-      else if(VSRemain == 0 & DealCycle$UltimateDarkSight[nrow(DealCycle)] - DealCycle$Time[1] < 2000) {
+      else if(VSRemain == 0 & DealCycle$UltimateDarkSight[nrow(DealCycle)] - DealCycle$Time[1] <= 2000) {
         if(DealCycle$UltimateDarkSight[nrow(DealCycle)] - DealCycle$Time[1] <= 0 | DealCycle$SmokeShell[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
           DealCycle <- DCATKSkip(DealCycle, "DarkSight", ATKFinal, SkipStructure)
           VSRemain <- max(0, VSRemain - DealCycle$Time[1])
@@ -648,7 +615,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
       } 
       ## SmokeShell
       else if(SSRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SmokeShell")) < nrow(subset(DealCycle, DealCycle$Skills=="UltimateDarkSight")) & 
-              DealCycle$UltimateDarkSight[nrow(DealCycle)] - DealCycle$Time[1] < 0 & DealCycle$VeilofShadowBuff[nrow(DealCycle)] - DealCycle$Time[1] < 0) {
+              DealCycle$UltimateDarkSight[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & DealCycle$VeilofShadowBuff[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
         DealCycle <- DCBuff(DealCycle, "SmokeShell", BuffFinal)
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
         EVRemain <- max(0, EVRemain - DealCycle$Time[1])
@@ -678,20 +645,31 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
         SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
         
+        if(EVDummy == 1) {
+          DealCycle <- DCATKSkip(DealCycle, "MesoExplosion", ATKFinal, SkipStructure)
+          VSRemain <- max(0, VSRemain - DealCycle$Time[1])
+          EVRemain <- max(0, EVRemain - DealCycle$Time[1])
+          SBRemain <- max(0, SBRemain - DealCycle$Time[1])
+          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+          MYRemain <- max(0, MYRemain - DealCycle$Time[1])
+          EVDummy <- 0
+        }
+        
+        DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
+        VSRemain <- max(0, VSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        EVRemain <- max(0, EVRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        SBRemain <- max(0, SBRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        MYRemain <- max(0, MYRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+        WoundStack <- min(3, WoundStack + 1)
+        
         DealCycle <- DCATKSkip(DealCycle, "MesoExplosion", ATKFinal, SkipStructure)
+        DealCycle[1, 2:ncol(DealCycle)] <- AddDelay
         VSRemain <- max(0, VSRemain - DealCycle$Time[1])
         EVRemain <- max(0, EVRemain - DealCycle$Time[1])
         SBRemain <- max(0, SBRemain - DealCycle$Time[1])
         SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-        
-        DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
-        VSRemain <- max(0, VSRemain - DealCycle$Time[1])
-        EVRemain <- max(0, EVRemain - DealCycle$Time[1])
-        SBRemain <- max(0, max(0, SBRemain - DealCycle$Time[1]) - 1500)
-        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-        MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-        WoundStack <- min(3, WoundStack + 1)
       }
     }
     
@@ -711,6 +689,14 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
             SBRemain <- max(0, SBRemain - DealCycle$Time[1])
             SSRemain <- max(0, SSRemain - DealCycle$Time[1])
             MYRemain <- max(0, MYRemain - DealCycle$Time[1])
+    
+            DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
+            VSRemain <- max(0, VSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+            EVRemain <- max(0, EVRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+            SBRemain <- max(0, SBRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+            MYRemain <- max(0, MYRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+            WoundStack <- min(3, WoundStack + 1)
             
             DealCycle <- DCATKSkip(DealCycle, "MesoExplosion", ATKFinal, SkipStructure)
             VSRemain <- max(0, VSRemain - DealCycle$Time[1])
@@ -718,14 +704,7 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
             SBRemain <- max(0, SBRemain - DealCycle$Time[1])
             SSRemain <- max(0, SSRemain - DealCycle$Time[1])
             MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-            
-            DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
-            VSRemain <- max(0, VSRemain - DealCycle$Time[1])
-            EVRemain <- max(0, EVRemain - DealCycle$Time[1])
-            SBRemain <- max(0, SBRemain - DealCycle$Time[1])
-            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-            MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-            WoundStack <- min(3, WoundStack + 1)
+            DealCycle[1, 2:ncol(DealCycle)] <- AddDelay
           }
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
@@ -740,7 +719,6 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
   }
   
   while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="VeilofShadowBuff")$Time) + min(subset(DealCycle, DealCycle$Skills=="VeilofShadowBuff")$Time) < VSCool | 
-        SBRemain - 1500 - min(subset(DealCycle, DealCycle$Skills=="SonicBlow")$Time) > 0 | 
         WoundStack < 1) {
     DealCycle <- DCATKSkip(DealCycle, "Assassination1", ATKFinal, SkipStructure)
     VSRemain <- max(0, VSRemain - DealCycle$Time[1])
@@ -749,20 +727,21 @@ ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, S
     SSRemain <- max(0, SSRemain - DealCycle$Time[1])
     MYRemain <- max(0, MYRemain - DealCycle$Time[1])
     
+    DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
+    VSRemain <- max(0, VSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+    EVRemain <- max(0, EVRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+    SBRemain <- max(0, SBRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+    SSRemain <- max(0, SSRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+    MYRemain <- max(0, MYRemain - DealCycle$Time[1] + ATKFinal[rownames(ATKFinal)=="Assassination2", ]$Delay - ShadowerSkipATK[rownames(ShadowerSkipATK)=="Assassination2", ]$SkippedDelay)
+    WoundStack <- min(3, WoundStack + 1)
+    
     DealCycle <- DCATKSkip(DealCycle, "MesoExplosion", ATKFinal, SkipStructure)
     VSRemain <- max(0, VSRemain - DealCycle$Time[1])
     EVRemain <- max(0, EVRemain - DealCycle$Time[1])
     SBRemain <- max(0, SBRemain - DealCycle$Time[1])
     SSRemain <- max(0, SSRemain - DealCycle$Time[1])
     MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-    
-    DealCycle <- DCATKSkip(DealCycle, "Assassination2", ATKFinal, SkipStructure)
-    VSRemain <- max(0, VSRemain - DealCycle$Time[1])
-    EVRemain <- max(0, EVRemain - DealCycle$Time[1])
-    SBRemain <- max(0, max(0, SBRemain - DealCycle$Time[1]) - 1500)
-    SSRemain <- max(0, SSRemain - DealCycle$Time[1])
-    MYRemain <- max(0, MYRemain - DealCycle$Time[1])
-    WoundStack <- min(3, WoundStack + 1)
+    DealCycle[1, 2:ncol(DealCycle)] <- AddDelay
   }
   
   rownames(DealCycle) <- 1:nrow(DealCycle)
@@ -847,52 +826,13 @@ ShadowerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) 
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
   
-  ## Advanced Dark Sight
-  for(i in 2:nrow(DealCycle)) {
+  ## Assasination 2 Killing Point (Saleui Buff)
+  for(i in 1:nrow(DealCycle)) {
     DealCycle$AdvancedDarkSightDummy[i] <- max(DealCycle$UltimateDarkSight[i], DealCycle$SmokeShell[i], DealCycle$VeilofShadowBuff[i])
-    if(sum(DealCycle$Skills[i] == c("Assassination1", "Assassination2")) >= 1 & DealCycle$AdvancedDarkSightDummy[i] > 0) {
-      DealCycle$AssassinationADS[i] <- 1
-    } else if(sum(DealCycle$Skills[i] == c("DarkFlare", "SpiderInMirror1", "SpiderInMirror2", "SpiderInMirror3", "SpiderInMirror4", "SpiderInMirror5")) >= 1 & 
-              DealCycle$AdvancedDarkSightDummy[i] > 0 & DealCycle$UltimateDarkSight[i] == 0) {
-      DealCycle$Skills[i] <- "Dummy"
-    } 
-  }
-  SIDummy <- 0 ; EVDummy <- 0 ; SBDummy <- 0
-  for(i in 2:nrow(DealCycle)) {
-    if(DealCycle$Skills[i] == "ShadowerInstinct") {
-      SIDummy <- 1
-    } else if(DealCycle$Skills[i] == "EviscerateStart") {
-      EVDummy <- 1
-    } else if(DealCycle$Skills[i] == "SonicBlowStart") {
-      SBDummy <- 1
-    } else if(DealCycle$Skills[i] == "Assassination1") {
-      if(SBDummy == 1 & SIDummy != 1) {
-        DealCycle$Assassination2KP[i] <- 1
-      } else if(EVDummy == 2 & SIDummy != 1 | 
-                SBDummy == 2 & SIDummy != 1) {
-        DealCycle$Assassination2KP[i] <- 1
-        EVDummy <- 0
-        SBDummy <- 0
-      } else if(SIDummy != 1) {
-        DealCycle$Assassination1KP[i] <- 1
-      } 
-    } else if(DealCycle$Skills[i] == "Assassination2") {
-      if(SIDummy == 1) {
-        SIDummy <- 0
-      } else if(EVDummy == 1 | SBDummy == 1) {
-        if(EVDummy == 1) {
-          EVDummy <- 2
-        }
-        if(SBDummy == 1) {
-          SBDummy <- 2
-        }
-        DealCycle$Assassination2KP[i] <- 1
-      } else {
-        DealCycle$Assassination2KP[i] <- 1
-      }
+    if(DealCycle$Skills[i]=="Assassination2") {
+      DealCycle$Assassination2KP[i] <- 1
     }
   }
-  
   
   ## Shadow Partner
   for(i in 1:nrow(DealCycle)) {
@@ -907,7 +847,6 @@ ShadowerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) 
   
   ## Dummy Reduction
   DealCycle <- DealCycle[DealCycle$Skills!="MesoExplosionDummy", ]
-  DealCycle <- DealCycle[DealCycle$Skills!="Dummy", ]
   DealCycle$MesoStack <- 0
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
@@ -972,3 +911,35 @@ set(get(DPMCalcOption$DataName), as.integer(4), "Shadower", Deal_40s(ShadowerDea
 ShadowerSpecMean <- SpecMean("Shadower", ShadowerDealCycleReduction, 
                              DealCalcWithMaxDMR(ShadowerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt), 
                              ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt)
+
+
+## Shadower - Add Delay 90ms
+DealCycle <- c("Skills", "Time", rownames(ShadowerBuff))
+ShadowerDealCycle90 <- t(rep(0, length(DealCycle)))
+colnames(ShadowerDealCycle90) <- DealCycle
+ShadowerDealCycle90 <- data.frame(ShadowerDealCycle90)
+
+ShadowerDealCycle90 <- ShadowerCycle(ShadowerDealCycle90, 
+                                     ATKFinal, 
+                                     BuffFinal, 
+                                     SummonedFinal, 
+                                     ShadowerSpec, 
+                                     ShadowerSkipATK, 
+                                     Period=180.5, CycleTime=361, AddDelay=90)
+ShadowerDealCycle90 <- DealCycleFinal(ShadowerDealCycle90)
+ShadowerDealCycle90 <- ShadowerAddATK(ShadowerDealCycle90, 
+                                      ATKFinal, 
+                                      BuffFinal, 
+                                      SummonedFinal, 
+                                      ShadowerSpec)
+
+ShadowerFinalDPM90 <- DealCalcWithMaxDMR(ShadowerDealCycle90, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt)
+Shadower90DPM <- sum(na.omit(ShadowerFinalDPM90)) / (max(ShadowerDealCycle90$Time)/ 60000)
+
+ShadowerDealData90 <- data.frame(ShadowerDealCycle90$Skills, ShadowerDealCycle90$Time, ShadowerDealCycle90$Restraint4, ShadowerFinalDPM90)
+colnames(ShadowerDealData90) <- c("Skills", "Time", "R4", "Deal")
+
+Shadower90RR <- Deal_RR(ShadowerDealData90)
+Shadower9040s <- Deal_40s(ShadowerDealData90)
+
+print(list(Shadower90ms=data.frame(Shadower90DPM=Shadower90DPM, Shadower90RR=Shadower90RR, Shadower9040s=Shadower9040s)))

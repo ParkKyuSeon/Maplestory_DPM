@@ -1,6 +1,6 @@
 ## Viper - Data
 ## Viper - VMatrix
-ViperCoreBase <- CoreBuilder(ActSkills=c("Transform", "SerpentScrew", "FuriousCharge", "HawlingFist",
+ViperCoreBase <- CoreBuilder(ActSkills=c("LightningForm", "SerpentScrew", "FuriousCharge", "HawlingFist",
                                          CommonV("Pirate", "Adventure")), 
                              ActSkillsLv=c(25, 25, 25, 25, 25, 25, 25, 25, 25), 
                              UsefulSkills=c("SharpEyes", "CombatOrders"), 
@@ -44,6 +44,10 @@ ViperBase <- JobBase(ChrInfo=ChrInfo,
 value <- c(20, 5)
 CriticalRoar <- data.frame(option, value) 
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+KnuckleAcceleration <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30)
 MentalClearity <- data.frame(option, value)
@@ -56,16 +60,20 @@ option <- factor(c("CRR", "CDMR", "ATK"), levels=PSkill)
 value <- c(35, 10, 30)
 CriticalRage <- data.frame(option, value)
 
+option <- factor(c("CRR", "CDMR"), levels=PSkill)
+value <- c(60, 15)
+GroggyMastery <- data.frame(option, value)
+
 option <- factor(c("Mastery"), levels=PSkill)
 value <- c(70 + ceiling(ViperBase$SkillLv/2))
 VipersitionPassive <- data.frame(option, value)
 
 option <- factor(c("BDR"), levels=PSkill)
 value <- c(25 + 2 * ViperBase$SkillLv)
-CounterAttack <- data.frame(option, value)
+OffenseForm <- data.frame(option, value)
 
 option <- factor(c("IGR", "ATK"), levels=PSkill)
-value <- c(40 + 2 * ViperBase$SkillLv, 30 + ViperBase$SkillLv)
+value <- c(40 + 4 * ViperBase$SkillLv, 30 + 2 * ViperBase$SkillLv)
 GuardCrush <- data.frame(option, value)
 
 option <- factor(c("BDR"), levels=PSkill)
@@ -84,38 +92,17 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(ViperCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-ViperPassive <- Passive(list(CriticalRoar, MentalClearity, PhysicalTraining, CriticalRage, VipersitionPassive, CounterAttack, GuardCrush, StimulatePassive,
+ViperPassive <- Passive(list(CriticalRoar, KnuckleAcceleration, MentalClearity, PhysicalTraining, CriticalRage, GroggyMastery, VipersitionPassive, OffenseForm, GuardCrush, StimulatePassive,
                              LoadedDice, BlinkPassive, RopeConnectPassive))
 
 
 ## Viper - Buff
 {option <- factor(levels=BSkill)
 value <- c()
-info <- c(0, 1, 0, F, NA, NA, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Energy <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(0, 1, 0, F, NA, NA, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-FullCharge <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=BSkill)
-value <- c()
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-StimulateEnergy <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(270, 1, 600, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SerpentScrewOn <- rbind(data.frame(option, value), info)
+SerpentStoneStack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -130,13 +117,6 @@ info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 FuriousChargeDummy <- rbind(data.frame(option, value), info)
-
-option <- factor(c("ATKSpeed"), levels=BSkill)
-value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-KnuckleBooster <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("ATKP"), levels=BSkill)
 value <- c(30 + ViperBase$SkillLv)
@@ -159,19 +139,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(Cooldown(60, T, ViperBase$UnionChrs$CoolReduceP, ViperBase$CoolReduce), 60, Delay(900, 2), F, T, T, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-NautilusBuff <- rbind(data.frame(option, value), info) 
-
 option <- factor(c("FDR"), levels=BSkill)
-value <- c(20 + floor(ViperBase$SkillLv/2))
-info <- c(15, 16, Delay(900, 2), F, F, F, F)
+value <- c(20)
+info <- c(15, 16, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-DragonStrikeDebuff <- rbind(data.frame(option, value), info) 
+SeaSerpentEnrageDebuff <- rbind(data.frame(option, value), info) 
 
 option <- factor("BDR", levels=BSkill)
 value <- c(20)
@@ -215,19 +188,47 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice577 <- rbind(data.frame(option, value), info)
 
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(20, 15)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice53 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(20, 25)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice533 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(30, 15)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice553 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "ATK", "IGR"), levels=BSkill)
+value <- c(20, 15, 20)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice537 <- rbind(data.frame(option, value), info)
+
 option <- factor("BDR", levels=BSkill)
 value <- c(20)
-info <- c(120, 240, 930, F, F, F, T)
+info <- c(90, 180, 930, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-Stimulate <- rbind(data.frame(option, value), info) ## SubTime : 4000ms
+Stimulate <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CDMR"), levels=BSkill)
-value <- c(40)
-info <- c(90, NA, Delay(900, 2), F, NA, NA, T)
+value <- c(25)
+info <- c(90, 60, Delay(900, 2), F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-UnityofPowerBuff <- rbind(data.frame(option, value), info)
+SerpentSpirit <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -244,11 +245,11 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 
 option <- factor("FDR", levels=BSkill)
-value <- c(20 + floor(GetCoreLv(ViperCore, "Transform")/5))
-info <- c(50 + GetCoreLv(ViperCore, "Transform"), 180, 450, F, T, F, T)
+value <- c(20 + floor(GetCoreLv(ViperCore, "LightningForm")/5))
+info <- c(50 + GetCoreLv(ViperCore, "LightningForm"), 180, 450, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-Transform <- rbind(data.frame(option, value), info)
+LightningForm <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(floor((0.2 + 0.02 * GetCoreLv(ViperCore, "OverDrive")) * ArcaneShade[rownames(ArcaneShade)=="Knuckle", 6]))
@@ -279,15 +280,15 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-ViperBuff <- list(Energy=Energy, FullCharge=FullCharge, StimulateEnergy=StimulateEnergy, SerpentScrewOn=SerpentScrewOn, FuriousChargeStack=FuriousChargeStack, FuriousChargeDummy=FuriousChargeDummy, 
-                  KnuckleBooster=KnuckleBooster, Vipersition=Vipersition, WindBooster=WindBooster, MapleSoldier=MapleSoldier, 
-                  NautilusBuff=NautilusBuff, DragonStrikeDebuff=DragonStrikeDebuff, 
+ViperBuff <- list(SerpentStoneStack=SerpentStoneStack, FuriousChargeStack=FuriousChargeStack, FuriousChargeDummy=FuriousChargeDummy, 
+                  Vipersition=Vipersition, WindBooster=WindBooster, MapleSoldier=MapleSoldier, SeaSerpentEnrageDebuff=SeaSerpentEnrageDebuff, 
                   LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, LuckyDice57=LuckyDice57, LuckyDice555=LuckyDice555, LuckyDice557=LuckyDice557, LuckyDice577=LuckyDice577, 
-                  Stimulate=Stimulate, UnityofPowerBuff=UnityofPowerBuff, EpicAdventure=EpicAdventure, 
+                  LuckyDice53=LuckyDice53, LuckyDice533=LuckyDice533, LuckyDice553=LuckyDice553, LuckyDice537=LuckyDice537,
+                  Stimulate=Stimulate, SerpentSpirit=SerpentSpirit, EpicAdventure=EpicAdventure, 
                   UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
-                  Transform=Transform, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, PirateFlag=PirateFlag, MapleWarriors2=MapleWarriors2, 
+                  LightningForm=LightningForm, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, PirateFlag=PirateFlag, MapleWarriors2=MapleWarriors2, 
                   SoulContractLink=SoulContractLink, Restraint4=Restraint4)
-## Petbuff : KnuckleBooster(600ms), WindBooster(900ms), Vipersition(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+## Petbuff : WindBooster(900ms), Vipersition(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   ViperBuff[[length(ViperBuff)+1]] <- UsefulAdvancedBless
   names(ViperBuff)[[length(ViperBuff)]] <- "UsefulAdvancedBless"
@@ -325,39 +326,25 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 ## Viper - ATK
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(200, ifelse(GetCoreLv(ViperCore, "ScrewPunch")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "ScrewPunch"))
-info <- c(120, 3, 120, NA, 0, NA, NA, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-ScrewPunch <- rbind(data.frame(option, value), info)
-
-option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(GetCoreLv(ViperCore, "FistEnrage")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "FistEnrage"))
-info <- c(320 + 4 * ViperSpec$SkillLv, 9, 780, NA, 0, NA, NA, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-FistEnrage <- rbind(data.frame(option, value), info)
-
-option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(ViperCore, "FistEnrage")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "FistEnrage"))
 info <- c(320 + 4 * ViperSpec$SkillLv, 11, 780, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-FistEnrageFullCharge <- rbind(data.frame(option, value), info) ## Energy Cost : 150
+FistEnrage <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(ViperCore, "DragonStrike")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "DragonStrike"))
-info <- c(300 + 4 * ViperSpec$SkillLv, 12, 0, NA, 10, T, T, F)
+value <- c(ifelse(GetCoreLv(ViperCore, "SeaSerpentEnrage_SerpentAssaultEnragee")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "SeaSerpentEnrage_SerpentAssaultEnrage"))
+info <- c(430 + 5 * ViperSpec$SkillLv, 6, 0, NA, 4, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-DragonStrike <- rbind(data.frame(option, value), info) ## Energy Cost : 180
+SeaSerpentEnrage <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(ViperCore, "Nautilus")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "Nautilus"))
-info <- c(440 + 4 * ViperSpec$SkillLv, 7, 0, NA, 60, T, T, F)
+value <- c(ifelse(GetCoreLv(ViperCore, "SeaSerpentEnrage_SerpentAssaultEnragee")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "SeaSerpentEnrage_SerpentAssaultEnrage"))
+info <- c(240 + 2 * ViperSpec$SkillLv, 4, 0, 240, NA, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-Nautilus <- rbind(data.frame(option, value), info)
+SerpentAssaultEnrage <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(ViperCore, "Nautilus")>=40, 20, 0), ViperBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(ViperCore, "Nautilus"))
@@ -366,33 +353,12 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 NautilusFinalATK <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(ViperCore, "UnityofPower")>=40, 20, 0), 2 * GetCoreLv(ViperCore, "UnityofPower"))
-info <- c(650, 5, 0, NA, 10, T, T, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-UnityofPower <- rbind(data.frame(option, value), info) ## Energy Cost : 1000
-
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(50)
-info <- c(450 + 18 * GetCoreLv(ViperCore, "Transform"), 3, 1020, 150, 0, NA, NA, F)
+info <- c(360 + 14 * GetCoreLv(ViperCore, "LightningForm"), 5, 1080, 150, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-TransformOrb <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(360 + 14 * GetCoreLv(ViperCore, "SerpentScrew"), 3, 270, NA, 0, NA, NA, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SerpentScrewTick <- rbind(data.frame(option, value), info) ## Energy Cost : 60 / sec, 25.5 / Tick
-
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(0, 0, 0, NA, 0, NA, NA, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SerpentScrewOffDummy <- rbind(data.frame(option, value), info)
+LightningFormOrb <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("BDR"), levels=ASkill)
 value <- c(30)
@@ -410,28 +376,34 @@ HawlingFistStart <- rbind(data.frame(option, value), info) ## Energy Cost : 1250
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(525 + 21 * GetCoreLv(ViperCore, "HawlingFist"), 10, 2580, NA, 90, T, F, F)
+info <- c(695 + 27 * GetCoreLv(ViperCore, "HawlingFist"), 10, 2580, NA, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HawlingFistLast <- rbind(data.frame(option, value), info) 
 ## 120ms(1), 840ms(2), 1080ms(3), 1260ms(4), 1350ms(5), 1440ms(6), 1530ms(7), 1620ms(8), 1710ms(9), 1800ms(10), 1890ms(11), 1980ms(12), 2070ms(13), 2160ms(14)
 }
 
-ViperATK <- Attack(list(ScrewPunch=ScrewPunch, FistEnrage=FistEnrage, FistEnrageFullCharge=FistEnrageFullCharge, DragonStrike=DragonStrike, Nautilus=Nautilus, NautilusFinalATK=NautilusFinalATK, 
-                        UnityofPower=UnityofPower, TransformOrb=TransformOrb, SerpentScrewTick=SerpentScrewTick, SerpentScrewOffDummy=SerpentScrewOffDummy, 
-                        FuriousCharge=FuriousCharge, HawlingFistStart=HawlingFistStart, HawlingFistLast=HawlingFistLast, 
+ViperATK <- Attack(list(FistEnrage=FistEnrage, SeaSerpentEnrage=SeaSerpentEnrage, SerpentAssaultEnrage=SerpentAssaultEnrage, NautilusFinalATK=NautilusFinalATK, 
+                        LightningFormOrb=LightningFormOrb, FuriousCharge=FuriousCharge, HawlingFistStart=HawlingFistStart, HawlingFistLast=HawlingFistLast, 
                         SpiderInMirror=SpiderInMirror))
 
 
 ## Viper - Summoned
-ViperSummoned <- Summoned(list(SpiderInMirrorStart=SpiderInMirrorStart, 
+{option <- factor(levels=SSkill)
+value <- c()
+info <- c(360 + 14 * GetCoreLv(ViperCore, "SerpentScrew"), 3, 0, 270, 900, 60, F, T, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SerpentScrew <- rbind(data.frame(option, value), info)}
+
+ViperSummoned <- Summoned(list(SerpentScrew=SerpentScrew, SpiderInMirrorStart=SpiderInMirrorStart, 
                                SpiderInMirror1=SpiderInMirror1, SpiderInMirror2=SpiderInMirror2, SpiderInMirror3=SpiderInMirror3, 
                                SpiderInMirror4=SpiderInMirror4, SpiderInMirror5=SpiderInMirror5, SpiderInMirrorWait=SpiderInMirrorWait))
 
 
 ## Viper - DealCycle & Deal Calculation
 ATKFinal <- data.frame(ViperATK)
-ATKFinal$Delay[c(-1, -9, -12)] <- Delay(ATKFinal$Delay, ViperSpec$ATKSpeed)[c(-1, -9, -12)]
+ATKFinal$Delay[c(-7)] <- Delay(ATKFinal$Delay, ViperSpec$ATKSpeed)[c(-7)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, ViperSpec$CoolReduceP, ViperSpec$CoolReduce)
 
 BuffFinal <- data.frame(ViperBuff)
@@ -452,10 +424,10 @@ ViperDealCycle <- data.frame(ViperDealCycle)
 
 ViperCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                        Period=c(182.4), CycleTime=c(729.6)) {
-  BuffSummonedPrior <- c("Vipersition", "KnuckleBooster", "WindBooster", "LuckyDice5", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
-                         "Stimulate", "Transform", "MapleWarriors2", "OverDrive", "PirateFlag", "SoulContractLink", "Restraint4")
-  Times180 <- c(0, 0, 0, 1, 0, 0, 0, 0, 
-                0.75, 1, 1, 3, 6, 2, 1)
+  BuffSummonedPrior <- c("Vipersition", "WindBooster", "LuckyDice5", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
+                         "SerpentScrew", "SerpentSpirit", "Stimulate", "LightningForm", "MapleWarriors2", "OverDrive", "PirateFlag", "SoulContractLink", "Restraint4")
+  Times180 <- c(0, 0, 1, 0, 0, 0, 0, 
+                0, 3, 1, 1, 1, 3, 6, 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -514,49 +486,7 @@ ViperCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     BuffDelays[[i]] <- DelayData$Delay[t]
   } 
   
-  ## Energy Charge : 700 (Screw Punch, Fist Enrage, Furious Charge, Nautilus) / 800 (Stimulate Tick)
-  ## Energy Cost : 150 (Fist Enrage(Charged)) / 180 (Dragon Strike) / 1000 (Unity of Power) / 25.5 (Serpent Screw Tick) / 60 (Serpent Screw per sec) / 1250 (Hawling Fist)
   ViperStacks <- function(DealCycle) {
-    ## Energy Cost
-    DealCycle$Energy[nrow(DealCycle)] <- DealCycle$Energy[nrow(DealCycle)-1]
-    DealCycle$FullCharge[nrow(DealCycle)] <- DealCycle$FullCharge[nrow(DealCycle)-1]
-    if(DealCycle$Skills[nrow(DealCycle)]=="FistEnrage" & DealCycle$FullCharge[nrow(DealCycle)] > 0) {
-      DealCycle$Skills[nrow(DealCycle)] <- "FistEnrageFullCharge"
-    }
-    if(sum(DealCycle$Skills[nrow(DealCycle)]==c("ScrewPunch", "FistEnrage", "FuriousCharge", "Nautilus")) >= 1 & DealCycle$FullCharge[nrow(DealCycle)]==0) {
-      DealCycle$Energy[nrow(DealCycle)] <- min(10000, DealCycle$Energy[nrow(DealCycle)] + 700)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==10000, 1, DealCycle$FullCharge[nrow(DealCycle)])
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("FistEnrageFullCharge")) >= 1 & DealCycle$FullCharge[nrow(DealCycle)] > 0) {
-      DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)] - 150)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)])
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("DragonStrike")) >= 1 & DealCycle$FullCharge[nrow(DealCycle)] > 0) {
-      DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)] - 180)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)])
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("UnityofPower")) >= 1 & DealCycle$FullCharge[nrow(DealCycle)] > 0) {
-      DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)] - 1000)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)])
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("HawlingFistStart")) >= 1 & DealCycle$FullCharge[nrow(DealCycle)] > 0) {
-      DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)] - 1250)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)])
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("Stimulate", "Transform")) >= 1) {
-      DealCycle$Energy[nrow(DealCycle)] <- 10000
-      DealCycle$FullCharge[nrow(DealCycle)] <- 1
-    }
-    
-    if(DealCycle$StimulateEnergy[nrow(DealCycle)-1] >= 0 & DealCycle$StimulateEnergy[nrow(DealCycle)]==0 & 
-       DealCycle$Stimulate[nrow(DealCycle)] > 0 & DealCycle$Skills[nrow(DealCycle)]!="Stimulate") {
-      DealCycle$Energy[nrow(DealCycle)] <- min(10000, DealCycle$Energy[nrow(DealCycle)] + 800)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==10000, 1, DealCycle$FullCharge[nrow(DealCycle)])
-      DealCycle$StimulateEnergy[nrow(DealCycle)] <- ifelse(nrow(DealCycle)==2, 5000, 5000 - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] - DealCycle$StimulateEnergy[nrow(DealCycle)-1]))
-    } else if(DealCycle$Skills[nrow(DealCycle)]=="Stimulate") {
-      DealCycle$StimulateEnergy[nrow(DealCycle)] <- 5000
-    } 
-    
-    if(DealCycle$SerpentScrewOn[nrow(DealCycle)] > 0 & DealCycle$Skills[nrow(DealCycle)]!="SerpentScrewOn") {
-      DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)] - (ceiling(DealCycle$SerpentScrewOn[nrow(DealCycle)-1]/1000) - ceiling(DealCycle$SerpentScrewOn[nrow(DealCycle)]/1000)) * 60)
-      DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)])
-    }
-    
     ## Furious Charge
     DealCycle$FuriousChargeStack[nrow(DealCycle)] <- DealCycle$FuriousChargeStack[nrow(DealCycle)-1]
     if(DealCycle$FuriousChargeDummy[nrow(DealCycle)-1] >= 0 & DealCycle$FuriousChargeDummy[nrow(DealCycle)]==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] < 6) {
@@ -569,76 +499,32 @@ ViperCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       DealCycle$FuriousChargeDummy[nrow(DealCycle)] <- 8000
     }
     
-    SerpentTimeList <- seq(0, 270000, 270)[order(seq(0, 270000, 270), decreasing=T)][c(-1, -2)]
-    ## Serpent Screw (Tick)
-    if(DealCycle$SerpentScrewOn[nrow(DealCycle)] > 0) {
-      Serpent <- SerpentTimeList[SerpentTimeList <= DealCycle$SerpentScrewOn[nrow(DealCycle)]]
-      Serpent <- Serpent[Serpent > DealCycle$SerpentScrewOn[nrow(DealCycle)] - DealCycle$Time[1]]
-      
-      if(length(Serpent) > 0) {
-        OriginalTime <- DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]
-        for(i in 1:length(Serpent)) {
-          if(DealCycle$SerpentScrewOn[nrow(DealCycle)] > 0) {
-            DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$SerpentScrewOn[nrow(DealCycle)] - Serpent[i]
-            DealCycle <- DCATK(DealCycle, "SerpentScrewTick", ATKFinal)
-            DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)-1] - 
-                                                       (ceiling(DealCycle$SerpentScrewOn[nrow(DealCycle)-1]/1000) - ceiling(DealCycle$SerpentScrewOn[nrow(DealCycle)]/1000)) * 60)
-            DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)-1])
-            if(DealCycle$Energy[nrow(DealCycle)]==0) {
-              DealCycle$Skills[nrow(DealCycle)] <- "SerpentScrewOffDummy"
-              DealCycle$SerpentScrewOn[nrow(DealCycle)] <- 0
-            }
-            
-            DealCycle$Energy[nrow(DealCycle)] <- max(0, DealCycle$Energy[nrow(DealCycle)] - 25.5)
-            DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==0, 0, DealCycle$FullCharge[nrow(DealCycle)])
-            
-            if(DealCycle$StimulateEnergy[nrow(DealCycle)-1] >= 0 & DealCycle$StimulateEnergy[nrow(DealCycle)]==0 & 
-               DealCycle$Stimulate[nrow(DealCycle)] > 0 & DealCycle$Skills[nrow(DealCycle)]!="Stimulate") {
-              DealCycle$Energy[nrow(DealCycle)] <- min(10000, DealCycle$Energy[nrow(DealCycle)] + 800)
-              DealCycle$FullCharge[nrow(DealCycle)] <- ifelse(DealCycle$Energy[nrow(DealCycle)]==10000, 1, DealCycle$FullCharge[nrow(DealCycle)])
-              DealCycle$StimulateEnergy[nrow(DealCycle)] <- ifelse(nrow(DealCycle)==2, 5000, 
-                                                                   5000 - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] - DealCycle$StimulateEnergy[nrow(DealCycle)-1]))
-            } 
-            
-            DealCycle$FuriousChargeStack[nrow(DealCycle)] <- DealCycle$FuriousChargeStack[nrow(DealCycle)-1]
-            if(DealCycle$FuriousChargeDummy[nrow(DealCycle)-1] >= 0 & DealCycle$FuriousChargeDummy[nrow(DealCycle)]==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] < 6) {
-              DealCycle$FuriousChargeStack[nrow(DealCycle)] <- min(6, DealCycle$FuriousChargeStack[nrow(DealCycle)] + 1)
-              DealCycle$FuriousChargeDummy[nrow(DealCycle)] <- ifelse(nrow(DealCycle)==2, 8000, 
-                                                                      8000 - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] - DealCycle$FuriousChargeDummy[nrow(DealCycle)-1]))
-            } else if(DealCycle$Skills[nrow(DealCycle)]=="FuriousCharge") {
-              DealCycle$FuriousChargeStack[nrow(DealCycle)] <- DealCycle$FuriousChargeStack[nrow(DealCycle)] - 1
-            } else if(DealCycle$FuriousChargeDummy[nrow(DealCycle)] == 6) {
-              DealCycle$FuriousChargeDummy[nrow(DealCycle)] <- 8000
-            }
-          } 
-          if(i==length(Serpent)) {
-            DealCycle[1, 2:ncol(DealCycle)] <- OriginalTime - DealCycle$Time[nrow(DealCycle)]
-          }
-        }
-      }
+    ## Sea Serpent Enrage Debuff
+    if(DealCycle$Skills[nrow(DealCycle)] == "SeaSerpentEnrage") {
+      DealCycle$SeaSerpentEnrageDebuff[nrow(DealCycle)] <- 15000
+    }
+    
+    ## Serpent Stone
+    if(DealCycle$Skills[nrow(DealCycle)] == "SeaSerpentEnrage") {
+      DealCycle$SerpentStoneStack[nrow(DealCycle)] <- min(5, DealCycle$SerpentStoneStack[nrow(DealCycle)-1] + 1)
+    } else if(DealCycle$Skills[nrow(DealCycle)] == "SerpentAssaultEnrage") {
+      DealCycle$SerpentStoneStack[nrow(DealCycle)] <- 0
+    } else {
+      DealCycle$SerpentStoneStack[nrow(DealCycle)] <- DealCycle$SerpentStoneStack[nrow(DealCycle)-1]
     }
     return(DealCycle)
   }
   
   DealCycle <- DCBuff(DealCycle, "MapleSoldier", BuffFinal)
   DealCycle$FuriousChargeStack[nrow(DealCycle)] <- 6
-  DealCycle$Energy[nrow(DealCycle)] <- 1000
+  DealCycle$SerpentStoneStack[nrow(DealCycle)] <- 4
+  DealCycle$SeaSerpentEnrageDebuff[nrow(DealCycle)] <- 14000
   
   TotalTime <- TotalTime * 1000
   for(i in 1:length(BuffList[[1]])) {
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
       if(BuffList[[1]][i]=="Stimulate") {
         DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
-        DealCycle <- ViperStacks(DealCycle)
-        DealCycle <- DCATK(DealCycle, "UnityofPower", ATKFinal)
-        DealCycle <- ViperStacks(DealCycle)
-        DealCycle <- DCBuff(DealCycle, "UnityofPowerBuff", BuffFinal)
-        DealCycle <- ViperStacks(DealCycle)
-        DealCycle <- DCATK(DealCycle, "Nautilus", ATKFinal)
-        DealCycle <- ViperStacks(DealCycle)
-        DealCycle <- DCBuff(DealCycle, "NautilusBuff", BuffFinal)
-        DealCycle <- ViperStacks(DealCycle)
-        DealCycle <- DCBuff(DealCycle, "SerpentScrewOn", BuffFinal)
         DealCycle <- ViperStacks(DealCycle)
       } 
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
@@ -678,14 +564,9 @@ ViperCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       }
     }
   }
-  DSCool <- subset(ATKFinal, rownames(ATKFinal)=="DragonStrike")$CoolTime * 1000
-  NACool <- subset(ATKFinal, rownames(ATKFinal)=="Nautilus")$CoolTime * 1000
   FCCool <- subset(ATKFinal, rownames(ATKFinal)=="FuriousCharge")$CoolTime * 1000
-  UPCool <- subset(ATKFinal, rownames(ATKFinal)=="UnityofPower")$CoolTime * 1000
-  
-  DSRemain <- 0 ; FCRemain <- 0
-  NARemain <- NACool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - subset(DealCycle, DealCycle$Skills=="Nautilus")$Time)
-  UPRemain <- UPCool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - subset(DealCycle, DealCycle$Skills=="UnityofPower")$Time)
+  SSCool <- subset(ATKFinal, rownames(ATKFinal)=="SeaSerpentEnrage")$CoolTime * 1000
+  FCRemain <- 0 ; SSRemain <- 0
   
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
@@ -715,187 +596,120 @@ ViperCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
-          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-          NARemain <- max(0, NARemain - DealCycle$Time[1])
           FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-          UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
           DealCycle <- ViperStacks(DealCycle)
         }
       }
-      ## Serpent Screw
-      if(DealCycle$Energy[nrow(DealCycle)] >= 200 & DealCycle$SerpentScrewOn[nrow(DealCycle)] == 0) {
-        DealCycle <- DCBuff(DealCycle, "SerpentScrewOn", BuffFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-      }
-      ## Dragon Strike Debuff
-      else if(DSRemain == 0 & DealCycle$Energy[nrow(DealCycle)] >= 180 & DealCycle$FullCharge[nrow(DealCycle)] > 0 & DealCycle$DragonStrikeDebuff[nrow(DealCycle)] < 3000) {
-        DealCycle <- DCATK(DealCycle, "DragonStrike", ATKFinal)
-        DSRemain <- DSCool - DealCycle$Time[1]
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-        
-        DealCycle <- DCBuff(DealCycle, "DragonStrikeDebuff", BuffFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-      } else if(DSRemain == 0 & DealCycle$Energy[nrow(DealCycle)] >= 180 & DealCycle$FullCharge[nrow(DealCycle)] > 0 & DealCycle$Energy[nrow(DealCycle)] <= 500) {
-        DealCycle <- DCATK(DealCycle, "DragonStrike", ATKFinal)
-        DSRemain <- DSCool - DealCycle$Time[1]
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-        
-        DealCycle <- DCBuff(DealCycle, "DragonStrikeDebuff", BuffFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-      }
-      ## Unity of Power
-      else if(UPRemain == 0 & DealCycle$Energy[nrow(DealCycle)] >= 1000 & DealCycle$FullCharge[nrow(DealCycle)] > 0 & DealCycle$UnityofPowerBuff[nrow(DealCycle)] < 20000) {
-        DealCycle <- DCATK(DealCycle, "UnityofPower", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- UPCool - DealCycle$Time[1]
-        DealCycle <- ViperStacks(DealCycle)
-        
-        DealCycle <- DCBuff(DealCycle, "UnityofPowerBuff", BuffFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-      }
-      ## Nautilus
-      else if(NARemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="Nautilus")) <= 11) {
-        DealCycle <- DCATK(DealCycle, "Nautilus", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- NACool - DealCycle$Time[1]
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-        
-        DealCycle <- DCBuff(DealCycle, "NautilusBuff", BuffFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-      }
       ## Hawling Fist
-      else if(DealCycle$Energy[nrow(DealCycle)] >= 1250 & 
-              nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) > nrow(subset(DealCycle, DealCycle$Skills=="HawlingFistStart"))) {
+      if(SSRemain > 0 & DealCycle$SerpentStoneStack[nrow(DealCycle)] != 5 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) > nrow(subset(DealCycle, DealCycle$Skills=="HawlingFistStart")) | 
+              DealCycle$Restraint4[nrow(DealCycle)] == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) > nrow(subset(DealCycle, DealCycle$Skills=="HawlingFistStart"))) {
         DealCycle <- DCATK(DealCycle, "HawlingFistStart", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
         FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         DealCycle <- ViperStacks(DealCycle)
         
         DealCycle <- DCATK(DealCycle, "HawlingFistLast", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
         FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         DealCycle <- ViperStacks(DealCycle)
       }
-      ## Transform Orb
-      else if(nrow(subset(DealCycle, DealCycle$Skills=="Transform")) * 3 > nrow(subset(DealCycle, DealCycle$Skills=="TransformOrb"))) {
-        DealCycle <- DCATK(DealCycle, "TransformOrb", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+      ## Lightning Form Orb
+      else if(SSRemain > 0 & DealCycle$SerpentStoneStack[nrow(DealCycle)] != 5 & nrow(subset(DealCycle, DealCycle$Skills=="LightningForm")) * 3 > nrow(subset(DealCycle, DealCycle$Skills=="LightningFormOrb"))) {
+        DealCycle <- DCATK(DealCycle, "LightningFormOrb", ATKFinal)
         FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         DealCycle <- ViperStacks(DealCycle)
       }
       ## Furious Charge
-      else if(k < length(BuffList) - 1 & FCRemain==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] > 0 & DealCycle$OverDrive[nrow(DealCycle)] - DealCycle$Time[1] > 0 | 
-              k < length(BuffList) - 1 & FCRemain==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] > 0 & DealCycle$SoulContractLink[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+      else if(k < length(BuffList) - 1 & SSRemain > 0 & FCRemain==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] > 0 & DealCycle$OverDrive[nrow(DealCycle)] - DealCycle$Time[1] > 0 & 
+              DealCycle$SerpentStoneStack[nrow(DealCycle)] != 5 | 
+              k < length(BuffList) - 1 & SSRemain > 0 & FCRemain==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] > 0 & DealCycle$SoulContractLink[nrow(DealCycle)] - DealCycle$Time[1] > 0 & 
+              DealCycle$SerpentStoneStack[nrow(DealCycle)] != 5) {
         DealCycle <- DCATK(DealCycle, "FuriousCharge", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         FCRemain <- FCCool - DealCycle$Time[1]
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
         DealCycle <- ViperStacks(DealCycle)
-      } else if(k == length(BuffList) - 1 & FCRemain==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] > 0 & 
-                DealCycle$Time[nrow(DealCycle)] + (6 - DealCycle$FuriousChargeStack[nrow(DealCycle)] + 1) * 8000 - (8000 - DealCycle$FuriousChargeDummy[nrow(DealCycle)]) < BuffStartTime + 30400) {
+      } else if(k == length(BuffList) - 1 & SSRemain > 0 & FCRemain==0 & DealCycle$FuriousChargeStack[nrow(DealCycle)] > 0 & 
+                DealCycle$Time[nrow(DealCycle)] + (6 - DealCycle$FuriousChargeStack[nrow(DealCycle)] + 1) * 8000 - (8000 - DealCycle$FuriousChargeDummy[nrow(DealCycle)]) < BuffStartTime + 30400 & 
+                DealCycle$SerpentStoneStack[nrow(DealCycle)] != 5) {
         DealCycle <- DCATK(DealCycle, "FuriousCharge", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+        SSRemain <- max(0, SSRemain - DealCycle$Time[1])
         FCRemain <- FCCool - DealCycle$Time[1]
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
         DealCycle <- ViperStacks(DealCycle)
       }
       ## Fist Enrage
-      else if(DealCycle$FullCharge[nrow(DealCycle)]==0) {
-        DealCycle <- DCATK(DealCycle, "ScrewPunch", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+      else {
+        DealCycle <- DCATK(DealCycle, "FistEnrage", ATKFinal)
         FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+        SSRemain <- SSRemain
         DealCycle <- ViperStacks(DealCycle)
         
-        DealCycle <- DCATK(DealCycle, "FistEnrage", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
-      } else {
-        DealCycle <- DCATK(DealCycle, "FistEnrageFullCharge", ATKFinal)
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-        UPRemain <- max(0, UPRemain - DealCycle$Time[1])
-        DealCycle <- ViperStacks(DealCycle)
+        if(DealCycle$SerpentStoneStack[nrow(DealCycle)] == 5) {
+          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+          DealCycle[1, 2:ncol(DealCycle)] <- 1
+          DealCycle <- DCATK(DealCycle, "SerpentAssaultEnrage", ATKFinal)
+          DealCycle[1, 2:ncol(DealCycle)] <- ATKFinal[rownames(ATKFinal)=="FistEnrage", ]$Delay - 1
+          DealCycle <- ViperStacks(DealCycle)
+        } else if(SSRemain == 0) {
+          DealCycle[1, 2:ncol(DealCycle)] <- 240
+          DealCycle <- DCATK(DealCycle, "SeaSerpentEnrage", ATKFinal)
+          DealCycle[1, 2:ncol(DealCycle)] <- ATKFinal[rownames(ATKFinal)=="FistEnrage", ]$Delay - 240
+          SSRemain <- max(0, ifelse(DealCycle$Stimulate[nrow(DealCycle)] > 0, SSCool/2, SSCool) - DealCycle$Time[1])
+          DealCycle <- ViperStacks(DealCycle)
+        } else {
+          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+        }
       }
     }
     
     if(k != length(BuffList)) {
       for(i in 1:length(BuffList[[k]])) {
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
-          if(BuffList[[k]][i]=="Stimulate") {
+          if(BuffList[[k]][i]=="Stimulate" & DealCycle$Time[nrow(DealCycle)] - max(subset(DealCycle, DealCycle$Skills=="SpiderInMirror")$Time) > 240000) {
             DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
-            DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-            NARemain <- max(0, NARemain - DealCycle$Time[1])
             FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-            UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+            SSRemain <- max(0, SSRemain - DealCycle$Time[1])
             DealCycle <- ViperStacks(DealCycle)
           }
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
-          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-          NARemain <- max(0, NARemain - DealCycle$Time[1])
           FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-          UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
           DealCycle <- ViperStacks(DealCycle)
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
-          DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-          NARemain <- max(0, NARemain - DealCycle$Time[1])
           FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-          UPRemain <- max(0, UPRemain - DealCycle$Time[1])
+          SSRemain <- max(0, SSRemain - DealCycle$Time[1])
           DealCycle <- ViperStacks(DealCycle)
         }
       }
     }
   }
+  
+  while(DealCycle$SerpentStoneStack[nrow(DealCycle)] < 4) {
+    DealCycle <- DCATK(DealCycle, "FistEnrage", ATKFinal)
+    FCRemain <- max(0, FCRemain - DealCycle$Time[1])
+    SSRemain <- SSRemain
+    DealCycle <- ViperStacks(DealCycle)
+    
+    if(SSRemain == 0) {
+      DealCycle[1, 2:ncol(DealCycle)] <- 240
+      DealCycle <- DCATK(DealCycle, "SeaSerpentEnrage", ATKFinal)
+      DealCycle[1, 2:ncol(DealCycle)] <- ATKFinal[rownames(ATKFinal)=="FistEnrage", ]$Delay - 240
+      SSRemain <- max(0, ifelse(DealCycle$Stimulate[nrow(DealCycle)] > 0, SSCool/2, SSCool) - DealCycle$Time[1])
+      DealCycle <- ViperStacks(DealCycle)
+    } else {
+      SSRemain <- max(0, SSRemain - DealCycle$Time[1])
+    }
+  }
   return(DealCycle)
 }
-ViperAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                        LuckyDice=c(5, 55, 57, 555, 557, 577)) {
-  ## Transform Orb
-  DealCycle <- RepATKCycle(DealCycle, "TransformOrb", 5, 1500, ATKFinal)
+ViperAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
+  ## Lightning Form Orb
+  DealCycle <- RepATKCycle(DealCycle, "LightningFormOrb", 12, 1350, ATKFinal)
+  
+  ## Serpent Assault Enrage
+  DealCycle <- RepATKCycle(DealCycle, "SerpentAssaultEnrage", 15, 1260 - 1, ATKFinal)
   
   ## Hawling Fist
   DealCycle <- RepATKCycle(DealCycle, "HawlingFistStart", 8, 240, ATKFinal)
@@ -927,7 +741,7 @@ ViperAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   
   ## Nautilus Add ATK
   for(i in 1:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("ScrewPunch", "FistEnrage", "FistEnrageFullCharge", "FuriousCharge", "HawlingFistStart", "HawlingFistLast")) >= 1 & DealCycle$NautilusBuff[i] > 0) {
+    if(sum(DealCycle$Skills[i]==c("FistEnrage", "FistEnrageFullCharge", "FuriousCharge", "HawlingFistStart", "HawlingFistLast")) >= 1) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NautilusFinalATK"
     }
@@ -938,6 +752,18 @@ ViperAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   ## Spider In Mirror
   DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   
+  ## Serpent Screw
+  DealCycle <- DCSummonedATKs(DealCycle, "SerpentScrew", SummonedFinal)
+  
+  ## Dummy Reduction
+  DealCycle$SerpentStoneStack <- 0
+  DealCycle$FuriousChargeStack <- 0
+  DealCycle$FuriousChargeDummy <- 0
+  
+  return(DealCycle)
+}
+ViperLuckyDice <- function(DealCycle, 
+                           LuckyDice=c(5, 55, 57, 555, 557, 577, 53, 533, 553, 537)) {
   ## Lucky Dice
   if(LuckyDice==55) {
     DealCycle$LuckyDice55 <- DealCycle$LuckyDice5
@@ -954,14 +780,19 @@ ViperAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   } else if(LuckyDice==577) {
     DealCycle$LuckyDice577 <- DealCycle$LuckyDice5
     DealCycle$LuckyDice5 <- 0
+  } else if(LuckyDice==53) {
+    DealCycle$LuckyDice533 <- DealCycle$LuckyDice5
+    DealCycle$LuckyDice5 <- 0
+  } else if(LuckyDice==533) {
+    DealCycle$LuckyDice533 <- DealCycle$LuckyDice5
+    DealCycle$LuckyDice5 <- 0
+  } else if(LuckyDice==553) {
+    DealCycle$LuckyDice553 <- DealCycle$LuckyDice5
+    DealCycle$LuckyDice5 <- 0
+  } else if(LuckyDice==537) {
+    DealCycle$LuckyDice537 <- DealCycle$LuckyDice5
+    DealCycle$LuckyDice5 <- 0
   }
-  
-  ## Dummy Reduction
-  DealCycle$Energy <- 0
-  DealCycle$FullCharge <- 0
-  DealCycle$StimulateEnergy <- 0
-  DealCycle$FuriousChargeStack <- 0
-  DealCycle$FuriousChargeDummy <- 0
   
   return(DealCycle)
 }
@@ -974,55 +805,29 @@ ViperDealCycle <- ViperCycle(DealCycle=ViperDealCycle,
                              Period=182.4, 
                              CycleTime=729.6)
 ViperDealCycle <- DealCycleFinal(ViperDealCycle)
-ViperDealCycle5 <- ViperAddATK(DealCycle=ViperDealCycle, 
-                               ATKFinal, 
-                               BuffFinal, 
-                               SummonedFinal, 
-                               Spec=ViperSpec, 
-                               LuckyDice=5)
-ViperDealCycle55 <- ViperAddATK(DealCycle=ViperDealCycle, 
-                                ATKFinal, 
-                                BuffFinal, 
-                                SummonedFinal, 
-                                Spec=ViperSpec, 
-                                LuckyDice=55)
-ViperDealCycle57 <- ViperAddATK(DealCycle=ViperDealCycle, 
-                                ATKFinal, 
-                                BuffFinal, 
-                                SummonedFinal, 
-                                Spec=ViperSpec, 
-                                LuckyDice=57)
-ViperDealCycle555 <- ViperAddATK(DealCycle=ViperDealCycle, 
-                                 ATKFinal, 
-                                 BuffFinal, 
-                                 SummonedFinal, 
-                                 Spec=ViperSpec, 
-                                 LuckyDice=555)
-ViperDealCycle557 <- ViperAddATK(DealCycle=ViperDealCycle, 
-                                 ATKFinal, 
-                                 BuffFinal, 
-                                 SummonedFinal, 
-                                 Spec=ViperSpec, 
-                                 LuckyDice=557)
-ViperDealCycle577 <- ViperAddATK(DealCycle=ViperDealCycle, 
-                                 ATKFinal, 
-                                 BuffFinal, 
-                                 SummonedFinal, 
-                                 Spec=ViperSpec, 
-                                 LuckyDice=577)
+ViperDealCycle <- ViperAddATK(DealCycle=ViperDealCycle, 
+                              ATKFinal, 
+                              BuffFinal, 
+                              SummonedFinal, 
+                              Spec=ViperSpec)
 
-ViperDealCycle5 <- OverDriveExhaustBuff(ViperDealCycle5, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-ViperDealCycle55 <- OverDriveExhaustBuff(ViperDealCycle55, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-ViperDealCycle57 <- OverDriveExhaustBuff(ViperDealCycle57, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-ViperDealCycle555 <- OverDriveExhaustBuff(ViperDealCycle555, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-ViperDealCycle557 <- OverDriveExhaustBuff(ViperDealCycle557, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-ViperDealCycle577 <- OverDriveExhaustBuff(ViperDealCycle577, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-
+VILuckyDiceList <- c(5, 55, 57, 555, 557, 577, 53, 533, 553, 537)
+for(i in 1:length(VILuckyDiceList)) {
+  ViperDealCycleDummy <- ViperLuckyDice(ViperDealCycle, VILuckyDiceList[i])
+  ViperDealCycleDummy <- OverDriveExhaustBuff(ViperDealCycleDummy, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
+  assign(paste("ViperDealCycle", VILuckyDiceList[i], sep=""), ViperDealCycleDummy)
+  rm(ViperDealCycleDummy)
+}
 ViperDealCycleReduction <- DealCycleReduction(ViperDealCycle5)
-
-ViperDealCycleProbs <- c(0.637500, 
-                         0.238417, 0.094355, 
-                         0.010363, 0.016205, 0.003161)
+ViperDealCycleProbs <- c(0.520968, 
+                         0.207808, 0.082414, 
+                         0.010363, 0.016205, 0.003160, 
+                         0.105255, 
+                         0.011277, 0.030609, 0.011941)
+ViperCycleNames <- c()
+for(i in 1:length(VILuckyDiceList)) {
+  ViperCycleNames <- c(ViperCycleNames, paste("ViperDealCycle", VILuckyDiceList[i], sep=""))
+}
 
 for(i in 1:length(PotentialOpt)) {
   if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
@@ -1050,28 +855,20 @@ if(DPMCalcOption$Optimization==T) {
 }
 ViperSpecOpt <- OptDataAdd(ViperSpecOpt, ViperSpecOpt2, "HyperStat", ViperBase$CRROver, DemonAvenger=F)
 
-ViperFinalDPM <- ResetDealCalc(DealCycles=list(ViperDealCycle5, 
-                                               ViperDealCycle55, ViperDealCycle57, 
-                                               ViperDealCycle555, ViperDealCycle557, ViperDealCycle577), 
-                               ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 6), ViperDealCycleProbs)
-ViperFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=list(ViperDealCycle5, 
-                                                                ViperDealCycle55, ViperDealCycle57, 
-                                                                ViperDealCycle555, ViperDealCycle557, ViperDealCycle577), 
-                                                ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 6), ViperDealCycleProbs)
+ViperFinalDPM <- ResetDealCalc(DealCycles=GetList(ViperCycleNames), 
+                               ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 10), ViperDealCycleProbs)
+ViperFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(ViperCycleNames), 
+                                                ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 10), ViperDealCycleProbs)
 
 set(get(DPMCalcOption$DataName), as.integer(1), "Viper", sum(na.omit(ViperFinalDPMwithMax)) / (max(ViperDealCycle5$Time) / 60000))
 set(get(DPMCalcOption$DataName), as.integer(2), "Viper", sum(na.omit(ViperFinalDPM)) / (max(ViperDealCycle5$Time) / 60000) - sum(na.omit(ViperFinalDPMwithMax)) / (max(ViperDealCycle5$Time) / 60000))
 
-ViperDealDatas <- list(DealCalcWithMaxDMR(ViperDealCycle5, ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt), 
-                       DealCalcWithMaxDMR(ViperDealCycle55, ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt), 
-                       DealCalcWithMaxDMR(ViperDealCycle57, ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt), 
-                       DealCalcWithMaxDMR(ViperDealCycle555, ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt), 
-                       DealCalcWithMaxDMR(ViperDealCycle557, ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt), 
-                       DealCalcWithMaxDMR(ViperDealCycle577, ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt))
-ViperDealRatio <- ResetDealRatio(DealCycles=list(ViperDealCycle5, 
-                                                 ViperDealCycle55, ViperDealCycle57, 
-                                                 ViperDealCycle555, ViperDealCycle557, ViperDealCycle577), 
-                                 DealDatas=ViperDealDatas, rep(max(ViperDealCycle5$Time), 6), ViperDealCycleProbs)
+ViperDealDatas <- list()
+for(i in 1:length(ViperCycleNames)) {
+  ViperDealDatas[[i]] <- DealCalcWithMaxDMR(get(ViperCycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt)
+}
+ViperDealRatio <- ResetDealRatio(DealCycles=GetList(ViperCycleNames), 
+                                 DealDatas=ViperDealDatas, rep(max(ViperDealCycle5$Time), 10), ViperDealCycleProbs)
 
 ViperDealData <- data.frame(ViperDealCycle5$Skills, ViperDealCycle5$Time, ViperDealCycle5$Restraint4, ViperDealDatas[[1]])
 colnames(ViperDealData) <- c("Skills", "Time", "R4", "Deal")
@@ -1079,6 +876,6 @@ set(get(DPMCalcOption$DataName), as.integer(3), "Viper", Deal_RR(ViperDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Viper", Deal_40s(ViperDealData))
 
 ViperSpecMean <- ResetSpecMean("Viper", 
-                               list(ViperDealCycle5, ViperDealCycle55, ViperDealCycle57, ViperDealCycle555, ViperDealCycle557, ViperDealCycle577), 
+                               GetList(ViperCycleNames), 
                                ViperDealDatas, 
-                               ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 6), ViperDealCycleProbs)
+                               ATKFinal, BuffFinal, SummonedFinal, ViperSpecOpt, rep(max(ViperDealCycle5$Time), 10), ViperDealCycleProbs)

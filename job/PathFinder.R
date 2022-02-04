@@ -56,6 +56,10 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
+option <- factor(c("FDR"), levels=PSkill)
+value <- c(20)
+AncientGuidancePassive <- data.frame(option, value)
+
 option <- factor(c("CRR", "BDR", "IGR"), levels=PSkill)
 value <- c(10, 10, 30)
 EssenceofArcher <- data.frame(option, value)
@@ -80,8 +84,9 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(PathFinderCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-PathFinderPassive <- Passive(list(ArcherMastery=ArcherMastery, CriticalShot=CriticalShot, AncientBowMastery=AncientBowMastery, PhysicalTraining=PhysicalTraining, EssenceofArcher=EssenceofArcher, 
-                                  AdditionalTransition=AdditionalTransition, AncientBowExpert=AncientBowExpert, IllusionStep=IllusionStep, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
+PathFinderPassive <- Passive(list(ArcherMastery=ArcherMastery, CriticalShot=CriticalShot, AncientBowMastery=AncientBowMastery, PhysicalTraining=PhysicalTraining, 
+                                  AncientGuidancePassive=AncientGuidancePassive, EssenceofArcher=EssenceofArcher, AdditionalTransition=AdditionalTransition, AncientBowExpert=AncientBowExpert, IllusionStep=IllusionStep, 
+                                  BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## PathFinder - Buff
@@ -100,8 +105,8 @@ colnames(info) <- c("option", "value")
 CurseTolerance <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=BSkill)
-value <- c(15)
-info <- c(24, 240, 0, F, NA, NA, T)
+value <- c(5)
+info <- c(40, 240, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AncientGuidance <- rbind(data.frame(option, value), info)
@@ -362,7 +367,7 @@ Raven <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * GetCoreLv(PathFinderCore, "GuidedArrow"), 1, 720, 500, 0.5 * 89 + 0.72 + 0.01, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(PathFinderCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)}
@@ -417,7 +422,7 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   BuffSummonedPrior <- c("AncientBowBooster", "CurseTolerance", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
                          "GuidedArrow", "MapleWarriors2", "CriticalReinforce", "SoulContractLink", "RavenTempestBuff", "Restraint4", "RelicEvolution")
   Times120 <- c(0, 0.5, 0, 0, 0, 0, 0, 
-                2, 0.5, 1, 1, 1, 0.5, 1)
+                0, 0.5, 1, 1, 1, 0.5, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -564,7 +569,7 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     ## Obsidian Barrier
     else if(DealCycle$Skills[nrow(DealCycle)]=="ObsidianBarrier") {
       DealCycle$GuidanceGauge[nrow(DealCycle)] <- DealCycle$GuidanceGauge[nrow(DealCycle)-1]
-      DealCycle$RelicGauge[nrow(DealCycle)] <- max(0, DealCycle$RelicGauge[nrow(DealCycle)-1] - 500)
+      DealCycle$RelicGauge[nrow(DealCycle)] <- max(0, DealCycle$RelicGauge[nrow(DealCycle)-1] - 300)
     }
     ## Relic Unbound
     else if(DealCycle$Skills[nrow(DealCycle)]=="RelicUnboundDischarge") {
@@ -638,26 +643,6 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         DealCycle <- RelicShape(DealCycle, Shape)
         Shape <- "None"
         
-        DealCycle <- BDATK(DealCycle, "CardinalBlast", ATKFinal, SkipStructure)
-        DealCycle <- RelicGauge(DealCycle, BuffFinal)
-        DealCycle <- RelicShape(DealCycle, Shape)
-        Shape <- "Blast"
-        
-        DealCycle <- BDATK(DealCycle, "CardinalDischarge", ATKFinal, SkipStructure)
-        DealCycle <- RelicGauge(DealCycle, BuffFinal)
-        DealCycle <- RelicShape(DealCycle, Shape)
-        Shape <- "Discharge"
-        
-        DealCycle <- BDATK(DealCycle, "CardinalBlast", ATKFinal, SkipStructure)
-        DealCycle <- RelicGauge(DealCycle, BuffFinal)
-        DealCycle <- RelicShape(DealCycle, Shape)
-        Shape <- "Blast"
-        
-        DealCycle <- BDATK(DealCycle, "CardinalDischarge", ATKFinal, SkipStructure)
-        DealCycle <- RelicGauge(DealCycle, BuffFinal)
-        DealCycle <- RelicShape(DealCycle, Shape)
-        Shape <- "Discharge"
-
         DealCycle <- BDATK(DealCycle, "CardinalBlast", ATKFinal, SkipStructure)
         DealCycle <- RelicGauge(DealCycle, BuffFinal)
         DealCycle <- RelicShape(DealCycle, Shape)
@@ -823,6 +808,16 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
             DealCycle <- RelicGauge(DealCycle, BuffFinal)
             DealCycle <- RelicShape(DealCycle, Shape)
             Shape <- "None"
+            
+            DealCycle <- BDATK(DealCycle, "CardinalBlast", ATKFinal, SkipStructure)
+            DealCycle <- RelicGauge(DealCycle, BuffFinal)
+            DealCycle <- RelicShape(DealCycle, Shape)
+            Shape <- "Blast"
+            
+            DealCycle <- DCATKSkip(DealCycle, "ObsidianBarrier", ATKFinal, SkipStructure)
+            DealCycle <- RelicGauge(DealCycle, BuffFinal)
+            DealCycle <- RelicShape(DealCycle, Shape)
+            Shape <- "None"
           } else if(BuffList[[k]][i]=="RelicEvolution") {
             DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
             DealCycle <- RelicGauge(DealCycle, BuffFinal)
@@ -908,7 +903,7 @@ PathFinderDealCycle <- PathFinderCycle(PreDealCycle=PathFinderDealCycle,
 PathFinderDealCycle <- PathFinderAddATK(DealCycle=PathFinderDealCycle, 
                                         ATKFinal=ATKFinal,
                                         SummonedFinal=SummonedFinal,
-                                        BarrierDuration=10 + floor(GetCoreLv(PathFinderCore, "ObisdianBarrier")/5))
+                                        BarrierDuration= 6 + floor(GetCoreLv(PathFinderCore, "ObisdianBarrier")/5))
 PathFinderDealCycleReduction <- DealCycleReduction(PathFinderDealCycle)
 
 Idx1 <- c() ; Idx2 <- c()
@@ -969,7 +964,7 @@ PathFinderDealCycle60 <- PathFinderCycle(PreDealCycle=PathFinderDealCycle60,
 PathFinderDealCycle60 <- PathFinderAddATK(DealCycle=PathFinderDealCycle60, 
                                           ATKFinal=ATKFinal,
                                           SummonedFinal=SummonedFinal,
-                                          BarrierDuration=10 + floor(GetCoreLv(PathFinderCore, "ObisdianBarrier")/5))
+                                          BarrierDuration = 6 + floor(GetCoreLv(PathFinderCore, "ObisdianBarrier")/5))
 PathFinderDealCycle60Reduction <- DealCycleReduction(PathFinderDealCycle60)
 
 PathFinder60ms <- DealCalcWithMaxDMR(PathFinderDealCycle60, ATKFinal, BuffFinal, SummonedFinal, PathFinderSpecOpt)

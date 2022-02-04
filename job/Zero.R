@@ -51,7 +51,7 @@ value <- c(25, 50)
 ResolveTime <- data.frame(option, value)
 
 option <- factor(c("ATK", "FDR", "Mastery", "CRR", "ATKSpeed"), levels=PSkill)
-value <- c(40, 5, 70, 15, 3)
+value <- c(40, 10, 70, 30, 3)
 Mastery <- data.frame(option, value)
 
 option <- factor(c("BDR", "CRR", "ATKSpeed"), levels=PSkill)
@@ -817,11 +817,6 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
     DealCycle$Beta[nrow(DealCycle)] <- 13100
     DealCycle$Alpha[nrow(DealCycle)] <- 0
     
-    if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-      DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-      DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-    } ## LimitBreak LastATK FDR Accept Needed
-    
     if(AfterSkill=="JointAttack") {
       DealCycle <- DCATKSkip(DealCycle, "TurningDrive", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "WhirlWind", ATKFinal, SkipStructure)
@@ -836,42 +831,30 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       DealCycle <- DCATKSkip(DealCycle, "JointAttack1", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "JointAttackLast", ATKFinal, SkipStructure)
       
+      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$Restraint4[nrow(DealCycle)] > 0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
+        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
+      }
+      
       DealCycle <- DCATKSkip(DealCycle, "ShadowFlashBetaInstall", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "ShadowFlashBetaExp", ATKFinal, SkipStructure)
       DealCycle[1, 2:ncol(DealCycle)] <- TagCancelDelay
     } else {
       DealCycle <- DCATKSkip(DealCycle, "TurningDrive", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "WhirlWind", ATKFinal, SkipStructure)
-      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-        DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-      }
       
       DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "ThrowingWeapon", ATKFinal, SkipStructure)
-      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-        DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-      }
       for(i in 1:5) {
         DealCycle <- DCATKSkip(DealCycle, "BetaWait", ATKFinal, SkipStructure)
       }
       
       DealCycle <- DCATKSkip(DealCycle, "TurningDrive", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "WhirlWind", ATKFinal, SkipStructure)
-      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-        DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-      }
-      
+
       if(AfterSkill=="NA") {
         DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "ThrowingWeapon", ATKFinal, SkipStructure)
-        if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-          DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-          DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-        }
-        
+
         DealCycle <- DCATKSkip(DealCycle, "UpperSlash", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "PowerStump", ATKFinal, SkipStructure)
         DealCycle[1, 2:ncol(DealCycle)] <- TagCancelDelay
@@ -892,10 +875,6 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       } else {
         DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "ThrowingWeapon", ATKFinal, SkipStructure)
-        if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-          DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-          DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-        }
         
         DealCycle <- DCATKSkip(DealCycle, AfterSkill, ATKFinal, SkipStructure)
         DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Tag[nrow(DealCycle)]
@@ -960,11 +939,6 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
     DealCycle$Beta[nrow(DealCycle)] <- 13100
     DealCycle$Alpha[nrow(DealCycle)] <- 0
     
-    if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-      DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-      DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-    } ## LimitBreak LastATK FDR Accept Needed
-    
     if(AfterSkill=="JointAttack") {
       DealCycle <- DCATKSkip(DealCycle, "TurningDrive", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "WhirlWind", ATKFinal, SkipStructure)
@@ -979,48 +953,32 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       DealCycle <- DCATKSkip(DealCycle, "JointAttack1", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "JointAttackLast", ATKFinal, SkipStructure)
       
+      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$Restraint4[nrow(DealCycle)] > 0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
+        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
+      }
+      
       DealCycle <- DCATKSkip(DealCycle, "ShadowFlashBetaInstall", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "ShadowFlashBetaExp", ATKFinal, SkipStructure)
       DealCycle[1, 2:ncol(DealCycle)] <- TagCancelDelay
     } else {
       DealCycle <- DCATKSkip(DealCycle, "TurningDrive", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "WhirlWind", ATKFinal, SkipStructure)
-      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-        DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-      }
       
       DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "ThrowingWeapon", ATKFinal, SkipStructure)
-      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-        DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-      }
       for(i in 1:5) {
         DealCycle <- DCATKSkip(DealCycle, "BetaWait", ATKFinal, SkipStructure)
       }
       
       DealCycle <- DCATKSkip(DealCycle, "TurningDrive", ATKFinal, SkipStructure)
       DealCycle <- DCATKSkip(DealCycle, "WhirlWind", ATKFinal, SkipStructure)
-      if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-        DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-        DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-      }
       
       if(AfterSkill=="NA") {
         DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "ThrowingWeapon", ATKFinal, SkipStructure)
-        if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-          DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-          DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-        }
         
         for(i in 1:9) {
           DealCycle <- DCATKSkip(DealCycle, "BetaWait", ATKFinal, SkipStructure)
-          if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-            DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-            DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-          }
         }
       } else if(sum(AfterSkill==c("SoulContractLink", "TimeDistortion", "AuraWeaponBuff"))==1) {
         DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
@@ -1039,10 +997,6 @@ ZeroCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipS
       } else {
         DealCycle <- DCATKSkip(DealCycle, "FrontSlash", ATKFinal, SkipStructure)
         DealCycle <- DCATKSkip(DealCycle, "ThrowingWeapon", ATKFinal, SkipStructure)
-        if(nrow(subset(DealCycle, DealCycle$Skills=="LimitBreakLast"))==0 & DealCycle$LimitBreakBuff[nrow(DealCycle)] < 4000 & DealCycle$LimitBreakBuff[nrow(DealCycle)] > 0) {
-          DealCycle <- DCATKSkip(DealCycle, "LimitBreakLast", ATKFinal, SkipStructure)
-          DealCycle$LimitBreakBuff[nrow(DealCycle)] <- 0
-        }
         
         DealCycle <- DCATKSkip(DealCycle, AfterSkill, ATKFinal, SkipStructure)
         DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Tag[nrow(DealCycle)]
@@ -1825,6 +1779,7 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
                                   "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor", 
                                   "LimitBreakLast", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp", "ShadowFlashBetaInstall", "ShadowFlashBetaExp", 
                                   "EgoWeaponAlpha", "EgoWeaponBeta"))==1 & DealCycle$Beta[i] > 0 & CriticalBindStack < 10 & CriticalBindCool == 0) {
+      DealCycle$CriticalBindDebuff[i] <- max(0, DealCycle$CriticalBindDebuff[i-1] - (DealCycle[i, 2] - DealCycle[i-1, 2]))
       CriticalBindStack <- CriticalBindStack + 1
     } else if(sum(DealCycle$Skills[i]==c("ShadowStrikeAura", "WindCutterVortex", "StormBreakVortex", "StormBreakFloor", 
                                          "UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "TurningDrive", "WhirlWind", "GigaCrash", "JumpingCrash", "JumpingCrashShockwave",
@@ -1832,7 +1787,7 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
                                          "LimitBreakLast", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp", "ShadowFlashBetaInstall", "ShadowFlashBetaExp", 
                                          "EgoWeaponAlpha", "EgoWeaponBeta"))==1 & DealCycle$Beta[i] > 0 & CriticalBindStack == 10 & CriticalBindCool == 0) {
       CriticalBindStack <- 0
-      CriticalBindCool <- 39000
+      CriticalBindCool <- ifelse(DealCycle$LimitBreakBuff[i] > 0 & BuffFinal[rownames(BuffFinal)=="LimitBreakBuff", ]$Duration * 1000 - DealCycle$LimitBreakBuff[i] < 6000, 0, 39000)
       DealCycle$CriticalBindDebuff[i] <- 4000
     } else {
       DealCycle$CriticalBindDebuff[i] <- max(0, DealCycle$CriticalBindDebuff[i-1] - (DealCycle[i, 2] - DealCycle[i-1, 2]))
@@ -1861,7 +1816,7 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
     if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("UpperSlash", "PowerStump", "PowerStumpShockwave", "FrontSlash", "ThrowingWeapon", "TurningDrive", "WhirlWind", "GigaCrash", 
                                                           "JumpingCrash", "JumpingCrashShockwave", "EarthBreak", "EarthBreakShockwave", "EarthBreakFloor"))==1) {
       DealCycle$BetaTargetBDR[i] <- 5 * 8
-    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("LimitBreak", "LimitBreakLast", "ShadowFlashAlphaExp", "ShadowFlashBetaExp", "SpiderInMirror"))==1) {
+    } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("ShadowRainBeta", "LimitBreak", "LimitBreakLast", "ShadowFlashAlphaExp", "ShadowFlashBetaExp", "SpiderInMirror"))==1) {
       DealCycle$BetaTargetBDR[i] <- 14 * 8
     } else if(DealCycle$Beta[i] > 0 & sum(DealCycle$Skills[i]==c("JointAttack1", "JointAttack2", "JointAttack3", "JointAttackLast"))==1) {
       DealCycle$BetaTargetBDR[i] <- 11 * 8

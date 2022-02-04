@@ -123,25 +123,25 @@ GetCoreLv <- function(CoreData,
 ## V Matrix Passive Skill Set, Matrix Point Prior
 ## Hero
 HeroVPassive <- list()
-HeroVPassive$N4 <- data.frame(Skills=c("RagingBlow", "RageUprising", "AdvancedFinalAttack", "Incising", "Panic", "Shout"), 
+HeroVPassive$N4 <- data.frame(Skills=c("RagingBlow", "RageUprising", "AdvancedFinalAttack", "Incising", "Valhalla", "AuraBlade"), 
                               Lv=c(50, 50, 50, 50, 50, 50), 
                               stringsAsFactors=F)
 HeroVPrior <- list()
-HeroVPrior$N4 <- c("RagingBlow-RageUprising-AdvancedFinalAttack", "RagingBlow-RageUprising-AdvancedFinalAttack", 
+HeroVPrior$N4 <- c("RagingBlow-Valhalla-AdvancedFinalAttack", "RagingBlow-Valhalla-AdvancedFinalAttack", 
                    "ComboInstinct", "SwordofBurningSoul", "SwordIllusion", "AuraWeapon", "MapleWarriors2", "SpiderInMirror", 
-                   "Incising-Panic-Shout", "Incising-Panic-Shout", 
+                   "Incising-RageUprising-AuraBlade", "Incising-RageUprising-AuraBlade", 
                    "ComboDeathfault", "Blink", "BodyofSteel", "RopeConnect", "BlitzShield")
 
 ## Palladin
 PalladinVPassive <- list()
-PalladinVPassive$N4 <- data.frame(Skills=c("Blast", "FinalAttack", "Sanctuary", "LightningCharge", "DivineCharge", "Smite"), 
+PalladinVPassive$N4 <- data.frame(Skills=c("Blast", "DivineStigma_DivineJudgement", "Sanctuary", "FinalAttack", "DivineCharge", "Smite"), 
                                   Lv=c(50, 50, 50, 50, 50, 50), 
                                   stringsAsFactors=F)
 PalladinVPrior <- list()
-PalladinVPrior$N4 <- c("Blast-Sanctuary-FinalAttack", "Blast-Sanctuary-FinalAttack", 
+PalladinVPrior$N4 <- c("Blast-Sanctuary-DivineStigma_DivineJudgement", "Blast-Sanctuary-DivineStigma_DivineJudgement", 
                        "GrandCross", "BlessedHammer", "HolyUnity", "MightyMjolnir", "AuraWeapon", "MapleWarriors2", 
                        "SpiderInMirror", "Blink", 
-                       "DivineCharge-LightningCharge-Smite", "DivineCharge-LightningCharge-Smite", 
+                       "DivineCharge-FinalAttack-Smite",  "DivineCharge-FinalAttack-Smite", 
                        "BodyofSteel", "RopeConnect", "BlitzShield")
 
 ## DarkKnight
@@ -158,71 +158,70 @@ DarkKnightVPrior$N3 <- c("GungnirDescent-Beholder-FinalAttack", "GungnirDescent-
 
 ## ArchMageFP
 ArchMageFPVPassive <- list()
-ArchMageFPVPassive$N4 <- data.frame(Skills=c("Paralyze", "FlameHaze", "MistEruption", "FireAura", "Meteor", "Ignite"), 
+ArchMageFPVPassive$N4 <- data.frame(Skills=c("FlameSweep", "FlameHaze", "MistEruption", "TeleportMastery_PoisonRegion", "Meteor", "Ignite"), 
                                     Lv=c(50, 50, 50, 50, 50, 50), 
                                     stringsAsFactors=F)
-ArchMageFPVPassive$N5 <- data.frame(Skills=c("Paralyze", "FlameHaze", "MistEruption", "FireAura", "Meteor", "Ignite", "MegiddoFlame", "Ifrit", "TeleportMastery"), 
+ArchMageFPVPassive$N5 <- data.frame(Skills=c("FlameSweep", "FlameHaze", "MistEruption", "TeleportMastery_PoisonRegion", "Meteor", "Ignite", "MegiddoFlame", "Ifrit", "FireAura"), 
                                     Lv=c(50, 50, 50, 50, 50, 50, 25, 25, 25), 
                                     stringsAsFactors=F)
-ArchMageFPVPassive$N6 <- data.frame(Skills=c("Paralyze", "FlameHaze", "MistEruption", "FireAura", "Meteor", "Ignite", "MegiddoFlame", "Ifrit", "TeleportMastery"), 
+ArchMageFPVPassive$N6 <- data.frame(Skills=c("FlameSweep", "FlameHaze", "MistEruption", "TeleportMastery_PoisonRegion", "Meteor", "Ignite", "MegiddoFlame", "Ifrit", "FireAura"), 
                                     Lv=c(50, 50, 50, 50, 50, 50, 50, 50, 50), 
                                     stringsAsFactors=F)
 ArchMageFPVPrior <- list()
-ArchMageFPVPrior$N4 <- c("Paralyze-FlameHaze-MistEruption", "Paralyze-FlameHaze-MistEruption", 
+ArchMageFPVPrior$N4 <- c("FlameSweep-FlameHaze-MistEruption", "FlameSweep-FlameHaze-MistEruption", 
                          "DotPunisher", 
-                         "FireAura-Meteor-Ignite", "FireAura-Meteor-Ignite", 
+                         "TeleportMastery_PoisonRegion-Meteor-Ignite", "TeleportMastery_PoisonRegion-Meteor-Ignite", 
                          "OverloadMana", "PoisonNova", "PoisonChain", "FuryofIfrit", "MapleWarriors2", "UnstableMemorize", "SpiderInMirror", "Blink", "RopeConnect")
-ArchMageFPVPrior$N5 <- c("Paralyze-FlameHaze-MistEruption", "Paralyze-FlameHaze-MistEruption", 
+ArchMageFPVPrior$N5 <- c("FlameSweep-FlameHaze-MistEruption", "FlameSweep-FlameHaze-MistEruption", 
                          "DotPunisher", 
-                         "FireAura-Meteor-Ignite", "FireAura-Meteor-Ignite", 
+                         "TeleportMastery_PoisonRegion-Meteor-Ignite", "TeleportMastery_PoisonRegion-Meteor-Ignite", 
                          "OverloadMana", "PoisonNova", "PoisonChain", "FuryofIfrit", "MapleWarriors2", "UnstableMemorize", "SpiderInMirror", "Blink", 
-                         "MegiddoFlame-Ifrit-TeleportMastery", 
+                         "MegiddoFlame-Ifrit-FireAura", 
                          "RopeConnect")
-ArchMageFPVPrior$N6 <- c("Paralyze-FlameHaze-MistEruption", "Paralyze-FlameHaze-MistEruption", 
+ArchMageFPVPrior$N6 <- c("FlameSweep-FlameHaze-MistEruption", "FlameSweep-FlameHaze-MistEruption", 
                          "DotPunisher", 
-                         "FireAura-Meteor-Ignite", "FireAura-Meteor-Ignite", 
+                         "TeleportMastery_PoisonRegion-Meteor-Ignite", "TeleportMastery_PoisonRegion-Meteor-Ignite", 
                          "OverloadMana", "PoisonNova", "PoisonChain", "FuryofIfrit", "MapleWarriors2", "UnstableMemorize", "SpiderInMirror", "Blink", 
-                         "MegiddoFlame-Ifrit-TeleportMastery", "MegiddoFlame-Ifrit-TeleportMastery", 
+                         "MegiddoFlame-Ifrit-FireAura", "MegiddoFlame-Ifrit-FireAura", 
                          "RopeConnect")
 
 ## ArchMageTC
 ArchMageTCVPassive <- list()
-ArchMageTCVPassive$N4 <- data.frame(Skills=c("ChainLightning", "LightningSpear", "FrozenOrb", "Elquines", "Blizard", "ThunderStorm"), 
+ArchMageTCVPassive$N4 <- data.frame(Skills=c("ChainLightning", "LightningSpear", "FrozenOrb", "Elquines", "Blizard", "ThunderSphere"), 
                                    Lv=c(50, 50, 50, 50, 50, 50), 
                                    stringsAsFactors=F)
 ArchMageTCVPrior <- list()
-ArchMageTCVPrior$N4 <- c("ChainLightning-LightningSpear-Blizard", "ChainLightning-LightningSpear-Blizard", 
+ArchMageTCVPrior$N4 <- c("ChainLightning-LightningSpear-ThunderSphere", "ChainLightning-LightningSpear-ThunderSphere", 
                          "ThunderBreak", "JupiterThunder", "OverloadMana", "SpiritofSnow", "MapleWarriors2", "UnstableMemorize", 
-                         "FrozenOrb-Elquines-ThunderStorm", "FrozenOrb-Elquines-ThunderStorm", 
+                         "FrozenOrb-Elquines-Blizard", "FrozenOrb-Elquines-Blizard", 
                          "IceAge", "SpiderInMirror", "Blink", "RopeConnect")
 
 
 ## Bishop
 BishopVPassive <- list()
-BishopVPassive$N4 <- data.frame(Skills=c("AngelRay", "HeavensDoor", "Bahamut", "Bigbang", "Genesis", "ShiningRay", "Heal"), 
-                               Lv=c(50, 50, 50, 50, 50, 25, 25), 
+BishopVPassive$N4 <- data.frame(Skills=c("AngelRay", "HeavensDoor_FountainforAngel", "Bahamut", "Bigbang", "Genesis_TriumphFeather", "Heal_AngelicTouch"), 
+                               Lv=c(50, 50, 50, 50, 50, 50), 
                                stringsAsFactors=F)
 BishopVPrior <- list()
-BishopVPrior$N4 <- c("AngelRay-HeavensDoor-Bahamut", "AngelRay-HeavensDoor-Bigbang", 
+BishopVPrior$N4 <- c("AngelRay-HeavensDoor_FountainforAngel-Genesis_TriumphFeather", "AngelRay-HeavensDoor_FountainforAngel-Genesis_TriumphFeather", 
                      "DivinePunishment", "PeaceMaker", "Pray", "OverloadMana", "AngelofLibra", "MapleWarriors2", "UnstableMemorize", "SpiderInMirror", "Blink",
-                     "Bahamut-Bigbang-Genesis", 
-                     "RopeConnect", 
-                     "Genesis-ShiningRay-Heal")
+                     "Bahamut-Bigbang-Heal_AngelicTouch", "Bahamut-Bigbang-Heal_AngelicTouch", 
+                     "RopeConnect")
 
 ## Bowmaster
 BowmasterVPassive <- list()
-BowmasterVPassive$N4 <- data.frame(Skills=c("HurricaneArrow", "ArrowPlatter", "AdvancedFinalAttack", "AdvancedQuiver", "Phoenix", "UncountableArrow"), 
+BowmasterVPassive$N4 <- data.frame(Skills=c("HurricaneArrow", "ArrowPlatter_FlashMirage", "AdvancedFinalAttack", "AdvancedQuiver", "Phoenix", "UncountableArrow"), 
                                   Lv=c(50, 50, 50, 50, 50, 50), 
                                   stringsAsFactors=F)
 BowmasterVPrior <- list()
-BowmasterVPrior$N4 <- c("HurricaneArrow-AdvancedFinalAttack-AdvancedQuiver", "HurricaneArrow-AdvancedFinalAttack-AdvancedQuiver", 
+BowmasterVPrior$N4 <- c("HurricaneArrow-ArrowPlatter_FlashMirage-AdvancedQuiver", "HurricaneArrow-ArrowPlatter_FlashMirage-AdvancedQuiver", 
                         "QuiverFullBurst", "ArrowRain", "AfterimageArrow", "CriticalReinforce", "MapleWarriors2", "SilhouetteMirage", "GuidedArrow", 
-                        "ArrowPlatter-Phoenix-UncountableArrow", "ArrowPlatter-Phoenix-UncountableArrow", 
+                        "AdvancedFinalAttack-Phoenix-UncountableArrow", "AdvancedFinalAttack-Phoenix-UncountableArrow", 
                         "Evolve", "Blink", "SpiderInMirror", "RopeConnect")
 
 ## Marksman
 MarksmanVPassive <- list()
-MarksmanVPassive$N3 <- data.frame(Skills=c("Snipe", "Piercing", "Freezer", "FinalAttack", "LongRangeTrueShot"), 
+MarksmanVPassive$N3 <- data.frame(Skills=c("Snipe", "Piercing", "FinalAttack", "Freezer", "LongRangeTrueShot"), 
                                   Lv=c(50, 50, 50, 50, 25), 
                                   stringsAsFactors=F)
 MarksmanVPrior <- list()
@@ -266,13 +265,13 @@ NightLordVPrior$N4 <- c("QuadrapleThrow-MarkofNightLord-DarkFlare", "QuadrapleTh
 
 ## Shadower
 ShadowerVPassive <- list()
-ShadowerVPassive$N4 <- data.frame(Skills=c("Assassination", "MesoExplosion", "BoomerangStab", "VeilofShadow", "DarkFlare", "SuddenRaid"), 
+ShadowerVPassive$N4 <- data.frame(Skills=c("Assassination", "MesoExplosion", "CruelStab", "VeilofShadow", "DarkFlare", "SuddenRaid"), 
                                   Lv=c(50, 50, 50, 50, 50, 50), 
                                   stringsAsFactors=F)
 ShadowerVPrior <- list()
 ShadowerVPrior$N4 <- c("Assassination-MesoExplosion-DarkFlare", "Assassination-MesoExplosion-DarkFlare", 
                        "UltimateDarkSight", "SonicBlow", "Eviscerate", "Myeolgwichamyeongjin", "ReadyToDie", "MapleWarriors2", "Blink", 
-                       "BoomerangStab-VeilofShadow-SuddenRaid", "BoomerangStab-VeilofShadow-SuddenRaid", 
+                       "CruelStab-VeilofShadow-SuddenRaid", "CruelStab-VeilofShadow-SuddenRaid", 
                        "SpiderInMirror", "RopeConnect", "ShadowAssault")
 
 ## DualBlade
@@ -288,64 +287,50 @@ DualBladeVPrior$N4 <- c("BladeTornado", "BladeStorm", "UltimateDarkSight",
 
 ## Viper
 ViperVPassive <- list()
-ViperVPassive$N4 <- data.frame(Skills=c("FistEnrage", "Nautilus", "DragonStrike", "UnityofPower", "EnergyBlast", "ScrewPunch"), 
+ViperVPassive$N4 <- data.frame(Skills=c("FistEnrage", "SeaSerpentEnrage_SerpentAssaultEnrage", "Nautilus", "SeaSerpentBust_SerpentAssault", "ScrewPunch", "HookBomber"), 
                                Lv=c(50, 50, 50, 50, 50, 50), 
                                stringsAsFactors=F)
 ViperVPrior <- list()
 ViperVPrior$N4 <- c("SerpentScrew", 
-                    "FistEnrage-Nautilus-DragonStrike", "FistEnrage-Nautilus-DragonStrike", 
-                    "PirateFlag", "OverDrive", "HawlingFist", "Transform", "FuriousCharge", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                    "UnityofPower-EnergyBlast-ScrewPunch", "UnityofPower-EnergyBlast-ScrewPunch")
+                    "FistEnrage-SeaSerpentEnrage_SerpentAssaultEnrage-Nautilus", "FistEnrage-SeaSerpentEnrage_SerpentAssaultEnrage-Nautilus", 
+                    "PirateFlag", "OverDrive", "HawlingFist", "LightningForm", "FuriousCharge", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
+                    "SeaSerpentBust_SerpentAssault-ScrewPunch-HookBomber", "SeaSerpentBust_SerpentAssault-ScrewPunch-HookBomber")
 
 ## Captain
 CaptainVPassive <- list()
-CaptainVPassive$N4 <- data.frame(Skills=c("RapidFire", "OctaQuaterdeck", "BattleShipBomber", "HeadShot", "CaptainDignity", "Fusilrade"), 
+CaptainVPassive$N4 <- data.frame(Skills=c("RapidFire", "SeizeBomber", "BattleShipBomber", "HeadShot", "CaptainDignity", "Fusilrade"), 
                                  Lv=c(50, 50, 50, 50, 50, 50), 
                                  stringsAsFactors=F)
-CaptainVPassive$N5 <- data.frame(Skills=c("RapidFire", "OctaQuaterdeck", "BattleShipBomber", "HeadShot", "CaptainDignity", "SummonCrew", "Fusilrade", "Nautilus"), 
+CaptainVPassive$N5 <- data.frame(Skills=c("RapidFire", "SeizeBomber", "BattleShipBomber", "HeadShot", "CaptainDignity", "SummonCrew", "Fusilrade", "StrangeBomb"), 
                                  Lv=c(50, 50, 50, 50, 50, 50, 50, 25), 
-                                 stringsAsFactors=F)
-CaptainVPassive$N6 <- data.frame(Skills=c("RapidFire", "OctaQuaterdeck", "BattleShipBomber", "HeadShot", "CaptainDignity", "SummonCrew", "Fusilrade", "Nautilus", "StrangeBomb"), 
-                                 Lv=c(50, 50, 50, 50, 50, 50, 50, 50, 50), 
                                  stringsAsFactors=F)
 CaptainVPrior <- list()
 CaptainVPrior$N4 <- c("RapidFire-BattleShipBomber-CaptainDignity", "RapidFire-BattleShipBomber-CaptainDignity", 
-                      "PirateFlag", "DeathTrigger", "NautilusAssault", "BulletParty", 
-                      "OctaQuaterdeck-HeadShot-Fusilrade", "OctaQuaterdeck-HeadShot-Fusilrade", 
-                      "DeadEye", "MapleWarriors2", "OverDrive", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect")
+                      "PirateFlag", "DeathTrigger", "NautilusAssault", 
+                      "SeizeBomber-HeadShot-Fusilrade", "SeizeBomber-HeadShot-Fusilrade", 
+                      "DeadEye", "MapleWarriors2", "OverDrive", "LoadedDice", "Blink", "BulletParty", "SpiderInMirror", "RopeConnect")
 CaptainVPrior$N5 <- c("RapidFire-BattleShipBomber-CaptainDignity", "RapidFire-BattleShipBomber-CaptainDignity", 
-                      "PirateFlag", "DeathTrigger", "NautilusAssault", "BulletParty", 
-                      "OctaQuaterdeck-HeadShot-SummonCrew", "OctaQuaterdeck-HeadShot-Fusilrade", 
+                      "PirateFlag", "DeathTrigger", "NautilusAssault", 
+                      "SeizeBomber-HeadShot-SummonCrew", "SeizeBomber-HeadShot-Fusilrade", 
                       "DeadEye", "MapleWarriors2", "OverDrive", 
-                      "SummonCrew-Fusilrade-Nautilus", 
-                      "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect")
-CaptainVPrior$N6 <- c("RapidFire-BattleShipBomber-CaptainDignity", "RapidFire-BattleShipBomber-CaptainDignity", 
-                      "PirateFlag", "DeathTrigger", "NautilusAssault", "BulletParty", 
-                      "OctaQuaterdeck-HeadShot-SummonCrew", "OctaQuaterdeck-HeadShot-SummonCrew", 
-                      "DeadEye", "MapleWarriors2", "OverDrive", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                      "Fusilrade-Nautilus-StrangeBomb", "Fusilrade-Nautilus-StrangeBomb")
+                      "SummonCrew-Fusilrade-StrangeBomb", 
+                      "BulletParty", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect")
 
 ## CannonShooter
 CannonShooterVPassive <- list()
-CannonShooterVPassive$N4 <- data.frame(Skills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious", "BarrelRoulette", "CannonBazuka"), 
+CannonShooterVPassive$N4 <- data.frame(Skills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious_MiniCannonball", "BarrelRoulette", "CannonBazuka"), 
                                        Lv=c(50, 50, 50, 50, 50, 50), 
                                        stringsAsFactors=F)
-CannonShooterVPassive$N5 <- data.frame(Skills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious", "BarrelRoulette", "CannonBazuka", "MagneticAnchor", "MokeyWave"), 
+CannonShooterVPassive$N5 <- data.frame(Skills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious_MiniCannonball", "BarrelRoulette", "CannonBazuka", "MagneticAnchor", "Nautilus"), 
                                        Lv=c(50, 50, 50, 50, 50, 50, 50, 25), 
-                                       stringsAsFactors=F)
-CannonShooterVPassive$N6 <- data.frame(Skills=c("CannonBuster", "RollingCannonRainbow", "SupportMonkeyTwins", "MonkeyFurious", "BarrelRoulette", "CannonBazuka", "MagneticAnchor", "MokeyWave", "Nautilus"), 
-                                       Lv=c(50, 50, 50, 50, 50, 50, 50, 50, 50), 
                                        stringsAsFactors=F)
 CannonShooterVPrior <- list()
 CannonShooterVPrior$N4 <- c("CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", "CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", 
                             "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                            "MonkeyFurious-BarrelRoulette-CannonBazuka", "MonkeyFurious-BarrelRoulette-CannonBazuka")
+                            "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka")
 CannonShooterVPrior$N5 <- c("CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", "CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", 
                             "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                            "MonkeyFurious-BarrelRoulette-MagneticAnchor", "MonkeyFurious-BarrelRoulette-CannonBazuka", "MagneticAnchor-CannonBazuka-MokeyWave")
-CannonShooterVPrior$N6 <- c("CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", "CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", 
-                            "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                            "MonkeyFurious-BarrelRoulette-MokeyWave", "MonkeyFurious-BarrelRoulette-MokeyWave", "CannonBazuka-MagneticAnchor-Nautilus", "CannonBazuka-MagneticAnchor-Nautilus")
+                            "MonkeyFurious_MiniCannonball-BarrelRoulette-MagneticAnchor", "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", "MagneticAnchor-CannonBazuka-Nautilus")
 
 ## Mikhail
 MikhailVPassive <- list()
@@ -405,9 +390,9 @@ StrikerVPassive$N4 <- data.frame(Skills=c("Annihilate", "Thunderbolt", "Typhoon"
                                  Lv=c(50, 50, 50, 50, 50, 25, 25), 
                                  stringsAsFactors=F)
 StrikerVPrior <- list()
-StrikerVPrior$N4 <- c("Annihilate-Thunderbolt-Typhoon", "Annihilate-Thunderbolt-Typhoon", 
+StrikerVPrior$N4 <- c("Annihilate-Thunderbolt-DeepRising", "Annihilate-Thunderbolt-DeepRising", 
                       "OverDrive", "SharkTorpedo", "LightningGodSpearStrike", "LightningSpearMultistrike", "LightningCascade", "CygnusPhalanx", "BlessofCygnus", "Blink", "LoadedDice", "SpiderInMirror", 
-                      "DeepRising-TidalCrash-Ascension", "DeepRising-TidalCrash-Thunder", 
+                      "Typhoon-TidalCrash-Ascension", "Typhoon-TidalCrash-Thunder", 
                       "RopeConnect")
 
 ## Blaster
@@ -606,11 +591,11 @@ MercedesVPrior <- list()
 MercedesVPrior$N4 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", "RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", 
                        "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
                        "LeafTornado_GustDive-ElementalKnight-UnicornSpike", "LeafTornado_GustDive-ElementalKnight-UnicornSpike", 
-                       "Blink", "SpiderInMirror", "RopeConnect", "FreudBlessing")
+                       "Blink", "Sylvidia", "SpiderInMirror", "RopeConnect", "FreudBlessing")
 MercedesVPrior$N5 <- c("RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", "RingofIshtar-AdvancedStrikeDualShot_AdvancedFinalAttack-WrathofEnlil", 
                        "ElementalGhost", "BreathofIrkalla", "RoyalKnights", "CriticalReinforce", "MapleWarriors2", "GuidedArrow", 
                        "LegendrySpear-ElementalKnight-UnicornSpike", "LeafTornado_GustDive-ElementalKnight-UnicornSpike", 
-                       "Blink", "SpiderInMirror", 
+                       "Blink", "Sylvidia", "SpiderInMirror", 
                        "LegendrySpear-LeafTornado_GustDive-RollingMoonsault", 
                        "RopeConnect", "FreudBlessing")
 

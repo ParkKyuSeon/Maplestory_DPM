@@ -64,9 +64,10 @@ value <- c(30)
 SummonSlashingKnifeDebuff <- data.frame(option, value)
 
 option <- factor(c("CDMR", "CRR"), levels=PSkill)
-value <- c(6 * (10 + ceiling(CadenaBase$PSkillLv/4)), 12)
+value <- c(6 * (10 + ceiling(CadenaBase$PSkillLv/4)), 6 * 2)
 WeakpointConvergingAttack <- data.frame(option, value) 
-## Adventure Wizard Link (Emprical Knowledge Weakpoint), Venom Bust (Dot), ChainArts : Stroke (Slow), Summon Slashing Knife (Fear), Summon Bitting Needlebat (Confusion), Weakpoint Conversing Attack (Bleeding)
+## Adventure Wizard Link (Emprical Knowledge Weakpoint), Venom Bust (Dot), ChainArts : Stroke I (Slow), ChainArts : Stroke II / ChainArts : Chase (Slow) [Not In CRR], ChainArts : Maelstrom (Slow)
+## Summon Slashing Knife (Fear), Summon Bitting Needlebat (Confusion), Weakpoint Conversing Attack (Bleeding)
 
 option <- factor(c("CDMR", "CRR", "Mastery", "ATK"), levels=PSkill)
 value <- c(15 + ceiling(CadenaBase$PSkillLv/2), 30 + CadenaBase$PSkillLv, 70 + ceiling(CadenaBase$PSkillLv/2), 30 + CadenaBase$PSkillLv)
@@ -228,91 +229,84 @@ ChainArtsChase <- rbind(data.frame(option, value), info) ## CancellableDelay : 1
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw"))))
-info <- c(425 + 5 * CadenaSpec$PSkillLv, 5, 780, NA, 4, T, T, F)
+info <- c(475 + 7 * CadenaSpec$PSkillLv, 5, 780, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonCuttingScimitar <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw")>=40, 20, 0), FDRCalc(c(15, 2 *GetCoreLv(CadenaCore, "CuttingScimitar_ScratchingClaw"))))
-info <- c(455 + 5 * CadenaSpec$PSkillLv, 4, 600, NA, 3, T, T, F)
+info <- c(505 + 7 * CadenaSpec$PSkillLv, 4, 600, NA, 3, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonScratchingClaw <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))))
-info <- c(425 + 5 * CadenaSpec$PSkillLv, 1, 780, 330, 10, T, T, F)
+info <- c(475 + 7 * CadenaSpec$PSkillLv, 1, 780, 330, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonThrowingWingdaggerFDR <- rbind(data.frame(option, value), info) ## Non Cancelled
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))
-info <- c(425 + 5 * CadenaSpec$PSkillLv, 1, 0, 0, 10, T, T, F)
+info <- c(475 + 7 * CadenaSpec$PSkillLv, 1, 0, 0, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonThrowingWingdagger <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))
-info <- c(670 + 5 * CadenaSpec$PSkillLv, 3, 0, 0, 10, T, T, F)
+info <- c(620 + 7 * CadenaSpec$PSkillLv, 3, 0, 0, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonThrowingWingdaggerExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb"))))
-info <- c(510 + 5 * CadenaSpec$PSkillLv, 7, 840, NA, 5, T, T, F)
+info <- c(560 + 7 * CadenaSpec$PSkillLv, 7, 840, NA, 5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonShootingShotgun <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "SlashingKnife_ThrowingWingdagger"))))
-info <- c(435 + 5 * CadenaSpec$PSkillLv, 8, 750, NA, 10, T, T, F)
+info <- c(485 + 7 * CadenaSpec$PSkillLv, 8, 750, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonSlashingKnife <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb"))
-info <- c(535 + 5 * CadenaSpec$PSkillLv, 6, 540, NA, 8, T, T, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-SummonReleasingBomb <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
-
-option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb")>=40, 20, 0), 2 * GetCoreLv(CadenaCore, "ShootingShotgun_ReleasingBomb"))
-info <- c(535 + 5 * CadenaSpec$PSkillLv, 6, 540, NA, 8, T, T, F)
+info <- c(585 + 7 * CadenaSpec$PSkillLv, 6, 540, NA, 8, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonReleasingBomb <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "StrikingBrick")>=40, 20, 0), FDRCalc(c(15, 2 * GetCoreLv(CadenaCore, "StrikingBrick"))))
-info <- c(485 + 8 * CadenaSpec$SkillLv, 7, 960, NA, 8, T, T, F)
+info <- c(535 + 8 * CadenaSpec$SkillLv, 7, 960, NA, 8, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonStrikingBrick <- rbind(data.frame(option, value), info) ## CancellableDelay : 240
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "BittingNeedlebat")>=40, 20, 0), FDRCalc(c(15, 35, 2 * GetCoreLv(CadenaCore, "BittingNeedlebat"))))
-info <- c(450 + 10 * CadenaSpec$SkillLv, 6, 480, NA, 12, T, T, F)
+info <- c(490 + 10 * CadenaSpec$SkillLv, 6, 480, NA, 12, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonBittingNeedlebat1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "BittingNeedlebat")>=40, 20, 0), FDRCalc(c(35, 2 * GetCoreLv(CadenaCore, "BittingNeedlebat"))))
-info <- c(555 + 10 * CadenaSpec$SkillLv, 7, 570, NA, 12, T, T, F)
+info <- c(610 + 10 * CadenaSpec$SkillLv, 7, 570, NA, 12, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonBittingNeedlebat2 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, ifelse(GetCoreLv(CadenaCore, "BittingNeedlebat")>=40, 20, 0), FDRCalc(c(45, 2 * GetCoreLv(CadenaCore, "BittingNeedlebat"))))
-info <- c(715 + 10 * CadenaSpec$SkillLv, 8, 810, NA, 12, T, T, F)
+info <- c(790 + 10 * CadenaSpec$SkillLv, 8, 810, NA, 12, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SummonBittingNeedlebat3 <- rbind(data.frame(option, value), info) ## CancellableDelay : 180 / 210

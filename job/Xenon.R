@@ -53,7 +53,11 @@ XenonBase2 <- JobBase(ChrInfo=ChrInfo,
                       CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Xenon")))
 
 ## Xenon - Passive
-{option <- factor(c("BDR"), levels=PSkill)
+{option <- factor(c("MainStat", "SubStat1", "SubStat2"), levels=PSkill)
+value <- c(70, 70, 70)
+ConversionStarForce <- data.frame(option, value)
+  
+option <- factor(c("BDR"), levels=PSkill)
 value <- c(3)
 MultiLateralI <- data.frame(option, value)
 
@@ -73,8 +77,8 @@ option <- factor(c("BDR"), levels=PSkill)
 value <- c(10)
 MultiLateralV <- data.frame(option, value)
 
-option <- factor(c("BDR"), levels=PSkill)
-value <- c(5)
+option <- factor(c("BDR", "FDR"), levels=PSkill)
+value <- c(5, 15)
 MultiLateralVI <- data.frame(option, value)
 
 option <- factor(c("ATKSpeed"), levels=PSkill)
@@ -121,7 +125,7 @@ option <- factor(c("MainStat", "SubStat1", "SubStat2"), levels=PSkill)
 value <- c(rep(GetCoreLv(XenonCore, "RopeConnect"), 3))
 RopeConnectPassive <- data.frame(option, value)}
 
-XenonPassive <- Passive(list(MultiLateralI, MultiLateralII, MultiLateralIII, MultiLateralVI, MultiLateralV, MultiLateralVI, 
+XenonPassive <- Passive(list(ConversionStarForce, MultiLateralI, MultiLateralII, MultiLateralIII, MultiLateralIV, MultiLateralV, MultiLateralVI, 
                              XenonBoost, LinearPerspective, MinoritySupport, XenonMastery, DualbridDefensive, XenonExpert, OffensiveMatrix, 
                              ReadyToDiePassive, LoadedDicePassive, BlinkPassive, RopeConnectPassive))
 
@@ -236,7 +240,7 @@ OverloadMode <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
 value <- c(5 + floor(GetCoreLv(XenonCore, "HologramGrafityFusion")/2))
-info <- c(30 + 10, 100, Delay(930, 2), F, T, F, F)
+info <- c(30 + 10, 90, Delay(930, 2), F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 HologramGrafityFusionBuff <- rbind(data.frame(option, value), info)
@@ -433,7 +437,7 @@ HologramGrafityFusion <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 0, 0, 35, T, F, F)
+info <- c(0, 0, 0, 0, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PhotonRayPrep <- rbind(data.frame(option, value), info)
@@ -493,20 +497,20 @@ colnames(XenonDealCycle) <- DealCycle
 XenonDealCycle <- data.frame(XenonDealCycle)
 
 XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                      Period=c(190), CycleTime=c(380)) {
+                      Period=c(180), CycleTime=c(360)) {
   BuffSummonedPrior <- c("UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "UsefulAdvancedBless", "LuckyDice5", 
                          "AmaranthGenerator", "OOPArtCode", "InclinePower", "OverloadMode")
-  Times190 <- c(0, 0, 0, 0, 0, 
-                2, 4, 1, 1)
+  Times180 <- c(0, 0, 0, 0, 0, 
+                1, 4, 1, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
-    Times190 <- Times190[BuffSummonedPrior!="UsefulAdvancedBless"]
+    Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
   }
   
-  SubTime <- rep(Period, length(BuffSummonedPrior))
-  TotalTime <- CycleTime
+  SubTime <- rep(165 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce + 21, length(BuffSummonedPrior))
+  TotalTime <- (165 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce + 21) * (CycleTime / Period)
   for(i in 1:length(BuffSummonedPrior)) {
-    SubTime[i] <- SubTime[i] / ifelse(Times190[i]==0, Inf, Times190[i])
+    SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
   
   SubTimeUniques <- unique(SubTime)
@@ -631,7 +635,7 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   RICool <- subset(SummonedFinal, rownames(SummonedFinal)=="ResistanceLineInfantry")$CoolTime * 1000
   
   HGFRemain <- 0 ; HGRemain <- 0 ; MERemain <- 0 ; SCRemain <- 0 ; ODRemain <- 0 ; MW2Remain <- 0 ; R4Remain <- 0 
-  PRRemain <- 0 ; MSRemain <- 15000 ; RIRemain <- 0
+  PRRemain <- 0 ; MSRemain <- 18500 ; RIRemain <- 0
   
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
@@ -666,7 +670,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           HGRemain <- max(0, HGRemain - DealCycle$Time[1])
           MERemain <- max(0, MERemain - DealCycle$Time[1])
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-          ODRemain <- max(0, ODRemain - DealCycle$Time[1])
           MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
           R4Remain <- max(0, R4Remain - DealCycle$Time[1])
           PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -675,15 +678,15 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         }
       }
       ## Hologram Grafity
-      if(HGRemain == 0 & DealCycle$HologramGrafityFusionBuff[nrow(DealCycle)] - DealCycle$Time[1] < 0 & 
-         nrow(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")) < nrow(subset(DealCycle, DealCycle$Skills=="HologramGrafityFusionBuff")) * 2 + 1)  {
+      if(HGRemain == 0 & HGFRemain <= 35000 & DealCycle$HologramGrafityFusionBuff[nrow(DealCycle)] - DealCycle$Time[1] < 0 & 
+         nrow(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")) < nrow(subset(DealCycle, DealCycle$Skills=="HologramGrafityFusionBuff")) + 1 & 
+         nrow(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")) < 4)  {
         DealCycle <- DCSummoned(DealCycle, "HologramGrafity", SummonedFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
         HGRemain <- max(0, HGCool - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -691,14 +694,14 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
       } 
       ## Hologram Grafity : Fusion
-      else if(HGFRemain == 0 & max(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")$Time) + 30000 <= DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1])  {
+      else if(HGFRemain == 0 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= 35 & max(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")$Time) + 30000 <= DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] | 
+              HGFRemain == 0 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & max(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")$Time) + 30000 <= DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) {
         DealCycle <- DCBuff(DealCycle, "HologramGrafityFusionBuff", BuffFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFCool - DealCycle$Time[1])
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -713,7 +716,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Cool - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -728,22 +730,20 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
         MSRemain <- max(0, MSRemain - DealCycle$Time[1])
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
       }
-      ## Over Drive, Meltdown Explosion
-      else if(ODRemain == 0 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= 36 & nrow(subset(DealCycle, DealCycle$Skills=="OverDrive")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * 3) {
+      ## Over Drive, Soul Contract, Ready To Die, Meltdown Explosion
+      else if(SCRemain <= 540 + 2370 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= 36 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * 2) {
         DealCycle <- DCBuff(DealCycle, "OverDrive", BuffFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODCool - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -756,7 +756,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MECool - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -769,62 +768,18 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
-        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
-        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
-        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
-        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
-      }
-      else if(ODRemain == 0 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & nrow(subset(DealCycle, DealCycle$Skills=="OverDrive")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * 3) {
-        DealCycle <- DCBuff(DealCycle, "OverDrive", BuffFinal)
-        DealCycle <- XenonStack(DealCycle)
-        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
-        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
-        MERemain <- max(0, MERemain - DealCycle$Time[1])
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODCool - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
         MSRemain <- max(0, MSRemain - DealCycle$Time[1])
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
         
-        DealCycle <- DCBuff(DealCycle, "MeltdownExplosionDebuff", BuffFinal)
-        DealCycle <- XenonStack(DealCycle)
-        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
-        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
-        MERemain <- max(0, MECool - DealCycle$Time[1])
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
-        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
-        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
-        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
-        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
-        
-        DealCycle <- DCBuff(DealCycle, "MeltdownExplosionBuff", BuffFinal)
-        DealCycle <- XenonStack(DealCycle)
-        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
-        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
-        MERemain <- max(0, MERemain - DealCycle$Time[1])
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
-        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
-        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
-        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
-        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
-      }
-      ## Restraint, Soul Contract, Ready To Die
-      else if(R4Remain <= 2000 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= 38 & nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode"))) {
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCCool - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -837,62 +792,96 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
+        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
+        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
+        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
+        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
+        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
+      }
+      else if(SCRemain <= 540 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * 2) {
+        DealCycle <- DCBuff(DealCycle, "OverDrive", BuffFinal)
+        DealCycle <- XenonStack(DealCycle)
+        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
+        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
+        MERemain <- max(0, MERemain - DealCycle$Time[1])
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
         MSRemain <- max(0, MSRemain - DealCycle$Time[1])
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
         
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        DealCycle <- XenonStack(DealCycle)
+        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
+        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
+        MERemain <- max(0, MERemain - DealCycle$Time[1])
+        SCRemain <- max(0, SCCool - DealCycle$Time[1])
+        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
+        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
+        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
+        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
+        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
+        
+        DealCycle <- DCBuff(DealCycle, "ReadyToDie2Stack", BuffFinal)
+        DealCycle <- XenonStack(DealCycle)
+        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
+        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
+        MERemain <- max(0, MERemain - DealCycle$Time[1])
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
+        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
+        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
+        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
+        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
+      }
+      else if(MERemain == 0 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & nrow(subset(DealCycle, DealCycle$Skills=="MeltdownExplosionBuff")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * 3) {
+        DealCycle <- DCBuff(DealCycle, "MeltdownExplosionDebuff", BuffFinal)
+        DealCycle <- XenonStack(DealCycle)
+        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
+        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
+        MERemain <- max(0, MECool - DealCycle$Time[1])
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
+        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
+        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
+        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
+        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
+        
+        DealCycle <- DCBuff(DealCycle, "MeltdownExplosionBuff", BuffFinal)
+        DealCycle <- XenonStack(DealCycle)
+        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
+        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
+        MERemain <- max(0, MERemain - DealCycle$Time[1])
+        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
+        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
+        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
+        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
+        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
+        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
+      }
+      ## Restraint 4
+      else if(R4Remain == 0 & DealCycle$SurplusSupplyStack[nrow(DealCycle)] >= 40 & nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode"))) {
         DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Cool - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
         MSRemain <- max(0, MSRemain - DealCycle$Time[1])
         RIRemain <- max(0, RIRemain - DealCycle$Time[1])
       }
-      else if(SCRemain == 0 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) < nrow(subset(DealCycle, DealCycle$Skills=="HologramGrafityFusionBuff"))) {
-        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
-        DealCycle <- XenonStack(DealCycle)
-        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
-        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
-        MERemain <- max(0, MERemain - DealCycle$Time[1])
-        SCRemain <- max(0, SCCool - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
-        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
-        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
-        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
-        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
-        
-        DealCycle <- DCBuff(DealCycle, "ReadyToDie2Stack", BuffFinal)
-        DealCycle <- XenonStack(DealCycle)
-        HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
-        HGRemain <- max(0, HGRemain - DealCycle$Time[1])
-        MERemain <- max(0, MERemain - DealCycle$Time[1])
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
-        MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1])
-        PRRemain <- max(0, PRRemain - DealCycle$Time[1])
-        MSRemain <- max(0, MSRemain - DealCycle$Time[1])
-        RIRemain <- max(0, RIRemain - DealCycle$Time[1])
-      }
       ## Photon Ray
-      else if(PRRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="PhotonRayPrep")) < ceiling(nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * ifelse(Spec$CoolReduce>=2, 5, 5))) {
+      else if(PRRemain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="PhotonRayPrep")) < ceiling(nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * ifelse(Spec$CoolReduce>=2, 6.5, 6))) {
         DealCycle <- DCATK(DealCycle, "PhotonRayPrep", ATKFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRCool - DealCycle$Time[1])
@@ -905,7 +894,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -920,21 +908,20 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
         MSRemain <- max(0, MSRemain - DealCycle$Time[1])
         RIRemain <- max(0, RICool - DealCycle$Time[1])
       }
-      else if(RIRemain == 0 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & nrow(subset(DealCycle, DealCycle$Skills=="ResistanceLineInfantrySummoned")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * 8) {
+      else if(RIRemain == 0 & DealCycle$OverloadMode[nrow(DealCycle)] == 0 & 
+              nrow(subset(DealCycle, DealCycle$Skills=="ResistanceLineInfantrySummoned")) < nrow(subset(DealCycle, DealCycle$Skills=="OverloadMode")) * ifelse(Spec$CoolReduce>=2, 8, 7)) {
         DealCycle <- DCSummoned(DealCycle, "ResistanceLineInfantry", SummonedFinal)
         DealCycle <- XenonStack(DealCycle)
         HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -949,7 +936,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -965,7 +951,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -979,7 +964,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           HGRemain <- max(0, HGRemain - DealCycle$Time[1])
           MERemain <- max(0, MERemain - DealCycle$Time[1])
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-          ODRemain <- max(0, ODRemain - DealCycle$Time[1])
           MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
           R4Remain <- max(0, R4Remain - DealCycle$Time[1])
           PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -993,7 +977,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -1008,7 +991,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         HGRemain <- max(0, HGRemain - DealCycle$Time[1])
         MERemain <- max(0, MERemain - DealCycle$Time[1])
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        ODRemain <- max(0, ODRemain - DealCycle$Time[1])
         MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
         R4Remain <- max(0, R4Remain - DealCycle$Time[1])
         PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -1026,7 +1008,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           HGRemain <- max(0, HGRemain - DealCycle$Time[1])
           MERemain <- max(0, MERemain - DealCycle$Time[1])
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-          ODRemain <- max(0, ODRemain - DealCycle$Time[1])
           MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
           R4Remain <- max(0, R4Remain - DealCycle$Time[1])
           PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -1039,7 +1020,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
             HGRemain <- max(0, HGRemain - DealCycle$Time[1])
             MERemain <- max(0, MERemain - DealCycle$Time[1])
             SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-            ODRemain <- max(0, ODRemain - DealCycle$Time[1])
             MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
             R4Remain <- max(0, R4Remain - DealCycle$Time[1])
             PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -1053,7 +1033,6 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
           HGRemain <- max(0, HGRemain - DealCycle$Time[1])
           MERemain <- max(0, MERemain - DealCycle$Time[1])
           SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-          ODRemain <- max(0, ODRemain - DealCycle$Time[1])
           MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
           R4Remain <- max(0, R4Remain - DealCycle$Time[1])
           PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -1064,15 +1043,13 @@ XenonCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
   }
   
-  while(max(HGFRemain - min(subset(DealCycle, DealCycle$Skills=="HologramGrafityFusionBuff")$Time), 
-            HGRemain - min(subset(DealCycle, DealCycle$Skills=="HologramGrafitySummoned")$Time)) > 0) { 
+  while(MSRemain >= 18500) {
     DealCycle <- DCATK(DealCycle, "FuzzylopMasquerade", ATKFinal)
     DealCycle <- XenonStack(DealCycle)
     HGFRemain <- max(0, HGFRemain - DealCycle$Time[1])
     HGRemain <- max(0, HGRemain - DealCycle$Time[1])
     MERemain <- max(0, MERemain - DealCycle$Time[1])
     SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-    ODRemain <- max(0, ODRemain - DealCycle$Time[1])
     MW2Remain <- max(0, MW2Remain - DealCycle$Time[1])
     R4Remain <- max(0, R4Remain - DealCycle$Time[1])
     PRRemain <- max(0, PRRemain - DealCycle$Time[1])
@@ -1248,7 +1225,7 @@ XenonDealCycle <- XenonCycle(XenonDealCycle,
                                  BuffFinal, 
                                  SummonedFinal, 
                                  XenonSpec, 
-                                 190, 380)
+                                 180, 360)
 XenonDealCycle <- DealCycleFinal(XenonDealCycle)
 XenonDealCycle <- XenonAddATK(XenonDealCycle, 
                               ATKFinal, 
@@ -1278,7 +1255,7 @@ if(DPMCalcOption$Optimization==T) {
 XenonSpecOpt <- OptDataAdd(XenonSpec, XenonSpecOpt1, "Potential", XenonBase$CRROver, DemonAvenger=F)
 
 if(DPMCalcOption$Optimization==T) {
-  XenonSpecOpt2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver, HyperStanceLv=5)
+  XenonSpecOpt2 <- XenonOptimization2(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt, XenonHyperStatBase, XenonBase$ChrLv, XenonBase$CRROver)
   HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- XenonSpecOpt2[1, ]
 } else {
   XenonSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
@@ -1298,7 +1275,7 @@ colnames(XenonDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Xenon", Deal_RR(XenonDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Xenon", Deal_40s(XenonDealData, F, StartTime=subset(XenonDealData, XenonDealData$Skills=="HologramGrafityFusionBuff")$Time[1]))
 
-XenonSpecMean <- XenonSpecMean("Xenon", XenonDealCycleReduction, 
+XenonSpecMean <- SpecMeanXenon("Xenon", XenonDealCycleReduction, 
                                DealCalcWithMaxDMR(XenonDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt), 
                                ATKFinal, BuffFinal, SummonedFinal, XenonSpecOpt)
 

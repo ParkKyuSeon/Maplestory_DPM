@@ -41,7 +41,11 @@ MarksmanBase <- JobBase(ChrInfo=ChrInfo,
 
 
 ## Marksman - Passive
-{option <- factor("ATKSpeed", levels=PSkill)
+{option <- factor("ATK", levels=PSkill)
+value <- c(9)
+TitaniumArrow <- data.frame(option, value)
+  
+option <- factor("ATKSpeed", levels=PSkill)
 value <- c(1)
 ArcherMastery <- data.frame(option, value)
   
@@ -57,6 +61,14 @@ option <- factor(c("FDR"), levels=PSkill)
 value <- c(20)
 CrossbowMastery <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+CrossbowAcceleration <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(30)
+SoulArrow <- data.frame(option, value)
+
 option <- factor("CDMR", levels=PSkill)
 value <- c(20)
 ExtremeArchery <- data.frame(option, value)
@@ -70,12 +82,24 @@ value <- c(70 + ceiling(MarksmanBase$PSkillLv/2), 30 + MarksmanBase$PSkillLv, 15
 CrossbowExpert <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
-value <- c(40 + MarksmanBase$PSkillLv)
+value <- c(80 + 2 * MarksmanBase$PSkillLv)
 IllusionStep <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
 value <- c(15 + MarksmanBase$PSkillLv)
 AdditionalBolt <- data.frame(option, value)
+
+option <- factor(c("IGR"), levels=PSkill)
+value <- c(30 + MarksmanBase$PSkillLv)
+ArrowIllusionPassive <- data.frame(option, value)
+
+option <- factor(c("FDR", "IGR"), levels=PSkill)
+value <- c(8, 20)
+AdvancedEnhanceArrowPassive <- data.frame(option, value)
+
+option <- factor(c("FDR"), levels=PSkill)
+value <- c(10 + MarksmanBase$PSkillLv)
+LastmanStanding <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(MarksmanCore, "Blink"))
@@ -85,27 +109,12 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(MarksmanCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-MarksmanPassive <- Passive(list(ArcherMastery, CriticalShot, PhysicalTraining, CrossbowMastery, ExtremeArchery, Marksmanship, 
-                                IllusionStep, CrossbowExpert, AdditionalBolt, BlinkPassive, RopeConnectPassive))
+MarksmanPassive <- Passive(list(TitaniumArrow, ArcherMastery, CriticalShot, PhysicalTraining, CrossbowMastery, CrossbowAcceleration, SoulArrow, ExtremeArchery, Marksmanship, 
+                                IllusionStep, CrossbowExpert, AdditionalBolt, ArrowIllusionPassive, AdvancedEnhanceArrowPassive, LastmanStanding, BlinkPassive, RopeConnectPassive))
 
 
 ## Marksman - Buff
-Distance <- 400
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-CrossbowBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("ATK", levels=BSkill)
-value <- c(30)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SoulArrow <- rbind(data.frame(option, value), info)
-
-option <- factor("MainStat", levels=BSkill)
+{option <- factor("MainStat", levels=BSkill)
 value <- c(floor((MarksmanBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(MarksmanBase$SkillLv/2))))
 info <- c(900 + 30 * MarksmanBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -141,10 +150,17 @@ Bullseye <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(T)
-info <- c(60, 120, 810, F, T, F, T)
+info <- c(72, 120, 810, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SplitArrowBuff <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(10, 0, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+ChargedArrowCharge <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(T)
@@ -160,6 +176,13 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)
 
+option <- factor("CDMR", levels=BSkill)
+value <- c(20 * (0.2 + 0.01 * GetCoreLv(MarksmanCore, "CriticalReinforce")))
+info <- c(0, 120, 0, F, T, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+Synergy <- rbind(data.frame(option, value), info)
+
 option <- factor(c("MainStat", "BDR"), levels=BSkill)
 value <- c(floor(((1 + 0.1 * GetCoreLv(MarksmanCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * MarksmanBase$MainStatP), 5 + floor(GetCoreLv(MarksmanCore, "MapleWarriors2")/2))
 info <- c(60, 180, 630, F, T, F, T)
@@ -167,62 +190,40 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR"), levels=BSkill)
-value <- c(IGRCalc(c(12, 23)))
-info <- c(1, 180, 0, F, F, F, F)
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-Distance0 <- rbind(data.frame(option, value), info)
-
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(12)
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-DistanceSenseTrueSnipe <- rbind(data.frame(option, value), info)
+EnhanceArrowStack <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=BSkill)
-value <- c(ifelse(Distance>=200, min(12, floor((Distance-200)/18)*2), 0), 
-           ifelse(Distance<200, min(12, floor((200-Distance)/18)*2), 0))
-info <- c(1, 180, 0, F, F, F, F)
+value <- c(4, 13)
+info <- c(15, 20, 0, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-DistancingSense <- rbind(data.frame(option, value), info)
+FocusOnBuff <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR"), levels=BSkill)
-value <- c(min(23 + floor(Distance/40) * 3, 50 + MarksmanBase$PSkillLv))
-info <- c(1, 180, 0, F, F, F, F)
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(3, 4, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-WeaknessFinding <- rbind(data.frame(option, value), info)
-
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(10 + MarksmanBase$PSkillLv)
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-LastmanStanding <- rbind(data.frame(option, value), info)
+EnhanceSinpeMark <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR"), levels=BSkill)
 value <- c(2)
 info <- c(1, 180, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-MotalBlow <- rbind(data.frame(option, value), info)
+MotalBlow <- rbind(data.frame(option, value), info)}
 
-option <- factor("CDMR", levels=BSkill)
-value <- c(20 * (0.2 + 0.01 * GetCoreLv(MarksmanCore, "CriticalReinforce")))
-info <- c(0, 120, 0, F, T, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Synergy <- rbind(data.frame(option, value), info)}
-
-MarksmanBuff <- list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
+MarksmanBuff <- list(MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
                      UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, Bullseye=Bullseye, 
-                     SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, DistanceSenseTrueSnipe=DistanceSenseTrueSnipe, 
-                     DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
+                     SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, ChargedArrowCharge=ChargedArrowCharge, CriticalReinforce=CriticalReinforce, Synergy=Synergy, 
+                     MapleWarriors2=MapleWarriors2, EnhanceArrowStack=EnhanceArrowStack, FocusOnBuff=FocusOnBuff, EnhanceSinpeMark=EnhanceSinpeMark, MotalBlow=MotalBlow, 
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-### PetBuff : CrossbowBooster(990ms), SoulArrow(840ms), SharpEyes(900ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+### PetBuff : SharpEyes(900ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), UsefulAdvancedBless
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   MarksmanBuff[[length(MarksmanBuff)+1]] <- UsefulAdvancedBless
   names(MarksmanBuff)[[length(MarksmanBuff)]] <- "UsefulAdvancedBless"
@@ -253,10 +254,10 @@ info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-MarksmanBuff <- list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
+MarksmanBuff <- list(MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
                      UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, Bullseye=Bullseye, 
-                     SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, DistanceSenseTrueSnipe=DistanceSenseTrueSnipe, 
-                     DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
+                     SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, ChargedArrowCharge=ChargedArrowCharge, CriticalReinforce=CriticalReinforce, Synergy=Synergy, 
+                     MapleWarriors2=MapleWarriors2, EnhanceArrowStack=EnhanceArrowStack, FocusOnBuff=FocusOnBuff, EnhanceSinpeMark=EnhanceSinpeMark, MotalBlow=MotalBlow, 
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   MarksmanBuff[[length(MarksmanBuff)+1]] <- UsefulAdvancedBless
@@ -280,12 +281,27 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 ## Marksman - Attacks
 {option <- factor(c("IGR", "BDR", "CRR", "FDR"), levels=ASkill)
-value <- c(IGRCalc(c(25 + ceiling(MarksmanSpec$SkillLv/3)*2, ifelse(GetCoreLv(MarksmanCore, "Snipe")>=40, 20, 0))), 
+value <- c(IGRCalc(c(25 + ceiling(MarksmanSpec$SkillLv/3)* 2, ifelse(GetCoreLv(MarksmanCore, "Snipe")>=40, 20, 0))), 
            30, 100, 2 * GetCoreLv(MarksmanCore, "Snipe"))
-info <- c(465 + MarksmanSpec$SkillLv * 5, 10, 840, NA, NA, NA, NA, F)
+info <- c(465 + MarksmanSpec$SkillLv * 5, 11, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Snipe <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "CRR", "FDR"), levels=ASkill)
+value <- c(IGRCalc(c(25 + ceiling(MarksmanSpec$SkillLv/3)* 2, ifelse(GetCoreLv(MarksmanCore, "Snipe")>=40, 20, 0))), 
+           30, 100, 2 * GetCoreLv(MarksmanCore, "Snipe"))
+info <- c(510 + MarksmanSpec$SkillLv * 7, 11, 840, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+EnhanceSnipe <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "CRR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(MarksmanCore, "Snipe")>=40, 20, 0), 30, 100, 2 * GetCoreLv(MarksmanCore, "Snipe"))
+info <- c(250 + MarksmanSpec$SkillLv * 2, 5, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+EnhanceSnipeAddATK <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
@@ -343,7 +359,8 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FinalAttack <- rbind(data.frame(option, value), info)}
 
-MarksmanATK <- Attack(list(Snipe=Snipe, SplitArrow=SplitArrow, ChargedArrowStart=ChargedArrowStart, ChargedArrow=ChargedArrow, ChargedArrowUncharged=ChargedArrowUncharged, 
+MarksmanATK <- Attack(list(Snipe=Snipe, EnhanceSnipe=EnhanceSnipe, EnhanceSnipeAddATK=EnhanceSnipeAddATK, 
+                           SplitArrow=SplitArrow, ChargedArrowStart=ChargedArrowStart, ChargedArrow=ChargedArrow, ChargedArrowUncharged=ChargedArrowUncharged, 
                            TrueSnipe=TrueSnipe, TrueSnipeStart=TrueSnipeStart, FullbustShot=FullbustShot, FinalAttack=FinalAttack, 
                            SpiderInMirror=SpiderInMirror))
 
@@ -358,14 +375,14 @@ Evolve <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=SSkill)
 value <- c(3 * GetCoreLv(MarksmanCore, "Freezer"), ifelse(GetCoreLv(MarksmanCore, "Freezer")>=40, 20, 0))
-info <- c(ifelse(Distance >= 400, 0, 390), 1, 0, 1710, 220, 105, T, T, F, F)
+info <- c(390, 1, 0, 1710, 220, 105, T, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Freezer <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * GetCoreLv(MarksmanCore, "GuidedArrow"), 1, 720, 500, 0.5 * 89 + 0.72 + 0.01, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(MarksmanCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)}
@@ -393,55 +410,399 @@ DealCycle <- c("Skills", "Time", rownames(MarksmanBuff))
 MarksmanDealCycle <- t(rep(0, length(DealCycle)))
 colnames(MarksmanDealCycle) <- DealCycle
 
-MarksmanDealCycle <- DCBuff(MarksmanDealCycle, c("CrossbowBooster", "SoulArrow", "SharpEyes", "MapleSoldier", "UsefulCombatOrders"), BuffFinal)
-if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
-  MarksmanDealCycle <- DCBuff(MarksmanDealCycle, c("UsefulAdvancedBless"), BuffFinal)
+MarksmanCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
+                          Period=120, CycleTime=240) {
+  BuffSummonedPrior <- c("SharpEyes", "MapleSoldier", "EpicAdventure", "UsefulCombatOrders", "UsefulAdvancedBless", 
+                         "GuidedArrow", "Evolve", "FullbustShotBuff", "MapleWarriors2", "Bullseye", "SplitArrowBuff", "SoulContractLink", "CriticalReinforce", "Restraint4")
+  Times120 <- c(0, 0, 1, 0, 0, 
+                0, 1, 1, 0.5, 1, 1, 1, 1, 0.5)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
+  
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime / Period)
+  for(i in 1:length(BuffSummonedPrior)) {
+    SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
+  }
+  
+  SubTimeUniques <- unique(SubTime)
+  SubTimeUniques <- SubTimeUniques[SubTimeUniques > 0]
+  TimeTypes <- c()
+  for(i in 1:length(SubTimeUniques)) {
+    Time <- 0 ; r <- 1
+    while(Time < TotalTime) {
+      Time <- SubTimeUniques[i] * r
+      r <- r + 1
+      TimeTypes <- c(TimeTypes, Time)
+    }
+  }
+  TimeTypes <- TimeTypes[TimeTypes < TotalTime]
+  TimeTypes <- unique(TimeTypes)
+  TimeTypes <- TimeTypes[order(TimeTypes)]
+  
+  Buffs <- data.frame(Buff=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  Buffs <- subset(Buffs, Buffs$SubTime > 0)
+  
+  BuffList <- list()
+  BuffList[[1]] <- BuffSummonedPrior
+  for(i in 1:length(TimeTypes)) {
+    s <- c()
+    for(j in 1:nrow(Buffs)) {
+      if(round(TimeTypes[i] / Buffs[j, 2]) == TimeTypes[i] / Buffs[j, 2]) {
+        s <- c(s, Buffs[j, 1])
+      }
+    }
+    BuffList[[i+1]] <- s
+  }
+  
+  DelayDataB <- data.frame(Name=rownames(BuffFinal), Delay=BuffFinal$Delay)
+  DelayDataS <- data.frame(Name=rownames(SummonedFinal), Delay=SummonedFinal$Delay)
+  DelayData <- rbind(DelayDataB, DelayDataS)
+  
+  BuffDelays <- list()
+  for(i in 1:length(BuffList)) {
+    t <- c()
+    for(j in 1:length(BuffList[[i]])) {
+      for(k in 1:nrow(DelayData)) {
+        if(DelayData$Name[k]==BuffList[[i]][j]) {
+          t <- c(t, k)
+        }
+      }
+    }
+    BuffDelays[[i]] <- DelayData$Delay[t]
+  } 
+  
+  ChargedArrowLogic <- function(DealCycle, CARemain, CAStatus = c("Auto", "Manual"), ATKForce = F) {
+    ## Charged Arrow Cancel
+    if(DealCycle$ChargedArrowCharge[nrow(DealCycle)] > 7000 & DealCycle$ChargedArrowCharge[nrow(DealCycle)] - DealCycle$Time[1] < 7000) {
+      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$ChargedArrowCharge[nrow(DealCycle)] - 7000
+    } 
+    
+    ## Charged Arrow ATK (Auto)
+    if(DealCycle$ChargedArrowCharge[nrow(DealCycle)] > 0 & DealCycle$ChargedArrowCharge[nrow(DealCycle)] - DealCycle$Time[1] <= 0) {
+      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$ChargedArrowCharge[nrow(DealCycle)]
+      DealCycle <- DCATK(DealCycle, "ChargedArrow", ATKFinal)
+      DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+      DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+      DealCycle$ChargedArrowCharge[nrow(DealCycle)] <- 0
+    }
+    
+    ## Charged Arrow ATK (Forced)
+    if(ATKForce == T) {
+      if(DealCycle$Skills[nrow(DealCycle)] == "FullbustShot") {
+        DealCycle[1, 2:ncol(DealCycle)] <- 450
+      } else {
+        DealCycle[1, 2:ncol(DealCycle)] <- 30
+      }
+      if(DealCycle$ChargedArrowCharge[nrow(DealCycle)] - DealCycle$Time[1] > 7000) {
+        DealCycle <- DCATK(DealCycle, "ChargedArrowUncharged", ATKFinal)
+        DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+        DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+        DealCycle$ChargedArrowCharge[nrow(DealCycle)] <- 0
+      } else {
+        DealCycle <- DCATK(DealCycle, "ChargedArrow", ATKFinal)
+        DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+        DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+        DealCycle$ChargedArrowCharge[nrow(DealCycle)] <- 0
+      }
+    }
+    
+    ## Charged Arrow Charging Start (Manual)
+    if(CARemain - DealCycle$Time[1] <= 0 & CAStatus == "Manual") {
+      DealCycle <- DCATK(DealCycle, "ChargedArrowStart", ATKFinal)
+      DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+      DealCycle$ChargedArrowCharge[nrow(DealCycle)] <- 10000
+    }
+    
+    ## Charged Arrow Charging Start (Auto)
+    if(CARemain - DealCycle$Time[1] <= 0 & CAStatus == "Auto") {
+      RemainedTime <- (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="ChargedArrowStart")$Time)) - 11000
+      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Time[1] - ((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="ChargedArrowStart")$Time)) - 11000)
+      DealCycle <- DCATK(DealCycle, "ChargedArrowStart", ATKFinal)
+      DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+      DealCycle$ChargedArrowCharge[nrow(DealCycle)] <- 10000
+      DealCycle[1, 2:ncol(DealCycle)] <- RemainedTime
+    }
+    return(DealCycle)
+  }
+  
+  TotalTime <- TotalTime * 1000
+  DealCycle <- PreDealCycle
+  for(i in 1:length(BuffList[[1]])) {
+    if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
+      DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
+    } else {
+      if(BuffList[[1]][i]=="GuidedArrow") {
+        DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
+      }
+      DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
+    }
+  }
+  
+  SubTimeList <- data.frame(Skills=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
+  NoSubTime <- subset(SubTimeList, SubTimeList$SubTime==0)$Skills
+  NoSubTimeBuff <- c()
+  for(i in 1:length(NoSubTime)) {
+    NoSubTimeBuff <- c(NoSubTimeBuff, NoSubTime[i])
+  }
+  ColNums <- c()
+  for(i in 1:length(NoSubTimeBuff)) {
+    for(j in 1:length(colnames(DealCycle))) {
+      if(NoSubTimeBuff[i]==colnames(DealCycle)[j]) {
+        ColNums[i] <- j
+      }
+    }
+  }
+  BuffList[[length(BuffList)+1]] <- BuffList[[1]]
+  BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
+  TimeTypes <- c(0, TimeTypes, TotalTime/1000)
+  CACool <- subset(ATKFinal, rownames(ATKFinal)=="ChargedArrowStart")$CoolTime * 1000
+  CARemain <- 0 ; CAStatus <- "Manual"
+  DealCycle$FocusOnBuff[2:nrow(DealCycle)] <- 10000
+  DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+  CARemain <- CACool
+  
+  for(k in 2:length(BuffList)) {
+    CycleBuffList <- data.frame(Skills=BuffList[[k]], Delay=BuffDelays[[k]])
+    BuffEndTime <- c()
+    for(i in 1:length(BuffList[[k]])) {
+      a <- subset(DealCycle, BuffList[[k]][i]==DealCycle$Skills)
+      a <- rbind(a, subset(DealCycle, paste(BuffList[[k]][i], "Summoned", sep="")==DealCycle$Skills))
+      for(j in 1:nrow(CycleBuffList)) {
+        if(CycleBuffList$Skills[j]==BuffList[[k]][i]) {
+          Idx <- j
+          break
+        }
+      }
+      BuffEndTime[i] <- max(a$Time) + 
+        min(subset(SubTimeList, SubTimeList$Skills==BuffList[[k]][i])$SubTime * 1000, subset(BuffFinal, rownames(BuffFinal)==BuffList[[k]][i])$CoolTime * 1000, 
+            subset(SummonedFinal, rownames(SummonedFinal)==BuffList[[k]][i])$CoolTime * 1000) + 
+        sum(CycleBuffList$Delay[Idx:nrow(CycleBuffList)])
+    }
+    BuffEndTime <- max(BuffEndTime)
+    BuffEndTime <- max(BuffEndTime, TimeTypes[k] * 1000)
+    BuffStartTime <- BuffEndTime - sum(CycleBuffList$Delay)
+    while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime) {
+      for(i in 1:length(ColNums)) {
+        if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
+          DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        }
+      }
+      ## Fullbust Shot
+      if(nrow(DealCycle[DealCycle$Skills=="FullbustShotBuff", ]) * 8 > nrow(DealCycle[DealCycle$Skills=="FullbustShot", ])) {
+        for(i in 1:7) {
+          DealCycle <- DCATK(DealCycle, "FullbustShot", ATKFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+          DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+          if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+            CAStatus <- "Auto"
+            CARemain <- max(0, 11000 - DealCycle$Time[1])
+          } else {
+            CARemain <- max(0, CARemain - DealCycle$Time[1])
+          }
+        }
+        
+        if(DealCycle$Restraint4[nrow(DealCycle)] > 0) {
+          DealCycle <- DCATK(DealCycle, "FullbustShot", ATKFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+          DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, T)
+          CAStatus <- "Manual"
+          CARemain <- max(0, CACool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="ChargedArrowStart", ]$Time)))
+        } else {
+          DealCycle <- DCATK(DealCycle, "FullbustShot", ATKFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+          DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+          if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+            CAStatus <- "Auto"
+            CARemain <- max(0, 11000 - DealCycle$Time[1])
+          } else {
+            CARemain <- max(0, CARemain - DealCycle$Time[1])
+          }
+        }
+      }
+      ## True Snipe
+      else if(nrow(DealCycle[DealCycle$Skills=="Restraint4", ]) > nrow(DealCycle[DealCycle$Skills=="TrueSnipeStart", ])) {
+        DealCycle <- DCATK(DealCycle, "TrueSnipeStart", ATKFinal)
+        DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+        CARemain <- max(0, CARemain - DealCycle$Time[1])
+        
+        for(i in 1:6) {
+          DealCycle <- DCATK(DealCycle, "TrueSnipe", ATKFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        }
+        
+        DealCycle <- DCATK(DealCycle, "TrueSnipe", ATKFinal)
+        DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+        DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+        DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+        if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+          CAStatus <- "Auto"
+          CARemain <- max(0, 11000 - DealCycle$Time[1])
+        } else {
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        }
+      }
+      ## Enhance Snipe
+      else if(DealCycle$EnhanceArrowStack[nrow(DealCycle)] == 3) {
+        DealCycle <- DCATK(DealCycle, "EnhanceSnipe", ATKFinal)
+        DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- 0
+        DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+        DealCycle$EnhanceSinpeMark[nrow(DealCycle)] <- 5000
+        DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+        if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+          CAStatus <- "Auto"
+          CARemain <- max(0, 11000 - DealCycle$Time[1])
+        } else {
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        }
+      }
+      ## Snipe
+      else {
+        DealCycle <- DCATK(DealCycle, "Snipe", ATKFinal)
+        DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1] + 1
+        DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+        if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+          CAStatus <- "Auto"
+          CARemain <- max(0, 11000 - DealCycle$Time[1])
+        } else {
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        }
+      }
+    }
+    
+    if(DealCycle$ChargedArrowCharge[nrow(DealCycle)] > 0) {
+      DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, T)
+      CAStatus <- "Manual"
+      CARemain <- max(0, CACool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="ChargedArrowStart", ]$Time)))
+    }
+    
+    if(k != length(BuffList)) {
+      for(i in 1:length(BuffList[[k]])) {
+        if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
+          DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        } else {
+          DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
+          DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
+          CARemain <- max(0, CARemain - DealCycle$Time[1])
+        }
+      }
+    }
+    
+    if(DealCycle$ChargedArrowCharge[nrow(DealCycle)] > 0) {
+      DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+      if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+        CAStatus <- "Auto"
+        CARemain <- max(0, 11000 - DealCycle$Time[1])
+      } else {
+        CARemain <- max(0, CARemain - DealCycle$Time[1])
+      }
+    }
+  }
+  
+  while(DealCycle$EnhanceArrowStack[nrow(DealCycle)] > 0) {
+    if(DealCycle$EnhanceArrowStack[nrow(DealCycle)] == 3) {
+      DealCycle <- DCATK(DealCycle, "EnhanceSnipe", ATKFinal)
+      DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- 0
+      DealCycle$FocusOnBuff[nrow(DealCycle)] <- 15000
+      DealCycle$EnhanceSinpeMark[nrow(DealCycle)] <- 5000
+    }
+    ## Snipe
+    else {
+      DealCycle <- DCATK(DealCycle, "Snipe", ATKFinal)
+      DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1] + 1
+    }
+  }
+  return(DealCycle)
 }
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("SpiderInMirror"), ATKFinal)
-MarksmanDealCycle <- DCSummoned(MarksmanDealCycle, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle <- DCSummoned(MarksmanDealCycle, Skill="Evolve", SummonedFinal)
-MarksmanDealCycle <- DCBuff(MarksmanDealCycle, c("FullbustShotBuff", "MapleWarriors2", "Bullseye", "SplitArrowBuff", "SoulContractLink", "CriticalReinforce", "Restraint4", "EpicAdventure"), BuffFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("FullbustShot", 8)), T, ATKFinal)
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("TrueSnipeStart", rep("TrueSnipe", 7)), ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 13)), T, ATKFinal)
-MarksmanDealCycle <- DCSummoned(MarksmanDealCycle, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 14)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 7)), T, ATKFinal)
-MarksmanDealCycle <- DCSummoned(MarksmanDealCycle, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle <- DCSummoned(MarksmanDealCycle, Skill="Evolve", SummonedFinal)
-MarksmanDealCycle <- DCBuff(MarksmanDealCycle, c("FullbustShotBuff", "Bullseye", "SplitArrowBuff", "SoulContractLink", "CriticalReinforce", "EpicAdventure"), BuffFinal)
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("FullbustShot"), ATKFinal)
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("FullbustShot"), ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("FullbustShot", 6), rep("Snipe", 12)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 9)), T, ATKFinal)
-MarksmanDealCycle <- DCSummoned(MarksmanDealCycle, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("Snipe"), ATKFinal)
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("Snipe"), ATKFinal)
-MarksmanDealCycle <- DCATK(MarksmanDealCycle, c("Snipe"), ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle <- ChargedArrowCycle(MarksmanDealCycle, c(rep("Snipe", 14)), T, ATKFinal)
+MarksmanAddATK <- function(DealCycle) {
+  ## Split Arrow, Final Attack, Enhance Snipe Mark ATK
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("Snipe", "EnhanceSnipe")) >= 1 & DealCycle$SplitArrowBuff[i] > 0) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("SplitArrow")
+    } else if (DealCycle$Skills[i]=="FullbustShot" & DealCycle$SplitArrowBuff[i] > 0) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("SplitArrow")
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("SplitArrow")
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("SplitArrow")
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("SplitArrow")
+    }
+    if(DealCycle$Skills[i]=="FullbustShot" | DealCycle$Skills[i]=="Snipe" | DealCycle$Skills[i]=="EnhanceSnipe") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("FinalAttack")
+    }
+    if(DealCycle$Skills[i]=="Snipe" & DealCycle$EnhanceSinpeMark[i] > 0 & DealCycle$EnhanceArrowStack[i] == 1) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- c("EnhanceSnipeAddATK")
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ]
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  
+  ## Spider In Mirror
+  DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
+  
+  
+  ## Guided Arrow
+  DealCycle <- DCSummonedATKs(DealCycle, "GuidedArrow", SummonedFinal)
+  
+  
+  ## Evolve
+  DealCycle <- DCSummonedATKs(DealCycle, "Evolve", SummonedFinal)
+  DealCycle <- EvolveCycle(DealCycle)
+  
+  
+  ## Bullseye - Critical Reinforce Synergy
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$CriticalReinforce[i] > 0 & DealCycle$Bullseye[i] > 0) {
+      DealCycle$Synergy[i] <- DealCycle$Bullseye[i]
+    }
+  }
+  
+  
+  ## Motal Blow
+  for(i in 1:nrow(DealCycle)) {
+    if(max(DealCycle$Skills[i]==c("Snipe", "EnhanceSnipe", "EnhanceSnipeAddATK", "SplitArrow", "ChargedArrow", "ChargedArrowUncharged", "TrueSnipe", "FullbustShot", "GuidedArrow", "SpiderInMirror"))==1) {
+      DealCycle$MotalBlow[i] <- 1
+    }
+  }
+  
+  
+  ## Dummy Reduction
+  DealCycle$EnhanceSinpeMark <- 0
+  DealCycle$EnhanceArrowStack <- 0
+  DealCycle$ChargedArrowCharge <- 0
+  
+  return(DealCycle)
+}
 
+
+MarksmanDealCycle <- MarksmanCycle(PreDealCycle=MarksmanDealCycle, 
+                                    ATKFinal=ATKFinal, 
+                                    BuffFinal=BuffFinal, 
+                                    SummonedFinal=SummonedFinal, 
+                                    Spec=MarksmanSpec, 
+                                    Period=120, 
+                                    CycleTime=240)
 MarksmanDealCycle <- DealCycleFinal(MarksmanDealCycle)
-MarksmanDealCycle <- AddATKsCycle(MarksmanDealCycle)
-MarksmanDealCycle <- DCSummonedATKs(MarksmanDealCycle, Skill=c("GuidedArrow", "Evolve"), SummonedFinal)
-MarksmanDealCycle <- DCSpiderInMirror(MarksmanDealCycle, SummonedFinal)
-MarksmanDealCycle <- EvolveCycle(MarksmanDealCycle)
-MarksmanDealCycle <- MarksmanSynergy(MarksmanDealCycle)
-MarksmanDealCycle <- MarksmanDistance(MarksmanDealCycle)
+MarksmanDealCycle <- MarksmanAddATK(MarksmanDealCycle)
 MarksmanDealCycleReduction <- DealCycleReduction(MarksmanDealCycle)
+
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {
@@ -487,227 +848,3 @@ set(get(DPMCalcOption$DataName), as.integer(4), "Marksman", Deal_40s(MarksmanDea
 MarksmanSpecMean <- SpecMean("Marksman", MarksmanDealCycleReduction, 
                              DealCalcWithMaxDMR(MarksmanDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt), 
                              ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt)
-
-
-## Distance 0
-Distance <- 100
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-CrossbowBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("ATK", levels=BSkill)
-value <- c(30)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SoulArrow <- rbind(data.frame(option, value), info)
-
-option <- factor("MainStat", levels=BSkill)
-value <- c(floor((MarksmanBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(MarksmanBase$SkillLv/2))))
-info <- c(900 + 30 * MarksmanBase$SkillLv, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-MapleSoldier <- rbind(data.frame(option, value), info)
-
-option <- factor(c("CRR", "CDMR"), levels=BSkill)
-value <- c(20 + ceiling(MarksmanBase$SkillLv/2), 15 + ceiling(MarksmanBase$SkillLv/2))
-info <- c(300 + 3 * MarksmanBase$SkillLv, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SharpEyes <- rbind(data.frame(option, value), info)
-
-Useful <- UsefulSkills(MarksmanCore)
-UsefulCombatOrders <- Useful$UsefulCombatOrders
-if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
-  UsefulAdvancedBless <- Useful$UsefulAdvancedBless
-}
-
-option <- factor("BDR", levels=BSkill)
-value <- c(5)
-info <- c(120, 120, 0, F, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-EpicAdventure <- rbind(data.frame(option, value), info)
-
-option <- factor(c("CRR", "CDMR", "IGR", "BDR"), levels=BSkill)
-value <- c(20, 10, 20, 20)
-info <- c(30, 90, 960, F, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Bullseye <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSkill", levels=BSkill)
-value <- c(T)
-info <- c(60, 120, 810, F, T, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SplitArrowBuff <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSkill", levels=BSkill)
-value <- c(T)
-info <- c(60, 120, 660, F, T, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-FullbustShotBuff <- rbind(data.frame(option, value), info)
-
-option <- factor("CDMR", levels=BSkill)
-value <- c(MarksmanSpec$CRR * (0.2 + 0.01 * GetCoreLv(MarksmanCore, "CriticalReinforce")))
-info <- c(30, 120, 780, F, T, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-CriticalReinforce <- rbind(data.frame(option, value), info)
-
-option <- factor(c("MainStat", "BDR"), levels=BSkill)
-value <- c(floor(((1 + 0.1 * GetCoreLv(MarksmanCore, "MapleWarriors2")) * MapleSoldier[1, 2]) * MarksmanBase$MainStatP), 5 + floor(GetCoreLv(MarksmanCore, "MapleWarriors2")/2))
-info <- c(60, 180, 630, F, T, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-MapleWarriors2 <- rbind(data.frame(option, value), info)
-
-option <- factor(c("IGR"), levels=BSkill)
-value <- c(IGRCalc(c(12, 23)))
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Distance0 <- rbind(data.frame(option, value), info)
-
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(12)
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-DistanceSenseTrueSnipe <- rbind(data.frame(option, value), info)
-
-option <- factor(c("FDR", "IGR"), levels=BSkill)
-value <- c(ifelse(Distance>=200, min(12, floor((Distance-200)/18)*2), 0), 
-           ifelse(Distance<200, min(12, floor((200-Distance)/18)*2), 0))
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-DistancingSense <- rbind(data.frame(option, value), info)
-
-option <- factor(c("IGR"), levels=BSkill)
-value <- c(min(23 + floor(Distance/40) * 3, 50 + MarksmanBase$PSkillLv))
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-WeaknessFinding <- rbind(data.frame(option, value), info)
-
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(10 + MarksmanBase$PSkillLv)
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-LastmanStanding <- rbind(data.frame(option, value), info)
-
-option <- factor(c("BDR"), levels=BSkill)
-value <- c(2)
-info <- c(1, 180, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-MotalBlow <- rbind(data.frame(option, value), info)
-
-option <- factor("CDMR", levels=BSkill)
-value <- c(20 * (0.2 + 0.01 * GetCoreLv(MarksmanCore, "CriticalReinforce")))
-info <- c(0, 120, 0, F, T, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Synergy <- rbind(data.frame(option, value), info)}
-
-{option <- factor(c("FDR", "IGR"), levels=SSkill)
-value <- c(3 * GetCoreLv(MarksmanCore, "Freezer"), ifelse(GetCoreLv(MarksmanCore, "Freezer")>=40, 20, 0))
-info <- c(ifelse(Distance >= 400, 0, 390), 1, 0, 1710, 220, 105, T, T, F, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-Freezer <- rbind(data.frame(option, value), info)}
-MarksmanBuff2 <- list(CrossbowBooster=CrossbowBooster, SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
-                      UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, Bullseye=Bullseye, 
-                      SplitArrowBuff=SplitArrowBuff, FullbustShotBuff=FullbustShotBuff, CriticalReinforce=CriticalReinforce, Synergy=Synergy, Distance0=Distance0, DistanceSenseTrueSnipe=DistanceSenseTrueSnipe, 
-                      DistancingSense=DistancingSense, WeaknessFinding=WeaknessFinding, LastmanStanding=LastmanStanding, MotalBlow=MotalBlow, MapleWarriors2=MapleWarriors2, 
-                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
-  MarksmanBuff2[[length(MarksmanBuff2)+1]] <- UsefulAdvancedBless
-  names(MarksmanBuff2)[[length(MarksmanBuff2)]] <- "UsefulAdvancedBless"
-}
-MarksmanBuff2 <- Buff(MarksmanBuff2)
-MarksmanAllTimeBuff <- AllTimeBuff(MarksmanBuff2)
-MarksmanSummoned2 <- Summoned(list(Evolve=Evolve, Freezer=Freezer, GuidedArrow=GuidedArrow, SpiderInMirrorStart=SpiderInMirrorStart, 
-                                   SpiderInMirror1=SpiderInMirror1, SpiderInMirror2=SpiderInMirror2, SpiderInMirror3=SpiderInMirror3, 
-                                   SpiderInMirror4=SpiderInMirror4, SpiderInMirror5=SpiderInMirror5, SpiderInMirrorWait=SpiderInMirrorWait))
-
-BuffFinal <- data.frame(MarksmanBuff2)
-BuffFinal$CoolTime <- Cooldown(BuffFinal$CoolTime, BuffFinal$CoolReduceAvailable, MarksmanSpec$CoolReduceP, MarksmanSpec$CoolReduce)
-BuffFinal$Duration <- BuffFinal$Duration + BuffFinal$Duration * ifelse(BuffFinal$BuffDurationAvailable==T, MarksmanSpec$BuffDuration / 100, 0) +
-  ifelse(BuffFinal$ServerLag==T, General$General$Serverlag, 0)
-BuffFinal <- CriReinAdj(MarksmanSpec, MarksmanSpecOpt, BuffFinal, GetCoreLv(MarksmanCore, "CriticalReinforce"))
-
-SummonedFinal <- data.frame(MarksmanSummoned2)
-SummonedFinal$CoolTime <- Cooldown(SummonedFinal$CoolTime, SummonedFinal$CoolReduceAvailable, MarksmanSpec$CoolReduceP, MarksmanSpec$CoolReduce)
-SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$SummonedDurationAvailable==T, SummonedFinal$Duration * MarksmanSpec$SummonedDuration / 100, 0)
-
-DealCycle <- c("Skills", "Time", rownames(MarksmanBuff))
-MarksmanDealCycle0 <- t(rep(0, length(DealCycle)))
-colnames(MarksmanDealCycle0) <- DealCycle
-
-MarksmanDealCycle0 <- DCBuff(MarksmanDealCycle0, c("CrossbowBooster", "SoulArrow", "SharpEyes", "MapleSoldier", "UsefulCombatOrders"), BuffFinal)
-if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
-  MarksmanDealCycle0 <- DCBuff(MarksmanDealCycle0, c("UsefulAdvancedBless"), BuffFinal)
-}
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("SpiderInMirror"), ATKFinal)
-MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="Evolve", SummonedFinal)
-MarksmanDealCycle0 <- DCBuff(MarksmanDealCycle0, c("FullbustShotBuff", "MapleWarriors2", "Bullseye", "SplitArrowBuff", "SoulContractLink", "CriticalReinforce", "Restraint4", "EpicAdventure"), BuffFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("FullbustShot", 8)), T, ATKFinal)
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("TrueSnipeStart", rep("TrueSnipe", 7)), ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 13)), T, ATKFinal)
-MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 14)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 7)), T, ATKFinal)
-MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="Evolve", SummonedFinal)
-MarksmanDealCycle0 <- DCBuff(MarksmanDealCycle0, c("FullbustShotBuff", "Bullseye", "SplitArrowBuff", "SoulContractLink", "CriticalReinforce", "EpicAdventure"), BuffFinal)
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("FullbustShot"), ATKFinal)
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("FullbustShot"), ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("FullbustShot", 6), rep("Snipe", 12)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 9)), T, ATKFinal)
-MarksmanDealCycle0 <- DCSummoned(MarksmanDealCycle0, Skill="GuidedArrow", SummonedFinal)
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("Snipe"), ATKFinal)
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("Snipe"), ATKFinal)
-MarksmanDealCycle0 <- DCATK(MarksmanDealCycle0, c("Snipe"), ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 18)), T, ATKFinal)
-MarksmanDealCycle0 <- ChargedArrowCycle(MarksmanDealCycle0, c(rep("Snipe", 14)), T, ATKFinal)
-
-MarksmanDealCycle0 <- DealCycleFinal(MarksmanDealCycle0)
-MarksmanDealCycle0 <- AddATKsCycle(MarksmanDealCycle0)
-MarksmanDealCycle0 <- DCSummonedATKs(MarksmanDealCycle0, Skill=c("GuidedArrow", "Evolve"), SummonedFinal)
-MarksmanDealCycle0 <- DCSpiderInMirror(MarksmanDealCycle0, SummonedFinal)
-MarksmanDealCycle0 <- EvolveCycle(MarksmanDealCycle0)
-MarksmanDealCycle0 <- MarksmanSynergy(MarksmanDealCycle0)
-MarksmanDealCycle0 <- MarksmanDistance(MarksmanDealCycle0)
-
-MarksmanFinalDPMwithMax0 <- DealCalcWithMaxDMR(MarksmanDealCycle0, ATKFinal, BuffFinal, SummonedFinal, MarksmanSpecOpt)
-Marksman0DPM <- sum(na.omit(MarksmanFinalDPMwithMax0))/(max(MarksmanDealCycle0$Time)/60000)
-
-MarksmanDealData0 <- data.frame(MarksmanDealCycle0$Skills, MarksmanDealCycle0$Time, MarksmanDealCycle0$Restraint4, MarksmanFinalDPMwithMax0)
-colnames(MarksmanDealData0) <- c("Skills", "Time", "R4", "Deal")
-
-MarksmanR40 <- Deal_RR(MarksmanDealData0)
-Marksman40s0 <- Deal_40s(MarksmanDealData0)
-
-print(data.frame(Marksman0DPM=Marksman0DPM, MarksmanR40=MarksmanR40, Marksman40s0=Marksman40s0))

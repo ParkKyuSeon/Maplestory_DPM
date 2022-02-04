@@ -165,7 +165,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 
 option <- factor("FDR", levels=BSkill)
-value <- c(5 + floor(GetCoreLv(StrikerCore, "LightningCascade")/6))
+value <- c(12 + floor(GetCoreLv(StrikerCore, "LightningCascade")/2))
 info <- c(30 + floor(GetCoreLv(StrikerCore, "LightningCascade")/2), 120 - floor(GetCoreLv(StrikerCore, "LightningCascade")/2), 540, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -252,21 +252,21 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Hyper Setting : Typhoon - Bonus ATK, Thunderbolt - Reinforce / Bonus ATK, Annihilate - Reinforce / Boss Killer
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
 value <- c(40, ifelse(GetCoreLv(StrikerCore, "Annihilate")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Annihilate"))
-info <- c(350 + 4 * StrikerSpec$SkillLv, 7, 1170, NA, NA, NA, NA, F)
+info <- c(350 + 4 * StrikerSpec$SkillLv, 7, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Annihilate <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
 value <- c(20, ifelse(GetCoreLv(StrikerCore, "Thunderbolt")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Thunderbolt"))
-info <- c(320 + 4 * StrikerSpec$SkillLv, 6, 1050, NA, NA, NA, NA, F)
+info <- c(320 + 4 * StrikerSpec$SkillLv, 6, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Thunderbolt <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
 value <- c(ifelse(GetCoreLv(StrikerCore, "Typhoon")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Typhoon"))
-info <- c(390 + 3 * StrikerSpec$SkillLv, 6, 1200, NA, 10, T, T, F)
+info <- c(390 + 3 * StrikerSpec$SkillLv, 6, 840, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Typhoon <- rbind(data.frame(option, value), info)
@@ -332,18 +332,26 @@ value <- c()
 info <- c(750 + 30 * GetCoreLv(StrikerCore, "LightningSpearMultistrike"), 6, 0, 180, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-LightningSpearMultistrikeLastLightning <- rbind(data.frame(option, value), info)}
+LightningSpearMultistrikeLastLightning <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill) 
+value <- c(ifelse(GetCoreLv(StrikerCore, "TidalCrash")>=40, 20, 0), 5 * GetCoreLv(StrikerCore, "TidalCrash"))
+info <- c(255, 2, 300, 0, 1.8, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+TidalCrash <- rbind(data.frame(option, value), info)}
 
 StrikerATK <- Attack(list(Annihilate=Annihilate, Thunderbolt=Thunderbolt, Typhoon=Typhoon, DeepRising=DeepRising, LightningCascade=LightningCascade, 
                           SharkTorpedo=SharkTorpedo, LightningGodSpearStrike=LightningGodSpearStrike, LightningGodSpearStrikeShock=LightningGodSpearStrikeShock, LightningSpearMultistrike=LightningSpearMultistrike, 
                           LightningSpearMultistrikeLast=LightningSpearMultistrikeLast, LightningSpearMultistrikeLightning=LightningSpearMultistrikeLightning, 
-                          LightningSpearMultistrikeLastLightning=LightningSpearMultistrikeLastLightning, SpiderInMirror=SpiderInMirror))
+                          LightningSpearMultistrikeLastLightning=LightningSpearMultistrikeLastLightning, 
+                          TidalCrash=TidalCrash, SpiderInMirror=SpiderInMirror))
 
 
 ## Striker - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(450 + 18 * GetCoreLv(StrikerCore, "CygnusPhalanx"), 1, 780, 240, 0.24 * (39 + GetCoreLv(StrikerCore, "CygnusPhalanx")) + 0.25, 30, F, T, F, F)
+info <- c(450 + 18 * GetCoreLv(StrikerCore, "CygnusPhalanx"), 1, 30 + 240, 240, 0.24 * (39 + GetCoreLv(StrikerCore, "CygnusPhalanx")) + 0.25, 30, F, T, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 CygnusPhalanx <- rbind(data.frame(option, value), info)}
@@ -372,15 +380,15 @@ StrikerSkipATK <- matrix(rep(F, nrow(ATKFinal) * (nrow(ATKFinal)+1)), nrow=nrow(
 StrikerSkipATK <- data.frame(StrikerSkipATK, row.names=c(rownames(ATKFinal)))
 colnames(StrikerSkipATK) <- c(rownames(ATKFinal), "SkippedDelay")
 
-StrikerSkipATK$Annihilate <- c(F, T, T, T, F, T, F, F, T, T, F, F, F)
-StrikerSkipATK$Thunderbolt <- c(T, F, T, T, F, T, F, F, T, T, F, F, F)
-StrikerSkipATK$Typhoon <- c(T, T, F, T, F, T, F, F, T, T, F, F, F)
-StrikerSkipATK$DeepRising <- c(T, T, T, F, F, T, F, F, T, T, F, F, F)
-StrikerSkipATK$SharkTorpedo <- c(T, T, T, T, F, F, F, F, T, T, F, F, F)
-StrikerSkipATK$LightningSpearMultistrike <- c(T, T, T, T, F, T, F, F, T, T, F, F, F)
-StrikerSkipATK$LightningSpearMultistrikeLast <- c(T, T, T, T, F, T, F, F, T, F, F, F, F)
-StrikerSkipATK$SkippedDelay <- c(Delay(630, StrikerSpec$ATKSpeed), Delay(690, StrikerSpec$ATKSpeed), Delay(540, StrikerSpec$ATKSpeed), Delay(540, StrikerSpec$ATKSpeed), 0, 
-                                 Delay(480, StrikerSpec$ATKSpeed), 0, 0, Delay(300, StrikerSpec$ATKSpeed), Delay(600, StrikerSpec$ATKSpeed), 0, 0, 0)
+StrikerSkipATK$Annihilate <- c(F, T, T, T, F, T, F, F, T, T, F, F, F, T)
+StrikerSkipATK$Thunderbolt <- c(T, F, T, T, F, T, F, F, T, T, F, F, F, T)
+StrikerSkipATK$Typhoon <- c(T, T, F, T, F, T, F, F, T, T, F, F, F, T)
+StrikerSkipATK$DeepRising <- c(T, T, T, F, F, T, F, F, T, T, F, F, F, T)
+StrikerSkipATK$SharkTorpedo <- c(T, T, T, T, F, F, F, F, T, T, F, F, F, T)
+StrikerSkipATK$LightningSpearMultistrike <- c(T, T, T, T, F, T, F, F, T, T, F, F, F, T)
+StrikerSkipATK$LightningSpearMultistrikeLast <- c(T, T, T, T, F, T, F, F, T, F, F, F, F, T)
+StrikerSkipATK$SkippedDelay <- c(Delay(450, StrikerSpec$ATKSpeed), Delay(390, StrikerSpec$ATKSpeed), Delay(540, StrikerSpec$ATKSpeed), Delay(540, StrikerSpec$ATKSpeed), 0, 
+                                 Delay(480, StrikerSpec$ATKSpeed), 0, 0, Delay(300, StrikerSpec$ATKSpeed), Delay(600, StrikerSpec$ATKSpeed), 0, 0, Delay(210, StrikerSpec$ATKSpeed), 0)
 StrikerSkipATK <- subset(StrikerSkipATK, StrikerSkipATK$SkippedDelay>0)
 
 ## Striker - DealCycle
@@ -391,17 +399,17 @@ StrikerDealCycle <- data.frame(StrikerDealCycle)
 
 StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, 
                          Period=c(120), CycleTime=c(240)) {
-  BuffSummonedPrior <- c("KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "LuckyDice5",
-                         "GloryofGardians", "CygnusPhalanx", "BlessofCygnus", "LightningCascadeBuff", "PrimalBolt", "OverDrive", "SoulContractLink", "Restraint4")
-  Times120 <- c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0, 
-                0, 4, 0.5, 1, 1, 2, 1, 0.5)
+  BuffSummonedPrior <- c("KnuckleBooster", "ArcCharger", "WindBooster", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "CygnusPhalanx", 
+                         "LuckyDice5", "GloryofGardians", "LightningCascadeBuff", "BlessofCygnus")
+  Times120 <- c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 4, 
+                0, 0, 1, 0.5)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
   }
   
-  SubTime <- rep(Period, length(BuffSummonedPrior))
-  TotalTime <- CycleTime
+  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - (Spec$CoolReduce / (CycleTime/Period)), length(BuffSummonedPrior))
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times120[i]==0, Inf, Times120[i])
   }
@@ -492,10 +500,15 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
     Cool$DeepRising <- ifelse(DealCycle$Skills[nrow(DealCycle)]=="DeepRising", subset(ATKFinal, rownames(ATKFinal)=="DeepRising")$CoolTime * 1000, 
                               max(Cool$DeepRising - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)]), 0))
     Cool$DeepRisingTimes <- nrow(subset(DealCycle, DealCycle$Skills=="DeepRising"))
-    Cool$LSMS <- ifelse(DealCycle$Skills[nrow(DealCycle)]=="LightningSpearMultistrikeBuff", 120000, max(Cool$LSMS - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)]), 0))
+    Cool$LSMS <- ifelse(DealCycle$Skills[nrow(DealCycle)]=="LightningSpearMultistrikeBuff", subset(BuffFinal, rownames(BuffFinal)=="LightningSpearMultistrikeBuff")$CoolTime * 1000, 
+                        max(Cool$LSMS - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)]), 0))
+    Cool$OverDrive <- ifelse(DealCycle$Skills[nrow(DealCycle)]=="OverDrive", TotalTime / 3, 
+                             max(Cool$OverDrive - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)]), 0))
+    Cool$SoulContract <- ifelse(DealCycle$Skills[nrow(DealCycle)]=="SoulContractLink", subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000, 
+                                max(Cool$SoulContract - (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)]), 0))
     return(Cool)
   }
-  Cool <- data.frame(LGSS=0, LGSSTimes=0, SharkTorpedo=0, LSMS=0, DeepRising=0, DeepRisingTimes=0)
+  Cool <- data.frame(LGSS=0, LGSSTimes=0, SharkTorpedo=0, LSMS=0, DeepRising=0, DeepRisingTimes=0, OverDrive=0, SoulContract=0)
   
   LinkDelay <- function(DealCycle, SkipStructure) {
     if(sum(DealCycle$Skills[nrow(DealCycle)]==rownames(SkipStructure))==1) {
@@ -535,8 +548,38 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
           Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
         }
       }
+      ## Over Drive, Primal Bolt
+      if(Cool$OverDrive - DealCycle$Time[1] <= 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 35000 | 
+         Cool$OverDrive - DealCycle$Time[1] <= 0 & nrow(subset(DealCycle, DealCycle$Skills=="OverDrive")) >= 1 & nrow(subset(DealCycle, DealCycle$Skills=="OverDrive")) < 3) {
+        DealCycle <- DCBuff(DealCycle, "OverDrive", BuffFinal)
+        DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
+        Link <- 0
+        Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+        
+        if(nrow(subset(DealCycle, DealCycle$Skills=="OverDrive")) == 1) {
+          DealCycle <- DCBuff(DealCycle, "PrimalBolt", BuffFinal)
+          DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
+          Link <- 0
+          Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+        }
+      }
+      ## Soul Contract, Restraint4
+      if(Cool$SoulContract - DealCycle$Time[1] <= 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) == 0 & DealCycle$BlessofCygnus[nrow(DealCycle)] - DealCycle$Time[1] <= 20000 | 
+         Cool$SoulContract - DealCycle$Time[1] <= 0 & nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) == 1 & Cool$LSMS - DealCycle$Time[1] < 10000) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
+        Link <- 0
+        Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+        
+        if(nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) == 1) {
+          DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
+          DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
+          Link <- 0
+          Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+        }
+      }
       ## Typhoon (Taepung) for Buff
-      if(DealCycle$TyphoonBuff[nrow(DealCycle)] == 0 & DealCycle$LightningStack[nrow(DealCycle)] == 5) {
+      else if(DealCycle$TyphoonBuff[nrow(DealCycle)] == 0 & DealCycle$LightningStack[nrow(DealCycle)] == 5) {
         DealCycle <- DCATKSkip(DealCycle, "Typhoon", ATKFinal, SkipStructure)
         DealCycle$TyphoonBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="TyphoonBuff")$Duration * 1000
         DealCycle$LightningStack[nrow(DealCycle)] <- ifelse(DealCycle$PrimalBolt[nrow(DealCycle)] > 0, DealCycle$LightningStack[(nrow(DealCycle)-1)], 0)
@@ -567,7 +610,8 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
         }
       }
       ## Deep Rising (Haesingangrim)
-      else if(Cool$DeepRising - LinkDelay(DealCycle, SkipStructure) <= 0 & Cool$DeepRisingTimes < 5) {
+      else if(Cool$DeepRising - LinkDelay(DealCycle, SkipStructure) <= 0 & Cool$DeepRisingTimes < 4 & Cool$DeepRisingTimes > 0 | 
+              Cool$DeepRising - LinkDelay(DealCycle, SkipStructure) <= 0 & Cool$DeepRisingTimes == 0 & DealCycle$Restraint4[nrow(DealCycle)] - LinkDelay(DealCycle, SkipStructure) > 0) {
         DealCycle <- DCATKSkip(DealCycle, "DeepRising", ATKFinal, SkipStructure)
         DealCycle$LightningStack[nrow(DealCycle)] <- min(DealCycle$LightningStack[(nrow(DealCycle)-1)] + 1, 5)
         DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
@@ -582,8 +626,9 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
         }
       }
       ## Lightning Spear Multistrike (Changnoeyeongyeok)
-      else if(Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0 & k!=2 | 
-              Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0 & k==2 & DealCycle$Restraint4[nrow(DealCycle)] < 5000) {
+      else if(nrow(subset(DealCycle, DealCycle$Skills=="LightningSpearMultistrikeBuff")) == 0 & 
+              DealCycle$Restraint4[nrow(DealCycle)] - LinkDelay(DealCycle, SkipStructure) < 6000 & DealCycle$Restraint4[nrow(DealCycle)] - LinkDelay(DealCycle, SkipStructure) > 0 | 
+              nrow(subset(DealCycle, DealCycle$Skills=="LightningSpearMultistrikeBuff")) == 1 & Cool$LSMS - LinkDelay(DealCycle, SkipStructure) <= 0) {
         DealCycle <- DCATKSkip(DealCycle, "LightningSpearMultistrike", ATKFinal, SkipStructure)
         DealCycle$LightningStack[nrow(DealCycle)] <- min(DealCycle$LightningStack[(nrow(DealCycle)-1)] + 1, 5)
         DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
@@ -620,37 +665,6 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
           DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
           DealCycle$Skills[(nrow(DealCycle)-1)] <- "LightningGodSpearStrikeShock"
           rownames(DealCycle) <- 1:nrow(DealCycle)
-        }
-      }
-      ## Primal Bolt (Cheonjigaebyeok) : Typhoon (Taepung) - Annihilate (Seommyeol) 
-      else if(DealCycle$PrimalBolt[nrow(DealCycle)] > 0) {
-        if(DealCycle$Skills[nrow(DealCycle)]!="Typhoon") {
-          DealCycle <- DCATKSkip(DealCycle, "Typhoon", ATKFinal, SkipStructure)
-          DealCycle$TyphoonBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="TyphoonBuff")$Duration * 1000
-          DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
-          DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
-          Link <- 1
-          Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
-          if(Cool$LGSS == 0 & Cool$LGSSTimes==9) {
-            Cool$LGSS <- subset(ATKFinal, rownames(ATKFinal)=="LightningGodSpearStrike")$CoolTime * 1000
-            Cool$LGSSTimes <- 0
-            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
-            DealCycle$Skills[(nrow(DealCycle)-1)] <- "LightningGodSpearStrikeShock"
-            rownames(DealCycle) <- 1:nrow(DealCycle)
-          }
-        } else {
-          DealCycle <- DCATKSkip(DealCycle, "Annihilate", ATKFinal, SkipStructure)
-          DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
-          DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
-          Link <- 1
-          Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
-          if(Cool$LGSS == 0 & Cool$LGSSTimes==9) {
-            Cool$LGSS <- subset(ATKFinal, rownames(ATKFinal)=="LightningGodSpearStrike")$CoolTime * 1000
-            Cool$LGSSTimes <- 0
-            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
-            DealCycle$Skills[(nrow(DealCycle)-1)] <- "LightningGodSpearStrikeShock"
-            rownames(DealCycle) <- 1:nrow(DealCycle)
-          }
         }
       }
       ## Annihilate (Seommyeol) - Thunderbolt (Byeokryeok)
@@ -701,10 +715,61 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
       }
     }
   }
+  
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="PrimalBolt")$Time) + min(subset(DealCycle, DealCycle$Skills=="PrimalBolt")$Time) < 120000) {
+    if(DealCycle$Skills[nrow(DealCycle)]!="Annihilate") {
+      DealCycle <- DCATKSkip(DealCycle, "Annihilate", ATKFinal, SkipStructure)
+      DealCycle$LightningStack[nrow(DealCycle)] <- DealCycle$LightningStack[(nrow(DealCycle)-1)]
+      DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
+      Link <- 1
+      Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+      if(Cool$LGSS == 0 & Cool$LGSSTimes==9) {
+        Cool$LGSS <- subset(ATKFinal, rownames(ATKFinal)=="LightningGodSpearStrike")$CoolTime * 1000
+        Cool$LGSSTimes <- 0
+        DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+        DealCycle$Skills[(nrow(DealCycle)-1)] <- "LightningGodSpearStrikeShock"
+        rownames(DealCycle) <- 1:nrow(DealCycle)
+      }
+    } else {
+      DealCycle <- DCATKSkip(DealCycle, "Thunderbolt", ATKFinal, SkipStructure)
+      DealCycle$LightningStack[nrow(DealCycle)] <- min(DealCycle$LightningStack[(nrow(DealCycle)-1)] + 1, 5)
+      DealCycle$LinkMastery[nrow(DealCycle)] <- ifelse(Link==1, 1, 0)
+      Link <- 1
+      Cool <- CoolControl(Cool, DealCycle, ATKFinal, BuffFinal, Link)
+      if(Cool$LGSS == 0 & Cool$LGSSTimes==9) {
+        Cool$LGSS <- subset(ATKFinal, rownames(ATKFinal)=="LightningGodSpearStrike")$CoolTime * 1000
+        Cool$LGSSTimes <- 0
+        DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+        DealCycle$Skills[(nrow(DealCycle)-1)] <- "LightningGodSpearStrikeShock"
+        rownames(DealCycle) <- 1:nrow(DealCycle)
+      }
+    }
+  }
   DealCycle <- DealCycleFinal(DealCycle)
   return(DealCycle)
 }
 StrikerAddATK <- function(DealCycle, ATKFinal, SummonedFinal) {
+  ## Cygnus Phalanx Cancel (TidalCrash) ATK
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="CygnusPhalanxSummoned") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "TidalCrash"
+      DealCycle$Time[nrow(DealCycle)] <- DealCycle$Time[nrow(DealCycle)] + 30
+    }
+  }
+  
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+
+  for(i in 2:nrow(DealCycle)) {
+    if(DealCycle$Skills[i]=="TidalCrash") {
+      DealCycle[i, 3:ncol(DealCycle)] <- DealCycle[i-1, 3:ncol(DealCycle)] - (DealCycle$Time[i] - DealCycle$Time[i-1])
+      for(j in 3:ncol(DealCycle)) {
+        DealCycle[i, j] <- max(0, DealCycle[i, j])
+      }
+    }
+  }
+  
   ## Lightning God Spear Strike (Noesinchanggyeok) 
   DealCycle <- RepATKCycle(DealCycle, "LightningGodSpearStrikeShock", 4, 1350, ATKFinal)
   for(i in 1:nrow(DealCycle)) {
@@ -881,7 +946,7 @@ StrikerDealRatio <- DealRatio(StrikerDealCycle, StrikerFinalDPMwithMax)
 StrikerDealData <- data.frame(StrikerDealCycle$Skills, StrikerDealCycle$Time, StrikerDealCycle$Restraint4, StrikerFinalDPMwithMax)
 colnames(StrikerDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Striker", Deal_RR(StrikerDealData))
-set(get(DPMCalcOption$DataName), as.integer(4), "Striker", Deal_40s(StrikerDealData))
+set(get(DPMCalcOption$DataName), as.integer(4), "Striker", Deal_40s(StrikerDealData, F, NA, FinishTime=subset(StrikerDealData, StrikerDealData$Skills=="Restraint4")$Time[1] + 15000))
 
 StrikerSpecMean <- SpecMean("Striker", StrikerDealCycleReduction, 
                             DealCalcWithMaxDMR(StrikerDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, StrikerSpecOpt, 

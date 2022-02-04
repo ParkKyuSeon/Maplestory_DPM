@@ -57,9 +57,17 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
-option <- factor("FDR", levels=PSkill)
-value <- c(25)
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+JavelinAcceleration <- data.frame(option, value)
+
+option <- factor(c("FDR", "CRR"), levels=PSkill)
+value <- c(25, 20)
 ExpertJavelin <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(10)
+SpiritJavelin <- data.frame(option, value)
 
 option <- factor("CDMR", levels=PSkill)
 value <- c(10)
@@ -75,11 +83,11 @@ JavelinExpert <- data.frame(option, value)
 
 option <- factor("BDR", levels=PSkill)
 value <- c(10 + ceiling(NightLordBase$PSkillLv/3))
-PurgeArea <- data.frame(option, value)
+PurgeAreaPassive <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
 value <- c(GetCoreLv(NightLordCore, "ReadyToDie"))
-ReadyToDie <- data.frame(option, value)
+ReadyToDiePassive <- data.frame(option, value)
 
 option <- factor("ATK", levels=PSkill)
 value <- c(GetCoreLv(NightLordCore, "Blink"))
@@ -89,38 +97,17 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(NightLordCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-NightLordPassive <- Passive(list(FlameJavelin, NimbleBody, CriticalThrow, PhysicalTraining, ExpertJavelin, Adrenaline, 
-                                 DarkSerenity, JavelinExpert, PurgeArea, ReadyToDie, BlinkPassive, RopeConnectPassive))
+NightLordPassive <- Passive(list(FlameJavelin, NimbleBody, CriticalThrow, PhysicalTraining, JavelinAcceleration, ExpertJavelin, SpiritJavelin, Adrenaline, 
+                                 DarkSerenity, JavelinExpert, PurgeAreaPassive, ReadyToDiePassive, BlinkPassive, RopeConnectPassive))
 
 
 ## NightLord - Buff
-{option <- factor(levels=BSkill)
-value <- c()
-info <- c(200, NA, 600, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Haste <- rbind(data.frame(option, value), info)
-
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 600, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-JavelinBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("AddATKRate", levels=BSkill)
+{option <- factor("AddATKRate", levels=BSkill)
 value <- c(70)
 info <- c(200, NA, 900, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ShadowPartner <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(200, NA, 990, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SpiritJavelin <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=BSkill)
 value <- c(30 + NightLordBase$SkillLv)
@@ -199,13 +186,17 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-NightLordBuff <- list(JavelinBooster=JavelinBooster, ShadowPartner=ShadowPartner, SpiritJavelin=SpiritJavelin, PurgeArea=PurgeArea, MapleSoldier=MapleSoldier, 
+NightLordBuff <- list(ShadowPartner=ShadowPartner, PurgeArea=PurgeArea, MapleSoldier=MapleSoldier, 
                       UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, EpicAdventure=EpicAdventure, BleedingToxin=BleedingToxin, 
                       SpreadThrow=SpreadThrow, ThrowBlastingBuff=ThrowBlastingBuff, UltimateDarkSight=UltimateDarkSight, ReadyToDie1Stack=ReadyToDie1Stack, 
                       ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## PetBuff : NA -> Not Use Useful Advanced Bless
 NightLordBuff <- Buff(NightLordBuff)
 NightLordAllTimeBuff <- AllTimeBuff(NightLordBuff)
+## Useful Skill Delay
+NightLordBuff <- data.frame(NightLordBuff)
+NightLordBuff[rownames(NightLordBuff)=="UsefulSharpEyes", ]$Delay <- 900
+NightLordBuff[rownames(NightLordBuff)=="UsefulCombatOrders", ]$Delay <- 1500
 
 
 ## NightLord - Union & HyperStat & SoulWeapon
@@ -239,21 +230,21 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 SpreadThrowStems <- 3
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(NightLordCore, "QuadrapleThrow")>=40, 20, 0), 40, 2 * GetCoreLv(NightLordCore, "QuadrapleThrow"))
-info <- c(420 + NightLordSpec$SkillLv * 4, 5, 780, NA, NA, NA, NA, F)
+info <- c(470 + NightLordSpec$SkillLv * 4, 5, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 QuadrapleThrow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(NightLordCore, "QuadrapleThrow")>=40, 20, 0), 40, 2 * GetCoreLv(NightLordCore, "QuadrapleThrow"))
-info <- c((420 + NightLordSpec$SkillLv * 4) * 0.8, 5 * SpreadThrowStems, 0, NA, NA, NA, NA, F)
+info <- c((470 + NightLordSpec$SkillLv * 4) * 0.8, 5 * SpreadThrowStems, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 QuadrapleThrowSpread <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(NightLordCore, "SuddenRaid")>=40, 20, 0), 2 * GetCoreLv(NightLordCore, "SuddenRaid"))
-info <- c(1150 + NightLordSpec$SkillLv * 15, 3, 900, NA, 30, T, T, F)
+info <- c(494 + NightLordSpec$SkillLv * 5, 7, 900, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SuddenRaid <- rbind(data.frame(option, value), info)
@@ -301,7 +292,7 @@ NightLordATK <- Attack(list(QuadrapleThrow=QuadrapleThrow, QuadrapleThrowSpread=
 ## NightLord - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(NightLordCore, "DarkFlare")>=40, 20, 0), GetCoreLv(NightLordCore, "DarkFlare") * 3)
-info <- c(280, 1, 600, 900, 60, 60, T, T, T, F)
+info <- c(360, 1, 600, 900, 60, 60, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 DarkFlare <- rbind(data.frame(option, value), info)
@@ -338,11 +329,11 @@ NightLordDealCycle <- t(rep(0, length(DealCycle)))
 colnames(NightLordDealCycle) <- DealCycle
 
 NightLordCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Period=180.5, CycleTime=361) {
-  BuffSummonedPrior <- c("JavelinBooster", "ShadowPartner", "SpiritJavelin", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "DarkFlare", 
+  BuffSummonedPrior <- c("ShadowPartner", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "DarkFlare", 
                          "BleedingToxin", "ThrowBlastingBuff", "MapleWarriors2", "SpreadThrow",
                          "SoulContractLink", "UltimateDarkSight", "ReadyToDie2Stack", "Restraint4", "PurgeArea", "SecretBook")
   
-  Times180 <- c(1, 1, 1, 1, 1, 1, 0, -180.5/57, 1, 1, 1, 1, 2, 1, -180.5/71.25, 1, 4, -180.5/57)
+  Times180 <- c(1, 1, 1, 1, 0, -180.5/57, 1, 1, 1, 1, 2, 1, -180.5/71.25, 1, 4, -180.5/57)
   
   SubTime <- rep(Period - Spec$CoolReduce, length(Times180))
   TotalTime <- CycleTime - (CycleTime/Period) * Spec$CoolReduce

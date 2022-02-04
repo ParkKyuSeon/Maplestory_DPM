@@ -61,7 +61,7 @@ value <- c(40, 20)
 AffinityIII <- data.frame(option, value)
 
 option <- factor(c("FDR", "IGR"), levels=PSkill)
-value <- c(10 + ceiling(AngelicBusterBase$SkillLv/3), 15 + ceiling(AngelicBusterBase$SkillLv/2))
+value <- c(25 + ceiling(AngelicBusterBase$SkillLv/2), 15 + ceiling(AngelicBusterBase$SkillLv/2))
 TrinityPassive <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CRR", "CDMR"), levels=PSkill)
@@ -262,7 +262,7 @@ AngelicBusterSpec <- JobSpec(JobBase=AngelicBusterBase,
                              MobInfo=get(DPMCalcOption$MobSet), 
                              SpecSet=get(DPMCalcOption$SpecSet), 
                              WeaponName="SoulShooter", 
-                             UnionStance=10)
+                             UnionStance=0)
 
 AngelicBusterUnionRemained <- AngelicBusterSpec$UnionRemained
 AngelicBusterHyperStatBase <- AngelicBusterSpec$HyperStatBase
@@ -286,21 +286,21 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Hyper : Trinity - Reinforce / Split Attack, Soul Seeker - Reinforce / Make Up,  Finitura Fettuccia - CoolTime Reduce
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
-info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 3, 660, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 3, 510, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity1 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
-info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 4, 720, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 4, 480, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity2 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
-info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 5, 480, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 5, 450, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity3 <- rbind(data.frame(option, value), info) 
@@ -398,7 +398,7 @@ colnames(AngelicBusterSkipATK) <- c(rownames(ATKFinal), "SkippedDelay")
 AngelicBusterSkipATK$Trinity2 <- c(T, rep(F, 11))
 AngelicBusterSkipATK$Trinity3 <- c(F, T, rep(F, 10))
 
-AngelicBusterSkipATK$SkippedDelay <- c(Delay(480, AngelicBusterSpec$ATKSpeed), Delay(480, AngelicBusterSpec$ATKSpeed), rep(F, 10))
+AngelicBusterSkipATK$SkippedDelay <- c(Delay(480, AngelicBusterSpec$ATKSpeed), Delay(450, AngelicBusterSpec$ATKSpeed), rep(F, 10))
 AngelicBusterSkipATK <- subset(AngelicBusterSkipATK, AngelicBusterSkipATK$SkippedDelay>0)
 ## Trinity Fusion : Other Logic(Set Time 240 when Making Dealcycle)
 
@@ -1006,8 +1006,7 @@ if(DPMCalcOption$Optimization==T) {
 AngelicBusterSpecOpt <- OptDataAdd(AngelicBusterSpec, AngelicBusterSpecOpt1, "Potential", AngelicBusterBase$CRROver, DemonAvenger=F)
 
 if(DPMCalcOption$Optimization==T) {
-  AngelicBusterSpecOpt2 <- Optimization2(AngelicBusterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterHyperStatBase, AngelicBusterBase$ChrLv, AngelicBusterBase$CRROver, 
-                                         HyperStanceLv=5)
+  AngelicBusterSpecOpt2 <- Optimization2(AngelicBusterDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, AngelicBusterSpecOpt, AngelicBusterHyperStatBase, AngelicBusterBase$ChrLv, AngelicBusterBase$CRROver)
   HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- AngelicBusterSpecOpt2[1, ]
 } else {
   AngelicBusterSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]

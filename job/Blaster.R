@@ -221,14 +221,14 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Blaster - Attacks
 {option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(2 * GetCoreLv(BlasterCore, "MagnumPunch"), 10, IGRCalc(c(20, ifelse(GetCoreLv(BlasterCore, "MagnumPunch")>=40, 20, 0))))
-info <- c(430 + 2 * BlasterSpec$SkillLv, 3, 180, NA, NA, NA, NA, F)
+info <- c(475 + 3 * BlasterSpec$SkillLv, 3, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MagnumPunch <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR", "IGR"), levels=ASkill)
 value <- c(2 * GetCoreLv(BlasterCore, "DoubleFang"), 10, IGRCalc(c(20, ifelse(GetCoreLv(BlasterCore, "DoubleFang")>=40, 20, 0))))
-info <- c(360 + 2 * BlasterSpec$SkillLv, 4, 180, NA, NA, NA, NA, F)
+info <- c(400 + 2 * BlasterSpec$SkillLv, 4, 180, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DoubleFang <- rbind(data.frame(option, value), info)

@@ -61,7 +61,7 @@ value <- c(30)
 MetalArmorTank <- data.frame(option, value)
 
 option <- factor(c("FDR", "CRR", "IGR"), levels=PSkill)
-value <- c(20, 20, 30)
+value <- c(25, 20, 30)
 OverTuning <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK"), levels=PSkill)
@@ -166,6 +166,27 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice555 <- rbind(data.frame(option, value), info)
 
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(20, 15)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice53 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(20, 25)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice533 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(30, 15)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice553 <- rbind(data.frame(option, value), info)
+
 option <- factor("ATKSkill", levels=BSkill)
 value <- c(1)
 info <- c(10, 100, 900, F, F, F, T)
@@ -224,8 +245,9 @@ colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
 MechanicBuff <- list(MechanicBooster=MechanicBooster, SupportWaiver=SupportWaiver, RM1Buff=RM1Buff, OpenGate=OpenGate, MagneticFieldBuff=MagneticFieldBuff, MechCarrierBuff=MechCarrierBuff, 
-                     MultipleOptionBuff=MultipleOptionBuff, MapleSoldier=MapleSoldier, LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, 
-                     LuckyDice555=LuckyDice555, BomberTime=BomberTime, WillofLiberty=WillofLiberty, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
+                     MultipleOptionBuff=MultipleOptionBuff, MapleSoldier=MapleSoldier, 
+                     LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, LuckyDice555=LuckyDice555, LuckyDice53=LuckyDice53, LuckyDice533=LuckyDice533, LuckyDice553=LuckyDice553, 
+                     BomberTime=BomberTime, WillofLiberty=WillofLiberty, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                      MetalArmorFullburstBuff=MetalArmorFullburstBuff, MetalArmorFullburstExhaust=MetalArmorFullburstExhaust, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, MapleWarriors2=MapleWarriors2,
                      Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## PetBuff : MechanicBooster, MapleSoldier, UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
@@ -690,6 +712,9 @@ MechanicDealCycleReduction <- DealCycleReduction(MechanicDealCycle)
 MechanicDealCycle5 <- MechanicDealCycle
 MechanicDealCycle55 <- MechanicDealCycle
 MechanicDealCycle555 <- MechanicDealCycle
+MechanicDealCycle53 <- MechanicDealCycle
+MechanicDealCycle533 <- MechanicDealCycle
+MechanicDealCycle553 <- MechanicDealCycle
 
 MechanicDealCycle55$LuckyDice55 <- MechanicDealCycle55$LuckyDice5
 MechanicDealCycle55$LuckyDice5 <- 0
@@ -697,7 +722,17 @@ MechanicDealCycle55$LuckyDice5 <- 0
 MechanicDealCycle555$LuckyDice555 <- MechanicDealCycle555$LuckyDice5
 MechanicDealCycle555$LuckyDice5 <- 0
 
-MechanicDealCycleProbs <- c(0.745340, 0.245185, 0.009475)
+MechanicDealCycle53$LuckyDice53 <- MechanicDealCycle53$LuckyDice5
+MechanicDealCycle53$LuckyDice5 <- 0
+
+MechanicDealCycle533$LuckyDice533 <- MechanicDealCycle533$LuckyDice5
+MechanicDealCycle533$LuckyDice5 <- 0
+
+MechanicDealCycle553$LuckyDice533 <- MechanicDealCycle553$LuckyDice5
+MechanicDealCycle553$LuckyDice5 <- 0
+
+MechanicDealCycleProbs <- c(0.592680, 0.208894, 0.009475, 
+                            0.135320, 0.017340, 0.036291)
 
 for(i in 1:length(PotentialOpt)) {
   if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
@@ -725,10 +760,12 @@ if(DPMCalcOption$Optimization==T) {
 }
 MechanicSpecOpt <- OptDataAdd(MechanicSpecOpt, MechanicSpecOpt2, "HyperStat", MechanicBase$CRROver, DemonAvenger=F)
 
-MechanicFinalDPM <- ResetDealCalc(list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555), 
-                                  ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 3), MechanicDealCycleProbs)
-MechanicFinalDPMwithMax <- ResetDealCalcWithMaxDMR(list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555), 
-                                                   ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 3), MechanicDealCycleProbs)
+MechanicFinalDPM <- ResetDealCalc(list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555, 
+                                       MechanicDealCycle53, MechanicDealCycle533, MechanicDealCycle553), 
+                                  ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 6), MechanicDealCycleProbs)
+MechanicFinalDPMwithMax <- ResetDealCalcWithMaxDMR(list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555, 
+                                                        MechanicDealCycle53, MechanicDealCycle533, MechanicDealCycle553), 
+                                                   ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 6), MechanicDealCycleProbs)
 
 set(get(DPMCalcOption$DataName), as.integer(1), "Mechanic", sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000))
 set(get(DPMCalcOption$DataName), as.integer(2), "Mechanic", sum(na.omit(MechanicFinalDPM)) / (max(MechanicDealCycle$Time) / 60000) - sum(na.omit(MechanicFinalDPMwithMax)) / (max(MechanicDealCycle$Time) / 60000))
@@ -736,9 +773,13 @@ set(get(DPMCalcOption$DataName), as.integer(2), "Mechanic", sum(na.omit(Mechanic
 MechanicDeal1 <- DealCalcWithMaxDMR(MechanicDealCycle5, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt)
 MechanicDeal2 <- DealCalcWithMaxDMR(MechanicDealCycle55, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt)
 MechanicDeal3 <- DealCalcWithMaxDMR(MechanicDealCycle555, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt)
-MechanicDealDatas <- list(MechanicDeal1, MechanicDeal2, MechanicDeal3)
-MechanicDealRatio <- ResetDealRatio(list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555), 
-                                    MechanicDealDatas, rep(max(MechanicDealCycle$Time), 3), MechanicDealCycleProbs)
+MechanicDeal4 <- DealCalcWithMaxDMR(MechanicDealCycle53, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt)
+MechanicDeal5 <- DealCalcWithMaxDMR(MechanicDealCycle533, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt)
+MechanicDeal6 <- DealCalcWithMaxDMR(MechanicDealCycle553, ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt)
+MechanicDealDatas <- list(MechanicDeal1, MechanicDeal2, MechanicDeal3, MechanicDeal4, MechanicDeal5, MechanicDeal6)
+MechanicDealRatio <- ResetDealRatio(list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555, 
+                                         MechanicDealCycle53, MechanicDealCycle533, MechanicDealCycle553), 
+                                    MechanicDealDatas, rep(max(MechanicDealCycle$Time), 6), MechanicDealCycleProbs)
 
 MechanicDealData <- data.frame(MechanicDealCycle$Skills, MechanicDealCycle$Time, MechanicDealCycle$Restraint4, MechanicDeal1)
 colnames(MechanicDealData) <- c("Skills", "Time", "R4", "Deal")
@@ -746,6 +787,8 @@ set(get(DPMCalcOption$DataName), as.integer(3), "Mechanic", Deal_RR(MechanicDeal
 set(get(DPMCalcOption$DataName), as.integer(4), "Mechanic", Deal_40s(MechanicDealData))
 
 MechanicSpecMean <- ResetSpecMean("Mechanic", 
-                                  list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555), 
-                                  list(MechanicDeal1, MechanicDeal2, MechanicDeal3), 
-                                  ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 3), MechanicDealCycleProbs)
+                                  list(MechanicDealCycle5, MechanicDealCycle55, MechanicDealCycle555, 
+                                       MechanicDealCycle53, MechanicDealCycle533, MechanicDealCycle553), 
+                                  list(MechanicDeal1, MechanicDeal2, MechanicDeal3, 
+                                       MechanicDeal4, MechanicDeal5, MechanicDeal6), 
+                                  ATKFinal, BuffFinal, SummonedFinal, MechanicSpecOpt, rep(max(MechanicDealCycle$Time), 6), MechanicDealCycleProbs)

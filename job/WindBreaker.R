@@ -69,7 +69,7 @@ value <- c(10 + ceiling(WindBreakerBase$PSkillLv/3), 15 + floor(WindBreakerBase$
 WindBlessing <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "FDR", "CDMR", "BDR"), levels=PSkill)
-value <- c(70 + ceiling(WindBreakerBase$PSkillLv/2), 30 + WindBreakerBase$PSkillLv, 25 + ceiling(WindBreakerBase$PSkillLv/3), 20 + floor(WindBreakerBase$PSkillLv/2), 40 + WindBreakerBase$PSkillLv)
+value <- c(70 + ceiling(WindBreakerBase$PSkillLv/2), 30 + WindBreakerBase$PSkillLv, 35 + ceiling(WindBreakerBase$PSkillLv/2), 20 + floor(WindBreakerBase$PSkillLv/2), 40 + WindBreakerBase$PSkillLv)
 BowExpert <- data.frame(option, value)
 
 option <- factor(c("ATK", "BDR", "IGR", "CRR", "ATKSpeed"), levels=PSkill)
@@ -262,28 +262,28 @@ StormBringer <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * GetCoreLv(WindBreakerCore, "IdleWhim"), 3, 0, NA, 10, T, F, F)
+info <- c(550 + 22 * GetCoreLv(WindBreakerCore, "IdleWhim"), 3, 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IdleWhimFirst <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c((500 + 20 * GetCoreLv(WindBreakerCore, "IdleWhim")) * 0.75, 27, 600, NA, 10, T, F, F)
+info <- c((550 + 22 * GetCoreLv(WindBreakerCore, "IdleWhim")) * 0.85, 27, 600, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 IdleWhimRemain <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(250 + 10 * GetCoreLv(WindBreakerCore, "HowlingGale"), 3, 840, 150, 20, F, F, F)
+info <- c(325 + 13 * GetCoreLv(WindBreakerCore, "HowlingGale"), 3, 840, 150, 20, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HowlingGaleSmall <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * GetCoreLv(WindBreakerCore, "HowlingGale"), 3, 840, 150, 40, F, F, F)
+info <- c(785 + 31 * GetCoreLv(WindBreakerCore, "HowlingGale"), 3, 840, 150, 40, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HowlingGaleBig <- rbind(data.frame(option, value), info)
@@ -317,7 +317,7 @@ WindBreakerATK <- Attack(list(PinpointPierce=PinpointPierce, SongofSky=SongofSky
 ## WindBreaker - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * GetCoreLv(WindBreakerCore, "GuidedArrow"), 1, 720, 500, 0.5*89+0.51, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(WindBreakerCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)
@@ -356,7 +356,7 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
                           Period=c(120), CycleTime=240) {
   BuffSummonedPrior <- c("SharpEyes", "StormBringer", "SylphsAid", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "GloryofGardians", 
                          "GuidedArrow", "CygnusPhalanx", "PinpointPierceBuff", "BlessofCygnus", "WindWallBuff", "SoulContractLink", "CriticalReinforce", "Restraint4")
-  Times120 <- c(0, 0, 0, 0, 0, 0, 0, 2, 4, 2, 0.5, 1, 1, 1, 0.5)
+  Times120 <- c(0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 0.5, 1, 1, 1, 0.5)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]

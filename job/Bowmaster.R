@@ -39,7 +39,11 @@ BowmasterBase <- JobBase(ChrInfo=ChrInfo,
                          CoolReduceHat=as.logical(FindJob(get(paste(DPMCalcOption$SpecSet, "CoolReduceHat", sep="")), "Bowmaster")))
 
 ## Bowmaster - Passive
-{option <- factor("ATKSpeed", levels=PSkill)
+{option <- factor("ATK", levels=PSkill)
+value <- c(9)
+TitaniumArrow <- data.frame(option, value)
+
+option <- factor("ATKSpeed", levels=PSkill)
 value <- c(1)
 ArcherMastery <- data.frame(option, value)
 
@@ -55,6 +59,10 @@ option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
 value <- c(2, 20)
 BowAcceleration <- data.frame(option, value)
 
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(30)
+SoulArrow <- data.frame(option, value)
+
 option <- factor(c("ATK", "FDR"), levels=PSkill)
 value <- c(40, 30)
 ExtremeArchery <- data.frame(option, value)
@@ -64,7 +72,7 @@ value <- c(25, 25)
 MarksmanShip <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
-value <- c(70 + ceiling(BowmasterBase$PSkillLv / 2), 60 + 2 * BowmasterBase$PSkillLv, 8)
+value <- c(70 + ceiling(BowmasterBase$PSkillLv / 2), 60 + 2 * BowmasterBase$PSkillLv, 16)
 BowExpert <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
@@ -75,6 +83,10 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(20 + ceiling(BowmasterBase$PSkillLv / 2))
 AdvancedFinalAttack <- data.frame(option, value)
 
+option <- factor(c("FDR"), levels=PSkill)
+value <- c(6)
+AdvancedQuiverPassive <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(GetCoreLv(BowmasterCore, "Blink"))
 BlinkPassive <- data.frame(option, value)
@@ -83,19 +95,12 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(BowmasterCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-BowmasterPassive <- Passive(list(ArcherMastery, CriticalShot, PhysicalTraining, BowAcceleration, ExtremeArchery, MarksmanShip, BowExpert, 
-                                 IllusionStep, AdvancedFinalAttack, BlinkPassive, RopeConnectPassive))
+BowmasterPassive <- Passive(list(TitaniumArrow, ArcherMastery, CriticalShot, PhysicalTraining, BowAcceleration, SoulArrow, ExtremeArchery, MarksmanShip, BowExpert, 
+                                 IllusionStep, AdvancedFinalAttack, AdvancedQuiverPassive, BlinkPassive, RopeConnectPassive))
 
 
 ## Bowmaster - Buff
-{option <- factor("ATK", levels=BSkill)
-value <- c(30)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SoulArrow <- rbind(data.frame(option, value), info)
-
-option <- factor("MainStat", levels=BSkill)
+{option <- factor("MainStat", levels=BSkill)
 value <- c(floor((BowmasterBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(BowmasterBase$SkillLv/2))))
 info <- c(900 + 30 * BowmasterBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -108,13 +113,6 @@ info <- c(300 + 3 * BowmasterBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SharpEyes <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(30, 30, 0, T, T, T, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-AdvancedQuiver <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "ATK"), levels=BSkill)
 value <- c(20, 50)
@@ -145,14 +143,14 @@ ArrowRainBuff <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(3, 60, 720, F, T, F, F)
+info <- c(30, 120, 720, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 AfterimageArrowBuff <- rbind(data.frame(option, value), info)
 
 option <- factor("ATKP", levels=BSkill)
 value <- c(5 + floor(GetCoreLv(BowmasterCore, "QuiverFullBurst")/2))
-info <- c(30, 120, 630, F, T, F, T)
+info <- c(40, 120, 630, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 QuiverFullBurst <- rbind(data.frame(option, value), info)
@@ -178,13 +176,6 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ArmorPiercingDummy <- rbind(data.frame(option, value), info)
 
-option <- factor("CDMR", levels=BSkill)
-value <- c(8)
-info <- c(8, 9, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-QuiverPoisonDummy <- rbind(data.frame(option, value), info)
-
 option <- factor("BDR", levels=BSkill)
 value <- c(35)
 info <- c(5, 6, 0, F, F, F, F)
@@ -192,11 +183,11 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MotalBlowDummy <- rbind(data.frame(option, value), info)}
 
-BowmasterBuff <- list(BSoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, AdvancedQuiver=AdvancedQuiver, 
+BowmasterBuff <- list(MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
                       Preperation=Preperation, EpicAdventure=EpicAdventure, UsefulCombatOrders=UsefulCombatOrders, ArrowRainBuff=ArrowRainBuff, AfterimageArrowBuff=AfterimageArrowBuff, 
                       QuiverFullBurst=QuiverFullBurst, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, ArmorPiercingDummy=ArmorPiercingDummy, 
-                      QuiverPoisonDummy=QuiverPoisonDummy, MotalBlowDummy=MotalBlowDummy, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-## Petbuff : UsefulCombatOrders(1500ms), SharpEyes(900ms), SoulArrow(810ms), MapleSoldier(0ms), (UsefulAdvancedBless)
+                      MotalBlowDummy=MotalBlowDummy, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+## Petbuff : UsefulCombatOrders(1500ms), SharpEyes(900ms), MapleSoldier(0ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   BowmasterBuff[[length(BowmasterBuff)+1]] <- UsefulAdvancedBless
   names(BowmasterBuff)[[length(BowmasterBuff)]] <- "UsefulAdvancedBless"
@@ -227,10 +218,10 @@ info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-BowmasterBuff <- list(SoulArrow=SoulArrow, MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, AdvancedQuiver=AdvancedQuiver, 
+BowmasterBuff <- list(MapleSoldier=MapleSoldier, SharpEyes=SharpEyes, 
                       Preperation=Preperation, EpicAdventure=EpicAdventure, UsefulCombatOrders=UsefulCombatOrders, ArrowRainBuff=ArrowRainBuff, AfterimageArrowBuff=AfterimageArrowBuff, 
                       QuiverFullBurst=QuiverFullBurst, CriticalReinforce=CriticalReinforce, MapleWarriors2=MapleWarriors2, ArmorPiercingDummy=ArmorPiercingDummy, 
-                      QuiverPoisonDummy=QuiverPoisonDummy, MotalBlowDummy=MotalBlowDummy, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
+                      MotalBlowDummy=MotalBlowDummy, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## Petbuff : UsefulCombatOrders(1500ms), SharpEyes(900ms), SoulArrow(810ms), MapleSoldier(0ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   BowmasterBuff[[length(BowmasterBuff)+1]] <- UsefulAdvancedBless
@@ -259,6 +250,13 @@ info <- c((350 + 3 * BowmasterSpec$SkillLv) * 0.75, 2, 120, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HurricaneArrow <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage")>=40, 20, 0), 2 * GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage"))
+info <- c(420 + 120 + 2 * BowmasterSpec$SkillLv, 4 * 4, 0, NA, NA, NA, NA, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+FlashMirage <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(BowmasterCore, "AdvancedQuiver")>=40, 20, 0), 2 * GetCoreLv(BowmasterCore, "AdvancedQuiver"))
@@ -297,14 +295,14 @@ ArrowRain2 <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(600 + 24 * GetCoreLv(BowmasterCore, "AfterimageArrow"), 3, 0, 180, NA, NA, NA, F)
+info <- c(400 + 16 * GetCoreLv(BowmasterCore, "AfterimageArrow"), 3, 0, 210, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AfterimageArrowActive <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(400 + 16 * GetCoreLv(BowmasterCore, "AfterimageArrow"), 3, 0, 180, NA, NA, NA, F)
+info <- c(400 + 16 * GetCoreLv(BowmasterCore, "AfterimageArrow"), 3, 0, 210, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AfterimageArrowPassive <- rbind(data.frame(option, value), info)
@@ -323,7 +321,7 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SilhouetteMirage <- rbind(data.frame(option, value), info)}
 
-BowmasterATK <- Attack(list(HurricaneArrow=HurricaneArrow, QuiverMagic=QuiverMagic, QuiverMagicRain=QuiverMagicRain, AdvancedFinalAttack=AdvancedFinalAttack, 
+BowmasterATK <- Attack(list(HurricaneArrow=HurricaneArrow, FlashMirage=FlashMirage, QuiverMagic=QuiverMagic, QuiverMagicRain=QuiverMagicRain, AdvancedFinalAttack=AdvancedFinalAttack, 
                             ArrowRain1=ArrowRain1, ArrowRain2=ArrowRain2, AfterimageArrowActive=AfterimageArrowActive, AfterimageArrowPassive=AfterimageArrowPassive, 
                             QuiverFlame=QuiverFlame, SilhouetteMirage=SilhouetteMirage, SpiderInMirror=SpiderInMirror))
 
@@ -331,8 +329,8 @@ BowmasterATK <- Attack(list(HurricaneArrow=HurricaneArrow, QuiverMagic=QuiverMag
 
 ## Bowmaster - Summoned
 {option <- factor(c("FDR", "IGR"), levels=SSkill)
-value <- c(2 * GetCoreLv(BowmasterCore, "ArrowPlatter"), ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter")>=40, 20, 0))
-info <- c(175 + 3 * BowmasterBase$SkillLv, 1, 0, 210, 30, NA, T, NA, NA, F)
+value <- c(2 * GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage"), ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage")>=40, 20, 0))
+info <- c(175, 1, 0, 210, 30, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 ArrowPlatter <- rbind(data.frame(option, value), info) 
@@ -353,7 +351,7 @@ Evolve <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=SSkill)
 value <- c()
-info <- c(400 + 16 * GetCoreLv(BowmasterCore, "GuidedArrow"), 1, 720, 500, 0.5*89+0.72+0.01, 60, F, T, F, F)
+info <- c(400 + 16 * GetCoreLv(BowmasterCore, "GuidedArrow"), 1, 0, 510, 600, NA, F, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 GuidedArrow <- rbind(data.frame(option, value), info)}
@@ -387,9 +385,9 @@ BowmasterDealCycle <- data.frame(BowmasterDealCycle)
 
 BowmasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                           Period=c(120), CycleTime, SummonSkillPeriod) {
-  BuffSummonedPrior <- c("SoulArrow", "SharpEyes", "MapleSoldier", "EpicAdventure", "UsefulCombatOrders", "UsefulAdvancedBless", "GuidedArrow", "Evolve", "ArrowPlatter", 
-                         "MapleWarriors2", "Preperation", "ArrowRainBuff", "SoulContractLink", "AdvancedQuiver", "QuiverFullBurst", "CriticalReinforce", "Restraint4", "AfterimageArrowBuff")
-  Times120 <- c(0, 0, 0, 0, 0, 0, 2, 1, 4, 0.5, 1, 1, 1, 4, 1, 1, 0.5, 2)
+  BuffSummonedPrior <- c("SharpEyes", "MapleSoldier", "EpicAdventure", "UsefulCombatOrders", "UsefulAdvancedBless", "GuidedArrow", "Evolve", "ArrowPlatter", 
+                         "MapleWarriors2", "Preperation", "ArrowRainBuff", "SoulContractLink", "QuiverFullBurst", "CriticalReinforce", "Restraint4", "AfterimageArrowBuff")
+  Times120 <- c(0, 0, 0, 0, 0, 0, 1, 4, 0.5, 1, 1, 1, 1, 1, 0.5, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -512,13 +510,8 @@ BowmasterCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
         }
       }
       DealCycle <- DCATK(DealCycle, "HurricaneArrow", ATKFinal)
-      if(DealCycle$QuiverFullBurst[nrow(DealCycle)] > 0) {
-        if(DealCycle$Skills[nrow(DealCycle)]=="HurricaneArrow") {
-          DealCycle$QuiverPoisonDummy[nrow(DealCycle)] <- 8000
-        }
-      }
-      if(max(DealCycle$Time) > max(subset(DealCycle, DealCycle$Skills=="AfterimageArrowBuff")$Time) + 3000 & 
-         max(DealCycle$Time) < max(subset(DealCycle, DealCycle$Skills=="AfterimageArrowBuff")$Time) + 60000 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * 1000) {
+      if(max(DealCycle$Time) > max(subset(DealCycle, DealCycle$Skills=="AfterimageArrowBuff")$Time) + 30000 & 
+         max(DealCycle$Time) < max(subset(DealCycle, DealCycle$Skills=="AfterimageArrowBuff")$Time) + 120000 * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * 1000) {
         if(nrow(subset(DealCycle, DealCycle$Skills=="AfterimageArrowPassive"))==0) {
           AfterimageDummy <- AfterimageDummy + 1
         } else if(max(DealCycle$Time) > max(subset(DealCycle, DealCycle$Skills=="AfterimageArrowPassive")$Time) + 1000) {
@@ -581,6 +574,7 @@ BMEvolveCycle <- function(DealCycleWithEvolve) {
   return(DealCycleWithEvolve)
 }
 BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
+  ## Afterimage Arrow
   for(i in 1:(nrow(DealCycle))) {
     if(DealCycle$Skills[i]=="AfterimageArrowBuff") {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
@@ -590,11 +584,16 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DealCycle <- DealCycle[order(DealCycle$Time), ]
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
-  DealCycle <- RepATKCycle(DealCycle, c("AfterimageArrowActive"), 13, 180, ATKFinal)
-  DealCycle <- RepATKCycle(DealCycle, c("AfterimageArrowPassive"), 4, 180, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, c("AfterimageArrowActive"), 141, 600, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, c("AfterimageArrowPassive"), 4, 210, ATKFinal)
+  
+  
+  ## Guided Arrow, Arrow Platter, Evolve, Phoenix
   DealCycle <- DCSummonedATKs(DealCycle, Skill=c("GuidedArrow", "ArrowPlatter", "Evolve"), SummonedFinal)
   DealCycle <- BMEvolveCycle(DealCycle)
   
+  
+  ## Arrow Rain, Quiver Fullburst, Silhouette Mirage
   RainTime <- 5000 ; QuiverFlameTime <- 2000 ; MirageTime <- 7500 ; t <- 1
   for(i in 1:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("AfterimageArrowActive", "HurricaneArrow")) > 0) {
@@ -611,7 +610,7 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
       } else {
         RainTime <- RainTime + DealCycle$Time[i+1] - DealCycle$Time[i]
       }
-      if(DealCycle$QuiverFullBurst[i] > 0 & QuiverFlameTime >= 2000) {
+      if(DealCycle$QuiverFullBurst[i] > 0 & QuiverFlameTime >= 2000 & nrow(DealCycle[DealCycle$Skills=="QuiverFlame", ]) < nrow(DealCycle[DealCycle$Skills=="QuiverFullBurst", ]) * 18 * 6) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
@@ -646,6 +645,8 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   DealCycle <- RepATKCycle(DealCycle, c("ArrowRain1"), 4, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, c("ArrowRain2"), 3, 0, ATKFinal)
   
+  
+  ## Advanced Final Attack, Advanced Quiver 
   for(i in 1:(nrow(DealCycle))) {
     if(sum(DealCycle$Skills[i]==c("AfterimageArrowActive", "HurricaneArrow")) > 0) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
@@ -663,8 +664,30 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ]
   rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  
+  ## Spider In Mirror
   DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   
+  
+  ## Flash Mirage
+  FlashMirageIdx <- 0
+  for(i in 1:(nrow(DealCycle)-1)) {
+    if(sum(DealCycle$Skills[i]==c("HurricaneArrow", "ArrowRain1", "ArrowRain2", "QuiverFlame", "SilhouetteMirage", "GuidedArrow", "AfterimageArrowActive")) > 0) {
+      if(FlashMirageIdx==7 * 7) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- c("FlashMirage")
+        FlashMirageIdx <- 0
+      } else {
+        FlashMirageIdx <- FlashMirageIdx + 1
+      }
+    }
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ]
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  
+  ## Motal Blow
   MotalIdx <- 0
   for(i in 1:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("HurricaneArrow", "AfterimageArrowActive")) > 0) {
@@ -680,6 +703,8 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
     }
   }
   
+  
+  ## Armor Piercing
   ArmorCT <- Cooldown(9, T, BowmasterSpec$CoolReduceP, BowmasterSpec$CoolReduce) * 1000
   ArmorDummy <- 0 ; CoolCut <- 0
   for(i in 1:(nrow(DealCycle)-1)) {
@@ -695,6 +720,7 @@ BowmasterAddATK <- function(DealCycle, ATKFinal, SummonedFinal, Spec) {
     ArmorDummy <- max(ArmorDummy - (DealCycle$Time[i+1] - DealCycle$Time[i]), 0)
     ArmorDummy <- ifelse(ArmorDummy - CoolCut < 0, 0, ArmorDummy)
   }
+  
   return(DealCycle)
 }
 

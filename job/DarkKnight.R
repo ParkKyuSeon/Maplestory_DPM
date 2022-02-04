@@ -41,9 +41,14 @@ DarkKnightBase <- JobBase(ChrInfo=ChrInfo,
 
 ## DarkKnight - Passive
 ## Hyper : Beholder - Reinforce, Beholder - Buff Reinforce, Gugnir Descent - Reinforce, Reincarnation - Damage, Reincarnation - Critical Rate
+## Weapon : Spear
 {option <- factor(c("ATKSpeed", "BDR"), levels=PSkill)
 value <- c(1, 5)
-WeaponMastery <- data.frame(option, value) ## Spear Only
+WeaponMastery <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+WeaponAcceleration <- data.frame(option, value)
 
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
@@ -63,10 +68,10 @@ BeholdersBuff <- data.frame(option, value)
 
 option <- factor(c("IGR"), levels=PSkill)
 value <- c(30 + DarkKnightBase$SkillLv)
-SacrificePassive <- data.frame(option, value)
+DarkResonanacePassive <- data.frame(option, value)
 
 option <- factor(c("FDR", "CRR", "CDMR"), levels=PSkill)
-value <- c(30 + DarkKnightBase$SkillLv, 30 + ceiling(DarkKnightBase$SkillLv/3), 15)
+value <- c(35 + DarkKnightBase$SkillLv, 30 + ceiling(DarkKnightBase$SkillLv/3), 15)
 ReincarnationPassive <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CMDR"), levels=PSkill)
@@ -85,27 +90,14 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(DarkKnightCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-DarkKnightPassive <- Passive(list(WeaponMastery=WeaponMastery, PhysicalTraining=PhysicalTraining, CrossOverChainPassive=CrossOverChainPassive, LordofDarkness=LordofDarkness, BeholdersBuff=BeholdersBuff, 
-                                  SacrificePassive=SacrificePassive, ReincarnationPassive=ReincarnationPassive, AdvancedWeaponMastery=AdvancedWeaponMastery, 
+DarkKnightPassive <- Passive(list(WeaponMastery=WeaponMastery, WeaponAcceleration=WeaponAcceleration, PhysicalTraining=PhysicalTraining, 
+                                  CrossOverChainPassive=CrossOverChainPassive, LordofDarkness=LordofDarkness, BeholdersBuff=BeholdersBuff, 
+                                  DarkResonanacePassive=DarkResonanacePassive, ReincarnationPassive=ReincarnationPassive, AdvancedWeaponMastery=AdvancedWeaponMastery, 
                                   BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## DarkKnight - Buff
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-WeaponBooster <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-IronWall <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
+{option <- factor(levels=BSkill)
 value <- c()
 info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -126,26 +118,19 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "BDR"), levels=BSkill)
-value <- c(10 + ceiling(DarkKnightBase$SkillLv/3), 10 + ceiling(DarkKnightBase$SkillLv/3))
-info <- c(30 * (100 + DarkKnightBase$BuffDurationNeeded) / 100 + General$General$Serverlag, Cooldown(70, T, DarkKnightBase$UnionChrs$CoolReduceP, DarkKnightBase$CoolReduce) - 7.7, 1080, F, F, F, F)
+option <- factor(c("IGR", "BDR", "FDR"), levels=BSkill)
+value <- c(10 + ceiling(DarkKnightBase$SkillLv/3), 10 + ceiling(DarkKnightBase$SkillLv/3), 10)
+info <- c(30 * (100 + DarkKnightBase$BuffDurationNeeded) / 100 + General$General$Serverlag, Cooldown(70, T, DarkKnightBase$UnionChrs$CoolReduceP, DarkKnightBase$CoolReduce) - 7.7, 960, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-Sacrifice <- rbind(data.frame(option, value), info)
+DarkResonance <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
 info <- c(Cooldown(70, T, DarkKnightBase$UnionChrs$CoolReduceP, DarkKnightBase$CoolReduce), 70, 0, F, T, T, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-SacrificeCooldown <- rbind(data.frame(option, value), info)
-
-option <- factor("FDR", levels=BSkill)
-value <- c(((1.6 + 0.01 * DarkKnightBase$SkillLv) / (1.3 + 0.01 * DarkKnightBase$SkillLv) - 1) * 100)
-info <- c(40 + DarkKnightBase$SkillLv, Cooldown(900, T, DarkKnightBase$UnionChrs$CoolReduceP, DarkKnightBase$CoolReduce) - 300, 0, T, F, F, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-Reincarnation <- rbind(data.frame(option, value), info)
+DarkResonanceCooldown <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -189,8 +174,8 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-DarkKnightBuff <- list(WeaponBooster=WeaponBooster, IronWall=IronWall, HyperBody=HyperBody, CrossOverChain=CrossOverChain, MapleSoldier=MapleSoldier,
-                       Sacrifice=Sacrifice, SacrificeCooldown=SacrificeCooldown, Reincarnation=Reincarnation, EpicAdventure=EpicAdventure, DarkThirst=DarkThirst, 
+DarkKnightBuff <- list(HyperBody=HyperBody, CrossOverChain=CrossOverChain, MapleSoldier=MapleSoldier,
+                       DarkResonance=DarkResonance, DarkResonanceCooldown=DarkResonanceCooldown, EpicAdventure=EpicAdventure, DarkThirst=DarkThirst, 
                        UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, DarknessAuraBuff=DarknessAuraBuff, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, 
                        Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
@@ -199,7 +184,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 DarkKnightBuff <- Buff(DarkKnightBuff)
 DarkKnightAllTimeBuff <- AllTimeBuff(DarkKnightBuff)
-## PetBuff : WeaponBooster(990ms), HyperBody(600ms), CrossOverChain(720ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+## PetBuff : HyperBody(600ms), CrossOverChain(720ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
 
 
 ## DarkKnight - Union & HyperStat & SoulWeapon
@@ -239,10 +224,24 @@ GungnirDescent <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(DarkKnightCore, "Beholder")>=40, 20, 0), 150, 3 * GetCoreLv(DarkKnightCore, "Beholder"))
-info <- c(515 + 5 * DarkKnightSpec$SkillLv, 6, 0, NA, 12, T, T, F)
+info <- c(370 + 3 * DarkKnightSpec$SkillLv, 6, 0, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BeholderShock <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(DarkKnightCore, "Beholder")>=40, 20, 0), 150, 3 * GetCoreLv(DarkKnightCore, "Beholder"))
+info <- c(350 + 5 * DarkKnightSpec$SkillLv, 3, 0, NA, 10, T, T, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BeholderShockSphere <- rbind(data.frame(option, value), info)
+
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(DarkKnightCore, "Beholder")>=40, 20, 0), 150, 3 * GetCoreLv(DarkKnightCore, "Beholder"))
+info <- c(182 + 2 * DarkKnightSpec$SkillLv, 5, 0, NA, 5, F, F, F)
+info <- data.frame(AInfo, info)
+colnames(info) <- c("option", "value")
+BeholdersRevenge <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(DarkKnightCore, "FinalAttack")>=40, 20, 0), DarkKnightBase$MonsterLife$FinalATKDMR, 4 * GetCoreLv(DarkKnightCore, "FinalAttack"))
@@ -274,21 +273,21 @@ PierceCyclonePre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(50)
-info <- c(400 + 16 * GetCoreLv(DarkKnightCore, "PierceCyclone"), 12, 360, 0, NA, NA, NA, F)
+info <- c(470 + 19 * GetCoreLv(DarkKnightCore, "PierceCyclone"), 12, 180, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PierceCycloneTick <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(50)
-info <- c(400 + 16 * GetCoreLv(DarkKnightCore, "PierceCyclone"), 12, 270, 0, NA, NA, NA, F)
+info <- c(470 + 19 * GetCoreLv(DarkKnightCore, "PierceCyclone"), 12, 90, 0, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PierceCycloneRemain <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(50)
-info <- c(300 + 12 * GetCoreLv(DarkKnightCore, "PierceCyclone"), 15, 1200, 30, 180, T, F, F)
+info <- c(360 + 14 * GetCoreLv(DarkKnightCore, "PierceCyclone"), 15, 1200, 30, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PierceCycloneEnd <- rbind(data.frame(option, value), info)
@@ -314,7 +313,8 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AuraWeapon <- rbind(data.frame(option, value), info)}
 
-DarkKnightATK <- Attack(list(GungnirDescent=GungnirDescent, BeholderShock=BeholderShock, FinalAttack=FinalAttack, DarkSpear=DarkSpear, BeholderImpact=BeholderImpact, 
+DarkKnightATK <- Attack(list(GungnirDescent=GungnirDescent, BeholderShock=BeholderShock, BeholderShockSphere=BeholderShockSphere, BeholdersRevenge=BeholdersRevenge, FinalAttack=FinalAttack, 
+                             DarkSpear=DarkSpear, BeholderImpact=BeholderImpact, 
                              PierceCyclonePre=PierceCyclonePre, PierceCycloneTick=PierceCycloneTick, PierceCycloneRemain=PierceCycloneRemain, PierceCycloneEnd=PierceCycloneEnd, 
                              DarknessAura=DarknessAura, DarknessAuraEnd=DarknessAuraEnd, AuraWeapon=AuraWeapon, SpiderInMirror=SpiderInMirror))
 
@@ -334,7 +334,7 @@ DarkKnightSummoned <- Summoned(list(BeholderDominant=BeholderDominant, SpiderInM
 
 ## DarkKnight - DealCycle & Deal Calculation
 ATKFinal <- data.frame(DarkKnightATK)
-ATKFinal$Delay[c(-6, -7, -8, -9)] <- Delay(ATKFinal$Delay, DarkKnightSpec$ATKSpeed)[c(-6, -7, -8, -9)]
+ATKFinal$Delay[c(-8:-11)] <- Delay(ATKFinal$Delay, DarkKnightSpec$ATKSpeed)[c(-8:-11)]
 ATKFinal$CoolTime <- Cooldown(ATKFinal$CoolTime, ATKFinal$CoolReduceAvailable, DarkKnightSpec$CoolReduceP, DarkKnightSpec$CoolReduce)
 
 BuffFinal <- data.frame(DarkKnightBuff)
@@ -353,18 +353,12 @@ DarkKnightDealCycle <- t(rep(0, length(DealCycle)))
 colnames(DarkKnightDealCycle) <- DealCycle
 
 DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                         Period=c(180), CycleTime=c(720), Reincarnation=T) {
-  BuffSummonedPrior <- c("WeaponBooster", "IronWall", "HyperBody", "CrossOverChain", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
-                         "Sacrifice", "AuraWeaponBuff", "MapleWarriors2", "DarknessAuraBuff")
-  if(Reincarnation==T) {
-    BuffSummonedPrior <- c(BuffSummonedPrior, "Reincarnation")
-  }
+                         Period=c(180), CycleTime=c(360)) {
+  BuffSummonedPrior <- c("HyperBody", "CrossOverChain", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
+                         "DarkResonance", "AuraWeaponBuff", "MapleWarriors2", "DarknessAuraBuff")
   
-  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
                 3, 1, 1, 1)
-  if(Reincarnation==T) {
-    Times180 <- c(Times180, 0.25)
-  }
   
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -372,7 +366,7 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   }
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
-  TotalTime <- SubTime[1] * 4
+  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100)  - Spec$CoolReduce * (CycleTime / Period)
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -431,8 +425,8 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
       if(BuffList[[1]][i]=="DarknessAuraBuff") {
         DealCycle <- DCATK(DealCycle, "DarknessAura", ATKFinal)
-      } else if(BuffList[[1]][i]=="Sacrifice") {
-        DealCycle <- DCBuff(DealCycle, "SacrificeCooldown", BuffFinal)
+      } else if(BuffList[[1]][i]=="DarkResonance") {
+        DealCycle <- DCBuff(DealCycle, "DarkResonanceCooldown", BuffFinal)
       }
       DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
       if(BuffList[[1]][i]=="MapleSoldier") {
@@ -461,9 +455,9 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   BuffDelays[[length(BuffDelays)+1]] <- BuffDelays[[1]]
   TimeTypes <- c(0, TimeTypes, TotalTime/1000)
   
-  BSCool <- subset(ATKFinal, rownames(ATKFinal)=="BeholderShock")$CoolTime * 1000
   DSCool <- subset(ATKFinal, rownames(ATKFinal)=="DarkSpear")$CoolTime * 1000
-  BSRemain <- 0 ; DSRemain <- 0
+  BRCool <- subset(ATKFinal, rownames(ATKFinal)=="BeholdersRevenge")$CoolTime * 1000
+  DSRemain <- 0 ; BRRemain <- 0
   ImpactDummy <- 0 ; SCDummy <- 0
   
   for(k in 2:length(BuffList)) {
@@ -490,83 +484,116 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
       for(i in 1:length(ColNums)) {
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
-          BSRemain <- max(0, BSRemain - DealCycle$Time[1])
           DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         }
       }
       ## Dark Thirst, Soul Contract, Restraint
       if(DealCycle$DarknessAuraBuff[nrow(DealCycle)] - DealCycle$Time[1] > 0 & DealCycle$DarknessAuraBuff[nrow(DealCycle)] - DealCycle$Time[1] <= 10000 & 
          DealCycle$Restraint4[nrow(DealCycle)] == 0) {
         DealCycle <- DCBuff(DealCycle, "DarkThirst", BuffFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         
         DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         SCDummy <- 1
       } else if(nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) >= 1 & 
                 DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - ifelse(nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) >= 1, 
                                                                              max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time), 0) >=
                 subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 & SCDummy == 1) {
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         SCDummy <- 0
       }
       ## Dark Spear and Beholder Impact
       else if(DSRemain==0 & ImpactDummy==0) {
-        DealCycle <- DCATK(DealCycle, "DarkSpear", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-        DSRemain <- DSCool - DealCycle$Time[1]
-        DealCycle <- DCATK(DealCycle, "BeholderImpact", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "BeholderShock", ATKFinal)
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+        
+        DealCycle <- DCATK(DealCycle, "DarkSpear", ATKFinal)
+        DSRemain <- DSCool - DealCycle$Time[1]
+        if(BRRemain == 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+          DealCycle$Skills[nrow(DealCycle)-1] <- "BeholdersRevenge"
+          BRRemain <- BRCool - DealCycle$Time[1]
+        } else {
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+        }
+        DealCycle <- DCATK(DealCycle, "BeholderImpact", ATKFinal)
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         ImpactDummy <- 1
       } else if(DSRemain==0 & ImpactDummy==1) {
+        DealCycle <- DCATK(DealCycle, "BeholderShock", ATKFinal)
+        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+        
         DealCycle <- DCATK(DealCycle, "DarkSpear", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- DSCool - DealCycle$Time[1]
-        ImpactDummy <- 0
+        if(BRRemain == 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+          DealCycle$Skills[nrow(DealCycle)-1] <- "BeholdersRevenge"
+          BRRemain <- BRCool - DealCycle$Time[1]
+        } else {
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+        }
+        ImpactDummy <- ifelse(TotalTime - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) + min(subset(DealCycle, DealCycle$Skills=="BeholderImpact")$Time) <= 
+                                ATKFinal[rownames(ATKFinal)=="BeholderImpact", ]$CoolTime * 1000, 1, 0)
       }
       ## Pierce Cyclone and Darkness Aura
       else if(DealCycle$Restraint4[nrow(DealCycle)] >= 10000) {
         DealCycle <- DCATK(DealCycle, "PierceCyclonePre", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         for(i in 1:24) {
-          if(DealCycle$DarknessAuraBuff[nrow(DealCycle)] > 0 & DealCycle$DarknessAuraBuff[nrow(DealCycle)] - DealCycle$Time[1] <= 3000) {
+          if(DealCycle$DarknessAuraBuff[nrow(DealCycle)] > 0 & DealCycle$DarknessAuraBuff[nrow(DealCycle)] - DealCycle$Time[1] <= 4000) {
             DealCycle <- DCATK(DealCycle, "DarknessAuraEnd", ATKFinal)
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
             DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+            BRRemain <- max(0, BRRemain - DealCycle$Time[1])
             DealCycle$DarknessAuraBuff[nrow(DealCycle)] <- 0
           }
           DealCycle <- DCATK(DealCycle, "PierceCycloneTick", ATKFinal)
-          BSRemain <- max(0, BSRemain - DealCycle$Time[1])
           DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          if(BRRemain == 0) {
+            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+            DealCycle$Skills[nrow(DealCycle)-1] <- "BeholdersRevenge"
+            BRRemain <- BRCool - DealCycle$Time[1]
+          } else {
+            BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+          }
         }
         DealCycle <- DCATK(DealCycle, "PierceCycloneRemain", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        if(BRRemain == 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+          DealCycle$Skills[nrow(DealCycle)-1] <- "BeholdersRevenge"
+          BRRemain <- BRCool - DealCycle$Time[1]
+        } else {
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+        }
         DealCycle <- DCATK(DealCycle, "PierceCycloneEnd", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        BRRemain <- max(0, BRRemain - DealCycle$Time[1])
       } 
-      ## Beholder Shock
-      else if(BSRemain==0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="BeholderImpact")$Time) >= 3660) {
-        DealCycle <- DCATK(DealCycle, "BeholderShock", ATKFinal)
-        BSRemain <- BSCool - DealCycle$Time[1]
-        DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-      }
       ## Gungnir Descent
       else {
         DealCycle <- DCATK(DealCycle, "GungnirDescent", ATKFinal)
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+        if(BRRemain == 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+          DealCycle$Skills[nrow(DealCycle)-1] <- "BeholdersRevenge"
+          BRRemain <- BRCool - DealCycle$Time[1]
+        } else {
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+        }
       }
     }
       
@@ -575,25 +602,20 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
           if(BuffList[[k]][i]=="DarknessAuraBuff") {
             DealCycle <- DCATK(DealCycle, "DarknessAura", ATKFinal)
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
             DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-          } else if(BuffList[[k]][i]=="Sacrifice") {
-            DealCycle <- DCBuff(DealCycle, "SacrificeCooldown", BuffFinal)
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+            BRRemain <- max(0, BRRemain - DealCycle$Time[1])
+          } else if(BuffList[[k]][i]=="DarkResonance") {
+            DealCycle <- DCBuff(DealCycle, "DarkResonanceCooldown", BuffFinal)
             DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+            BRRemain <- max(0, BRRemain - DealCycle$Time[1])
           }
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
-          BSRemain <- max(0, BSRemain - DealCycle$Time[1])
           DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-          if(BuffList[[k]][i]=="MapleSoldier") {
-            DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
-            BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-            DSRemain <- max(0, DSRemain - DealCycle$Time[1])
-          }
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
-          BSRemain <- max(0, BSRemain - DealCycle$Time[1])
           DSRemain <- max(0, DSRemain - DealCycle$Time[1])
+          BRRemain <- max(0, BRRemain - DealCycle$Time[1])
         }
       }
     }
@@ -603,7 +625,7 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
 DarkKnightAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   ## Beholder Summon
   for(i in 1:nrow(DealCycle)) {
-    if(DealCycle$Skills[i]=="BeholderShock") {
+    if(sum(DealCycle$Skills[i]==c("BeholderShock", "BeholdersRevenge")) >= 1) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "BeholderDominantSummoned"
     } else if(DealCycle$Skills[i]=="BeholderImpact") {
@@ -633,23 +655,33 @@ DarkKnightAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   DealCycle <- DealCycle[-BeholderRM, ]
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
+  ## Beholder Shock Sphere
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("BeholderShock")) >= 1) {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "BeholderShockSphere"
+    } 
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
   ## Beholder Impact
   DealCycle <- RepATKCycle(DealCycle, "BeholderImpact", 11, 780, ATKFinal)
-  
-  ## Sacrifice Cooldown
-  for(i in 2:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("BeholderImpact", "BeholderDominant", "BeholderShock"))==1) {
-      DealCycle$SacrificeCooldown[i] <- max(0, DealCycle$SacrificeCooldown[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]) - 350)
-    } else if(DealCycle$Skills[i]!="SacrificeCooldown") {
-      DealCycle$SacrificeCooldown[i] <- max(0, DealCycle$SacrificeCooldown[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]))
-    }
-  }
   
   ## Dark Spear, Darkness Aura, Darkness Aura End, Pierce Cyclone, Pierce Cyclone End
   DealCycle <- RepATKCycle(DealCycle, "DarkSpear", 10, 60, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "DarknessAura", 26, 1500, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "DarknessAuraEnd", 6, 600, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "PierceCycloneEnd", 5, 150, ATKFinal)
+  
+  ## DarkResonance Cooldown
+  for(i in 2:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("GungnirDescent", "DarkSpear", "PierceCycloneTick", "PierceCycloneRemain"))==1) {
+      DealCycle$DarkResonanceCooldown[i] <- max(0, DealCycle$DarkResonanceCooldown[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]) - 350)
+    } else if(DealCycle$Skills[i]!="DarkResonanceCooldown") {
+      DealCycle$DarkResonanceCooldown[i] <- max(0, DealCycle$DarkResonanceCooldown[i-1] - (DealCycle$Time[i] - DealCycle$Time[i-1]))
+    }
+  }
   
   ## Final Attack
   for(i in 1:nrow(DealCycle)) {
@@ -675,8 +707,7 @@ DarkKnightDealCycle <- DarkKnightCycle(PreDealCycle=DarkKnightDealCycle,
                                        SummonedFinal=SummonedFinal, 
                                        Spec=DarkKnightSpec,
                                        Period=180, 
-                                       CycleTime=720, 
-                                       Reincarnation=T)
+                                       CycleTime=360)
 DarkKnightDealCycle <- DealCycleFinal(DarkKnightDealCycle)
 DarkKnightDealCycle <- DarkKnightAddATK(DealCycle=DarkKnightDealCycle, 
                                         ATKFinal=ATKFinal,
@@ -728,35 +759,3 @@ set(get(DPMCalcOption$DataName), as.integer(4), "DarkKnight", Deal_40s(DarkKnigh
 DarkKnightSpecMean <- SpecMean("DarkKnight", DarkKnightDealCycleReduction, 
                                DealCalcWithMaxDMR(DarkKnightDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt), 
                                ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt)
-
-
-## Reincarnation OFF
-DealCycle <- c("Skills", "Time", rownames(DarkKnightBuff))
-DarkKnightDealCycleReincOff <- t(rep(0, length(DealCycle)))
-colnames(DarkKnightDealCycleReincOff) <- DealCycle
-
-DarkKnightDealCycleReincOff <- DarkKnightCycle(PreDealCycle=DarkKnightDealCycleReincOff, 
-                                       ATKFinal=ATKFinal,
-                                       BuffFinal=BuffFinal, 
-                                       SummonedFinal=SummonedFinal, 
-                                       Spec=DarkKnightSpec,
-                                       Period=180, 
-                                       CycleTime=720, 
-                                       Reincarnation=F)
-DarkKnightDealCycleReincOff <- DealCycleFinal(DarkKnightDealCycleReincOff)
-DarkKnightDealCycleReincOff <- DarkKnightAddATK(DealCycle=DarkKnightDealCycleReincOff, 
-                                        ATKFinal=ATKFinal,
-                                        BuffFinal=BuffFinal, 
-                                        SummonedFinal=SummonedFinal, 
-                                        Spec=DarkKnightSpec)
-
-DarkKnightReincOff <- DealCalcWithMaxDMR(DarkKnightDealCycleReincOff, ATKFinal, BuffFinal, SummonedFinal, DarkKnightSpecOpt)
-ReincOffDPM <- sum(na.omit(DarkKnightReincOff)) / (max(DarkKnightDealCycleReincOff$Time) / 60000)
-
-ReincOffDealData <- data.frame(DarkKnightDealCycleReincOff$Skills, DarkKnightDealCycleReincOff$Time, DarkKnightDealCycleReincOff$Restraint4, DarkKnightReincOff)
-colnames(ReincOffDealData) <- c("Skills", "Time", "R4", "Deal")
-
-ReincOffRR <- Deal_RR(ReincOffDealData)
-ReincOff40s <- Deal_40s(ReincOffDealData, F, NA, FinishTime=subset(ReincOffDealData, ReincOffDealData$Skills=="Restraint4")$Time[1] + 15000)
-
-print(data.frame(ReincOffDPM=ReincOffDPM, ReincOffRR=ReincOffRR, ReincOff40s=ReincOff40s))

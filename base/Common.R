@@ -225,7 +225,7 @@ colnames(CommonSkills) <- CommonSkillOptions
 
 
 
-## Spider in Mirror Data
+## Spider in Mirror, Crest of the Solar Data
 SIMData <- function(SIMLv) {
   option <- factor(levels=ASkill)
   value <- c()
@@ -291,6 +291,24 @@ SIMData <- function(SIMLv) {
               SpiderInMirror4=SpiderInMirror4, 
               SpiderInMirror5=SpiderInMirror5, 
               SpiderInMirrorWait=SpiderInMirrorWait))
+}
+COSData <- function(COSLv) {
+  option <- factor(levels=ASkill)
+  value <- c()
+  info <- c(750 + 30 * COSLv, 15, 870, NA, 250, T, F, F)
+  info <- data.frame(AInfo, info)
+  colnames(info) <- c("option", "value")
+  CrestoftheSolar <- rbind(data.frame(option, value), info) 
+  
+  option <- factor(levels=SSkill)
+  value <- c()
+  info <- c(275 + 11 * COSLv, 6, 0, 2100, 51, 250, F, T, F, F)
+  info <- data.frame(SInfo, info)
+  colnames(info) <- c("option", "value")
+  CrestoftheSolarSummoned <- rbind(data.frame(option, value), info)
+  
+  return(list(CrestoftheSolar=CrestoftheSolar, 
+              CrestoftheSolarSummoned=CrestoftheSolarSummoned))
 }
 
 

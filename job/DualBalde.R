@@ -47,6 +47,10 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+DualBladeAcceleration <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30 + DualBladeBase$PSkillLv)
 ThornsEffect <- data.frame(option, value)
@@ -71,19 +75,12 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(DualBladeCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-DualBladePassive <- Passive(list(Karma=Karma, PhysicalTraining=PhysicalTraining, ThornsEffect=ThornsEffect, Sharpness=Sharpness, DualBladeExpert=DualBladeExpert, 
+DualBladePassive <- Passive(list(Karma=Karma, PhysicalTraining=PhysicalTraining, DualBladeAcceleration=DualBladeAcceleration, ThornsEffect=ThornsEffect, Sharpness=Sharpness, DualBladeExpert=DualBladeExpert, 
                                  ReadyToDie=ReadyToDie, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## DualBlade - Buff
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 600, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-DualBladeBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("AddATKRate", levels=BSkill)
+{option <- factor("AddATKRate", levels=BSkill)
 value <- c(70)
 info <- c(200, NA, 900, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -105,7 +102,7 @@ colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(9)
+value <- c(10)
 info <- c(25, 60, 0, F, T, T, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
@@ -160,12 +157,16 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-DualBladeBuff <- list(DualBladeBooster=DualBladeBooster, MirrorImaging=MirrorImaging, FinalCutBuff=FinalCutBuff, MapleSoldier=MapleSoldier, FlashBangBuff=FlashBangBuff, EpicAdventure=EpicAdventure, 
+DualBladeBuff <- list(MirrorImaging=MirrorImaging, FinalCutBuff=FinalCutBuff, MapleSoldier=MapleSoldier, FlashBangBuff=FlashBangBuff, EpicAdventure=EpicAdventure, 
                       HiddenBladeBuff=HiddenBladeBuff, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UltimateDarkSight=UltimateDarkSight, 
                       ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
 ## PetBuff : NA -> Not Use Useful Advanced Bless
 DualBladeBuff <- Buff(DualBladeBuff)
 DualBladeAllTimeBuff <- AllTimeBuff(DualBladeBuff)
+## Useful Skill Delay
+DualBladeBuff <- data.frame(DualBladeBuff)
+DualBladeBuff[rownames(DualBladeBuff)=="UsefulSharpEyes", ]$Delay <- 900
+DualBladeBuff[rownames(DualBladeBuff)=="UsefulCombatOrders", ]$Delay <- 1500
 
 
 ## DualBlade - Union & HyperStat & SoulWeapon
@@ -197,7 +198,7 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 ## DualBlade - Attacks
 {option <- factor("BDR", levels=ASkill)
-value <- c(-9)
+value <- c(-10)
 info <- c(250, 1, 510, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -226,7 +227,7 @@ FinalCut <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(2 * GetCoreLv(DualBladeCore, "SuddenRaid"), ifelse(GetCoreLv(DualBladeCore, "SuddenRaid")>=40, 20, 0))
-info <- c(1150 + 15 * DualBladeSpec$SkillLv, 3, 900, NA, 30, T, T, F)
+info <- c(494 + 5 * DualBladeSpec$SkillLv, 7, 900, NA, 30, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SuddenRaid <- rbind(data.frame(option, value), info)
@@ -247,7 +248,7 @@ AsuraPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(2 * GetCoreLv(DualBladeCore, "Asura"), 100)
-info <- c(420, 4, 9400, 300, 60, F, F, F)
+info <- c(693, 5, 4400, 330, 60, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Asura <- rbind(data.frame(option, value), info)
@@ -261,14 +262,14 @@ AsuraEnd <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(580 + 23 * GetCoreLv(DualBladeCore, "BladeStorm"), 7, 120, NA, 90, T, F, F)
+info <- c(580 + 23 * GetCoreLv(DualBladeCore, "BladeStorm"), 7, 30, NA, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeStormPre <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(350 + 10 * GetCoreLv(DualBladeCore, "BladeStorm"), 5, 9880, 210, 90, T, F, F)
+info <- c(565 + 12 * GetCoreLv(DualBladeCore, "BladeStorm"), 5, 4970, 210, 90, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BladeStorm <- rbind(data.frame(option, value), info)
@@ -303,7 +304,7 @@ BladeTornado <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(30)
-info <- c(200 + 8 * GetCoreLv(DualBladeCore, "HuntedEdge"), 4, 0, 90, 14, T, F, F)
+info <- c(410 + 8 * GetCoreLv(DualBladeCore, "HuntedEdge"), 4, 0, 90, 12, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HuntedEdge <- rbind(data.frame(option, value), info)}
@@ -340,9 +341,9 @@ colnames(DualBladeDealCycle) <- DealCycle
 
 DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                            Period=180.5, CycleTime=361) {
-  BuffSummonedPrior <- c("DualBladeBooster", "MirrorImaging", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "HiddenBladeBuff", "FlashBangBuff", "FinalCutBuff",
+  BuffSummonedPrior <- c("MirrorImaging", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "HiddenBladeBuff", "FlashBangBuff", "FinalCutBuff",
                          "MapleWarriors2", "UltimateDarkSight", "SoulContractLink", "ReadyToDie2Stack", "Restraint4")
-  Times180 <- c(1, 1, 1, 1, 1, 0, 1, 2, 0, 1, 1, 2, 2, 1)
+  Times180 <- c(1, 1, 1, 1, 0, 1, 2, 0, 1, 1, 2, 2, 1)
   
   SubTime <- rep(Period - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime - (CycleTime/Period) * Spec$CoolReduce
@@ -512,7 +513,12 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
         BSRemain <- max(0, BSRemain - DealCycle$Time[1])
       }
       ## Blade Storm, Asura
-      else if(BSRemain==0 & BTRemain > BTCool - 2000 & DealCycle$ReadyToDie2Stack[nrow(DealCycle)] > 0) {
+      else if(BSRemain==0 & BTRemain > BTCool - 7000 & DealCycle$ReadyToDie2Stack[nrow(DealCycle)] > 0) {
+        DealCycle <- DCATK(DealCycle, "PhantomBlow", ATKFinal)
+        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "BladeStormPre", ATKFinal)
         KFRemain <- max(0, KFRemain - DealCycle$Time[1])
         BTRemain <- max(0, BTRemain - DealCycle$Time[1])
@@ -524,6 +530,21 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
         SRRemain <- max(0, SRRemain - DealCycle$Time[1])
         BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "BladeStormEnd", ATKFinal)
+        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "AsuraPre", ATKFinal)
+        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "Asura", ATKFinal)
+        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
+        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
+        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
+        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
+        DealCycle <- DCATK(DealCycle, "AsuraEnd", ATKFinal)
         KFRemain <- max(0, KFRemain - DealCycle$Time[1])
         BTRemain <- max(0, BTRemain - DealCycle$Time[1])
         SRRemain <- max(0, SRRemain - DealCycle$Time[1])
@@ -544,21 +565,6 @@ DualBladeCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
         SRRemain <- max(0, SRRemain - DealCycle$Time[1])
         BSRemain <- max(0, BSRemain - DealCycle$Time[1])
         DealCycle <- DCATK(DealCycle, "PhantomBlow", ATKFinal)
-        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
-        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
-        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "AsuraPre", ATKFinal)
-        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
-        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
-        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "Asura", ATKFinal)
-        KFRemain <- max(0, KFRemain - DealCycle$Time[1])
-        BTRemain <- max(0, BTRemain - DealCycle$Time[1])
-        SRRemain <- max(0, SRRemain - DealCycle$Time[1])
-        BSRemain <- max(0, BSRemain - DealCycle$Time[1])
-        DealCycle <- DCATK(DealCycle, "AsuraEnd", ATKFinal)
         KFRemain <- max(0, KFRemain - DealCycle$Time[1])
         BTRemain <- max(0, BTRemain - DealCycle$Time[1])
         SRRemain <- max(0, SRRemain - DealCycle$Time[1])
@@ -622,8 +628,8 @@ DualBladeDealCycle <- HuntedEdgeCycle(DualBladeDealCycle, ATKFinal[rownames(ATKF
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "HuntedEdge", 5, 30, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "KarmaFury", 5, 0, ATKFinal)
 DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "BladeTornado", 5, 0, ATKFinal)
-DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "Asura", 32, 0, ATKFinal)
-DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "BladeStorm", 48, 0, ATKFinal)
+DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "Asura", 14, 0, ATKFinal)
+DualBladeDealCycle <- RepATKCycle(DualBladeDealCycle, "BladeStorm", 42, 0, ATKFinal)
 DualBladeDealCycle <- AddATKCycleDualBlade(DualBladeDealCycle)
 DualBladeDealCycle <- DCSpiderInMirror(DualBladeDealCycle, SummonedFinal)
 DualBladeDealCycleReduction <- DealCycleReduction(DualBladeDealCycle)
@@ -648,7 +654,7 @@ if(DPMCalcOption$Optimization==T) {
 DualBladeSpecOpt <- OptDataAdd(DualBladeSpec, DualBladeSpecOpt1, "Potential", DualBladeBase$CRROver, DemonAvenger=F)
 
 if(DPMCalcOption$Optimization==T) {
-  DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt, DualBladeHyperStatBase, DualBladeBase$ChrLv, DualBladeBase$CRROver, HyperStanceLv=4)
+  DualBladeSpecOpt2 <- Optimization2(DualBladeDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, DualBladeSpecOpt, DualBladeHyperStatBase, DualBladeBase$ChrLv, DualBladeBase$CRROver)
   HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- DualBladeSpecOpt2[1, ]
 } else {
   DualBladeSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]

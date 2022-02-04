@@ -23,7 +23,6 @@ LuminousCore <- MatrixSet(PasSkills=LuminousCoreBase$PasSkills$Skills,
 
 
 ## Luminous - Basic Info
-## Link Check Needed
 LuminousBase <- JobBase(ChrInfo=ChrInfo, 
                         MobInfo=get(DPMCalcOption$MobSet),
                         SpecSet=get(DPMCalcOption$SpecSet), 
@@ -48,6 +47,10 @@ PowerofLight <- data.frame(option, value)
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30)
 BlessofDarkness <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+MagicAcceleration <- data.frame(option, value)
 
 option <- factor(c("ATK", "BDR", "CRR", "ATKSpeed"), levels=PSkill)
 value <- c(10, 15, 20, 1)
@@ -81,7 +84,7 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(LuminousCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-LuminousPassive <- Passive(list(PowerofLight=PowerofLight, BlessofDarkness=BlessofDarkness, SpellMastery=SpellMastery, HighWisdom=HighWisdom, 
+LuminousPassive <- Passive(list(PowerofLight=PowerofLight, BlessofDarkness=BlessofDarkness, MagicAcceleration=MagicAcceleration, SpellMastery=SpellMastery, HighWisdom=HighWisdom, 
                                 MorningStarfall=MorningStarfall, DarkCrescendo=DarkCrescendo, DarknessSorcery=DarknessSorcery, MagicMastery=MagicMastery, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
@@ -100,16 +103,9 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 EquilibriumMemorize <- rbind(data.frame(option, value), info)
 
-option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(180, NA, 960, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-MagicBooster <- rbind(data.frame(option, value), info)
-
 option <- factor("ATK", levels=BSkill)
 value <- c(40)
-info <- c(180, NA, 0, T, NA, NA, T)
+info <- c(180, NA, 600, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PhoticMeditation <- rbind(data.frame(option, value), info)
@@ -184,7 +180,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-LuminousBuff <- list(Equilibrium=Equilibrium, EquilibriumMemorize=EquilibriumMemorize, MagicBooster=MagicBooster, PhoticMeditation=PhoticMeditation, DarknessSorcery=DarknessSorcery, 
+LuminousBuff <- list(Equilibrium=Equilibrium, EquilibriumMemorize=EquilibriumMemorize, PhoticMeditation=PhoticMeditation, DarknessSorcery=DarknessSorcery, 
                      MapleSoldier=MapleSoldier, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                      BaptismStack=BaptismStack, LiberationOrb=LiberationOrb, LiberationLightSTK=LiberationLightSTK, LiberationDarknessSTK=LiberationDarknessSTK, OverloadMana=OverloadMana, 
                      MapleWarriors2=MapleWarriors2, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
@@ -194,7 +190,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 LuminousBuff <- Buff(LuminousBuff)
 LuminousAllTimeBuff <- AllTimeBuff(LuminousBuff)
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, PhoticMeditation(600ms), (UsefulAdvancedBless) -> Not Use MagicBooster and DarknessSorcery : To Maintain DealCycle
+## PetBuff : UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless) -> Not Use Photic Meditation and DarknessSorcery : To Maintain DealCycle
 
 
 ## Luminous - Union & HyperStat & SoulWeapon
@@ -227,63 +223,63 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Luminous - Attacks
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(LuminousCore, "LightReflection")>=40, 20, 0), 20, 2 * GetCoreLv(LuminousCore, "LightReflection"))
-info <- c(400 + 5 * LuminousSpec$SkillLv, 4, 900, NA, NA, NA, NA, F)
+info <- c(440 + 4 * LuminousSpec$SkillLv, 4, 900, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightReflection <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(LuminousCore, "LightReflection")>=40, 20, 0), 20, 2 * GetCoreLv(LuminousCore, "LightReflection"))
-info <- c((400 + 5 * LuminousSpec$SkillLv) * 0.5, 4, 900, NA, NA, NA, NA, F)
+info <- c((440 + 4 * LuminousSpec$SkillLv) * 0.5, 4, 900, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightReflectionAdd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(LuminousCore, "Apocalypse")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(LuminousCore, "Apocalypse"), 5)))
-info <- c(340 + 4 * LuminousSpec$SkillLv, 7, 960, NA, NA, NA, NA, F)
+info <- c(375 + 4 * LuminousSpec$SkillLv, 7, 960, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Apocalypse <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(LuminousCore, "Apocalypse")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(LuminousCore, "Apocalypse"), 5)))
-info <- c((340 + 4 * LuminousSpec$SkillLv) * 0.5, 7, 960, NA, NA, NA, NA, F)
+info <- c((375 + 4 * LuminousSpec$SkillLv) * 0.5, 7, 960, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ApocalypseAdd <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(40 + LuminousSpec$SkillLv, ifelse(GetCoreLv(LuminousCore, "AbsoluteKill")>=40, 20, 0))), 20, FDRCalc(c(2 * GetCoreLv(LuminousCore, "AbsoluteKill"), 5)))
-info <- c(385 + 3 * LuminousSpec$SkillLv, 7, 810, NA, NA, NA, NA, F)
+info <- c(425 + 4 * LuminousSpec$SkillLv, 7, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AbsoluteKill <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(40 + LuminousSpec$SkillLv, ifelse(GetCoreLv(LuminousCore, "AbsoluteKill")>=40, 20, 0))), 20, FDRCalc(c(2 * GetCoreLv(LuminousCore, "AbsoluteKill"), 5)))
-info <- c(385 + 3 * LuminousSpec$SkillLv, 7, 810, NA, NA, NA, NA, F)
+info <- c(425 + 4 * LuminousSpec$SkillLv, 7, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AbsoluteKillEq <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(40 + LuminousSpec$SkillLv, ifelse(GetCoreLv(LuminousCore, "AbsoluteKill")>=40, 20, 0))), 20, FDRCalc(c(2 * GetCoreLv(LuminousCore, "AbsoluteKill"), 5)))
-info <- c((385 + 3 * LuminousSpec$SkillLv) * 0.5, 7, 810, NA, NA, NA, NA, F)
+info <- c((425 + 4 * LuminousSpec$SkillLv) * 0.5, 7, 810, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 AbsoluteKillAdd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(340 + 13 * GetCoreLv(LuminousCore, "PunishingResonator"), 6, 990, 180, 30, T, F, F)
+info <- c(400 + 16 * GetCoreLv(LuminousCore, "PunishingResonator"), 6, 990, 180, 30, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PunishingResonator <- rbind(data.frame(option, value), info)
 
 option <- factor("IGR", levels=ASkill)
 value <- c(100)
-info <- c(375 + 15 * GetCoreLv(LuminousCore, "BaptismofLightandDarkness"), 7, 840, 185, 45, T, F, F)
+info <- c(450 + 18 * GetCoreLv(LuminousCore, "BaptismofLightandDarkness"), 7, 840, 185, 45, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BaptismofLightandDarkness <- rbind(data.frame(option, value), info)
@@ -297,7 +293,7 @@ LiberationOrbLight <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * GetCoreLv(LuminousCore, "LiberationOrb") + 7 * (25 + GetCoreLv(LuminousCore, "LiberationOrb")), 10, 0, NA, NA, NA, NA, F)
+info <- c(550 + 22 * GetCoreLv(LuminousCore, "LiberationOrb") + 7 * (45 + 2 * GetCoreLv(LuminousCore, "LiberationOrb")), 10, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LiberationOrbBalance <- rbind(data.frame(option, value), info)}
@@ -311,7 +307,7 @@ LuminousATK <- Attack(list(LightReflection=LightReflection, LightReflectionAdd=L
 ## Luminous - Summoned
 {option <- factor(levels=SSkill)
 value <- c()
-info <- c(375 + 15 * GetCoreLv(LuminousCore, "DoorofTruth"), 10, 870, 4000, 25 + floor(GetCoreLv(LuminousCore, "DoorofTruth")/2), NA, F, NA, NA, F)
+info <- c(450 + 18 * GetCoreLv(LuminousCore, "DoorofTruth"), 10, 870, 4000, 25 + floor(GetCoreLv(LuminousCore, "DoorofTruth")/2), NA, F, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 DoorofTruth <- rbind(data.frame(option, value), info)}
@@ -432,14 +428,14 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       ABKillCool <- Cooldown(12 - Spec$SkillLv, T, Spec$CoolReduceP, Spec$CoolReduce) * 1000
       ABKillRemain <- 0
       DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
-      LiberationLight <- 6000 - DealCycle$Time[1]
+      LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
       DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
       DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
       DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
       PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
       ABKillRemain <- ABKillCool - DealCycle$Time[1]
       
-      BuffList <- c("MagicBooster", "PhoticMeditation", "DarknessSorcery", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders")
+      BuffList <- c("PhoticMeditation", "DarknessSorcery", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders")
       if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
         BuffList <- c(BuffList, "UsefulAdvancedBless")
       }
@@ -610,9 +606,9 @@ LuminousAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) 
     p <- Ind[i] + 1
     n <- 0
     
-    time <- 1001
+    time <- 901
     while(p < Ind[i+1] & DealCycle$LiberationOrb[p] > 0 & n < 20) {
-      if(time > 1000 & max(DealCycle$Skills[p]==c("AbsoluteKill"))==1) {
+      if(time > 900 & max(DealCycle$Skills[p]==c("AbsoluteKill"))==1) {
         DC <- rbind(DC, DealCycle[p, ])
         DC[nrow(DC), 1] <- c("LiberationOrbBalance")
         time <- DealCycle[p+1, 2] - DealCycle[p, 2]

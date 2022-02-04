@@ -74,7 +74,7 @@ value <- c(20)
 CurseMarkCompletion <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATKSpeed", "BDR", "IGR", "FDR"), levels=PSkill)
-value <- c(70, 1, 30, 25, 35)
+value <- c(70, 1, 30, 25, 40)
 WisdomoftheCrystal <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -132,7 +132,7 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(10, 120, 30, T, T, T, T)
+info <- c(1, 180, 30, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 FastCharge <- rbind(data.frame(option, value), info)
@@ -526,6 +526,7 @@ IlliumDealCycle <- t(rep(0, length(DealCycle)))
 colnames(IlliumDealCycle) <- DealCycle
 IlliumDealCycle <- data.frame(IlliumDealCycle)
 
+## 171s / 3 Glory Wing
 IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec) {
   DealCycle <- PreDealCycle
   IGDummy <- 0
@@ -533,22 +534,26 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
     DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
   }
-  DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "MagicGuntletBooster", "MapleSoldier", "RaceofGod", "CrystalGateBuff", "FastCharge"), BuffFinal)
+  DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "MagicGuntletBooster", "MapleSoldier", "RaceofGod", "CrystalGateBuff", "SoulofCrystal2"), BuffFinal)
   DealCycle <- DCSummoned(DealCycle, "Liyo1Stack", SummonedFinal)
   DealCycle <- DCSummoned(DealCycle, "Machina", SummonedFinal)
   while(DealCycle$CrystalCharge[nrow(DealCycle)] < 150) {
-    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 0 & IGDummy == 0) {
+    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 70 & IGDummy == 0) {
       DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 6, 3))
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
       DealCycle <- DCBuff(DealCycle, "SoulofCrystal1", BuffFinal)
       DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
       IGDummy <- 1
     }
+    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 90 & nrow(DealCycle[DealCycle$Skills=="DeusSummoned", ]) == 0) {
+      DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
     DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
     DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 4, 2))
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
     DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 2, 1))
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
   }
   
   DealCycle <- DCATK(DealCycle, c("SpiderInMirror"), ATKFinal)
@@ -562,8 +567,6 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
   DealCycle <- DCBuff(DealCycle, c("SoulofCrystal2"), BuffFinal)
   DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
   DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
-  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
-  DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
   DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
   
   DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
@@ -589,71 +592,98 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
   CrystalDummy <- 0
   
   ## ith Cycle
-  for(i in 2:12) {
-    if(sum(i==c(4, 7, 10))==1) {
-      if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
-        DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  for(i in 2:6) {
+    ## Wait for Restraint4 CoolTime
+    if(sum(i==c(4))==1) {
+      while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < floor(i / 3) * ATKFinal[rownames(ATKFinal)=="CrystalIgnition", ]$CoolTime * 1000) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000 & 
+           DealCycle$Skills[nrow(DealCycle)] != "Javelin") {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
       }
-      DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "RaceofGod", "CrystalGateBuff", "FastCharge"), BuffFinal)
-      CrystalDummy <- 1
-    }
-    if(i==7) {
-      DealCycle <- DCBuff(DealCycle, c("MagicGuntletBooster"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
     }
     
+    ## Fast Charge
+    if(sum(i==c(2, 5)) == 1) {
+      DealCycle <- DCBuff(DealCycle, "FastCharge", BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- 150
+    }
+    ## Crystal Gate Buff
+    if(sum(i==c(4))==1) {
+      if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+        DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "RaceofGod", "CrystalGateBuff"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Soul of Crystal
     if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
       DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 6, 3))
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
     }
     DealCycle <- DCBuff(DealCycle, c("SoulofCrystal1"), BuffFinal)
     DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
     if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
       DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 6, 3))
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
     }
-      
+    
+    ## General DealCycle
     while(DealCycle$CrystalCharge[nrow(DealCycle)] < 150) {
       if(DealCycle$RaceofGod[nrow(DealCycle)] < 3000) {
         DealCycle <- DCBuff(DealCycle, "RaceofGod", BuffFinal)
         DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
       }
-      if(CrystalDummy==0 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 50) {
+      if(CrystalDummy==0 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 70) {
         if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
           DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
-          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 6, 3))
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
         }
         DealCycle <- DCBuff(DealCycle, "SoulofCrystal2", BuffFinal)
         DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
         CrystalDummy <- 1
         if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
           DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
-          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 6, 3))
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
         }
       }
-      if(sum(i==c(3, 6, 9, 12))==1 & 
-         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 + 180) {
+      if(sum(i==c(3, 6))==1 & 
+         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000) {
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
         DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
       }
-      if(sum(i==c(5, 9))==1 & 
-         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BlessofGrandis")$Time) >= 
-         subset(BuffFinal, rownames(BuffFinal)=="BlessofGrandis")$CoolTime * 1000 + 180) {
-        DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
-        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
-        DealCycle <- DCBuff(DealCycle, "MagicCircuitFullDriveBuff", BuffFinal)
+      if(sum(i==c(4))==1 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 90 & nrow(DealCycle[DealCycle$Skills=="DeusSummoned", ]) < i) {
+        DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
         DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
       }
       DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
       DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 4, 2))
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
       DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 2, 1))
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
     }
     
-    if(i==7) {
-      DealCycle <- DCATK(DealCycle, c("SpiderInMirror"), ATKFinal)
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    ## Wait for Soul of Crystal CoolTime
+    if(sum(i==c(2, 5)) == 1) {
+      for(j in 1:3) {
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
     }
+    
+    ## Soul of Crystal
     if(DealCycle$SoulofCrystal2[nrow(DealCycle)] > DealCycle$SoulofCrystal1[nrow(DealCycle)]) {
       DealCycle <- DCBuff(DealCycle, c("SoulofCrystal1"), BuffFinal)
       DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
@@ -661,35 +691,583 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
       DealCycle <- DCBuff(DealCycle, c("SoulofCrystal2"), BuffFinal)
       DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
     }
-    if(sum(i==c(4, 7, 10))==1) {
-      while((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 + 180) {
+    
+    ## Soul Contract, Restraint 4, Gramholder, Deus
+    if(sum(i==c(4))==1) {
+      while((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 | 
+            (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Restraint4")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="Restraint4")$CoolTime * 1000) {
         if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
           DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
-          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 6, 3))
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
         }
         DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
         DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
-        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 4, 2))
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
         DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
-        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + ifelse(DealCycle$FastCharge[nrow(DealCycle)] > 0, 2, 1))
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
       }
       DealCycle <- DCBuff(DealCycle, c("SoulContractLink"), BuffFinal)
       DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
       DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
       DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
     }
-    DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
-    DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    if(sum(i==c(2, 3, 5, 6))==1) {
+      DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
     DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
     DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
     
-    if(sum(i==c(4, 7, 10))==1) {
-      DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
-      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    if(sum(i==c(4))==1) {
       DealCycle <- DCSummoned(DealCycle, "Gramholder", SummonedFinal)
       DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
     }
     
+    ## Glory Wing
+    DealCycle <- DCBuff(DealCycle, c("GloryWing"), BuffFinal)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+    
+    if(sum(i==c(4))==1) {
+      DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionPre", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCATKSkip(DealCycle, "ReactionSpectrum", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCATKSkip(DealCycle, "CrystalIgnition", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionEnd", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    DealCycle <- DCATKSkip(DealCycle, "MotalWingBeat", ATKFinal, SkipStructure)
+    while(DealCycle$GloryWing[nrow(DealCycle)] - subset(ATKFinal, rownames(ATKFinal)=="EnhancedJavelin")$Delay > 0) {
+      DealCycle <- DCATKSkip(DealCycle, "EnhancedJavelin", ATKFinal, SkipStructure)
+      if(sum(i==c(2, 5))==1 & 
+         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+      }
+    }
+    CrystalDummy <- 0
+    i <- i
+  }
+  
+  ## Wait for CoolTime
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="CrystalIgnitionPre", ]$Time) + min(DealCycle[DealCycle$Skills=="CrystalIgnitionPre", ]$Time) < 
+        ATKFinal[rownames(ATKFinal)=="CrystalIgnitionPre", ]$CoolTime * 1000 | 
+        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="Restraint4", ]$Time) + min(DealCycle[DealCycle$Skills=="Restraint4", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="Restraint4", ]$CoolTime * 1000 | 
+        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="SoulContractLink", ]$Time) + min(DealCycle[DealCycle$Skills=="SoulContractLink", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="SoulContractLink", ]$CoolTime * 1000) {
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000 & 
+       DealCycle$Skills[nrow(DealCycle)] != "Javelin") {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+  }
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+  
+  ## DealCycle$CrystalCharge <- 0
+  return(DealCycle)
+}
+
+## 228s / 4 Glory Wing
+IlliumCycle2 <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec) {
+  DealCycle <- PreDealCycle
+  IGDummy <- 0
+  ## First Cycle
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
+  DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "MagicGuntletBooster", "MapleSoldier", "RaceofGod", "CrystalGateBuff", "SoulofCrystal2"), BuffFinal)
+  DealCycle <- DCSummoned(DealCycle, "Liyo1Stack", SummonedFinal)
+  DealCycle <- DCSummoned(DealCycle, "Machina", SummonedFinal)
+  while(DealCycle$CrystalCharge[nrow(DealCycle)] < 150) {
+    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 70 & IGDummy == 0) {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+      DealCycle <- DCBuff(DealCycle, "SoulofCrystal1", BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      IGDummy <- 1
+    }
+    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 90 & nrow(DealCycle[DealCycle$Skills=="DeusSummoned", ]) == 0) {
+      DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+  }
+  
+  DealCycle <- DCATK(DealCycle, c("SpiderInMirror"), ATKFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("MagicCircuitFullDriveBuff"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("SoulContractLink"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("SoulofCrystal2"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  
+  DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCSummoned(DealCycle, "Gramholder", SummonedFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  
+  DealCycle <- DCBuff(DealCycle, c("GloryWing"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+  DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionPre", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCATKSkip(DealCycle, "ReactionSpectrum", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCATKSkip(DealCycle, "CrystalIgnition", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionEnd", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  
+  DealCycle <- DCATKSkip(DealCycle, "MotalWingBeat", ATKFinal, SkipStructure)
+  while(DealCycle$GloryWing[nrow(DealCycle)] - subset(ATKFinal, rownames(ATKFinal)=="EnhancedJavelin")$Delay > 0) {
+    DealCycle <- DCATKSkip(DealCycle, "EnhancedJavelin", ATKFinal, SkipStructure)
+  }
+  CrystalDummy <- 0
+  
+  ## ith Cycle
+  for(i in 2:12) {
+    ## Wait for Bless of Grandis CoolTime
+    if(sum(i==c(5, 9))==1) {
+      while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < floor(i / 4) * BuffFinal[rownames(BuffFinal)=="BlessofGrandis", ]$CoolTime * 1000) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000 & 
+           DealCycle$Skills[nrow(DealCycle)] != "Javelin") {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="CrystalGateBuff")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="CrystalGateBuff")$CoolTime * 1000) {
+          DealCycle <- DCBuff(DealCycle, "CrystalGateBuff", BuffFinal)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+        }
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+    }
+    
+    ## Fast Charge
+    if(sum(i==c(2, 6, 10)) == 1) {
+      DealCycle <- DCBuff(DealCycle, "FastCharge", BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- 150
+    }
+    ## Useful Buffs
+    if(sum(i==c(7))==1) {
+      DealCycle <- DCBuff(DealCycle, c("MagicGuntletBooster"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    if(sum(i==c(5, 9))==1) {
+      if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+        DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "RaceofGod"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Soul of Crystal
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    DealCycle <- DCBuff(DealCycle, c("SoulofCrystal1"), BuffFinal)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    
+    ## General DealCycle
+    while(DealCycle$CrystalCharge[nrow(DealCycle)] < 150) {
+      if(DealCycle$RaceofGod[nrow(DealCycle)] < 3000) {
+        DealCycle <- DCBuff(DealCycle, "RaceofGod", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      if(CrystalDummy==0 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 70) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        DealCycle <- DCBuff(DealCycle, "SoulofCrystal2", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+        CrystalDummy <- 1
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+      }
+      if(sum(i==c(3, 7, 11))==1 & 
+         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      if(sum(i==c(5, 9))==1 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 90 & nrow(DealCycle[DealCycle$Skills=="DeusSummoned", ]) < i) {
+        DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="CrystalGateBuff")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="CrystalGateBuff")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, "CrystalGateBuff", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+      DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+      DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+    }
+    
+    ## Wait for Soul of Crystal CoolTime
+    if(sum(i==c(2, 6, 10)) == 1) {
+      for(j in 1:3) {
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
+    }
+    
+    ## Soul of Crystal
+    if(DealCycle$SoulofCrystal2[nrow(DealCycle)] > DealCycle$SoulofCrystal1[nrow(DealCycle)]) {
+      DealCycle <- DCBuff(DealCycle, c("SoulofCrystal1"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    } else {
+      DealCycle <- DCBuff(DealCycle, c("SoulofCrystal2"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Spider In Mirror
+    if(sum(i==c(7))==1) {
+      DealCycle <- DCATK(DealCycle, c("SpiderInMirror"), ATKFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Soul Contract, Restraint 4, Gramholder, Deus
+    if(sum(i==c(5, 9))==1) {
+      while((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 | 
+            (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BlessofGrandis")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="BlessofGrandis")$CoolTime * 1000) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
+      DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCBuff(DealCycle, c("MagicCircuitFullDriveBuff"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCBuff(DealCycle, c("SoulContractLink"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    if(sum(i==c(2, 3, 4, 6, 7, 8, 10, 11, 12))==1) {
+      DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    
+    if(sum(i==c(5, 9))==1) {
+      DealCycle <- DCSummoned(DealCycle, "Gramholder", SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Glory Wing
+    DealCycle <- DCBuff(DealCycle, c("GloryWing"), BuffFinal)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+    
+    if(sum(i==c(5, 9))==1) {
+      DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionPre", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCATKSkip(DealCycle, "ReactionSpectrum", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCATKSkip(DealCycle, "CrystalIgnition", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionEnd", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    DealCycle <- DCATKSkip(DealCycle, "MotalWingBeat", ATKFinal, SkipStructure)
+    while(DealCycle$GloryWing[nrow(DealCycle)] - subset(ATKFinal, rownames(ATKFinal)=="EnhancedJavelin")$Delay > 0) {
+      DealCycle <- DCATKSkip(DealCycle, "EnhancedJavelin", ATKFinal, SkipStructure)
+      if(sum(i==c(3, 7, 11))==1 & 
+         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+      }
+      if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="CrystalGateBuff")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="CrystalGateBuff")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, "CrystalGateBuff", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+    }
+    CrystalDummy <- 0
+    i <- i
+  }
+  
+  ## Wait for CoolTime
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="BlessofGrandis", ]$Time) + min(DealCycle[DealCycle$Skills=="BlessofGrandis", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="BlessofGrandis", ]$CoolTime * 1000 | 
+        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="SoulContractLink", ]$Time) + min(DealCycle[DealCycle$Skills=="SoulContractLink", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="SoulContractLink", ]$CoolTime * 1000 | 
+        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="CrystalGateBuff", ]$Time) + min(DealCycle[DealCycle$Skills=="CrystalGateBuff", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="CrystalGateBuff", ]$CoolTime * 1000) {
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000 & 
+       DealCycle$Skills[nrow(DealCycle)] != "Javelin") {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+  }
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+  
+  ## DealCycle$CrystalCharge <- 0
+  return(DealCycle)
+}
+
+## 171s / 3 Glory Wing + Grandis Bless per 228s
+IlliumCycle3 <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec) {
+  DealCycle <- PreDealCycle
+  IGDummy <- 0
+  ## First Cycle
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+    DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+  }
+  DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "MagicGuntletBooster", "MapleSoldier", "RaceofGod", "CrystalGateBuff", "SoulofCrystal2"), BuffFinal)
+  DealCycle <- DCSummoned(DealCycle, "Liyo1Stack", SummonedFinal)
+  DealCycle <- DCSummoned(DealCycle, "Machina", SummonedFinal)
+  while(DealCycle$CrystalCharge[nrow(DealCycle)] < 150) {
+    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 70 & IGDummy == 0) {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+      DealCycle <- DCBuff(DealCycle, "SoulofCrystal1", BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      IGDummy <- 1
+    }
+    if(DealCycle$CrystalCharge[nrow(DealCycle)] >= 90 & nrow(DealCycle[DealCycle$Skills=="DeusSummoned", ]) == 0) {
+      DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+  }
+  
+  DealCycle <- DCATK(DealCycle, c("SpiderInMirror"), ATKFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("MagicCircuitFullDriveBuff"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("SoulContractLink"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("SoulofCrystal2"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  
+  DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCSummoned(DealCycle, "Gramholder", SummonedFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  
+  DealCycle <- DCBuff(DealCycle, c("GloryWing"), BuffFinal)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+  DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionPre", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCATKSkip(DealCycle, "ReactionSpectrum", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCATKSkip(DealCycle, "CrystalIgnition", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  DealCycle <- DCATKSkip(DealCycle, "CrystalIgnitionEnd", ATKFinal, SkipStructure)
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+  
+  DealCycle <- DCATKSkip(DealCycle, "MotalWingBeat", ATKFinal, SkipStructure)
+  while(DealCycle$GloryWing[nrow(DealCycle)] - subset(ATKFinal, rownames(ATKFinal)=="EnhancedJavelin")$Delay > 0) {
+    DealCycle <- DCATKSkip(DealCycle, "EnhancedJavelin", ATKFinal, SkipStructure)
+  }
+  CrystalDummy <- 0
+  
+  ## ith Cycle
+  for(i in 2:12) {
+    ## Wait for Restraint4 CoolTime
+    if(sum(i==c(4, 7, 10))==1) {
+      while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < floor(i / 3) * BuffFinal[rownames(BuffFinal)=="Restraint4", ]$CoolTime * 1000) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000 & 
+           DealCycle$Skills[nrow(DealCycle)] != "Javelin") {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BlessofGrandis")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="BlessofGrandis")$CoolTime * 1000) {
+          DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+          DealCycle <- DCBuff(DealCycle, c("MagicCircuitFullDriveBuff"), BuffFinal)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+        }
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+    }
+    
+    ## Fast Charge
+    if(sum(i==c(2, 5, 8, 11)) == 1) {
+      DealCycle <- DCBuff(DealCycle, "FastCharge", BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- 150
+    }
+    ## Useful Buffs
+    if(sum(i==c(7))==1) {
+      DealCycle <- DCBuff(DealCycle, c("MagicGuntletBooster"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    if(sum(i==c(4, 7, 10))==1) {
+      if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) > 0) {
+        DealCycle <- DCBuff(DealCycle, c("UsefulAdvancedBless"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      DealCycle <- DCBuff(DealCycle, c("UsefulSharpEyes", "UsefulCombatOrders", "RaceofGod", "CrystalGateBuff"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Soul of Crystal
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    DealCycle <- DCBuff(DealCycle, c("SoulofCrystal1"), BuffFinal)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    
+    ## General DealCycle
+    while(DealCycle$CrystalCharge[nrow(DealCycle)] < 150) {
+      if(DealCycle$RaceofGod[nrow(DealCycle)] < 3000) {
+        DealCycle <- DCBuff(DealCycle, "RaceofGod", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      if(CrystalDummy==0 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 70) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        DealCycle <- DCBuff(DealCycle, "SoulofCrystal2", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+        CrystalDummy <- 1
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+      }
+      if(sum(i==c(3, 6, 9, 12))==1 & 
+         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      if(sum(i==c(4, 7, 10))==1 & DealCycle$CrystalCharge[nrow(DealCycle)] >= 90 & nrow(DealCycle[DealCycle$Skills=="DeusSummoned", ]) < i) {
+        DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BlessofGrandis")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="BlessofGrandis")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+        DealCycle <- DCBuff(DealCycle, c("MagicCircuitFullDriveBuff"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      }
+      DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+      DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+      DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+    }
+    
+    ## Wait for Soul of Crystal CoolTime
+    if(sum(i==c(2, 5, 8, 11)) == 1) {
+      for(j in 1:3) {
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
+    }
+    
+    ## Soul of Crystal
+    if(DealCycle$SoulofCrystal2[nrow(DealCycle)] > DealCycle$SoulofCrystal1[nrow(DealCycle)]) {
+      DealCycle <- DCBuff(DealCycle, c("SoulofCrystal1"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    } else {
+      DealCycle <- DCBuff(DealCycle, c("SoulofCrystal2"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Spider In Mirror
+    if(sum(i==c(7))==1) {
+      DealCycle <- DCATK(DealCycle, c("SpiderInMirror"), ATKFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Soul Contract, Restraint 4, Gramholder, Deus
+    if(sum(i==c(4, 7, 10))==1) {
+      while((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 | 
+            (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Restraint4")$Time) <= subset(BuffFinal, rownames(BuffFinal)=="Restraint4")$CoolTime * 1000) {
+        if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000) {
+          DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+          DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+        }
+        DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+        DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+        DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+      }
+      DealCycle <- DCBuff(DealCycle, c("SoulContractLink"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+      DealCycle <- DCBuff(DealCycle, c("Restraint4"), BuffFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    if(sum(i==c(2, 3, 5, 6, 8, 9, 11, 12))==1) {
+      DealCycle <- DCSummoned(DealCycle, c("Deus"), SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    DealCycle <- DCATKSkip(DealCycle, "MotalSwing", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    
+    if(sum(i==c(4, 7, 10))==1) {
+      DealCycle <- DCSummoned(DealCycle, "Gramholder", SummonedFinal)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+    }
+    
+    ## Glory Wing
     DealCycle <- DCBuff(DealCycle, c("GloryWing"), BuffFinal)
     DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
     
@@ -707,24 +1285,52 @@ IlliumCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipSt
     DealCycle <- DCATKSkip(DealCycle, "MotalWingBeat", ATKFinal, SkipStructure)
     while(DealCycle$GloryWing[nrow(DealCycle)] - subset(ATKFinal, rownames(ATKFinal)=="EnhancedJavelin")$Delay > 0) {
       DealCycle <- DCATKSkip(DealCycle, "EnhancedJavelin", ATKFinal, SkipStructure)
-      if(sum(i==c(2, 5, 8, 11))==1 & 
-         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 + 180) {
+      if(sum(i==c(3, 6, 9, 12))==1 & 
+         (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="SoulContractLink")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000) {
         DealCycle <- DCBuff(DealCycle, "SoulContractLink", BuffFinal)
+      }
+      if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="BlessofGrandis")$Time) >= subset(BuffFinal, rownames(BuffFinal)=="BlessofGrandis")$CoolTime * 1000) {
+        DealCycle <- DCBuff(DealCycle, c("BlessofGrandis"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
+        DealCycle <- DCBuff(DealCycle, c("MagicCircuitFullDriveBuff"), BuffFinal)
+        DealCycle$CrystalCharge[nrow(DealCycle)] <- DealCycle$CrystalCharge[(nrow(DealCycle)-1)]
       }
     }
     CrystalDummy <- 0
+    i <- i
   }
+  
+  ## Wait for CoolTime
+  while(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="BlessofGrandis", ]$Time) + min(DealCycle[DealCycle$Skills=="BlessofGrandis", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="BlessofGrandis", ]$CoolTime * 1000 | 
+        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="SoulContractLink", ]$Time) + min(DealCycle[DealCycle$Skills=="SoulContractLink", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="SoulContractLink", ]$CoolTime * 1000 | 
+        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="Restraint4", ]$Time) + min(DealCycle[DealCycle$Skills=="Restraint4", ]$Time) < 
+        BuffFinal[rownames(BuffFinal)=="Restraint4", ]$CoolTime * 1000) {
+    if((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]) - max(subset(DealCycle, DealCycle$Skills=="Longinus")$Time) >= subset(ATKFinal, rownames(ATKFinal)=="Longinus")$CoolTime * 1000 & 
+       DealCycle$Skills[nrow(DealCycle)] != "Javelin") {
+      DealCycle <- DCATKSkip(DealCycle, "Longinus", ATKFinal, SkipStructure)
+      DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 3)
+    }
+    DealCycle <- DCATKSkip(DealCycle, "Orb", ATKFinal, SkipStructure)
+    DealCycle$JavelinBuffDummy[nrow(DealCycle)] <- 2000
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 2)
+    DealCycle <- DCATKSkip(DealCycle, "Javelin", ATKFinal, SkipStructure)
+    DealCycle$CrystalCharge[nrow(DealCycle)] <- min(150, DealCycle$CrystalCharge[(nrow(DealCycle)-1)] + 1)
+  }
+  DealCycle$CrystalCharge[nrow(DealCycle)] <- 0
+  
   ## DealCycle$CrystalCharge <- 0
   return(DealCycle)
 }
 
 ## DealCycle
-IlliumDealCycle <- IlliumCycle(PreDealCycle=IlliumDealCycle,
-                                ATKFinal=ATKFinal, 
-                                BuffFinal=BuffFinal, 
-                                SummonedFinal=SummonedFinal,
-                                SkipStructure=IlliumSkipATK, 
-                                Spec=IlliumSpec)
+IlliumDealCycle <- IlliumCycle2(PreDealCycle=IlliumDealCycle,
+                               ATKFinal=ATKFinal, 
+                               BuffFinal=BuffFinal, 
+                               SummonedFinal=SummonedFinal,
+                               SkipStructure=IlliumSkipATK, 
+                               Spec=IlliumSpec)
 IlliumDealCycle <- DealCycleFinal(IlliumDealCycle)
 IlliumDealCycle <- RepATKCycle(IlliumDealCycle, "CrystalIgnition", 62, 0, ATKFinal)
 IlliumDealCycle <- RepATKCycle(IlliumDealCycle, "ReactionSpectrum", 9, 0, ATKFinal)

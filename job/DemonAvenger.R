@@ -78,8 +78,8 @@ option <- factor(c("MainStat"), levels=PSkill)
 value <- c(600 / 17.5)
 InnerStrength <- data.frame(option, value)
 
-option <- factor(c("BDR", "ATKSpeed"), levels=PSkill)
-value <- c(30 + DemonAvengerBase$PSkillLv, 1)
+option <- factor(c("FDR", "BDR", "ATKSpeed"), levels=PSkill)
+value <- c(15 + floor(DemonAvengerBase$PSkillLv/3), 30 + DemonAvengerBase$PSkillLv, 1)
 OverwhelmingPower <- data.frame(option, value)
 
 option <- factor(c("IGR"), levels=PSkill)
@@ -183,10 +183,10 @@ ExceedExecutionStack <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(0, 1, 0, F, F, F, F)
+info <- c(0.42, 1, 0, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-BloodFeastCharge <- rbind(data.frame(option, value), info)
+BloodFeastDamageRed <- rbind(data.frame(option, value), info)
 
 option <- factor(c("ATKSpeed"), levels=BSkill)
 value <- c(2)
@@ -265,7 +265,7 @@ BlessofIsekaiGoddess <- rbind(data.frame(option, value), info)}
 
 DemonAvengerBuff <- list(HP=HP, FrenzyCostDummy=FrenzyCostDummy, DiabolicRecoveryDummy=DiabolicRecoveryDummy, RevenantRage=RevenantRage, RevenantRageDummy=RevenantRageDummy, 
                          ExceedStack=ExceedStack, ReleaseOverloadBuff=ReleaseOverloadBuff, ReleaseOverloadFDR=ReleaseOverloadFDR, DemonFrenzyFDR=DemonFrenzyFDR, ExceedExecutionStack=ExceedExecutionStack, 
-                         BloodFeastCharge=BloodFeastCharge, 
+                         BloodFeastDamageRed=BloodFeastDamageRed, 
                          DemonBooster=DemonBooster, RefractEvil=RefractEvil, DiabolicRecovery=DiabolicRecovery, ArmorBreakBuff=ArmorBreakBuff, 
                          DemonicFortitude=DemonicFortitude, ForbiddenContract=ForbiddenContract, 
                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, UsefulHyperBody=UsefulHyperBody, 
@@ -349,7 +349,7 @@ ExceedExecution5 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, IGRCalc(c(30 + DemonAvengerSpec$PSkillLv, ifelse(GetCoreLv(DemonAvengerCore, "ShieldChasing")>=40, 20, 0))), 2 * GetCoreLv(DemonAvengerCore, "ShieldChasing"))
-info <- c(500 + 10 * DemonAvengerSpec$SkillLv, 2 * 2, 720, 500, 6, T, T, F)
+info <- c(500 + 10 * DemonAvengerSpec$SkillLv, 2 * 2, 480, 500, 6, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 ShieldChasing <- rbind(data.frame(option, value), info) ## BDR : Defense Expertise, Shield Chasing - Reinforce, ATKSpeed Not Applied
@@ -377,38 +377,17 @@ ThousandSword <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 0, 2040, NA, NA, NA, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-DemonFrenzyDummy <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(300 + 8 * GetCoreLv(DemonAvengerCore, "DemonFrenzy"), 2, 0, 360, NA, NA, NA, F)
+info <- c(390 + 15 * GetCoreLv(DemonAvengerCore, "DemonFrenzy"), 3, 0, 240, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonFrenzy <- rbind(data.frame(option, value), info) 
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * GetCoreLv(DemonAvengerCore, "BloodFeast"), 7, 420, NA, 10, T, F, F)
+info <- c(725 + 29 * GetCoreLv(DemonAvengerCore, "BloodFeast"), 12, 0, NA, 12, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-BloodFeast1 <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=ASkill)
-value <- c()
-info <- c(650 + 26 * GetCoreLv(DemonAvengerCore, "BloodFeast"), 9, 420, NA, 10, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-BloodFeast2 <- rbind(data.frame(option, value), info) 
-
-option <- factor(c("IGR"), levels=ASkill)
-value <- c(100)
-info <- c(800 + 32 * GetCoreLv(DemonAvengerCore, "BloodFeast"), 12, 420, NA, 10, T, F, F)
-info <- data.frame(AInfo, info)
-colnames(info) <- c("option", "value")
-BloodFeast3 <- rbind(data.frame(option, value), info) 
+BloodFeast <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR"), levels=ASkill)
 value <- c(100)
@@ -455,7 +434,7 @@ OtherworldEmptiness <- rbind(data.frame(option, value), info)}
 DemonAvengerATK <- Attack(list(BatsSwarm=BatsSwarm, 
                                ExceedExecution1=ExceedExecution1, ExceedExecution2=ExceedExecution2, ExceedExecution3=ExceedExecution3, ExceedExecution4=ExceedExecution4, ExceedExecution5=ExceedExecution5, 
                                ShieldChasing=ShieldChasing, ArmorBreak=ArmorBreak, EnhancedExceed=EnhancedExceed, ThousandSword=ThousandSword, 
-                               DemonFrenzyDummy=DemonFrenzyDummy, DemonFrenzy=DemonFrenzy, BloodFeast1=BloodFeast1, BloodFeast2=BloodFeast2, BloodFeast3=BloodFeast3, 
+                               DemonFrenzy=DemonFrenzy, BloodFeast=BloodFeast,
                                DimensionSword=DimensionSword, DimensionSwordFast=DimensionSwordFast, 
                                RevenantAddATK=RevenantAddATK, AuraWeapon=AuraWeapon, MastemaClaw=MastemaClaw, OtherworldEmptiness=OtherworldEmptiness,
                                SpiderInMirror=SpiderInMirror))
@@ -487,18 +466,11 @@ colnames(DemonAvengerDealCycle) <- DealCycle
 DemonAvengerDealCycle <- data.frame(DemonAvengerDealCycle)
 
 DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                              Period=c(240), CycleTime=c(720), DimensionSwordType=c("Normal", "Fast", "Fusion"), FrenzyStack=c(0, 1, 2), ForbiddenContractUse=c(T, F), BloodFeastUse=c(T, F)) {
-  if(FrenzyStack != 0) {
-    BuffSummonedPrior <- c("DemonBooster", "RefractEvil", "DiabolicRecovery", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "DemonicFortitude", 
-                           "ArmorBreakBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
-    Times240 <- c(1, 1, 1, 0, 0, 0, 0, 
-                  0, 1, 4/3, 2, 1, 2, 1)
-  } else {
-    BuffSummonedPrior <- c("DemonBooster", "RefractEvil", "DiabolicRecovery", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "DemonicFortitude", 
-                           "ArmorBreakBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
-    Times240 <- c(1, 1, 1, 0, 0, 0, 0, 
-                  0, 1, 4/3, 2, 1, 2, 1)
-  }
+                              Period=c(240), CycleTime=c(720), DimensionSwordType=c("Normal", "Fast", "Fusion"), ForbiddenContractUse=c(T, F), BloodFeastUse=c(T, F)) {
+  BuffSummonedPrior <- c("DemonBooster", "RefractEvil", "DiabolicRecovery", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", "DemonicFortitude", 
+                         "ArmorBreakBuff", "CallMastema", "AuraWeaponBuff", "BlessofIsekaiGoddess", "Revenant", "SoulContractLink", "Restraint4")
+  Times240 <- c(1, 1, 1, 0, 0, 0, 0, 
+                0, 1, 4/3, 2, 1, 2, 1)
   
   SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100)  - Spec$CoolReduce, length(BuffSummonedPrior))
   TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime / Period)
@@ -552,7 +524,7 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
     BuffDelays[[i]] <- DelayData$Delay[t]
   }
   
-  DealCycle <- DCATK(DealCycle, "DemonFrenzyDummy", ATKFinal)
+  DealCycle <- DCATK(DealCycle, "DemonFrenzy", ATKFinal)
   DealCycle$ExceedStack[2] <- 18
   DealCycle$ExceedExecutionStack[2] <- 5
   
@@ -625,7 +597,7 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
   }
   
   SCCool <- subset(ATKFinal, rownames(ATKFinal)=="ShieldChasing")$CoolTime * 1000
-  BFCool <- subset(ATKFinal, rownames(ATKFinal)=="BloodFeast1")$CoolTime * 1000
+  BFCool <- subset(ATKFinal, rownames(ATKFinal)=="BloodFeast")$CoolTime * 1000
   FCCool <- subset(BuffFinal, rownames(BuffFinal)=="ForbiddenContract")$CoolTime * 1000
   
   SCRemain <- 0 ; BFRemain <- 0 ; FCRemain <- 0
@@ -696,26 +668,16 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
           FCRemain <- max(0, FCRemain - DealCycle$Time[1])
         }
       }
-      ## Blood Feast (Start)
-      else if(BFRemain==0) {
-        DealCycle <- DCBuff(DealCycle, "BloodFeastCharge", BuffFinal)
-        DealCycle$BloodFeastCharge[nrow(DealCycle)] <- 30000
-        DealCycle <- DAStack(DealCycle)
-        SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-        BFRemain <- max(0, 30000 - DealCycle$Time[1])
-        FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-      }
-      ## Blood Feast (ATK)
-      else if(BloodFeastUse==T & DealCycle$BloodFeastCharge[nrow(DealCycle)] - DealCycle$Time[1] < 23000 & DealCycle$BloodFeastCharge[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
-        DealCycle <- DCATK(DealCycle, "ThousandSword", ATKFinal)
-        DealCycle[1, 2:ncol(DealCycle)] <- 30  ## Cancel
+      ## Blood Feast
+      else if(BloodFeastUse==T & BFRemain == 0 & k!= length(BuffList) | 
+              BloodFeastUse==T & BFRemain == 0 & k== length(BuffList) & BFCool < (BuffEndTime - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]))) {
+        DealCycle <- DCBuff(DealCycle, "BloodFeastDamageRed", BuffFinal)
         DealCycle <- DAStack(DealCycle)
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         BFRemain <- max(0, BFRemain - DealCycle$Time[1])
         FCRemain <- max(0, FCRemain - DealCycle$Time[1])
         
-        DealCycle <- DCATK(DealCycle, "BloodFeast3", ATKFinal)
-        DealCycle$BloodFeastCharge[nrow(DealCycle)] <- 0
+        DealCycle <- DCATK(DealCycle, "BloodFeast", ATKFinal)
         DealCycle <- DAStack(DealCycle)
         SCRemain <- max(0, SCRemain - DealCycle$Time[1])
         BFRemain <- max(0, BFCool - DealCycle$Time[1])
@@ -764,43 +726,12 @@ DemonAvengerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spe
       }
     }
   }
-  if(DealCycle$BloodFeastCharge[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
-    DealCycle <- DCATK(DealCycle, "ThousandSword", ATKFinal)
-    DealCycle[1, 2:ncol(DealCycle)] <- 30  ## Cancel
-    DealCycle <- DAStack(DealCycle)
-    SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-    BFRemain <- max(0, BFRemain - DealCycle$Time[1])
-    FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-    
-    if(DealCycle$BloodFeastCharge[nrow(DealCycle)] - DealCycle$Time[1] > 27000) {
-      DealCycle <- DCATK(DealCycle, "BloodFeast1", ATKFinal)
-      DealCycle$BloodFeastCharge[nrow(DealCycle)] <- 0
-      DealCycle <- DAStack(DealCycle)
-      SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-      BFRemain <- max(0, BFCool - DealCycle$Time[1])
-      FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-    } else if(DealCycle$BloodFeastCharge[nrow(DealCycle)] - DealCycle$Time[1] > 23000) {
-      DealCycle <- DCATK(DealCycle, "BloodFeast2", ATKFinal)
-      DealCycle$BloodFeastCharge[nrow(DealCycle)] <- 0
-      DealCycle <- DAStack(DealCycle)
-      SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-      BFRemain <- max(0, BFCool - DealCycle$Time[1])
-      FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-    } else {
-      DealCycle <- DCATK(DealCycle, "BloodFeast3", ATKFinal)
-      DealCycle$BloodFeastCharge[nrow(DealCycle)] <- 0
-      DealCycle <- DAStack(DealCycle)
-      SCRemain <- max(0, SCRemain - DealCycle$Time[1])
-      BFRemain <- max(0, BFCool - DealCycle$Time[1])
-      FCRemain <- max(0, FCRemain - DealCycle$Time[1])
-    }
-  }
   
   rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
 DemonAvengerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                               DimensionSwordType=c("Normal", "Fast", "Fusion"), FrenzyStack=c(0, 1, 2), CallMastemaLevel, FrenzyLevel, BlessofIsekaiGoddessLevel) {
+                               DimensionSwordType=c("Normal", "Fast", "Fusion"), CallMastemaLevel, FrenzyLevel, BlessofIsekaiGoddessLevel) {
   ## Armor Break ATK & Enhanced Exceed & Otherworld Emptiness ATK & Call Mastema ATK
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="ArmorBreakBuff") {
@@ -844,29 +775,14 @@ DemonAvengerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   
   
   ## Demon Frenzy
-  if(FrenzyStack!=0) {
-    FrenzyTimes <- ceiling(DealCycle$Time[nrow(DealCycle)] / ATKFinal[rownames(ATKFinal)=="DemonFrenzyDummy", ]$SubTime)
-    DealCycle <- RepATKCycle(DealCycle, "DemonFrenzyDummy", FrenzyTimes, 0, ATKFinal)
-    
-    if(FrenzyStack==2) {
-      for(i in 1:nrow(DealCycle)) {
-        if(DealCycle$Skills[i]=="DemonFrenzyDummy") {
-          DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        } 
-      }
-      DealCycle <- DealCycle[order(DealCycle$Time), ] 
-      rownames(DealCycle) <- 1:nrow(DealCycle)
-    }
-    
-    DealCycle[DealCycle$Skills=="DemonFrenzyDummy", ]$Skills <- "DemonFrenzy"
-    DealCycle <- RepATKCycle(DealCycle, "DemonFrenzy", 11, 660, ATKFinal)
-  }
+  FrenzyATKTimes <- ceiling(DealCycle[(nrow(DealCycle)), ]$Time / ATKFinal[rownames(ATKFinal)=="DemonFrenzy", ]$SubTime)
+  DealCycle <- RepATKCycle(DealCycle, "DemonFrenzy", FrenzyATKTimes, 0, ATKFinal)
   print("Demon Frenzy Done")
   
   
   ## Aura Weapon
   DealCycle <- AWCycle(DealCycle, c("ExceedExecution1", "ExceedExecution2", "ExceedExecution3", "ExceedExecution4", "ExceedExecution5", 
-                                    "ArmorBreak", "ThousandSword", "BloodFeast1", "BloodFeast2", "BloodFeast3"))
+                                    "ArmorBreak", "ThousandSword", "BloodFeast"))
   
   print("Aura Weapon Done")
   
@@ -887,19 +803,19 @@ DemonAvengerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   DealCycle$HP[2] <- 500000
   DealCycle$FrenzyCostDummy[2] <- 1000
   DealCycle$DiabolicRecoveryDummy[2] <- 4000
-  HPCostSkills <- c("BloodFeastCharge", "DemonBooster", "RefractEvil", "DiabolicRecovery", "ArmorBreakBuff", "DemonicFortitude", "ForbiddenContract", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", 
+  HPCostSkills <- c("DemonBooster", "RefractEvil", "DiabolicRecovery", "ArmorBreakBuff", "DemonicFortitude", "ForbiddenContract", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody", 
                     "Revenant", "AuraWeaponBuff", "CallMastema", "BlessofIsekaiGoddess", "Restraint4", 
                     "BatsSwarmStart", "ExceedExecution1", "ExceedExecution2", "ExceedExecution3", "ExceedExecution4", "ExceedExecution5", "ShieldChasingStart", "ThousandSword", 
                     "DimensionSwordStart", "DimensionSwordFastStart", "SpiderInMirror", "CrestoftheSolar")
-  HPCost <- c(500000 * 0.01, 200, 900, 900, 1000 + 20 * Spec$SkillLv, 100, 5000, 500000 * 0.05, 500000 * 0.05, 500000 * 0.05, 
+  HPCost <- c(200, 900, 900, 1000 + 20 * Spec$SkillLv, 100, 5000, 500000 * 0.05, 500000 * 0.05, 500000 * 0.05, 
               500000 * 0.25, 500000 * 0.1, 500000 * 0.05, 500000 * 0.05, 600, 
               500000 * 0.01, 500000 * 0.04, 500000 * 0.04, 500000 * 0.05, 500000 * 0.05, 500000 * 0.06, 500000 * 0.08, 500000 * 0.15, 
               500000 * 0.2, 500000 * 0.2, 500000 * 0.15, 500000 * 0.15)
   HPCostSkills <- data.frame(Skills=HPCostSkills, Cost=HPCost)
   HPRecoverySkills <- c("BatsSwarm", "ExceedExecution1", "ExceedExecution2", "ExceedExecution3", "ExceedExecution4", "ExceedExecution5", "ShieldChasing", "ArmorBreak", "EnhancedExceed", 
-                        "DemonFrenzy", "BloodFeast1", "BloodFeast2", "BloodFeast3", "DimensionSwordFast", "SpiderInMirror") ## Enhanced Exceed : * Prob
-  HPRecoverySkills2 <- c("BloodFeast1", "BloodFeast2", "BloodFeast3", "OtherworldEmptiness")
-  HPRecovery <- c(500000 * 0.1, 500000 * 0.15, 500000 * 0.25, 500000 * (floor(BlessofIsekaiGoddessLevel/2) + 15) / 100 / 4)
+                        "DemonFrenzy", "BloodFeast", "DimensionSwordFast", "SpiderInMirror") ## Enhanced Exceed : * Prob
+  HPRecoverySkills2 <- c("BloodFeast", "OtherworldEmptiness")
+  HPRecovery <- c(500000 * (0.25 - 0.03), 500000 * (floor(BlessofIsekaiGoddessLevel/2) + 15) / 100 / 4)
   HPRecoverySkills2 <- data.frame(Skills=HPRecoverySkills2, Recovery=HPRecovery)
   for(i in 3:nrow(DealCycle)) {
     ## HP Cost By Skill
@@ -907,12 +823,6 @@ DemonAvengerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
       DealCycle$HP[i] <- max(1, DealCycle$HP[i-1] - subset(HPCostSkills, HPCostSkills$Skills==DealCycle$Skills[i])$Cost)
     } else {
       DealCycle$HP[i] <- DealCycle$HP[i-1]
-    }
-    
-    ## HP Cost By Blood Feast Charge 
-    if(DealCycle$Skills[i]=="BloodFeastCharge" & DealCycle$ForbiddenContract[i] == 0 | 
-       DealCycle$BloodFeastCharge[i-1] > 0 & DealCycle$BloodFeastCharge[i] > 0 & ceiling(DealCycle$BloodFeastCharge[i-1] / 1000) - ceiling(DealCycle$BloodFeastCharge[i] / 1000) > 0 & DealCycle$ForbiddenContract[i] == 0) {
-      DealCycle$HP[i] <- max(1, DealCycle$HP[i] * 0.97)
     }
     
     ## HP Cost By Demon Frenzy
@@ -1025,9 +935,9 @@ DemonAvengerAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
   for(i in 2:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("ExceedExecution1", "ExceedExecution2", "ExceedExecution3", "ExceedExecution4", "ExceedExecution5"))==1) {
       ExecutionStatus <- 1
-    } else if(sum(DealCycle$Skills[i]==c("BatsSwarmStart", "ShieldChasingStart", "ArmorBreak", "ThousandSword", "BloodFeast1", "BloodFeast2", "BloodFeast3", 
+    } else if(sum(DealCycle$Skills[i]==c("BatsSwarmStart", "ShieldChasingStart", "ArmorBreak", "ThousandSword", "BloodFeast", 
                                          "DimensionSwordStart", "DimensionSwordFastStart", "MastemaClawStart", "OtherworldEmptinessStart", "SpiderInMirror",
-                                         "ReleaseOverloadBuff", "BloodFeastCharge", "DemonBooster", "RefractEvil", "DiabolicRecovery", "ArmorBreakBuff", "DemonicFortitude", "ForbiddenContract", 
+                                         "ReleaseOverloadBuff", "DemonBooster", "RefractEvil", "DiabolicRecovery", "ArmorBreakBuff", "DemonicFortitude", "ForbiddenContract", 
                                          "Revenant", "AuraWeaponBuff", "CallMastema", "BlessofIsekaiGoddess", "SoulContractLink", "Restraint4", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulHyperBody"))==1) {
       ExecutionStatus <- 0
     }
@@ -1101,14 +1011,14 @@ DemonAvengerDealCycle <- DemonAvengerCycle(DemonAvengerDealCycle,
                                            BuffFinal, 
                                            SummonedFinal, 
                                            DemonAvengerSpec,
-                                           240, 720, "Fusion", 1, F, T)
+                                           240, 720, "Fusion", F, T)
 DemonAvengerDealCycle <- DealCycleFinal(DemonAvengerDealCycle)
 DemonAvengerDealCycle <- DemonAvengerAddATK(DemonAvengerDealCycle, 
                                             ATKFinal, 
                                             BuffFinal, 
                                             SummonedFinal, 
                                             DemonAvengerSpec, 
-                                            "Fusion", 1, GetCoreLv(DemonAvengerCore, "CallMastema"), GetCoreLv(DemonAvengerCore, "DemonFrenzy"), GetCoreLv(DemonAvengerCore, "BlessofIsekaiGoddess"))
+                                            "Fusion", GetCoreLv(DemonAvengerCore, "CallMastema"), GetCoreLv(DemonAvengerCore, "DemonFrenzy"), GetCoreLv(DemonAvengerCore, "BlessofIsekaiGoddess"))
 DemonAvengerDealCycleReduction <- DealCycleReduction(DemonAvengerDealCycle, c("ReleaseOverloadFDR", "DemonFrenzyFDR"))
 
 Idx1 <- c() ; Idx2 <- c()
@@ -1163,38 +1073,7 @@ DemonAvengerSpecMean <- SpecMean("DemonAvenger", DemonAvengerDealCycleReduction,
                                  NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
 
 
-## Demon Frenzy - 2 Stacks
-DealCycle <- c("Skills", "Time", rownames(DemonAvengerBuff))
-DemonAvengerDealCycle2 <- t(rep(0, length(DealCycle)))
-colnames(DemonAvengerDealCycle2) <- DealCycle
-DemonAvengerDealCycle2 <- data.frame(DemonAvengerDealCycle2)
-
-DemonAvengerDealCycle2 <- DemonAvengerCycle(DemonAvengerDealCycle2, 
-                                            ATKFinal, 
-                                            BuffFinal, 
-                                            SummonedFinal, 
-                                            DemonAvengerSpec,
-                                            240, 720, "Fusion", 2, F, T)
-DemonAvengerDealCycle2 <- DealCycleFinal(DemonAvengerDealCycle2)
-DemonAvengerDealCycle2 <- DemonAvengerAddATK(DemonAvengerDealCycle2, 
-                                             ATKFinal, 
-                                             BuffFinal, 
-                                             SummonedFinal, 
-                                             DemonAvengerSpec, 
-                                             "Fusion", 2, GetCoreLv(DemonAvengerCore, "CallMastema"), GetCoreLv(DemonAvengerCore, "DemonFrenzy"), GetCoreLv(DemonAvengerCore, "BlessofIsekaiGoddess"))
-
-DemonAvengerFinalDPM2Stack <- DealCalcWithMaxDMR(DemonAvengerDealCycle2, ATKFinal, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
-                                                 NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
-Frenzy2StackDPM <- sum(na.omit(DemonAvengerFinalDPM2Stack)) / (max(DemonAvengerDealCycle2$Time)/ 60000)
-
-DemonAvengerDealData2 <- data.frame(DemonAvengerDealCycle2$Skills, DemonAvengerDealCycle2$Time, DemonAvengerDealCycle2$Restraint4, DemonAvengerFinalDPM2Stack)
-colnames(DemonAvengerDealData2) <- c("Skills", "Time", "R4", "Deal")
-
-Frenzy2StackRR <- Deal_RR(DemonAvengerDealData2)
-Frenzy2Stack40s <- Deal_40s(DemonAvengerDealData2)
-
-
-## Demon Frenzy - 0 Stacks (+29lv)
+## Demon Frenzy 29lv
 DemonAvengerCore2 <- DemonAvengerCore
 DemonAvengerCore2[[2]][DemonAvengerCore2[[2]]$Active=="DemonFrenzy", ]$Levels <- 29
 
@@ -1205,48 +1084,17 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonFrenzy2 <- rbind(data.frame(option, value), info)}
 DemonAvengerATK2 <- Attack(list(BatsSwarm=BatsSwarm, 
-                                ExceedExecution1=ExceedExecution1, ExceedExecution2=ExceedExecution2, ExceedExecution3=ExceedExecution3, ExceedExecution4=ExceedExecution4, ExceedExecution5=ExceedExecution5, 
-                                ShieldChasing=ShieldChasing, ArmorBreak=ArmorBreak, EnhancedExceed=EnhancedExceed, ThousandSword=ThousandSword, 
-                                DemonFrenzyDummy=DemonFrenzyDummy, DemonFrenzy=DemonFrenzy2, BloodFeast1=BloodFeast1, BloodFeast2=BloodFeast2, BloodFeast3=BloodFeast3, 
-                                DimensionSword=DimensionSword, DimensionSwordFast=DimensionSwordFast, 
-                                RevenantAddATK=RevenantAddATK, AuraWeapon=AuraWeapon, MastemaClaw=MastemaClaw, OtherworldEmptiness=OtherworldEmptiness,
-                                SpiderInMirror=SpiderInMirror))
+                               ExceedExecution1=ExceedExecution1, ExceedExecution2=ExceedExecution2, ExceedExecution3=ExceedExecution3, ExceedExecution4=ExceedExecution4, ExceedExecution5=ExceedExecution5, 
+                               ShieldChasing=ShieldChasing, ArmorBreak=ArmorBreak, EnhancedExceed=EnhancedExceed, ThousandSword=ThousandSword, 
+                               DemonFrenzy=DemonFrenzy, BloodFeast=BloodFeast,
+                               DimensionSword=DimensionSword, DimensionSwordFast=DimensionSwordFast, 
+                               RevenantAddATK=RevenantAddATK, AuraWeapon=AuraWeapon, MastemaClaw=MastemaClaw, OtherworldEmptiness=OtherworldEmptiness,
+                               SpiderInMirror=SpiderInMirror))
 
 ATKFinal2 <- data.frame(DemonAvengerATK2)
 ATKFinal2$Delay[c(-7)] <- Delay(ATKFinal2$Delay, DemonAvengerSpec$ATKSpeed)[c(-7)]
 ATKFinal2$CoolTime <- Cooldown(ATKFinal2$CoolTime, ATKFinal2$CoolReduceAvailable, DemonAvengerSpec$CoolReduceP, DemonAvengerSpec$CoolReduce)
 
-DealCycle <- c("Skills", "Time", rownames(DemonAvengerBuff))
-DemonAvengerDealCycle0 <- t(rep(0, length(DealCycle)))
-colnames(DemonAvengerDealCycle0) <- DealCycle
-DemonAvengerDealCycle0 <- data.frame(DemonAvengerDealCycle0)
-
-DemonAvengerDealCycle0 <- DemonAvengerCycle(DemonAvengerDealCycle0, 
-                                            ATKFinal2, 
-                                            BuffFinal, 
-                                            SummonedFinal, 
-                                            DemonAvengerSpec,
-                                            240, 720, "Fusion", 0, F, T)
-DemonAvengerDealCycle0 <- DealCycleFinal(DemonAvengerDealCycle0)
-DemonAvengerDealCycle0 <- DemonAvengerAddATK(DemonAvengerDealCycle0, 
-                                             ATKFinal2, 
-                                             BuffFinal, 
-                                             SummonedFinal, 
-                                             DemonAvengerSpec, 
-                                             "Fusion", 0, GetCoreLv(DemonAvengerCore2, "CallMastema"), GetCoreLv(DemonAvengerCore2, "DemonFrenzy"), GetCoreLv(DemonAvengerCore2, "BlessofIsekaiGoddess"))
-
-DemonAvengerFinalDPM0Stack <- DealCalcWithMaxDMR(DemonAvengerDealCycle0, ATKFinal2, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
-                                                 NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
-Frenzy0StackDPM <- sum(na.omit(DemonAvengerFinalDPM0Stack)) / (max(DemonAvengerDealCycle0$Time)/ 60000)
-
-DemonAvengerDealData0 <- data.frame(DemonAvengerDealCycle0$Skills, DemonAvengerDealCycle0$Time, DemonAvengerDealCycle0$Restraint4, DemonAvengerFinalDPM0Stack)
-colnames(DemonAvengerDealData0) <- c("Skills", "Time", "R4", "Deal")
-
-Frenzy0StackRR <- Deal_RR(DemonAvengerDealData0)
-Frenzy0Stack40s <- Deal_40s(DemonAvengerDealData0)
-
-
-## Demon Frenzy - 1 Stack without Blood Feast (+29lv)
 DealCycle <- c("Skills", "Time", rownames(DemonAvengerBuff))
 DemonAvengerDealCycle1_off <- t(rep(0, length(DealCycle)))
 colnames(DemonAvengerDealCycle1_off) <- DealCycle
@@ -1257,14 +1105,14 @@ DemonAvengerDealCycle1_off <- DemonAvengerCycle(DemonAvengerDealCycle1_off,
                                                 BuffFinal, 
                                                 SummonedFinal, 
                                                 DemonAvengerSpec,
-                                                240, 720, "Normal", 1, F, F)
+                                                240, 720, "Normal", F, F)
 DemonAvengerDealCycle1_off <- DealCycleFinal(DemonAvengerDealCycle1_off)
 DemonAvengerDealCycle1_off <- DemonAvengerAddATK(DemonAvengerDealCycle1_off, 
                                                  ATKFinal2, 
                                                  BuffFinal, 
                                                  SummonedFinal, 
                                                  DemonAvengerSpec, 
-                                                 "Normal", 1, GetCoreLv(DemonAvengerCore2, "CallMastema"), GetCoreLv(DemonAvengerCore2, "DemonFrenzy"), GetCoreLv(DemonAvengerCore2, "BlessofIsekaiGoddess"))
+                                                 "Normal", GetCoreLv(DemonAvengerCore2, "CallMastema"), GetCoreLv(DemonAvengerCore2, "DemonFrenzy"), GetCoreLv(DemonAvengerCore2, "BlessofIsekaiGoddess"))
 
 DemonAvengerFinalDPM1_off <- DealCalcWithMaxDMR(DemonAvengerDealCycle1_off, ATKFinal2, BuffFinal, SummonedFinal, DemonAvengerSpecOpt, 
                                                 NotBuffCols=c("ReleaseOverloadFDR", "DemonFrenzyFDR"), NotBuffColOption=c("FDR", "FDR"))
@@ -1276,7 +1124,4 @@ colnames(DemonAvengerDealData1_off) <- c("Skills", "Time", "R4", "Deal")
 Frenzy1_offRR <- Deal_RR(DemonAvengerDealData1_off)
 Frenzy1_off40s <- Deal_40s(DemonAvengerDealData1_off)
 
-
-print(list(Frenzy2Stack=data.frame(Frenzy2StackDPM=Frenzy2StackDPM, Frenzy2StackRR=Frenzy2StackRR, Frenzy2Stack40s=Frenzy2Stack40s), 
-           Frenzy0Stack=data.frame(Frenzy0StackDPM=Frenzy0StackDPM, Frenzy0StackRR=Frenzy0StackRR, Frenzy0Stack40s=Frenzy0Stack40s), 
-           Frenzy1Stack29Lv=data.frame(Frenzy1_offDPM=Frenzy1_offDPM, Frenzy1_offRR=Frenzy1_offRR, Frenzy1_off40s=Frenzy1_off40s)))
+print(list(Frenzy1Stack29Lv=data.frame(Frenzy1_offDPM=Frenzy1_offDPM, Frenzy1_offRR=Frenzy1_offRR, Frenzy1_off40s=Frenzy1_off40s)))

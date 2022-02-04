@@ -49,7 +49,7 @@ value <- c(20)
 InnerBlaze <- data.frame(option, value)
 
 option <- factor(c("ATKP", "CRR", "FDR"), levels=PSkill)
-value <- c(30, 20, 20)
+value <- c(30, 20, 32)
 Catalize <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)

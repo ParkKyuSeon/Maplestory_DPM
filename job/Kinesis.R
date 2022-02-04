@@ -85,12 +85,12 @@ option <- factor(c("BDR"), levels=PSkill)
 value <- c(30 + KinesisBase$SkillLv)
 PsychicChargingPassive <- data.frame(option, value)
 
-option <- factor(c("ATK", "BDR"), levels=PSkill)
-value <- c(50 + 2 * KinesisBase$PSkillLv, 20 + KinesisBase$PSkillLv)
+option <- factor(c("ATK", "BDR", "FDR"), levels=PSkill)
+value <- c(50 + 2 * KinesisBase$PSkillLv, 20 + KinesisBase$PSkillLv, 20 + KinesisBase$PSkillLv)
 ESPBattleOrder <- data.frame(option, value)
 
 option <- factor(c("FDR"), levels=PSkill)
-value <- c(30 + KinesisBase$PSkillLv)
+value <- c(40 + KinesisBase$PSkillLv)
 Gakseong <- data.frame(option, value) ## Gakseong CDMR -> Buff(Ultimate Skill Only)
 
 option <- factor(c("BuffDuration"), levels=PSkill)
@@ -153,13 +153,6 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 GakseongUltimate <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(20)
-info <- c(0, 1, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-PsychicForceDebuff <- rbind(data.frame(option, value), info)
-
 option <- factor(c("FDR", "IGR"), levels=BSkill)
 value <- c(13, 16)
 info <- c(0, 1, 0, F, F, F, F)
@@ -179,11 +172,11 @@ value <- c(15)
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-PsychicShotDebuff <- rbind(data.frame(option, value), info)
+MaterialDebuff <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(15, 5, 0, F, T, T, F)
+info <- c(30, 3, 0, F, T, T, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PsychicDrain <- rbind(data.frame(option, value), info)
@@ -225,7 +218,7 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(30, 210, 0, F, F, F, F)
+info <- c(26, 180, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PsychicOver <- rbind(data.frame(option, value), info)
@@ -252,8 +245,8 @@ colnames(info) <- c("option", "value")
 BlessofMasteriaGoddess <- rbind(data.frame(option, value), info)}
 
 KinesisBuff <- list(PP=PP, UltimateBPMPP=UltimateBPMPP, PsychicOverPP=PsychicOverPP, PsychicDrainPP=PsychicDrainPP, 
-                    GakseongUltimate=GakseongUltimate, PsychicForceDebuff=PsychicForceDebuff, PsychicGroundDebuff=PsychicGroundDebuff, PsychoBreakBuff=PsychoBreakBuff, 
-                    PsychicDrain=PsychicDrain, PsychicShotDebuff=PsychicShotDebuff, LawofGravityDebuff=LawofGravityDebuff, LawofGravityFDR=LawofGravityFDR, 
+                    GakseongUltimate=GakseongUltimate, PsychicGroundDebuff=PsychicGroundDebuff, PsychoBreakBuff=PsychoBreakBuff, 
+                    PsychicDrain=PsychicDrain, MaterialDebuff=MaterialDebuff, LawofGravityDebuff=LawofGravityDebuff, LawofGravityFDR=LawofGravityFDR, 
                     ESPBooster=ESPBooster, PsychicShield=PsychicShield, MapleSoldier=MapleSoldier, PsychicOver=PsychicOver, 
                     UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, OverloadMana=OverloadMana, BlessofMasteriaGoddess=BlessofMasteriaGoddess, 
                     Restraint4=Restraint4, SoulContractLink=SoulContractLink)
@@ -296,13 +289,6 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Kinesis - Attacks
 ## Hyper : Psychic Grab - Boss Point, Psychic Grab - Reinforce, Psychic Ground - Reduce Guard, Psychic Ground - Persist, Psycho Break - Enhance
 {option <- factor(levels=ASkill)
-value <- c()
-info <- c(0, 0, 360, NA, 1, F, F, F)
-info <- data.frame(AInfo,info)
-colnames(info) <- c("option", "value")
-PsychicForce3 <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=ASkill)
 value <- c()
 info <- c(0, 0, 240, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
@@ -388,21 +374,21 @@ EverPsychicLast <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(500 + 20 * GetCoreLv(KinesisCore, "PsychicTornado"), 4, 720, 1000, 120, T, F, F)
+info <- c(750 + 30 * GetCoreLv(KinesisCore, "PsychicTornado"), 4, 720, 1000, 180, T, F, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicTornado <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(200)
-info <- c(200 + 3 * GetCoreLv(KinesisCore, "PsychicTornado"), 2, 720, NA, 0, NA, NA, F)
+info <- c(313 + 4 * GetCoreLv(KinesisCore, "PsychicTornado"), 2, 720, NA, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicTornadoObject <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(200)
-info <- c(350 + 10 * GetCoreLv(KinesisCore, "PsychicTornado"), 10, 0, 120, 0, NA, NA, F)
+info <- c(525 + 15 * GetCoreLv(KinesisCore, "PsychicTornado"), 10, 0, 180, 0, NA, NA, F)
 info <- data.frame(AInfo,info)
 colnames(info) <- c("option", "value")
 PsychicTornadoExp <- rbind(data.frame(option, value), info)
@@ -463,8 +449,7 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Delay2 <- rbind(data.frame(option, value), info)}
 
-KinesisATK <- Attack(list(PsychicForce3=PsychicForce3, PsychicGrab=PsychicGrab, PsychicSmashing=PsychicSmashing, Telekinesis=Telekinesis, PsychicGround=PsychicGround, PsychicCharging=PsychicCharging, 
-                          PsychoBreak=PsychoBreak, 
+KinesisATK <- Attack(list(PsychicGrab=PsychicGrab, PsychicSmashing=PsychicSmashing, Telekinesis=Telekinesis, PsychicGround=PsychicGround, PsychicCharging=PsychicCharging, PsychoBreak=PsychoBreak, 
                           UltimateMaterial=UltimateMaterial, UltimateTrain=UltimateTrain, UltimatePsychicShot=UltimatePsychicShot, UltimateBPM=UltimateBPM, EverPsychic=EverPsychic, EverPsychicLast=EverPsychicLast, 
                           PsychicTornado=PsychicTornado, PsychicTornadoObject=PsychicTornadoObject, PsychicTornadoExp=PsychicTornadoExp, 
                           UltimateMovingMatter=UltimateMovingMatter, UltimateMovingMatterExp=UltimateMovingMatterExp, LawofGravity=LawofGravity, LawofGravityPull=LawofGravityPull, LawofGravityExp=LawofGravityExp, 
@@ -476,7 +461,7 @@ KinesisATK <- Attack(list(PsychicForce3=PsychicForce3, PsychicGrab=PsychicGrab, 
 ## Kinesis - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(KinesisCore, "PsychicDrain")>=40, 20, 0), 5 * GetCoreLv(KinesisCore, "PsychicDrain"))
-info <- c(150, 1, Delay(690, KinesisSpec$ATKSpeed), 500, 14.9, 5, F, T, T, F)
+info <- c(150, 1, Delay(690, KinesisSpec$ATKSpeed), 500, 29.9, 3, F, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 PsychicDrainATK <- rbind(data.frame(option, value), info)}
@@ -523,14 +508,14 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   BuffSummonedPrior <- c("ESPBooster", "PsychicShield", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
                          "BlessofMasteriaGoddess", "SoulContractLink", "PsychicOver")
   Times180 <- c(0, 0, 0, 0, 0, 0, 
-                1.5, 2, 0.5)
+                1.5, 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
   }
   
-  SubTime <- rep(Period * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce, length(BuffSummonedPrior))
-  TotalTime <- CycleTime * ((100 - Spec$CoolReduceP) / 100) - Spec$CoolReduce * (CycleTime/Period)
+  SubTime <- rep(Period, length(BuffSummonedPrior))
+  TotalTime <- CycleTime
   for(i in 1:length(BuffSummonedPrior)) {
     SubTime[i] <- SubTime[i] / ifelse(Times180[i]==0, Inf, Times180[i])
   }
@@ -590,12 +575,12 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     ## PP By Skill
     if(DealCycle$Skills[nrow(DealCycle)]=="PsychicSmashing") {
       DealCycle$PP[nrow(DealCycle)] <- min(40, DealCycle$PP[(nrow(DealCycle)-1)] + 2)
-    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PsychicForce3", "PsychicGround", "PsychoBreak")) >= 1) {
+    } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PsychicGround", "PsychoBreak")) >= 1) {
       DealCycle$PP[nrow(DealCycle)] <- min(40, DealCycle$PP[(nrow(DealCycle)-1)] + 1)
     } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("EverPsychic")) >= 1) {
       DealCycle$PP[nrow(DealCycle)] <- ifelse(DealCycle$PsychicOver[nrow(DealCycle)] > 0, 39, 38)
     } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("PsychicCharging")) >= 1) {
-      DealCycle$PP[nrow(DealCycle)] <- min(40, DealCycle$PP[(nrow(DealCycle)-1)] + floor((40 - DealCycle$PP[(nrow(DealCycle)-1)]) / 2))
+      DealCycle$PP[nrow(DealCycle)] <- min(40, DealCycle$PP[(nrow(DealCycle)-1)] + 20)
     } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("UltimateMaterial")) >= 1 & DealCycle$PsychicOver[nrow(DealCycle)] > 0) {
       DealCycle$PP[nrow(DealCycle)] <- max(0, DealCycle$PP[(nrow(DealCycle)-1)] - 3)
     } else if(sum(DealCycle$Skills[nrow(DealCycle)]==c("UltimateMaterial")) >= 1) {
@@ -655,14 +640,12 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
     
     ## Buff / Debuff Connection
-    if(DealCycle$Skills[nrow(DealCycle)]=="PsychicForce3") {
-      DealCycle$PsychicForceDebuff[nrow(DealCycle)] <- 30000
-    } else if(DealCycle$Skills[nrow(DealCycle)]=="PsychicGround") {
+    if(DealCycle$Skills[nrow(DealCycle)]=="PsychicGround") {
       DealCycle$PsychicGroundDebuff[nrow(DealCycle)] <- 45000
     } else if(DealCycle$Skills[nrow(DealCycle)]=="PsychoBreak") {
-      DealCycle$PsychoBreakBuff[nrow(DealCycle)] <- 30000
-    } else if(DealCycle$Skills[nrow(DealCycle)]=="UltimatePsychicShot") {
-      DealCycle$PsychicShotDebuff[nrow(DealCycle)] <- 10000
+      DealCycle$PsychoBreakBuff[nrow(DealCycle)] <- 45000
+    } else if(DealCycle$Skills[nrow(DealCycle)]=="UltimatePsychicShot" | DealCycle$Skills[nrow(DealCycle)]=="UltimateMaterial" | DealCycle$Skills[nrow(DealCycle)]=="PsychicSmashing") {
+      DealCycle$MaterialDebuff[nrow(DealCycle)] <- 30000
     } else if(DealCycle$Skills[nrow(DealCycle)]=="PsychicDrainATKSummoned") {
       DealCycle$PsychicDrain[nrow(DealCycle)] <- BuffFinal[rownames(BuffFinal)=="PsychicDrain", ]$Duration * 1000
     } else if(DealCycle$Skills[nrow(DealCycle)]=="LawofGravity") {
@@ -696,6 +679,9 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       DealCycle <- KIStack(DealCycle)
     }
   }
+  ## Ultimate - Material (Debuff)
+  DealCycle <- DCATK(DealCycle, "UltimateMaterial", ATKFinal)
+  DealCycle <- KIStack(DealCycle)
   
   SubTimeList <- data.frame(Skills=BuffSummonedPrior, SubTime=SubTime, stringsAsFactors=F)
   NoSubTime <- subset(SubTimeList, SubTimeList$SubTime==0)$Skills
@@ -712,7 +698,7 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
   }
   
-  PGCool <- subset(ATKFinal, rownames(ATKFinal)=="PsychicGround")$CoolTime * 1000
+  PGCool <- 45000
   PCCool <- subset(ATKFinal, rownames(ATKFinal)=="PsychicCharging")$CoolTime * 1000
   EPCool <- subset(ATKFinal, rownames(ATKFinal)=="EverPsychic")$CoolTime * 1000
   PTCool <- subset(ATKFinal, rownames(ATKFinal)=="PsychicTornado")$CoolTime * 1000
@@ -780,9 +766,10 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
         GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
       }
-      ## Psychic Ground + Psychic Force + Psycho Break (Buff/Debuff)
-      else if(PGRemain == 0) {
-        DealCycle <- DCATK(DealCycle, "PsychicGround", ATKFinal)
+      ## Psychic Ground + Psycho Break (Buff/Debuff)
+      else if(PGRemain <= 1000 & k!= length(BuffList) | 
+              PGRemain <= 1000 & k== length(BuffList) & PGCool - 15000 < (BuffEndTime - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]))) {
+        DealCycle <- DCATK(DealCycle, "PsychoBreak", ATKFinal)
         DealCycle <- KIStack(DealCycle)
         DealCycle <- TornadoThrowing(DealCycle)
         PGRemain <- max(0, PGCool - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
@@ -795,20 +782,7 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
         GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
         
-        DealCycle <- DCATK(DealCycle, "PsychicForce3", ATKFinal)
-        DealCycle <- KIStack(DealCycle)
-        DealCycle <- TornadoThrowing(DealCycle)
-        PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        
-        DealCycle <- DCATK(DealCycle, "PsychoBreak", ATKFinal)
+        DealCycle <- DCATK(DealCycle, "PsychicGround", ATKFinal)
         DealCycle <- KIStack(DealCycle)
         DealCycle <- TornadoThrowing(DealCycle)
         PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
@@ -822,65 +796,65 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
       }
       ## Pyschic Shot
-      else if(PsychicShotUse == T & DealCycle$PsychicShotDebuff[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & DealCycle$PP[nrow(DealCycle)] >= 5 | 
-              PsychicShotUse == T & DealCycle$PsychicShotDebuff[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & DealCycle$PP[nrow(DealCycle)] >= 2 & DealCycle$PsychicOver[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
-        if(DealCycle$Skills[nrow(DealCycle)]=="UltimatePsychicShot") {
-          DealCycle <- DCATK(DealCycle, "Delay2", ATKFinal)
-          DealCycle <- KIStack(DealCycle)
-          DealCycle <- TornadoThrowing(DealCycle)
-          PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          
-          DealCycle <- DCATK(DealCycle, "PsychicGrab", ATKFinal)
-          DealCycle <- KIStack(DealCycle)
-          DealCycle <- TornadoThrowing(DealCycle)
-          PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          GrabRemain <- max(0, 10000 - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PsychicGrabStack <- 5
-        } else if(PsychicGrabStack == 0 | GrabRemain == 0) {
-          DealCycle <- DCATK(DealCycle, "PsychicGrab", ATKFinal)
-          DealCycle <- KIStack(DealCycle)
-          DealCycle <- TornadoThrowing(DealCycle)
-          PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          GrabRemain <- max(0, 10000 - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-          PsychicGrabStack <- 5
-        }
-        
-        DealCycle <- DCATK(DealCycle, "UltimatePsychicShot", ATKFinal)
-        DealCycle <- KIStack(DealCycle)
-        DealCycle <- TornadoThrowing(DealCycle)
-        PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
-        PsychicGrabStack <- 0
-      }
+      ##  else if(PsychicShotUse == T & DealCycle$PsychicShotDebuff[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & DealCycle$PP[nrow(DealCycle)] >= 5 | 
+      ##          PsychicShotUse == T & DealCycle$PsychicShotDebuff[nrow(DealCycle)] - DealCycle$Time[1] <= 0 & DealCycle$PP[nrow(DealCycle)] >= 2 & DealCycle$PsychicOver[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
+      ##  if(DealCycle$Skills[nrow(DealCycle)]=="UltimatePsychicShot") {
+      ##    DealCycle <- DCATK(DealCycle, "Delay2", ATKFinal)
+      ##    DealCycle <- KIStack(DealCycle)
+      ##    DealCycle <- TornadoThrowing(DealCycle)
+      ##    PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    
+      ##    DealCycle <- DCATK(DealCycle, "PsychicGrab", ATKFinal)
+      ##    DealCycle <- KIStack(DealCycle)
+      ##    DealCycle <- TornadoThrowing(DealCycle)
+      ##    PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    GrabRemain <- max(0, 10000 - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PsychicGrabStack <- 5
+      ##  } else if(PsychicGrabStack == 0 | GrabRemain == 0) {
+      ##    DealCycle <- DCATK(DealCycle, "PsychicGrab", ATKFinal)
+      ##    DealCycle <- KIStack(DealCycle)
+      ##    DealCycle <- TornadoThrowing(DealCycle)
+      ##    PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    GrabRemain <- max(0, 10000 - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##    PsychicGrabStack <- 5
+      ##  }
+      ##  
+      ##  DealCycle <- DCATK(DealCycle, "UltimatePsychicShot", ATKFinal)
+      ##  DealCycle <- KIStack(DealCycle)
+      ##  DealCycle <- TornadoThrowing(DealCycle)
+      ##  PGRemain <- max(0, PGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  PCRemain <- max(0, PCRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  EPRemain <- max(0, EPRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  PTRemain <- max(0, PTRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  MMRemain <- max(0, MMRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  LGRemain <- max(0, LGRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  R4Remain <- max(0, R4Remain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  TRRemain <- max(0, TRRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
+      ##  PsychicGrabStack <- 0
+      ## }
       ## Restraint 4
       else if(R4Remain == 0 & nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) * 2 < nrow(subset(DealCycle, DealCycle$Skills=="UltimateMovingMatter")) & 
               nrow(subset(DealCycle, DealCycle$Skills=="Restraint4")) * 3 < nrow(subset(DealCycle, DealCycle$Skills=="LawofGravity"))) {
@@ -913,7 +887,8 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
       }
       ## Psychic Charging
-      else if(PCRemain == 0 & DealCycle$PP[nrow(DealCycle)] <= 10) {
+      else if(PCRemain == 0 & DealCycle$PP[nrow(DealCycle)] <= 20 & k!= length(BuffList) | 
+              PCRemain == 0 & DealCycle$PP[nrow(DealCycle)] <= 20 & k== length(BuffList) & PCCool < (BuffEndTime - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1]))) {
         DealCycle <- DCATK(DealCycle, "PsychicCharging", ATKFinal)
         DealCycle <- KIStack(DealCycle)
         DealCycle <- TornadoThrowing(DealCycle)
@@ -945,8 +920,8 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         GrabRemain <- max(0, GrabRemain - DealCycle$Time[1] - ifelse(DealCycle$Skills[nrow(DealCycle)]=="PsychicTornadoObject", DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[(nrow(DealCycle)-1)], 0))
       }
       ## Psychic Tornado
-      else if(PTRemain == 0 & DealCycle$PP[nrow(DealCycle)] >= 15 & nrow(subset(DealCycle, DealCycle$Skills=="PsychicTornado")) < nrow(subset(DealCycle, DealCycle$Skills=="BlessofMasteriaGoddess")) | 
-              PTRemain == 0 & DealCycle$PP[nrow(DealCycle)] >= 7 & nrow(subset(DealCycle, DealCycle$Skills=="PsychicTornado")) < nrow(subset(DealCycle, DealCycle$Skills=="BlessofMasteriaGoddess")) & 
+      else if(PTRemain == 0 & DealCycle$PP[nrow(DealCycle)] >= 15 & nrow(subset(DealCycle, DealCycle$Skills=="PsychicTornado")) * 2 < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) | 
+              PTRemain == 0 & DealCycle$PP[nrow(DealCycle)] >= 7 & nrow(subset(DealCycle, DealCycle$Skills=="PsychicTornado")) * 2 < nrow(subset(DealCycle, DealCycle$Skills=="SoulContractLink")) & 
               DealCycle$PsychicOver[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
         DealCycle <- DCATK(DealCycle, "PsychicTornado", ATKFinal)
         DealCycle <- KIStack(DealCycle)
@@ -1108,7 +1083,7 @@ KinesisCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
   }
   
-  while(max(PGRemain - min(subset(DealCycle, DealCycle$Skills=="PsychicGround")$Time), 
+  while(max(PGRemain - min(subset(DealCycle, DealCycle$Skills=="PsychicGround")$Time) - 15000, 
             PCRemain - min(subset(DealCycle, DealCycle$Skills=="PsychicCharging")$Time), 
             EPRemain - min(subset(DealCycle, DealCycle$Skills=="EverPsychic")$Time),
             PTRemain - min(subset(DealCycle, DealCycle$Skills=="PsychicTornado")$Time), 
@@ -1295,7 +1270,7 @@ KinesisAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   LOGFDR <- rep(c(0, 12, 24, 36, rep(40, 12)), 10)
   k <- 1
   for(i in 2:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("PsychicForce3", "PsychicSmashing", "PsychoBreak", 
+    if(sum(DealCycle$Skills[i]==c("PsychicSmashing", "PsychoBreak", 
                                   "UltimateMaterial", "UltimateTrain", "UltimatePsychicShot", "UltimateBPM", 
                                   "EverPsychic", "EverPsychicLast", 
                                   "PsychicTornado", "PsychicTornadoObject", "PsychicTornadoExp", "UltimateMovingMatter", "UltimateMovingMatterExp", 

@@ -29,7 +29,7 @@ ArchMageFPSkillList <- list(DotPunisher=c("DotPunisher1st", "DotPunisherRemain")
                             PoisonChain=c("PoisonChain1", "PoisonChain2", "PoisonChain3", "PoisonChain4", "PoisonChain5", "PoisonChainMax", "PoisonChainPre"), 
                             PoisonMist=c("PoisonMistUnstable"), 
                             PoisonNova=c("PoisonNova123", "PoisonNovaRemain", "PoisonNovaStart"))
-ArchMageFPDealCycleSimplified <- DealCycleCollapse(ArchMageFPDealCycle, ArchMageFPSkillList)
+ArchMageFPDealCycleSimplified1 <- DealCycleCollapse(ArchMageFPDealCycle1, ArchMageFPSkillList)
 ArchMageFPDealCycleSimplified2 <- DealCycleCollapse(ArchMageFPDealCycle2, ArchMageFPSkillList)
 
 ## ArchMageTC
@@ -44,8 +44,9 @@ ArchMageTCSkillList <- list(Blizard=c("Blizard", "BlizardFA", "BlizardUnstable",
                             LightningSpear=c("LightningSpearEnd", "LightningSpearEndUnstable", "LightningSpearLoop"), 
                             ThunderBolt=c("ThunderBoltUnstable"), 
                             ThunderBreak=c("ThunderBreak", "ThunderBreak2", "ThunderBreak3", "ThunderBreak4", "ThunderBreak5", "ThunderBreak6", "ThunderBreak7", "ThunderBreak8"))
-ArchMageTCDealCycleSimplified <- DealCycleCollapse(ArchMageTCDealCycle, ArchMageTCSkillList)
+ArchMageTCDealCycleSimplified1 <- DealCycleCollapse(ArchMageTCDealCycle1, ArchMageTCSkillList)
 ArchMageTCDealCycleSimplified2 <- DealCycleCollapse(ArchMageTCDealCycle2, ArchMageTCSkillList)
+ArchMageTCDealCycleSimplified3 <- DealCycleCollapse(ArchMageTCDealCycle3, ArchMageTCSkillList)
 
 ## Bishop
 BishopSkillList <- list(AngelRay=c("AngelRay", "AngelRayUnstable"), 
@@ -57,8 +58,9 @@ BishopSkillList <- list(AngelRay=c("AngelRay", "AngelRayUnstable"),
                         HolyArrow=c("HolyArrowUnstable"), 
                         PeaceMaker=c("PeaceMaker", "PeaceMakerAfterUns1", "PeaceMakerAfterUns2", "PeaceMakerExplosion"), 
                         ShiningRay=c("ShiningRayUnstable"))
-BishopDealCycleSimplified <- DealCycleCollapse(BishopDealCycle, BishopSkillList)
+BishopDealCycleSimplified1 <- DealCycleCollapse(BishopDealCycle1, BishopSkillList)
 BishopDealCycleSimplified2 <- DealCycleCollapse(BishopDealCycle2, BishopSkillList)
+BishopDealCycleSimplified3 <- DealCycleCollapse(BishopDealCycle3, BishopSkillList)
 
 ## Marksman
 MarksmanSkillList <- list(ChargedArrow=c("ChargedArrow", "ChargedArrowUncharged"))

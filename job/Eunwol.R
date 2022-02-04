@@ -45,6 +45,10 @@ EunwolBase <- JobBase(ChrInfo=ChrInfo,
 value <- c(5)
 JeongryeongChinhwa <- data.frame(option, value)
 
+option <- factor(c("FDR"), levels=PSkill)
+value <- c(5)
+KnuckleMastery <- data.frame(option, value)
+
 option <- factor(c("ATKSpeed"), levels=PSkill)
 value <- c(1)
 JeongryeongGyeolsok2 <- data.frame(option, value)
@@ -85,7 +89,7 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(EunwolCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-EunwolPassive <- Passive(list(JeongryeongChinhwa=JeongryeongChinhwa, JeongryeongGyeolsok2=JeongryeongGyeolsok2, GeunryeokDanryeon=GeunryeokDanryeon, 
+EunwolPassive <- Passive(list(JeongryeongChinhwa=JeongryeongChinhwa, KnuckleMastery=KnuckleMastery, JeongryeongGyeolsok2=JeongryeongGyeolsok2, GeunryeokDanryeon=GeunryeokDanryeon, 
                               JeongryeongGyeolsok3=JeongryeongGyeolsok3, Yakhwa=Yakhwa, JeongryeongGyeolsok4=JeongryeongGyeolsok4, GogeupKnuckleSukryeon=GogeupKnuckleSukryeon, 
                               YakjeomGanpa=YakjeomGanpa, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive))
 
@@ -280,7 +284,7 @@ JinGwicham <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(3 * GetCoreLv(EunwolCore, "SohonJangmak"), ifelse(GetCoreLv(EunwolCore, "SohonJangmak")>=40, 20, 0))
-info <- c(45 * 8, 5, 10000, 180, 10 + Cooldown(10, T, EunwolSpec$CoolReduceP, EunwolSpec$CoolReduce), F, T, F)
+info <- c(90 * 8, 5, 5000, 180, 5 + Cooldown(10, T, EunwolSpec$CoolReduceP, EunwolSpec$CoolReduce), F, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SohonJangmak <- rbind(data.frame(option, value), info)
@@ -378,14 +382,14 @@ SahonGakinJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(3 * GetCoreLv(EunwolCore, "SohonJangmak"), ifelse(GetCoreLv(EunwolCore, "SohonJangmak")>=40, 20, 0))
-info <- c(45, 5 * JipsokData$Prob[6], 0, 270, NA, NA, NA, F)
+info <- c(90, 5 * JipsokData$Prob[6], 0, 270, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SohonJangmakJipsok <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(3 * GetCoreLv(EunwolCore, "SohonJangmak"), ifelse(GetCoreLv(EunwolCore, "SohonJangmak")>=40, 20, 0))
-info <- c(45, 5 * (JipsokData$Prob[6] - JipsokData$Prob[6]^2), 0, 270, NA, NA, NA, F)
+info <- c(90, 5 * (JipsokData$Prob[6] - JipsokData$Prob[6]^2), 0, 270, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SohonJangmakJipsokCancelled <- rbind(data.frame(option, value), info)
@@ -691,6 +695,8 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
     ## Second Restraint(Sohon Jangmak / Pashwae Yeongwon / Gwimunjin / Soul Contract / Bunhon Gyeokcham)
     if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < max(subset(DealCycle, DealCycle$Skills=="RanghonJangmak")$Time) + 6750 &
        DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] >= max(subset(DealCycle, DealCycle$Skills=="RanghonJangmak")$Time) + 630 &
+       DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="SohonJangmak")$Time) >= 
+       subset(ATKFinal, rownames(ATKFinal)=="SohonJangmak")$CoolTime * 1000 & 
        SohonCount==3) {
       DealCycle <- DCBuff(DealCycle, "MapleWarriors2", BuffFinal)
       RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
@@ -748,8 +754,10 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
     ## Sohon Jangmak
     else if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < max(subset(DealCycle, DealCycle$Skills=="RanghonJangmak")$Time) + 6750 &
             DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] >= max(subset(DealCycle, DealCycle$Skills=="RanghonJangmak")$Time) + 630 &
-            DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="JinGwicham")$Time) <= 4000) {
-      if(DealCycle$PashwaeCheoljoBan[nrow(DealCycle)] - DealCycle$Time[1] <= 9000) {
+            DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="JinGwicham")$Time) <= 4000 & 
+            DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="SohonJangmak")$Time) >=
+            subset(ATKFinal, rownames(ATKFinal)=="SohonJangmak")$CoolTime * 1000) {
+      if(DealCycle$PashwaeCheoljoBan[nrow(DealCycle)] - DealCycle$Time[1] <= 5000) {
         DealCycle <- DCBuff(DealCycle, "PashwaeCheoljoBan", BuffFinal)
         RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
         DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
@@ -873,7 +881,7 @@ EunwolCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal) {
             DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="JinGwicham")$Time) <= 4000 & 
             DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="SohonJangmak")$Time) >= 
             subset(ATKFinal, rownames(ATKFinal)=="SohonJangmak")$CoolTime * 1000) {
-      if(DealCycle$PashwaeCheoljoBan[nrow(DealCycle)] - DealCycle$Time[1] <= 9000) {
+      if(DealCycle$PashwaeCheoljoBan[nrow(DealCycle)] - DealCycle$Time[1] <= 5000) {
         DealCycle <- DCBuff(DealCycle, "PashwaeCheoljoBan", BuffFinal)
         RangDealCycle <- RangCycle(RangDealCycle$RangCycle, DealCycle, BuffFinal, RangDealCycle$Remains)
         DealCycle <- CycleAttach(RangDealCycle$RangCycle, DealCycle)
@@ -1036,7 +1044,7 @@ EunwolAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, BunhonFi
   
   
   ## Sohon Jangmak, Ranghon Jangmak
-  DealCycle <- RepATKCycle(DealCycle, "SohonJangmak", 56, 0, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "SohonJangmak", 28, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "RanghonJangmak", 35, 720 + 630, ATKFinal)
   
   

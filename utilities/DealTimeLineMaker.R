@@ -343,9 +343,9 @@ legend(x=0, y=80000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)",
 HeroDealTL <- DealTimeLine(HeroDealData$Time, HeroDealData$Deal)
 PalladinDealTL <- DealTimeLine(PalladinDealData$Time, PalladinDealData$Deal)
 DarkKnightDealTL <- DealTimeLine(DarkKnightDealData$Time, DarkKnightDealData$Deal)
-ArchMageFPDealTL <- DealTimeLine(ArchMageFPDealCycle$Time, ArchMageFPDeal1)
-ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle$Time, ArchMageTCDeal1)
-BishopDealTL <- DealTimeLine(BishopDealCycle$Time, BishopDeal1)
+ArchMageFPDealTL <- DealTimeLine(ArchMageFPDealCycle2$Time, ArchMageFPDealData2)
+ArchMageTCDealTL <- DealTimeLine(ArchMageTCDealCycle3$Time, ArchMageTCDealData3)
+BishopDealTL <- DealTimeLine(BishopDealCycle3$Time, BishopDealData3)
 BowmasterDealTL <- DealTimeLine(BowmasterDealData$Time, BowmasterDealData$Deal)
 MarksmanDealTL <- DealTimeLine(MarksmanDealData$Time, MarksmanDealData$Deal)
 PathFinderDealTL <- DealTimeLine(PathFinderDealData$Time, PathFinderDealData$Deal)
@@ -364,7 +364,7 @@ StrikerDealTL <- DealTimeLine(StrikerDealData$Time, StrikerDealData$Deal)
 AranDealTL <- DealTimeLine(AranDealData$Time, AranDealData$Deal)
 EvanDealTL <- DealTimeLine(EvanDealData$Time, EvanDealData$Deal)
 LuminousDealTL <- DealTimeLine(LuminousDealData$Time, LuminousDealData$Deal)
-MercedesDealTL <- DealTimeLine(MercedesDealData$Time, MercedesDealData$Deal)
+MercedesDealTL <- DealTimeLine(MercedesDealDataGust$Time, MercedesDealDataGust$Deal)
 PhantomDealTL <- DealTimeLine(PhantomDealData$Time, PhantomDealData$Deal)
 EunwolDealTL <- DealTimeLine(EunwolDealData$Time, EunwolDealData$Deal)
 DemonSlayerDealTL <- DealTimeLine(DemonSlayerDealData$Time, DemonSlayerDealData$Deal)
@@ -408,37 +408,24 @@ MaxDeal <- 80000 ; CumDealDivider <- 100000
 for(i in 1:nrow(ChrInfo)) {
   DealGraphSave(JobName=ChrInfo$job[i], 
                 DealTL=get(paste(ChrInfo$job[i], "DealTL", sep="")), 
-                GetTimeData=get(ifelse(sum(ChrInfo$job[i]==c("ArchMageFP", "ArchMageTC", "Bishop"))==1, 
-                                       paste(ChrInfo$job[i], "DealCycle", sep=""), 
+                GetTimeData=get(ifelse(sum(ChrInfo$job[i]==c("ArchMageFP"))==1, paste(ChrInfo$job[i], "DealCycle2", sep=""),
+                                       ifelse(sum(ChrInfo$job[i]==c("ArchMageTC", "Bishop"))==1, paste(ChrInfo$job[i], "DealCycle3", sep=""), 
                                        ifelse(ChrInfo$job[i]=="CannonMaster", "CannonShooterDealData", 
                                               ifelse(ChrInfo$job[i]=="DualBlader", "DualBladeDealData", 
-                                                     paste(ChrInfo$job[i], "DealData", sep=""))))), 
+                                                     paste(ChrInfo$job[i], "DealData", sep="")))))), 
                 Modifier=Modifier, 
                 MaxDeal=MaxDeal, 
                 CumDealDivider=CumDealDivider)
 }
 
-MaxDeal <- 210000 ; BishopRRDeal <- 85649
+MaxDeal <- 220000 ; BishopRRDeal <- 125583
 for(i in 1:nrow(ChrInfo)) {
-  if(sum(ChrInfo$job[i]==c("ArchMageFP", "ArchMageTC", "Bishop"))==1) {
-    DealDataDummy <- data.frame(get(paste(ChrInfo$job[i], "DealCycle", sep=""))$Skills, get(paste(ChrInfo$job[i], "DealCycle", sep=""))$Time, get(paste(ChrInfo$job[i], "DealCycle", sep=""))$Restraint4, 
-                                get(paste(ChrInfo$job[i], "Deal1", sep="")))
-    colnames(DealDataDummy) <- c("Skills", "Time", "R4", "Deal")
-    
-    RRGraphSave(JobName=ChrInfo$job[i], 
-                DealData=DealDataDummy, 
-                Modifier=Modifier, 
-                MaxDeal=MaxDeal, 
-                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "FlameWizard", "Striker"))==1, T, F), 
-                BishopRRDeal=BishopRRDeal)
-  } else {
-    RRGraphSave(JobName=ChrInfo$job[i], 
-                DealData=get(ifelse(ChrInfo$job[i]=="CannonMaster", "CannonShooterDealData", 
-                                    ifelse(ChrInfo$job[i]=="DualBlader", "DualBladeDealData", 
-                                           paste(ChrInfo$job[i], "DealData", sep="")))), 
-                Modifier=Modifier, 
-                MaxDeal=MaxDeal, 
-                reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "FlameWizard", "Striker"))==1, T, F), 
-                BishopRRDeal=BishopRRDeal)
-  }
+  RRGraphSave(JobName=ChrInfo$job[i], 
+              DealData=get(ifelse(ChrInfo$job[i]=="CannonMaster", "CannonShooterDealData", 
+                                  ifelse(ChrInfo$job[i]=="DualBlader", "DualBladeDealData", 
+                                         paste(ChrInfo$job[i], "DealData", sep="")))), 
+              Modifier=Modifier, 
+              MaxDeal=MaxDeal, 
+              reverse=ifelse(sum(ChrInfo$job[i]==c("SoulMaster", "ArchMageFP", "ArchMageTC", "Bishop", "FlameWizard", "Striker"))==1, T, F), 
+              BishopRRDeal=BishopRRDeal)
 }

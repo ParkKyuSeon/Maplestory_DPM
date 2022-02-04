@@ -44,9 +44,21 @@ CaptainBase <- JobBase(ChrInfo=ChrInfo,
 value <- c(20, 5)
 CriticalRoar <- data.frame(option, value) 
 
+option <- factor(c("CRR"), levels=PSkill)
+value <- c(10)
+GunMastery <- data.frame(option, value) 
+
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(30, 30)
 PhysicalTraining <- data.frame(option, value)
+
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+GunAcceleration <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(10)
+InfiniteBullet <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(60)
@@ -58,23 +70,19 @@ FullMetalJacket <- data.frame(option, value)
 
 option <- factor(c("FDR", "CDMR"), levels=PSkill)
 value <- c(25 + 2 * CaptainBase$SkillLv, 20 + CaptainBase$SkillLv)
-ContinualAiming <- data.frame(option, value)
+ContinualAimingPassive <- data.frame(option, value)
 
 option <- factor(c("BDR"), levels=PSkill)
 value <- c(15 + CaptainBase$PSkillLv)
-CounterAttack <- data.frame(option, value)
+OffenseForm <- data.frame(option, value)
 
 option <- factor(c("ATK", "CDMR", "CRR"), levels=PSkill)
 value <- c(45 + 3 * CaptainBase$PSkillLv, 30 + CaptainBase$PSkillLv, 10 + floor(CaptainBase$PSkillLv/3))
 CrewCommandership <- data.frame(option, value) ## Crew FDR 15 + PSkillLv%
 
-option <- factor(c("Mastery", "ATK"), levels=PSkill)
-value <- c(70 + floor(CaptainBase$PSkillLv/2), 30 + CaptainBase$PSkillLv)
+option <- factor(c("Mastery", "ATK", "FDR"), levels=PSkill)
+value <- c(70 + floor(CaptainBase$PSkillLv/2), 30 + CaptainBase$PSkillLv, 8)
 CaptainDignityPassive <- data.frame(option, value)
-
-option <- factor(c("CRR"), levels=PSkill)
-value <- c(10)
-UnwearyingNectar <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(10 + GetCoreLv(CaptainCore, "LoadedDice"))
@@ -92,26 +100,12 @@ option <- factor(c("ATK"), levels=PSkill)
 value <- c(22)
 GiantBullet <- data.frame(option, value)}
 
-CaptainPassive <- Passive(list(CriticalRoar, PhysicalTraining, HollowPointBullet, FullMetalJacket, ContinualAiming, CounterAttack, CrewCommandership, CaptainDignityPassive, UnwearyingNectar,
+CaptainPassive <- Passive(list(CriticalRoar, GunMastery, PhysicalTraining, GunAcceleration, InfiniteBullet, HollowPointBullet, FullMetalJacket, ContinualAimingPassive, OffenseForm, CrewCommandership, CaptainDignityPassive, 
                                LoadedDice, BlinkPassive, RopeConnectPassive, GiantBullet))
 
 
 ## Captain - Buff
-{option <- factor(c("ATKSpeed"), levels=BSkill)
-value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-GunBooster <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(180, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-InfiniteBullet <- rbind(data.frame(option, value), info)
-
-option <- factor(c("ATKP"), levels=BSkill)
+{option <- factor(c("ATKP"), levels=BSkill)
 value <- c(20 + CaptainBase$SkillLv)
 info <- c(180 + 6 * CaptainBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -124,6 +118,13 @@ info <- c(900 + 30 * CaptainBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(60 + 4 * CaptainBase$SkillLv, NA, Delay(870, 2), F, NA, NA, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+SignofBombard <- rbind(data.frame(option, value), info) ## Continual Aiming Delay
 
 option <- factor("BDR", levels=BSkill)
 value <- c(20)
@@ -146,26 +147,33 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 LuckyDice555 <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(30)
-info <- c(Cooldown(30, T, CaptainBase$UnionChrs$CoolReduceP, CaptainBase$CoolReduce), 60, Delay(900, 2), F, F, F, F)
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(20, 15)
+info <- c(180, 1800, 1500, T, T, T, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-NautilusBuff <- rbind(data.frame(option, value), info) ## Captain Dignity FDR 30%
+LuckyDice53 <- rbind(data.frame(option, value), info)
 
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(25 + CaptainBase$SkillLv)
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(20, 25)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice533 <- rbind(data.frame(option, value), info)
+
+option <- factor(c("BDR", "ATK"), levels=BSkill)
+value <- c(30, 15)
+info <- c(180, 1800, 1500, T, T, T, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LuckyDice553 <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
 info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-QuickDraw <- rbind(data.frame(option, value), info)
-
-option <- factor(c("FDR"), levels=BSkill)
-value <- c(25 + CaptainBase$SkillLv)
-info <- c(0, 1, 0, F, F, F, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-QuickDrawHeadShot <- rbind(data.frame(option, value), info)
+QuickDrawFDR <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -173,6 +181,13 @@ info <- c(0, 1, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 QuickDrawStack <- rbind(data.frame(option, value), info)
+
+option <- factor(levels=BSkill)
+value <- c()
+info <- c(30, 120, 390, F, F, F, T)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+UnwearyingNectar <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -217,13 +232,13 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 MapleWarriors2 <- rbind(data.frame(option, value), info)}
 
-CaptainBuff <- list(GunBooster=GunBooster, InfiniteBullet=InfiniteBullet, PirateStyle=PirateStyle, MapleSoldier=MapleSoldier, NautilusBuff=NautilusBuff, 
-                    QuickDraw=QuickDraw, QuickDrawHeadShot=QuickDrawHeadShot, QuickDrawStack=QuickDrawStack, 
-                    LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, LuckyDice555=LuckyDice555, EpicAdventure=EpicAdventure, 
+CaptainBuff <- list(PirateStyle=PirateStyle, MapleSoldier=MapleSoldier, SignofBombard=SignofBombard, QuickDrawFDR=QuickDrawFDR, QuickDrawStack=QuickDrawStack, 
+                    LuckyDice5=LuckyDice5, LuckyDice55=LuckyDice55, LuckyDice555=LuckyDice555, LuckyDice53=LuckyDice53, LuckyDice533=LuckyDice533, LuckyDice553=LuckyDice553, 
+                    UnwearyingNectar=UnwearyingNectar, EpicAdventure=EpicAdventure, 
                     UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                     OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, PirateFlag=PirateFlag, MapleWarriors2=MapleWarriors2, 
                     SoulContractLink=SoulContractLink, Restraint4=Restraint4)
-## Petbuff : GunBooster(600ms), InfiniteBullet(990ms), PirateStyle(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+## Petbuff : PirateStyle(990ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   CaptainBuff[[length(CaptainBuff)+1]] <- UsefulAdvancedBless
   names(CaptainBuff)[[length(CaptainBuff)]] <- "UsefulAdvancedBless"
@@ -260,30 +275,30 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Captain - Attack
-## Hyper : Rapid Fire - Boss Killer, Add Range, Reinforce / Head Shot - Bonus Attack, Reinforce
+## Hyper : Rapid Fire - Add Range, Reinforce / Head Shot - Bonus Attack, Reinforce, Boss Killer
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(50, ifelse(GetCoreLv(CaptainCore, "RapidFire")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "RapidFire"))
-info <- c(325 + 3 * CaptainBase$SkillLv, 1, 120, NA, 0, NA, NA, F)
+value <- c(30, ifelse(GetCoreLv(CaptainCore, "RapidFire")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "RapidFire"))
+info <- c(375 + 3 * CaptainBase$SkillLv, 1, 120, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 RapidFire <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(20, IGRCalc(c(60, ifelse(GetCoreLv(CaptainCore, "HeadShot")>=40, 20, 0))), 2 * GetCoreLv(CaptainCore, "HeadShot"))
-info <- c(525 + 5 * CaptainBase$SkillLv, 13, 570, NA, 5, T, T, F)
+value <- c(40, IGRCalc(c(60, ifelse(GetCoreLv(CaptainCore, "HeadShot")>=40, 20, 0))), 2 * GetCoreLv(CaptainCore, "HeadShot"))
+info <- c(1185 + 13 * CaptainBase$SkillLv, 14, 570, NA, 5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeadShot <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "Nautilus")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "Nautilus"))
-info <- c(440 + 130 + 7 * CaptainBase$SkillLv, 7, 0, NA, 30, T, T, F)
+value <- c(ifelse(GetCoreLv(CaptainCore, "ContinualAiming")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "ContinualAiming"))
+info <- c(610 + 16 * CaptainBase$SkillLv, 1, 0, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
-Nautilus <- rbind(data.frame(option, value), info) ## Delay on NautilusBuff
+ContinualAiming <- rbind(data.frame(option, value), info) ## Delay on Sign of Bombard
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "CaptainDignity")>=40, 20, 0), CaptainBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(CaptainCore, "CaptainDignity"))
+value <- c(ifelse(GetCoreLv(CaptainCore, "CaptainDignity")>=40, 20, 0), CaptainBase$MonsterLife$FinalATKDMR, FDRCalc(c(30, 2 * GetCoreLv(CaptainCore, "CaptainDignity"))))
 info <- c(275 + 3 * CaptainBase$SkillLv, 1, 0, NA, 0, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -291,14 +306,14 @@ CaptainDignity <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(230 + 9 * GetCoreLv(CaptainCore, "BulletParty"), 5, 12180 + 1000 * General$General$Serverlag, 180, 75, T, F, F)
+info <- c(230 + 9 * GetCoreLv(CaptainCore, "BulletParty"), 5, Cooldown(5, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) * 1000 - Delay(570, 2) + 180, 180, 75, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulletParty <- rbind(data.frame(option, value), info) ## SubTime : 180ms, Pre : 180ms, End : 180ms
 
 option <- factor(c("FDR"), levels=ASkill)
 value <- c(FDRCalc(c(200, 44)))
-info <- c(320 + 13 * GetCoreLv(CaptainCore, "DeadEye"), 15, 600, NA, Cooldown(30, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) + 5.4 + 3.48, F, F, F)
+info <- c(320 + 13 * GetCoreLv(CaptainCore, "DeadEye"), 15, 600, NA, Cooldown(30, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) + 3.48, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DeadEye <- rbind(data.frame(option, value), info)
@@ -325,108 +340,87 @@ colnames(info) <- c("option", "value")
 DeathTrigger <- rbind(data.frame(option, value), info) ## 7 * 7 * 4 Hits
 }
 
-CaptainATK <- Attack(list(RapidFire=RapidFire, HeadShot=HeadShot, Nautilus=Nautilus, CaptainDignity=CaptainDignity, 
+CaptainATK <- Attack(list(RapidFire=RapidFire, HeadShot=HeadShot, ContinualAiming=ContinualAiming, CaptainDignity=CaptainDignity, 
                           BulletParty=BulletParty, DeadEye=DeadEye, NautilusAssaultPre=NautilusAssaultPre, NautilusAssaultLast=NautilusAssaultLast, DeathTrigger=DeathTrigger, 
                           SpiderInMirror=SpiderInMirror))
 
 
 ## Captain - Summoned
 {option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "OctaQuaterdeck")>=40, 20, 0), 3 * GetCoreLv(CaptainCore, "OctaQuaterdeck"))
-info <- c(300, 1, 630, 540, 30, 10, T, T, T, F)
+value <- c(ifelse(GetCoreLv(CaptainCore, "SeizeBomber")>=40, 20, 0), 3 * GetCoreLv(CaptainCore, "SeizeBomber"))
+info <- c(300, 1, 630, 540, 60, 0, T, F, F, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-OctaQuaterdeck <- rbind(data.frame(option, value), info) ## SubTime Check Needed (540ms?), ATKSpeed Check Needed, StartATK 1260ms (Function Needed)
+SeizeBomber <- rbind(data.frame(option, value), info) ## ATKSpeed Check Needed, StartATK 1260ms (Function Needed)
+
+option <- factor(c("IGR", "FDR"), levels=SSkill)
+value <- c(ifelse(GetCoreLv(CaptainCore, "SeizeBomber")>=40, 20, 0), 3 * GetCoreLv(CaptainCore, "SeizeBomber"))
+info <- c(450, 1, 630, 540, 60, 0, T, F, F, F)
+info <- data.frame(SInfo, info)
+colnames(info) <- c("option", "value")
+SeizeBomberNectar <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
-info <- c(500, 1 * 1/2, 900, 3030, 120, 120, T, T, T, F)
+info <- c(200, 3 * 2, 900, 3030, 120, 45, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-AssembleCrewMurat <- rbind(data.frame(option, value), info) ## SubTime Check Needed, ATKSpeed/Delay Check Needed
+AssembleCrewDualPistol <- rbind(data.frame(option, value), info) ## ATKSpeed/Delay Check Needed
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
-info <- c(560, 1 * 1/2, 0, 3030, 120, 120, T, T, T, F)
+info <- c(285, 3 * 2, 900, 1200, 120, 45, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-AssembleCrewValery <- rbind(data.frame(option, value), info) 
+AssembleCrewDualPistolNectar <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
-info <- c(320, 1 * 1/2, 0, 600, 120, 120, T, T, T, F)
+info <- c(170, 4, 0, 3030, 120, 45, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-AssembleCrewJack <- rbind(data.frame(option, value), info) 
+AssembleCrewMarksman <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
-info <- c(480, 1 * 1/2, 0, 3030, 120, 120, T, T, T, F)
+info <- c(220, 4, 0, 1440, 120, 45, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-AssembleCrewStoner <- rbind(data.frame(option, value), info) 
+AssembleCrewMarksmanNectar <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(330 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 390, 690, 60, 30, T, T, T, F)
+info <- c(400 + 3 * CaptainSpec$PSkillLv, 3, 510, 1110, 60, 0.5, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-BattleShipBomberDauntless1 <- rbind(data.frame(option, value), info) ## SubTime Check Needed, ATKSpeed/Delay Check Needed
+BattleShipBomber1 <- rbind(data.frame(option, value), info) ## ATKSpeed/Delay Check Needed
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(445 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 930, 60, 30, T, T, T, F)
+info <- c(500, 3, 510, 1080, 60, 0.5, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-BattleShipBomberBlackbark1 <- rbind(data.frame(option, value), info)
+BattleShipBomber1Nectar <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(200 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 630, 60, 30, T, T, T, F)
+info <- c(400 + 3 * CaptainSpec$PSkillLv, 3, 390, 1110, 60, 0.5, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-BattleShipBomberSchultz1 <- rbind(data.frame(option, value), info)
+BattleShipBomber2 <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(320 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 690, 60, 30, T, T, T, F)
+info <- c(500, 3, 390, 1080, 60, 0.5, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
-BattleShipBomberJonathan1 <- rbind(data.frame(option, value), info)
+BattleShipBomber2Nectar <- rbind(data.frame(option, value), info) 
+}
 
-option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(330 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 390, 690, 60, 30, T, T, T, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-BattleShipBomberDauntless2 <- rbind(data.frame(option, value), info) ## SubTime Check Needed, ATKSpeed/Delay Check Needed
-
-option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(445 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 930, 60, 30, T, T, T, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-BattleShipBomberBlackbark2 <- rbind(data.frame(option, value), info)
-
-option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(200 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 630, 60, 30, T, T, T, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-BattleShipBomberSchultz2 <- rbind(data.frame(option, value), info)
-
-option <- factor(c("IGR", "FDR"), levels=SSkill)
-value <- c(ifelse(GetCoreLv(CaptainCore, "BattleShipBomber")>=40, 20, 0), 2 * GetCoreLv(CaptainCore, "BattleShipBomber"))
-info <- c(320 + 3 * CaptainSpec$PSkillLv, 3 * 1/4, 0, 690, 60, 30, T, T, T, F)
-info <- data.frame(SInfo, info)
-colnames(info) <- c("option", "value")
-BattleShipBomberJonathan2 <- rbind(data.frame(option, value), info)}
-
-CaptainSummoned <- Summoned(list(OctaQuaterdeck=OctaQuaterdeck, 
-                                 AssembleCrewMurat=AssembleCrewMurat, AssembleCrewValery=AssembleCrewValery, AssembleCrewJack=AssembleCrewJack, AssembleCrewStoner=AssembleCrewStoner, 
-                                 BattleShipBomberDauntless1=BattleShipBomberDauntless1, BattleShipBomberBlackbark1=BattleShipBomberBlackbark1, BattleShipBomberSchultz1=BattleShipBomberSchultz1, 
-                                 BattleShipBomberJonathan1=BattleShipBomberJonathan1, BattleShipBomberDauntless2=BattleShipBomberDauntless2, BattleShipBomberBlackbark2=BattleShipBomberBlackbark2, 
-                                 BattleShipBomberSchultz2=BattleShipBomberSchultz2, BattleShipBomberJonathan2=BattleShipBomberJonathan2, 
+CaptainSummoned <- Summoned(list(SeizeBomber=SeizeBomber, SeizeBomberNectar=SeizeBomberNectar, 
+                                 AssembleCrewDualPistol=AssembleCrewDualPistol, AssembleCrewDualPistolNectar=AssembleCrewDualPistolNectar, 
+                                 AssembleCrewMarksman=AssembleCrewMarksman, AssembleCrewMarksmanNectar=AssembleCrewMarksmanNectar, 
+                                 BattleShipBomber1=BattleShipBomber1, BattleShipBomber1Nectar=BattleShipBomber1Nectar, BattleShipBomber2=BattleShipBomber2, BattleShipBomber2Nectar=BattleShipBomber2Nectar, 
                                  SpiderInMirrorStart=SpiderInMirrorStart, SpiderInMirror1=SpiderInMirror1, SpiderInMirror2=SpiderInMirror2, SpiderInMirror3=SpiderInMirror3, 
                                  SpiderInMirror4=SpiderInMirror4, SpiderInMirror5=SpiderInMirror5, SpiderInMirrorWait=SpiderInMirrorWait))
 
@@ -451,12 +445,12 @@ CaptainDealCycle <- data.frame(CaptainDealCycle)
 
 CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360)) {
-  BuffSummonedPrior <- c("OctaQuaterdeck", "AssembleCrewMurat", "BattleShipBomberDauntless1",
-                         "GunBooster", "InfiniteBullet", "PirateStyle", "MapleSoldier", "LuckyDice5", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
-                         "MapleWarriors2", "OverDrive", "SoulContractLink", "Restraint4")
-  Times180 <- c(5.5, 3/2, 5.5, 
-                0, 0, 0, 0, 1, 0, 0, 0, 0, 
-                1, 2, 2, 1)
+  BuffSummonedPrior <- c("SignofBombard", "SeizeBomber", "AssembleCrewDualPistol", "BattleShipBomber1", "BattleShipBomber2",
+                         "PirateStyle", "MapleSoldier", "LuckyDice5", "EpicAdventure", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", 
+                         "UnwearyingNectar", "MapleWarriors2", "OverDrive", "SoulContractLink", "Restraint4")
+  Times180 <- c(3, 3, 3/2, 3, 3, 
+                0, 0, 1, 0, 0, 0, 0, 
+                1, 1, 2, 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -515,7 +509,6 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     BuffDelays[[i]] <- DelayData$Delay[t]
   } 
   
-  DealCycle <- DCBuff(DealCycle, "NautilusBuff", BuffFinal)
   DealCycle <- DCBuff(DealCycle, "PirateFlag", BuffFinal)
   
   TotalTime <- TotalTime * 1000
@@ -527,10 +520,6 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       }
     } else {
       DealCycle <- DCSummoned(DealCycle, BuffList[[1]][i], SummonedFinal)
-      if(BuffList[[1]][i]=="BattleShipBomberDauntless1") {
-        DealCycle[1, 2:ncol(DealCycle)] <- 0
-        DealCycle <- DCSummoned(DealCycle, "BattleShipBomberDauntless2", SummonedFinal)
-      }
     }
   }
   
@@ -564,14 +553,14 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
     }
   }
   HSCool <- subset(ATKFinal, rownames(ATKFinal)=="HeadShot")$CoolTime * 1000
-  NACool <- subset(ATKFinal, rownames(ATKFinal)=="Nautilus")$CoolTime * 1000
+  PFCool <- subset(BuffFinal, rownames(BuffFinal)=="PirateFlag")$CoolTime * 1000
   DECool <- subset(ATKFinal, rownames(ATKFinal)=="DeadEye")$CoolTime * 1000
   DEReaim <- 1900 + 3120 + 3480
   DTCool <- subset(ATKFinal, rownames(ATKFinal)=="DeathTrigger")$CoolTime * 1000
   NAACool <- subset(ATKFinal, rownames(ATKFinal)=="NautilusAssaultPre")$CoolTime * 1000
   NACommon <- Cooldown(8, T, Spec$CoolReduceP, Spec$CoolReduce) * 1000
   
-  NARemain <- NACool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - subset(DealCycle, DealCycle$Skills=="NautilusBuff")$Time)
+  PFRemain <- PFCool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - subset(DealCycle, DealCycle$Skills=="PirateFlag")$Time)
   HSRemain <- 0 ; DERemain <- 0 ; DTRemain <- 0 ; NAARemain <- 0
   
   BuffList[[length(BuffList)+1]] <- BuffList[[1]]
@@ -603,7 +592,7 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
           HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-          NARemain <- max(0, NARemain - DealCycle$Time[1])
+          PFRemain <- max(0, PFRemain - DealCycle$Time[1])
           DERemain <- max(0, DERemain - DealCycle$Time[1])
           DTRemain <- max(0, DTRemain - DealCycle$Time[1])
           NAARemain <- max(0, NAARemain - DealCycle$Time[1])
@@ -611,20 +600,20 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       }
       ## DeadEye
       if(DERemain == 0) {
-        if(sum(nrow(DealCycle[DealCycle$Skills=="DeadEye", ])==c(6))==1) {
-          for(i in 1:7) {
-            DealCycle <- DCATK(DealCycle, "RapidFire", ATKFinal)
-            HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-            NARemain <- max(0, NARemain - DealCycle$Time[1])
-            DERemain <- max(0, DERemain - DealCycle$Time[1])
-            DTRemain <- max(0, DTRemain - DealCycle$Time[1])
-            NAARemain <- max(0, NAARemain - DealCycle$Time[1])
-          }
-        }
+        ## if(sum(nrow(DealCycle[DealCycle$Skills=="DeadEye", ])==c(6))==1) {
+        ##   for(i in 1:7) {
+        ##     DealCycle <- DCATK(DealCycle, "RapidFire", ATKFinal)
+        ##    HSRemain <- max(0, HSRemain - DealCycle$Time[1])
+        ##    PFRemain <- max(0, PFRemain - DealCycle$Time[1])
+        ##    DERemain <- max(0, DERemain - DealCycle$Time[1])
+        ##    DTRemain <- max(0, DTRemain - DealCycle$Time[1])
+        ##    NAARemain <- max(0, NAARemain - DealCycle$Time[1])
+        ##  }
+        ## }
         DealCycle <- DCATK(DealCycle, "DeadEye", ATKFinal)
         HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        DERemain <- max(0, DECool - DealCycle$Time[1]) + ifelse(sum(nrow(DealCycle[DealCycle$Skills=="DeadEye", ])==c(1, 3, 5, 7))==1, 1800, DEReaim)
+        PFRemain <- max(0, PFRemain - DealCycle$Time[1])
+        DERemain <- max(0, DECool - DealCycle$Time[1]) + ifelse(sum(nrow(DealCycle[DealCycle$Skills=="DeadEye", ])==c(5, 10))==1, DEReaim, 600)
         DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         NAARemain <- max(0, NAARemain - DealCycle$Time[1])
       }
@@ -632,51 +621,44 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       else if(DTRemain == 0) {
         DealCycle <- DCATK(DealCycle, "DeathTrigger", ATKFinal)
         HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+        PFRemain <- max(0, PFRemain - DealCycle$Time[1])
         DERemain <- max(0, DERemain - DealCycle$Time[1])
         DTRemain <- max(0, DTCool - DealCycle$Time[1])
-        NAARemain <- max(0, NAARemain - DealCycle$Time[1])
-      }
-      ## HeadShot
-      else if(HSRemain == 0) {
-        DealCycle <- DCATK(DealCycle, "HeadShot", ATKFinal)
-        HSRemain <- max(0, HSCool - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
-        DERemain <- max(0, DERemain - DealCycle$Time[1])
-        DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         NAARemain <- max(0, NAARemain - DealCycle$Time[1])
       }
       ## Nautilus Assault
       else if(NAARemain == 0 & DealCycle$Restraint4[nrow(DealCycle)] - DealCycle$Time[1] >= 6100) {
         DealCycle <- DCATK(DealCycle, "NautilusAssaultPre", ATKFinal)
-        HSRemain <- max(0, HSCool - DealCycle$Time[1])
-        NARemain <- max(0, NACommon - DealCycle$Time[1], NARemain - DealCycle$Time[1])
+        HSRemain <- max(0, HSRemain - DealCycle$Time[1])
+        PFRemain <- max(0, PFRemain - DealCycle$Time[1])
         DERemain <- max(0, DERemain - DealCycle$Time[1])
         DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         NAARemain <- max(0, NAACool - DealCycle$Time[1])
       }
-      ## Pirate Flag, Nautilus
-      else if(NARemain == 0 & nrow(DealCycle[DealCycle$Skills=="PirateFlag", ]) < 12) {
-        DealCycle <- DCBuff(DealCycle, "NautilusBuff", BuffFinal)
-        HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NACool - DealCycle$Time[1])
-        DERemain <- max(0, DERemain - DealCycle$Time[1])
-        DTRemain <- max(0, DTRemain - DealCycle$Time[1])
-        NAARemain <- max(0, NAARemain - DealCycle$Time[1], NACommon - DealCycle$Time[1])
-        
-        DealCycle <- DCBuff(DealCycle, "PirateFlag", BuffFinal)
-        HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+      ## HeadShot & Bullet Party
+      else if(HSRemain == 0) {
+        DealCycle <- DCATK(DealCycle, "HeadShot", ATKFinal)
+        HSRemain <- max(0, HSCool - DealCycle$Time[1])
+        PFRemain <- max(0, PFRemain - DealCycle$Time[1])
         DERemain <- max(0, DERemain - DealCycle$Time[1])
         DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         NAARemain <- max(0, NAARemain - DealCycle$Time[1])
+        
+        if(nrow(DealCycle[DealCycle$Skills=="SoulContractLink", ]) > nrow(DealCycle[DealCycle$Skills=="BulletParty", ]) & 
+           nrow(DealCycle[DealCycle$Skills=="DeathTrigger", ]) > nrow(DealCycle[DealCycle$Skills=="BulletParty", ]) * 2) {
+          DealCycle <- DCATK(DealCycle, "BulletParty", ATKFinal)
+          HSRemain <- max(0, HSRemain - DealCycle$Time[1])
+          PFRemain <- max(0, PFRemain - DealCycle$Time[1])
+          DERemain <- max(0, DERemain - DealCycle$Time[1])
+          DTRemain <- max(0, DTRemain - DealCycle$Time[1])
+          NAARemain <- max(0, NAARemain - DealCycle$Time[1])
+        }
       }
-      ## Bullet Party
-      else if(nrow(DealCycle[DealCycle$Skills=="SoulContractLink", ]) > nrow(DealCycle[DealCycle$Skills=="BulletParty", ]) & 
-              nrow(DealCycle[DealCycle$Skills=="DeathTrigger", ]) > nrow(DealCycle[DealCycle$Skills=="BulletParty", ]) * 2) {
-        DealCycle <- DCATK(DealCycle, "BulletParty", ATKFinal)
+      ## Pirate Flag
+      else if(PFRemain == 0 & nrow(DealCycle[DealCycle$Skills=="PirateFlag", ]) < 12) {
+        DealCycle <- DCBuff(DealCycle, "PirateFlag", BuffFinal)
         HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+        PFRemain <- max(0, PFCool - DealCycle$Time[1])
         DERemain <- max(0, DERemain - DealCycle$Time[1])
         DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         NAARemain <- max(0, NAARemain - DealCycle$Time[1])
@@ -685,7 +667,7 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
       else {
         DealCycle <- DCATK(DealCycle, "RapidFire", ATKFinal)
         HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-        NARemain <- max(0, NARemain - DealCycle$Time[1])
+        PFRemain <- max(0, PFRemain - DealCycle$Time[1])
         DERemain <- max(0, DERemain - DealCycle$Time[1])
         DTRemain <- max(0, DTRemain - DealCycle$Time[1])
         NAARemain <- max(0, NAARemain - DealCycle$Time[1])
@@ -697,14 +679,14 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-          NARemain <- max(0, NARemain - DealCycle$Time[1])
+          PFRemain <- max(0, PFRemain - DealCycle$Time[1])
           DERemain <- max(0, DERemain - DealCycle$Time[1])
           DTRemain <- max(0, DTRemain - DealCycle$Time[1])
           NAARemain <- max(0, NAARemain - DealCycle$Time[1])
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           HSRemain <- max(0, HSRemain - DealCycle$Time[1])
-          NARemain <- max(0, NARemain - DealCycle$Time[1])
+          PFRemain <- max(0, PFRemain - DealCycle$Time[1])
           DERemain <- max(0, DERemain - DealCycle$Time[1])
           DTRemain <- max(0, DTRemain - DealCycle$Time[1])
           NAARemain <- max(0, NAARemain - DealCycle$Time[1])
@@ -716,45 +698,17 @@ CaptainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   return(DealCycle)
 }
 CaptainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
-  ## Nautilus ATK / Nautilus Assault / Assemble Crew / BattleShip Bomber Dummy Generation
-  k <- 1
+  ## Continual Aiming ATK / Nautilus Assault / Assemble Crew Dummy Generation
   for(i in 1:nrow(DealCycle)) {
-    if(DealCycle$Skills[i]=="BattleShipBomberDauntless1Summoned" & k == 1) {
-      k <- 2
-    } else if(DealCycle$Skills[i]=="BattleShipBomberDauntless1Summoned" & k == 2) {
-      DealCycle$Skills[i] <- "BattleShipBomberDauntless2Summoned"
-      k <- 1
-    }
-  }
-  
-  for(i in 1:nrow(DealCycle)) {
-    if(DealCycle$Skills[i]=="NautilusBuff") {
+    if(DealCycle$Skills[i]=="AssembleCrewDualPistolSummoned") {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "Nautilus"
-    } else if(DealCycle$Skills[i]=="AssembleCrewMuratSummoned") {
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "AssembleCrewValerySummoned"
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "AssembleCrewJackSummoned"
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "AssembleCrewStonerSummoned"
-    } else if(DealCycle$Skills[i]=="BattleShipBomberDauntless1Summoned") {
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomberBlackbark1Summoned"
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomberSchultz1Summoned"
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomberJonathan1Summoned"
-    } else if(DealCycle$Skills[i]=="BattleShipBomberDauntless2Summoned") {
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomberBlackbark2Summoned"
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomberSchultz2Summoned"
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomberJonathan2Summoned"
+      DealCycle$Skills[nrow(DealCycle)] <- "AssembleCrewMarksmanSummoned"
     } else if(DealCycle$Skills[i]=="NautilusAssaultPre") {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- "NautilusAssaultLast"
+    } else if(DealCycle$Skills[i]=="SignofBombard") {
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- "ContinualAiming"
     }
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
@@ -798,31 +752,130 @@ CaptainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   ## Nautilus Assault, Bullet Party
   DealCycle <- RepATKCycle(DealCycle, "NautilusAssaultPre", 7, 480, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "NautilusAssaultLast", 36, 2880, ATKFinal)
-  DealCycle <- RepATKCycle(DealCycle, "BulletParty", 83, 180, ATKFinal)
+  DealCycle <- RepATKCycle(DealCycle, "BulletParty", 24, 180, ATKFinal)
   print("Nautilus Assault, Bullet Party Done")
   
 
-  ## Octa Quaterdeck, Assemble Crew, BattleShip Bomber, Spider In Mirror
-  DealCycle <- DCSummonedATKs(DealCycle, "OctaQuaterdeck", SummonedFinal)
+  ## Seize Bomber, Assemble Crew, BattleShip Bomber, Spider In Mirror
+  DealCycle <- DCSummonedATKs(DealCycle, "SeizeBomber", SummonedFinal)
   
-  DealCycle <- DCSummonedATKs(DealCycle, "AssembleCrewMurat", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "AssembleCrewValery", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "AssembleCrewJack", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "AssembleCrewStoner", SummonedFinal)
+  NectarStart <- DealCycle[DealCycle$Skills=="UnwearyingNectar", ]$Time
+  NectarDuration <- BuffFinal[rownames(BuffFinal) =="UnwearyingNectar", ]$Duration * 1000
+  NectarON <- function(Time, NectarStart, NectarDuration) {
+    for(i in 1:length(NectarStart)) {
+      if(NectarStart[i] <= Time & NectarStart[i] + NectarDuration > Time) {
+        return(T)
+      } 
+    }
+    return(F)
+  }
   
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberDauntless1", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberBlackbark1", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberSchultz1", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberJonathan1", SummonedFinal)
+  AssembleCrewTime <- DealCycle[DealCycle$Skills=="AssembleCrewDualPistolSummoned", ]$Time
+  AssembleCrewTime <- c(AssembleCrewTime, max(DealCycle$Time))
+  DualPistolATKTime <- c()
+  MarksmanATKTime <- c()
+  for(i in 1:(length(AssembleCrewTime)-1)) {
+    Time <- AssembleCrewTime[i]
+    while(Time < AssembleCrewTime[i+1]) {
+      if(NectarON(Time, NectarStart, NectarDuration) == T) {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "AssembleCrewDualPistolNectar", ]$SubTime
+        DualPistolATKTime <- c(DualPistolATKTime, Time)
+      } else {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "AssembleCrewDualPistol", ]$SubTime
+        DualPistolATKTime <- c(DualPistolATKTime, Time)
+      }
+    }
+    
+    Time <- AssembleCrewTime[i]
+    while(Time < AssembleCrewTime[i+1]) {
+      if(NectarON(Time, NectarStart, NectarDuration) == T) {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "AssembleCrewMarksmanNectar", ]$SubTime
+        MarksmanATKTime <- c(MarksmanATKTime, Time)
+      } else {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "AssembleCrewMarksman", ]$SubTime
+        MarksmanATKTime <- c(MarksmanATKTime, Time)
+      }
+    }
+    DualPistolATKTime <- DualPistolATKTime[DualPistolATKTime < AssembleCrewTime[i+1]]
+    MarksmanATKTime <- MarksmanATKTime[MarksmanATKTime < AssembleCrewTime[i+1]]
+  }
   
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberDauntless2", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberBlackbark2", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberSchultz2", SummonedFinal)
-  DealCycle <- DCSummonedATKs(DealCycle, "BattleShipBomberJonathan2", SummonedFinal)
+  Bomber1Time <- DealCycle[DealCycle$Skills=="BattleShipBomber1Summoned", ]$Time
+  Bomber1Time <- c(Bomber1Time, max(DealCycle$Time))
+  Bomber1ATKTime <- c()
+  
+  for(i in 1:(length(Bomber1Time)-1)) {
+    Time <- Bomber1Time[i]
+    while(Time < Bomber1Time[i+1]) {
+      if(NectarON(Time, NectarStart, NectarDuration) == T) {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "BattleShipBomber1Nectar", ]$SubTime
+        Bomber1ATKTime <- c(Bomber1ATKTime, Time)
+      } else {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "BattleShipBomber1", ]$SubTime
+        Bomber1ATKTime <- c(Bomber1ATKTime, Time)
+      }
+    }
+    Bomber1ATKTime <- Bomber1ATKTime[Bomber1ATKTime < Bomber1Time[i+1]]
+  }
+  
+  Bomber2Time <- DealCycle[DealCycle$Skills=="BattleShipBomber2Summoned", ]$Time
+  Bomber2Time <- c(Bomber2Time, max(DealCycle$Time))
+  Bomber2ATKTime <- c()
+  
+  for(i in 1:(length(Bomber2Time)-1)) {
+    Time <- Bomber2Time[i]
+    while(Time < Bomber2Time[i+1]) {
+      if(NectarON(Time, NectarStart, NectarDuration) == T) {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "BattleShipBomber2Nectar", ]$SubTime
+        Bomber2ATKTime <- c(Bomber2ATKTime, Time)
+      } else {
+        Time <- Time + SummonedFinal[rownames(SummonedFinal) == "BattleShipBomber2", ]$SubTime
+        Bomber2ATKTime <- c(Bomber2ATKTime, Time)
+      }
+    }
+    Bomber2ATKTime <- Bomber2ATKTime[Bomber2ATKTime < Bomber2Time[i+1]]
+  }
+  
+  for(i in 1:length(DualPistolATKTime)) {
+    DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+    DealCycle$Skills[nrow(DealCycle)] <- "AssembleCrewDualPistol"
+    DealCycle$Time[nrow(DealCycle)] <- DualPistolATKTime[i]
+  }
+  for(i in 1:length(MarksmanATKTime)) {
+    DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+    DealCycle$Skills[nrow(DealCycle)] <- "AssembleCrewMarksman"
+    DealCycle$Time[nrow(DealCycle)] <- MarksmanATKTime[i]
+  }
+  for(i in 1:length(Bomber1ATKTime)) {
+    DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+    DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomber1"
+    DealCycle$Time[nrow(DealCycle)] <- Bomber1ATKTime[i]
+  }
+  for(i in 1:length(Bomber2ATKTime)) {
+    DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+    DealCycle$Skills[nrow(DealCycle)] <- "BattleShipBomber2"
+    DealCycle$Time[nrow(DealCycle)] <- Bomber2ATKTime[i]
+  }
+  DealCycle <- DealCycle[order(DealCycle$Time), ] 
+  rownames(DealCycle) <- 1:nrow(DealCycle)
+  
+  for(i in 2:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("AssembleCrewDualPistol", "AssembleCrewMarksman", "BattleShipBomber1", "BattleShipBomber2")) >= 1) {
+      DealCycle[i, 3:ncol(DealCycle)] <- DealCycle[i-1, 3:ncol(DealCycle)] - (DealCycle$Time[i] - DealCycle$Time[i-1])
+      for(j in 3:ncol(DealCycle)) {
+        DealCycle[i, j] <- max(0, DealCycle[i, j])
+      }
+    }
+  }
+  
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i] == c("SeizeBomber", "AssembleCrewDualPistol", "AssembleCrewMarksman", "BattleShipBomber1", "BattleShipBomber2")) >= 1 & DealCycle$UnwearyingNectar[i] > 0) {
+      DealCycle$Skills[i] <- paste(DealCycle$Skills[i], "Nectar", sep="")
+    }
+  }
   
   DealCycle <- DCSpiderInMirror(DealCycle, SummonedFinal)
   print("Summoned Skills Done")
-  
   
   ## Captain Dignity
   for(i in 1:nrow(DealCycle)) {
@@ -848,54 +901,25 @@ CaptainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   }
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)
-  
-  
-  ## Nautilus Assault Buff
-  for(i in 1:nrow(DealCycle)) {
-    if(DealCycle$Skills[i]=="CaptainDignity" & DealCycle$NautilusBuff[i] > 0) {
-      DealCycle$NautilusBuff[i] <- 1
-    } else {
-      DealCycle$NautilusBuff[i] <- 0
-    }
-  }
   print("Captain Dignity Done")
   
   
   ## Quick Draw
-  ## DeadEye : Always Applied, Head Shot Before DeadEye : Always Not Applied
+  ## FDR By Expectation
   QuickDrawProb <- 0.08 + ceiling(Spec$SkillLv / 2) * 0.01
-  DealCycle$QuickDrawStack[3] <- 1
+  QuickDrawFD <- 25 + Spec$SkillLv
+  DealCycle$QuickDrawStack[3] <- 0
   for(i in 4:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("RapidFire", "BulletParty", "HeadShot", "Nautilus", "NautilusAssaultPre", "NautilusAssualtLast", "DeathTrigger", "CaptainDignity")) >= 1 & 
+    if(sum(DealCycle$Skills[i]==c("RapidFire", "BulletParty", "HeadShot", "NautilusAssaultPre", "NautilusAssualtLast", "DeathTrigger", "CaptainDignity")) >= 1 & 
        DealCycle$QuickDrawStack[i-1] < 1) {
-      DealCycle$QuickDrawStack[i] <- DealCycle$QuickDrawStack[i-1] + QuickDrawProb
-    } else if(sum(DealCycle$Skills[i]==c("NautilusAssaultPre", "NautilusAssaultLast", "DeathTrigger")) >= 1 & DealCycle$QuickDrawStack[i-1] >= 1) {
-      DealCycle$QuickDrawStack[i] <- DealCycle$QuickDrawStack[i-1] - 1
-      DealCycle$QuickDraw[i] <- 1
-    } else if(sum(DealCycle$Skills[i]==c("HeadShot")) >= 1) {
+      DealCycle$QuickDrawStack[i] <- min(1, DealCycle$QuickDrawStack[i-1] + QuickDrawProb)
+    } else if(sum(DealCycle$Skills[i]==c("HeadShot", "DeadEye")) >= 1) {
+      DealCycle$QuickDrawFDR[i] <- QuickDrawFD * DealCycle$QuickDrawStack[i-1]
       DealCycle$QuickDrawStack[i] <- 0
-      DealCycle$QuickDrawHeadShot[i] <- 1
-    } else if(sum(DealCycle$Skills[i]==c("DeadEye")) >= 1) {
-      DealCycle$QuickDrawStack[i] <- 0
-      DealCycle$QuickDrawHeadShot[i] <- 1
     } else {
       DealCycle$QuickDrawStack[i] <- DealCycle$QuickDrawStack[i-1]
     }
   }
-  
-  DC1 <- subset(DealCycle, DealCycle$QuickDrawHeadShot == 0)
-  DC2 <- subset(DealCycle, DealCycle$QuickDrawHeadShot > 0)
-  
-  for(i in 2:(nrow(DC2)-1)) {
-    if(DC2$Skills[i]=="HeadShot" & DC2$Time[i+1] - DC2$Time[i] < ATKFinal[rownames(ATKFinal)=="HeadShot", ]$CoolTime * 1000 & DC2$Skills[i+1]=="DeadEye") {
-      DC2$QuickDrawHeadShot[i] <- 0
-    } 
-  }
-  DC2$QuickDrawHeadShot[nrow(DC2)] <- 0
-  
-  DealCycle <- rbind(DC1, DC2)
-  DealCycle <- DealCycle[order(DealCycle$Time), ] 
-  rownames(DealCycle) <- 1:nrow(DealCycle)
   print("Quick Draw Done")
   
   
@@ -918,11 +942,14 @@ CaptainDealCycle <- CaptainAddATK(CaptainDealCycle,
                                   SummonedFinal, 
                                   CaptainSpec)
 CaptainDealCycle <- OverDriveExhaustBuff(CaptainDealCycle, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$Duration, BuffFinal[rownames(BuffFinal)=="OverDrive", ]$CoolTime)
-CaptainDealCycleReduction <- DealCycleReduction(CaptainDealCycle)
+CaptainDealCycleReduction <- DealCycleReduction(CaptainDealCycle, c("QuickDrawFDR"))
 
 CaptainDealCycle5 <- CaptainDealCycle
 CaptainDealCycle55 <- CaptainDealCycle
 CaptainDealCycle555 <- CaptainDealCycle
+CaptainDealCycle53 <- CaptainDealCycle
+CaptainDealCycle533 <- CaptainDealCycle
+CaptainDealCycle553 <- CaptainDealCycle
 
 CaptainDealCycle55$LuckyDice55 <- CaptainDealCycle55$LuckyDice5
 CaptainDealCycle55$LuckyDice5 <- 0
@@ -930,7 +957,17 @@ CaptainDealCycle55$LuckyDice5 <- 0
 CaptainDealCycle555$LuckyDice555 <- CaptainDealCycle555$LuckyDice5
 CaptainDealCycle555$LuckyDice5 <- 0
 
-CaptainDealCycleProbs <- c(0.745340, 0.245185, 0.009475)
+CaptainDealCycle53$LuckyDice53 <- CaptainDealCycle53$LuckyDice5
+CaptainDealCycle53$LuckyDice5 <- 0
+
+CaptainDealCycle533$LuckyDice533 <- CaptainDealCycle533$LuckyDice5
+CaptainDealCycle533$LuckyDice5 <- 0
+
+CaptainDealCycle553$LuckyDice533 <- CaptainDealCycle553$LuckyDice5
+CaptainDealCycle553$LuckyDice5 <- 0
+
+CaptainDealCycleProbs <- c(0.592680, 0.208894, 0.009475, 
+                           0.135320, 0.017340, 0.036291)
 
 for(i in 1:length(PotentialOpt)) {
   if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
@@ -943,7 +980,8 @@ for(i in 1:nrow(PotentialOpt[[Idx1]])) {
   }
 }
 if(DPMCalcOption$Optimization==T) {
-  CaptainSpecOpt1 <- Optimization1(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpec, CaptainUnionRemained)
+  CaptainSpecOpt1 <- Optimization1(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpec, CaptainUnionRemained, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
   PotentialOpt[[Idx1]][Idx2, ] <- CaptainSpecOpt1[1, 1:3]
 } else {
   CaptainSpecOpt1 <- PotentialOpt[[Idx1]][Idx2, ]
@@ -951,27 +989,42 @@ if(DPMCalcOption$Optimization==T) {
 CaptainSpecOpt <- OptDataAdd(CaptainSpec, CaptainSpecOpt1, "Potential", CaptainBase$CRROver, DemonAvenger=F)
 
 if(DPMCalcOption$Optimization==T) {
-  CaptainSpecOpt2 <- Optimization2(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, CaptainHyperStatBase, CaptainBase$ChrLv, CaptainBase$CRROver)
+  CaptainSpecOpt2 <- Optimization2(CaptainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, CaptainHyperStatBase, CaptainBase$ChrLv, CaptainBase$CRROver, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
   HyperStatOpt[[Idx1]][Idx2, c(1, 3:10)] <- CaptainSpecOpt2[1, ]
 } else {
   CaptainSpecOpt2 <- HyperStatOpt[[Idx1]][Idx2, ]
 }
 CaptainSpecOpt <- OptDataAdd(CaptainSpecOpt, CaptainSpecOpt2, "HyperStat", CaptainBase$CRROver, DemonAvenger=F)
 
-CaptainFinalDPM <- ResetDealCalc(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
-                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
-CaptainFinalDPMwithMax <- ResetDealCalcWithMaxDMR(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
-                                                  ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
+CaptainFinalDPM <- ResetDealCalc(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555, 
+                                      CaptainDealCycle53, CaptainDealCycle533, CaptainDealCycle553), 
+                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 6), CaptainDealCycleProbs, 
+                                 NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainFinalDPMwithMax <- ResetDealCalcWithMaxDMR(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555, 
+                                                       CaptainDealCycle53, CaptainDealCycle533, CaptainDealCycle553), 
+                                                  ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 6), CaptainDealCycleProbs, 
+                                                  NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
 
 set(get(DPMCalcOption$DataName), as.integer(1), "Captain", sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000))
 set(get(DPMCalcOption$DataName), as.integer(2), "Captain", sum(na.omit(CaptainFinalDPM)) / (max(CaptainDealCycle$Time) / 60000) - sum(na.omit(CaptainFinalDPMwithMax)) / (max(CaptainDealCycle$Time) / 60000))
 
-CaptainDeal1 <- DealCalcWithMaxDMR(CaptainDealCycle5, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt)
-CaptainDeal2 <- DealCalcWithMaxDMR(CaptainDealCycle55, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt)
-CaptainDeal3 <- DealCalcWithMaxDMR(CaptainDealCycle555, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt)
-CaptainDealDatas <- list(CaptainDeal1, CaptainDeal2, CaptainDeal3)
-CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
-                                   CaptainDealDatas, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
+CaptainDeal1 <- DealCalcWithMaxDMR(CaptainDealCycle5, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainDeal2 <- DealCalcWithMaxDMR(CaptainDealCycle55, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainDeal3 <- DealCalcWithMaxDMR(CaptainDealCycle555, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainDeal4 <- DealCalcWithMaxDMR(CaptainDealCycle53, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainDeal5 <- DealCalcWithMaxDMR(CaptainDealCycle533, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainDeal6 <- DealCalcWithMaxDMR(CaptainDealCycle553, ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, 
+                                   NotBuffCols=c("QuickDrawFDR"), NotBuffColOption=c("FDR"))
+CaptainDealDatas <- list(CaptainDeal1, CaptainDeal2, CaptainDeal3, CaptainDeal4, CaptainDeal5, CaptainDeal6)
+CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555, 
+                                        CaptainDealCycle53, CaptainDealCycle533, CaptainDealCycle553), 
+                                   CaptainDealDatas, rep(max(CaptainDealCycle$Time), 6), CaptainDealCycleProbs)
 
 CaptainDealData <- data.frame(CaptainDealCycle$Skills, CaptainDealCycle$Time, CaptainDealCycle$Restraint4, CaptainDeal1)
 colnames(CaptainDealData) <- c("Skills", "Time", "R4", "Deal")
@@ -979,6 +1032,7 @@ set(get(DPMCalcOption$DataName), as.integer(3), "Captain", Deal_RR(CaptainDealDa
 set(get(DPMCalcOption$DataName), as.integer(4), "Captain", Deal_40s(CaptainDealData))
 
 CaptainSpecMean <- ResetSpecMean("Captain", 
-                                 list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555), 
-                                 list(CaptainDeal1, CaptainDeal2, CaptainDeal3), 
-                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
+                                 list(CaptainDealCycle5, CaptainDealCycle55, CaptainDealCycle555, 
+                                      CaptainDealCycle53, CaptainDealCycle533, CaptainDealCycle553), 
+                                 list(CaptainDeal1, CaptainDeal2, CaptainDeal3, CaptainDeal4, CaptainDeal5, CaptainDeal6), 
+                                 ATKFinal, BuffFinal, SummonedFinal, CaptainSpecOpt, rep(max(CaptainDealCycle$Time), 6), CaptainDealCycleProbs)

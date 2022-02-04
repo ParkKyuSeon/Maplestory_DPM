@@ -54,7 +54,7 @@ value <- c(10)
 ElementalExpert <- data.frame(option, value)
 
 option <- factor(c("FDR", "IGR"), levels=PSkill)
-value <- c(15, 35)
+value <- c(20, 35)
 ElementDarkness <- data.frame(option, value)
 
 option <- factor(c("BDR"), levels=PSkill)
@@ -68,6 +68,10 @@ CriticalThrow <- data.frame(option, value)
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(60)
 PhysicalTraining <- data.frame(option, value)
+
+option <- factor(c("ATK"), levels=PSkill)
+value <- c(10)
+SpiritThrowing <- data.frame(option, value)
 
 option <- factor(c("CDMR"), levels=PSkill)
 value <- c(10)
@@ -94,7 +98,7 @@ value <- c(rep(GetCoreLv(NightWalkerCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
 NightWalkerPassive <- Passive(list(FlameJavelin=FlameJavelin, ElementalHarmony=ElementalHarmony, ElementalExpert=ElementalExpert, ElementDarkness=ElementDarkness, ThrowingMastery=ThrowingMastery, 
-                                   CriticalThrow=CriticalThrow, PhysicalTraining=PhysicalTraining, Adrenaline=Adrenaline, ThrowingExpert=ThrowingExpert, DarknessBlessing=DarknessBlessing, 
+                                   CriticalThrow=CriticalThrow, PhysicalTraining=PhysicalTraining, SpiritThrowing=SpiritThrowing, Adrenaline=Adrenaline, ThrowingExpert=ThrowingExpert, DarknessBlessing=DarknessBlessing, 
                                    ReadyToDiePassive=ReadyToDiePassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
@@ -108,17 +112,10 @@ ThrowingBooster <- rbind(data.frame(option, value), info)
 
 option <- factor("AddATKRate", levels=BSkill)
 value <- c(70)
-info <- c(180, NA, 690, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-ShadowServant <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
 info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
-SpiritThrowing <- rbind(data.frame(option, value), info)
+ShadowServant <- rbind(data.frame(option, value), info)
 
 option <- factor("MainStat", levels=BSkill)
 value <- c(floor((NightWalkerBase$ChrLv * 5 + 18) * (0.15 + 0.01 * ceiling(NightWalkerBase$SkillLv/2))))
@@ -213,7 +210,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 
 option <- factor(levels=BSkill)
 value <- c()
-info <- c(50 + GetCoreLv(NightWalkerCore, "ShadowSpear"), 180 - floor(GetCoreLv(NightWalkerCore, "ShadowSpear")/2), 600, F, T, F, T)
+info <- c(57 + GetCoreLv(NightWalkerCore, "ShadowSpear"), 192 - floor(GetCoreLv(NightWalkerCore, "ShadowSpear")/2), 600, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 ShadowSpear <- rbind(data.frame(option, value), info)
@@ -260,7 +257,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofCygnus <- rbind(data.frame(option, value), info)}
 
-NightWalkerBuff <- list(ThrowingBooster=ThrowingBooster, ShadowServant=ShadowServant, SpiritThrowing=SpiritThrowing, ShadowBatStack=ShadowBatStack, MapleSoldier=MapleSoldier, 
+NightWalkerBuff <- list(ThrowingBooster=ThrowingBooster, ShadowServant=ShadowServant, ShadowBatStack=ShadowBatStack, MapleSoldier=MapleSoldier, 
                         Bat1=Bat1, Bat2=Bat2, Bat3=Bat3, Bat4=Bat4, Bat5=Bat5, 
                         SiphonVitality=SiphonVitality, DominionBuff=DominionBuff, ShadowIllusion1=ShadowIllusion1, ShadowIllusion2=ShadowIllusion2, GloryofGardians=GloryofGardians, 
                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ShadowSpear=ShadowSpear, ShadowServantExtend=ShadowServantExtend, ShadowBiteBuff=ShadowBiteBuff, 
@@ -271,7 +268,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   names(NightWalkerBuff)[[length(NightWalkerBuff)]] <- "UsefulAdvancedBless"
 }
 NightWalkerBuff <- Buff(NightWalkerBuff)
-## PetBuff : ThrowingBooster(600ms), SpiritThrowing(600ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless) / Heist Not Used
+## PetBuff : ThrowingBooster(600ms), ShadowServant(690ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless) / Heist Not Used
 NightWalkerAllTimeBuff <- AllTimeBuff(NightWalkerBuff)
 
 
@@ -412,9 +409,9 @@ NightWalkerDealCycle <- data.frame(NightWalkerDealCycle)
 
 NightWalkerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                              Period=c(180), CycleTime=c(360), JumpShotDelay=0) {
-  BuffSummonedPrior <- c("ThrowingBooster", "ShadowServant", "SpiritThrowing", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "GloryofGardians",
+  BuffSummonedPrior <- c("ThrowingBooster", "ShadowServant", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "GloryofGardians",
                          "CygnusPhalanx", "ShadowBiteBuffDummy", "ShadowSpear", "ShadowServantExtend", "BlessofCygnus")
-  Times180 <- c(0, 1, 0, 0, 0, 0, 0, 
+  Times180 <- c(0, 1, 0, 0, 0, 0, 
                 6, 9, 1, 3, 0.5)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]

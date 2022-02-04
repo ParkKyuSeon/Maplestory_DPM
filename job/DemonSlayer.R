@@ -56,7 +56,7 @@ value <- c(15, 15)
 EvilTorture <- data.frame(option, value)
 
 option <- factor(c("FDR", "ATKSpeed"), levels=PSkill)
-value <- c(25, 1)
+value <- c(30, 1)
 Concentration <- data.frame(option, value)
 
 option <- factor(c("IGR"), levels=PSkill)
@@ -90,13 +90,6 @@ info <- c(0, 1, 0, F, NA, NA, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DF <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(0, 1, 0, F, NA, NA, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-DFAbsorb <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=BSkill)
 value <- c()
@@ -140,13 +133,6 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 InfinityForce <- rbind(data.frame(option, value), info)
 
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(4, 0, 0, F, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-InfinityForceCoolReduce <- rbind(data.frame(option, value), info)
-
 option <- factor("IGR", levels=BSkill)
 value <- c(15)
 info <- c(20, 21, 0, F, NA, NA, F)
@@ -163,17 +149,10 @@ RemainTimeReinforce <- rbind(data.frame(option, value), info)
 
 option <- factor("AddATKRate", levels=BSkill)
 value <- c(90)
-info <- c(60, NA, 750, F, NA, NA, T)
+info <- c(3000, NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlueBlood <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(120, NA, 0, F, NA, NA, F)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-BlueBloodCooldown <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
 value <- c(5)
@@ -224,9 +203,9 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofIsekaiGoddess <- rbind(data.frame(option, value), info)}
 
-DemonSlayerBuff <- list(DF=DF, DFAbsorb=DFAbsorb, DFMaxForce=DFMaxForce, DemonBooster=DemonBooster, VampiricTouch=VampiricTouch, MapleSoldier=MapleSoldier, Metamorphosis=Metamorphosis, 
-                        InfinityForce=InfinityForce, InfinityForceCoolReduce=InfinityForceCoolReduce, 
-                        DevilCryDebuff=DevilCryDebuff, RemainTimeReinforce=RemainTimeReinforce, BlueBlood=BlueBlood, BlueBloodCooldown=BlueBloodCooldown, DemonicFortitude=DemonicFortitude, 
+DemonSlayerBuff <- list(DF=DF, DFMaxForce=DFMaxForce, DemonBooster=DemonBooster, VampiricTouch=VampiricTouch, MapleSoldier=MapleSoldier, Metamorphosis=Metamorphosis, 
+                        InfinityForce=InfinityForce, 
+                        DevilCryDebuff=DevilCryDebuff, RemainTimeReinforce=RemainTimeReinforce, BlueBlood=BlueBlood, DemonicFortitude=DemonicFortitude, 
                         UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, DemonAwakening=DemonAwakening, OrthrosBuff=OrthrosBuff, AuraWeaponBuff=AuraWeaponBuff, 
                         CallMastema=CallMastema, BlessofIsekaiGoddess=BlessofIsekaiGoddess, SoulContractLink=SoulContractLink, Restraint4=Restraint4)
 ## Petbuff : DemonBooster(990ms), MapleSoldier(0ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
@@ -383,14 +362,14 @@ DemonBaneLastPre <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(50, 30)
-info <- c(650 + 26 * GetCoreLv(DemonSlayerCore, "DemonBane"), 7, 120, NA, 240, T, F, F)
+info <- c(785 + 31 * GetCoreLv(DemonSlayerCore, "DemonBane"), 7, 120, NA, 240, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonBaneLastTick <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "IGR"), levels=ASkill)
 value <- c(50, 30)
-info <- c(650 + 26 * GetCoreLv(DemonSlayerCore, "DemonBane"), 7, 0, NA, 240, T, F, F)
+info <- c(785 + 31 * GetCoreLv(DemonSlayerCore, "DemonBane"), 7, 0, NA, 240, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DemonBaneLastEnd <- rbind(data.frame(option, value), info)
@@ -470,10 +449,10 @@ DemonSlayerDealCycle <- data.frame(DemonSlayerDealCycle)
 
 DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
                              Period=240, CycleTime=720, AwakeningOffSlash=T) {
-  BuffSummonedPrior <- c("DemonBooster", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "DemonicFortitude", 
-                         "CallMastema", "InfinityForce", "VampiricTouch", "Metamorphosis", "BlueBlood", "AuraWeaponBuff", "BlessofIsekaiGoddess", "OrthrosBuff", "SoulContractLink", "Restraint4")
-  Times240 <- c(0, 0, 0, 0, 0, 
-                1, 1, 1, 1, 4, 4/3, 2, 2, 2, 1)
+  BuffSummonedPrior <- c("BlueBlood", "DemonBooster", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "DemonicFortitude", 
+                         "CallMastema", "InfinityForce", "VampiricTouch", "Metamorphosis", "AuraWeaponBuff", "BlessofIsekaiGoddess", "OrthrosBuff", "SoulContractLink", "Restraint4")
+  Times240 <- c(0, 0, 0, 0, 0, 0, 
+                1, 1, 1, 1, 4/3, 2, 2, 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times240 <- Times240[BuffSummonedPrior!="UsefulAdvancedBless"]
     BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -540,15 +519,6 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
     if(sum(DealCycle$Skills[nrow(DealCycle)]==DFAbsorb$Skills)==1) {
       Absorb <- subset(DFAbsorb, DFAbsorb$Skills==DealCycle$Skills[nrow(DealCycle)])$Absorb
       DealCycle$DF[nrow(DealCycle)] <- min(170, DealCycle$DF[nrow(DealCycle)-1] + Absorb)
-      if(DealCycle$BlueBloodCooldown[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
-        DealCycle$DFAbsorb[nrow(DealCycle)] <- DealCycle$DFAbsorb[nrow(DealCycle)-1] + Absorb
-        if(DealCycle$DFAbsorb[nrow(DealCycle)]>=50) {
-          DealCycle$BlueBloodCooldown[nrow(DealCycle)] <- max(0, DealCycle$BlueBloodCooldown[nrow(DealCycle)] - 3000)
-          DealCycle$DFAbsorb[nrow(DealCycle)] <- DealCycle$DFAbsorb[nrow(DealCycle)] - 50
-        }
-      } else {
-        DealCycle$DFAbsorb[nrow(DealCycle)] <- 0
-      }
     } else if(sum(DealCycle$Skills[nrow(DealCycle)]==DFCost$Skills)==1) {
       Cost <- ifelse(DealCycle$InfinityForce[nrow(DealCycle)] > 0, 0, subset(DFCost, DFCost$Skills==DealCycle$Skills[nrow(DealCycle)])$Cost)
       Cost <- ifelse(DealCycle$Skills[nrow(DealCycle)]=="InfinityForce", subset(DFCost, DFCost$Skills==DealCycle$Skills[nrow(DealCycle)])$Cost, Cost)
@@ -557,10 +527,8 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         print(nrow(DealCycle))
         warning("Unavailable DealCycle")
       }
-      DealCycle$DFAbsorb[nrow(DealCycle)] <- DealCycle$DFAbsorb[nrow(DealCycle)-1]
     } else {
       DealCycle$DF[nrow(DealCycle)] <- DealCycle$DF[nrow(DealCycle)-1]
-      DealCycle$DFAbsorb[nrow(DealCycle)] <- DealCycle$DFAbsorb[nrow(DealCycle)-1]
     }
     
     if(DealCycle$DFMaxForce[nrow(DealCycle)-1] >= 0 & DealCycle$DFMaxForce[nrow(DealCycle)]==0 & DealCycle$DF[nrow(DealCycle)] < 170) {
@@ -569,14 +537,6 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
     } else if(DealCycle$DF[nrow(DealCycle)] == 170) {
       DealCycle$DFMaxForce[nrow(DealCycle)] <- 4000
     }
-    
-    if(DealCycle$InfinityForceCoolReduce[nrow(DealCycle)-1] >= 0 & DealCycle$InfinityForceCoolReduce[nrow(DealCycle)]==0 & DealCycle$InfinityForce[nrow(DealCycle)] > 0 & 
-       DealCycle$BlueBloodCooldown[nrow(DealCycle)] - DealCycle$Time[1] > 0 & DealCycle$Skills[nrow(DealCycle)]!="BlueBloodCooldown") {
-      DealCycle$BlueBloodCooldown[nrow(DealCycle)] <- max(0, DealCycle$BlueBloodCooldown[nrow(DealCycle)] - 2000)
-      DealCycle$InfinityForceCoolReduce[nrow(DealCycle)] <- ifelse(nrow(DealCycle)==2, 4000 + 1000 * General$General$Serverlag, 
-                                                                   4000 + 1000 * General$General$Serverlag - 
-                                                                     (DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] - DealCycle$InfinityForceCoolReduce[nrow(DealCycle)-1]))
-    } 
     return(DealCycle)
   }
   
@@ -588,9 +548,6 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
     if(sum(rownames(BuffFinal)==BuffList[[1]][i]) > 0) {
       if(BuffList[[1]][i]=="OrthrosBuff") {
         DealCycle <- DCATK(DealCycle, "Jormungand", ATKFinal)
-        DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
-      } else if(BuffList[[1]][i]=="BlueBlood") {
-        DealCycle <- DCBuff(DealCycle, "BlueBloodCooldown", BuffFinal)
         DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
       } else if(BuffList[[1]][i]=="Metamorphosis") {
         DealCycle <- DCSummoned(DealCycle, "MetamorphosisATK", SummonedFinal)
@@ -1025,6 +982,16 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       }
       else if(sum(nrow(subset(DealCycle, DealCycle$Skills=="DemonAwakening")) == c(1, 3, 5)) >= 1 & 
               DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="DemonAwakening")$Time) >= BuffFinal[rownames(BuffFinal)=="DemonAwakening", ]$CoolTime * 1000) {
+        if(DealCycle$DF[nrow(DealCycle)] < 80) {
+          DealCycle <- DCATK(DealCycle, "Cerberus", ATKFinal)
+          DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
+          ONRemain <- max(0, ONRemain - DealCycle$Time[1])
+          OGRemain <- max(0, OGRemain - DealCycle$Time[1])
+          CryRemain <- max(0, CryRemain - DealCycle$Time[1])
+          CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
+          CBRemain <- CBCool - DealCycle$Time[1]
+        }
+        
         DealCycle <- DCBuff(DealCycle, "DemonAwakening", BuffFinal)
         DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
         ONRemain <- max(0, ONRemain - DealCycle$Time[1])
@@ -1212,8 +1179,9 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         }
       }
       ## Cerberus
-      else if(CBRemain==0 & DealCycle$DemonAwakening[nrow(DealCycle)] == 0 & sum(k==c(3, 7, 11))==0 |
-              CBRemain==0 & DealCycle$DemonAwakening[nrow(DealCycle)] == 0 & sum(k==c(3, 7, 11))>=1 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime - 5000) {
+      else if(CBRemain==0 & DealCycle$DemonAwakening[nrow(DealCycle)] == 0 & DealCycle$DF[nrow(DealCycle)] < 50 |
+              CBRemain==0 & DealCycle$DemonAwakening[nrow(DealCycle)] == 0 & sum("InfinityForce" == BuffList[[k]]) > 0 & DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] > BuffStartTime - 15000 & 
+              DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] < BuffStartTime - 5000) {
         DealCycle <- DCATK(DealCycle, "Cerberus", ATKFinal)
         DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
         ONRemain <- max(0, ONRemain - DealCycle$Time[1])
@@ -1260,14 +1228,6 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
             CryRemain <- max(0, CryRemain - DealCycle$Time[1])
             CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
             CBRemain <- max(0, CBRemain - DealCycle$Time[1])
-          } else if(BuffList[[k]][i]=="BlueBlood") {
-            DealCycle <- DCBuff(DealCycle, "BlueBloodCooldown", BuffFinal)
-            DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
-            ONRemain <- max(0, ONRemain - DealCycle$Time[1])
-            OGRemain <- max(0, OGRemain - DealCycle$Time[1])
-            CryRemain <- max(0, CryRemain - DealCycle$Time[1])
-            CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
-            CBRemain <- max(0, CBRemain - DealCycle$Time[1])
           } else if(BuffList[[k]][i]=="BlessofIsekaiGoddess") {
             DealCycle <- DCATK(DealCycle, "OtherworldEmptiness", ATKFinal)
             DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
@@ -1286,14 +1246,6 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
               CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
               CBRemain <- max(0, CBRemain - DealCycle$Time[1])
             }
-          } else if(BuffList[[k]][i]=="DemonAwakening") {
-            DealCycle <- DCATK(DealCycle, "Cerberus", ATKFinal)
-            DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
-            ONRemain <- max(0, ONRemain - DealCycle$Time[1])
-            OGRemain <- max(0, OGRemain - DealCycle$Time[1])
-            CryRemain <- max(0, CryRemain - DealCycle$Time[1])
-            CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
-            CBRemain <- CBCool - DealCycle$Time[1]
           } else if(BuffList[[k]][i]=="Metamorphosis") {
             DealCycle <- DCSummoned(DealCycle, "MetamorphosisATK", SummonedFinal)
             DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
@@ -1302,6 +1254,14 @@ DemonSlayerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
             CryRemain <- max(0, CryRemain - DealCycle$Time[1])
             CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
             CBRemain <- max(0, CBRemain - DealCycle$Time[1])
+          } else if(BuffList[[k]][i]=="InfinityForce") {
+            DealCycle <- DCATK(DealCycle, "Cerberus", ATKFinal)
+            DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
+            ONRemain <- max(0, ONRemain - DealCycle$Time[1])
+            OGRemain <- max(0, OGRemain - DealCycle$Time[1])
+            CryRemain <- max(0, CryRemain - DealCycle$Time[1])
+            CBAWRemain <- max(0, CBAWRemain - DealCycle$Time[1])
+            CBRemain <- CBCool - DealCycle$Time[1]
           } else if(BuffList[[k]][i]=="CallMastema") {
             DealCycle <- DCATK(DealCycle, "MastemaClaw", ATKFinal)
             DealCycle <- DFBBLogic(DealCycle, DFAbsorb, DFCost)
