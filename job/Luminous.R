@@ -105,14 +105,14 @@ EquilibriumMemorize <- rbind(data.frame(option, value), info)
 
 option <- factor("ATK", levels=BSkill)
 value <- c(40)
-info <- c(180, NA, 600, T, NA, NA, T)
+info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PhoticMeditation <- rbind(data.frame(option, value), info)
 
 option <- factor("ImmuneIgnore", levels=BSkill)
 value <- c(10)
-info <- c(180 + 5 * LuminousBase$SkillLv, NA, 270, T, NA, NA, T)
+info <- c(180 + 5 * LuminousBase$SkillLv, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DarknessSorcery <- rbind(data.frame(option, value), info)
@@ -190,7 +190,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 LuminousBuff <- Buff(LuminousBuff)
 LuminousAllTimeBuff <- AllTimeBuff(LuminousBuff)
-## PetBuff : UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless) -> Not Use Photic Meditation and DarknessSorcery : To Maintain DealCycle
+## PetBuff : PhoticMeditation(600ms), DarknessSorcery(270ms), UsefulSharpEyes, UsefulCombatOrders, (UsefulAdvancedBless)
 
 
 ## Luminous - Union & HyperStat & SoulWeapon
@@ -346,12 +346,19 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   ECGauge <- 22 ; SFGauge <- 25
   
   PunishingCool <- subset(ATKFinal, rownames(ATKFinal)=="PunishingResonator")$CoolTime * 1000
+  OrbCool <- 6000
   PunishingRemain <- 0
+  if(nrow(DealCycle[DealCycle$Skills=="LiberationOrbLight", ]) > 0) {
+    OrbRemain <- max(0, OrbCool - (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(DealCycle[DealCycle$Skills=="LiberationOrbLight", ]$Time)))
+  } else {
+    OrbRemain <- 0
+  }
+  OrbARemain <- 0
   BaptismCool <- 2220
+  OrbADummy <- 0
   
   for(i in 1:length(states)) {
     if(states[i]=="EC") {
-      LiberationDarkness <- 0
       for(j in 1:(ECGauge-1)) {
         DealCycle <- DCATK(DealCycle, "Apocalypse", ATKFinal)
         if(nrow(DealCycle)==2) {
@@ -359,24 +366,26 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- 1
           DealCycle$LiberationLightSTK[nrow(DealCycle)] <- 0
-          LiberationDarkness <- 6000 - DealCycle$Time[1]
+          OrbRemain <- 6000 - DealCycle$Time[1]
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
           
           DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
           DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
         } else {
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-          if(LiberationDarkness == 0) {
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
+          if(OrbRemain == 0) {
             DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1] + 1)
             DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-            LiberationDarkness <- 6000 - DealCycle$Time[1]
+            OrbRemain <- 6000 - DealCycle$Time[1]
             
             DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
             DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
           } else {
             DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
             DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-            LiberationDarkness <- max(0, LiberationDarkness - DealCycle$Time[1])
+            OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
           }
         }
       }
@@ -385,7 +394,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         BuffList <- c("MapleWarriors2", "SoulContractLink")
         for(j in 1:length(BuffList)) {
           DealCycle <- DCBuff(DealCycle, BuffList[j], BuffFinal)
-          LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
           DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
@@ -393,7 +403,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         }
         if(nrow(subset(DealCycle, DealCycle$Skills=="SpiderInMirror"))==0) {
           DealCycle <- DCATK(DealCycle, "SpiderInMirror", ATKFinal)
-          LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
           DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
@@ -404,36 +415,28 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       DealCycle <- DCATK(DealCycle, "Apocalypse", ATKFinal)
       DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
       PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-      if(LiberationDarkness == 0) {
+      OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
+      if(OrbRemain == 0) {
         DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1] + 1)
         DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-        LiberationDarkness <- 6000 - DealCycle$Time[1]
+        OrbRemain <- 6000 - DealCycle$Time[1]
         DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
         DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
       } else {
         DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
         DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-        LiberationDarkness <- max(0, LiberationDarkness - DealCycle$Time[1])
+        OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
       }
     } else if(states[i]=="SF") {
-      DealCycle <- DCATK(DealCycle, "LightReflection", ATKFinal)
-      LiberationLight <- 6000 - DealCycle$Time[1]
-      DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
-      DealCycle$LiberationLightSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationLightSTK[nrow(DealCycle)-1] + 1)
-      DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
-      PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-      DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
-      DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
-      
-      ABKillCool <- Cooldown(12 - Spec$SkillLv, T, Spec$CoolReduceP, Spec$CoolReduce) * 1000
-      ABKillRemain <- 0
-      DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
-      LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
-      DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
-      DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-      DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
-      PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-      ABKillRemain <- ABKillCool - DealCycle$Time[1]
+      ## ABKillCool <- Cooldown(12 - Spec$SkillLv, T, Spec$CoolReduceP, Spec$CoolReduce) * 1000
+      ## ABKillRemain <- 0
+      ## DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
+      ## LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
+      ## DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
+      ## DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
+      ## DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
+      ## PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
+      ## ABKillRemain <- ABKillCool - DealCycle$Time[1]
       
       BuffList <- c("PhoticMeditation", "DarknessSorcery", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders")
       if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) >= 1) {
@@ -441,39 +444,41 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       }
       for(j in 1:length(BuffList)) {
         DealCycle <- DCBuff(DealCycle, BuffList[j], BuffFinal)
-        LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
         DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
         DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
         DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
+        OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+        OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-        ABKillRemain <- max(0, ABKillRemain - DealCycle$Time[1])
+        ## ABKillRemain <- max(0, ABKillRemain - DealCycle$Time[1])
       }
       
-      for(j in 2:SFGauge) {
-        if(ABKillRemain == 0) {
-          DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
-          LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
-          DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
-          DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-          DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
-          PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-          ABKillRemain <- ABKillCool - DealCycle$Time[1]
-        }
+      for(j in 1:SFGauge) {
+        ## if(ABKillRemain == 0) {
+        ##   DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
+        ##   LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
+        ##   DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
+        ##   DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
+        ##   DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
+        ##   PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
+        ##   ABKillRemain <- ABKillCool - DealCycle$Time[1]
+        ## }
         DealCycle <- DCATK(DealCycle, "LightReflection", ATKFinal)
         DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
         PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
-        if(LiberationLight == 0) {
+        OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
+        if(OrbRemain == 0) {
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
           DealCycle$LiberationLightSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationLightSTK[nrow(DealCycle)-1] + 1)
-          LiberationLight <- 6000 - DealCycle$Time[1]
+          OrbRemain <- 6000 - DealCycle$Time[1]
           DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
           DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
         } else {
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
           DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
-          LiberationLight <- max(0, LiberationLight - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
         }
-        ABKillRemain <- max(0, ABKillRemain - DealCycle$Time[1])
+        ## ABKillRemain <- max(0, ABKillRemain - DealCycle$Time[1])
       }
     } else if(states[i]=="EQ") {
       DealCycle <- DCBuff(DealCycle, "Equilibrium", BuffFinal)
@@ -481,6 +486,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
       DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
       PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
+      OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+      OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
       DTDummy <- 0 ; SCDummy <- 0
       BaptismRemain <- 0
       
@@ -491,6 +498,9 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
         PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
         BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+        OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+        OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
+        OrbADummy <- 0
         
         DealCycle <- DCBuff(DealCycle, "Restraint4", BuffFinal)
         DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
@@ -498,6 +508,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
         PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
         BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+        OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+        OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
       }
       
       while(DealCycle$Equilibrium[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
@@ -508,6 +520,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
           PunishingRemain <- PunishingCool - DealCycle$Time[1]
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         } else if(DealCycle$BaptismStack[nrow(DealCycle)]>=12 & BaptismRemain==0 & DealCycle$Equilibrium[nrow(DealCycle)] - DealCycle$Time[1] > 10000 & i!=6) {
           DealCycle <- DCATK(DealCycle, "BaptismofLightandDarkness", ATKFinal)
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
@@ -515,6 +529,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1] - 12
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- BaptismCool - DealCycle$Time[1]
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         } else if(DealCycle$BaptismStack[nrow(DealCycle)]>=12 & BaptismRemain==0 & i==6) {
           DealCycle <- DCATK(DealCycle, "BaptismofLightandDarkness", ATKFinal)
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
@@ -522,6 +538,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1] - 12
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- BaptismCool - DealCycle$Time[1]
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         } else if(i==2 & SCDummy==0 &
                   subset(BuffFinal, rownames(BuffFinal)=="Equilibrium")$Duration * 1000 - (DealCycle$Equilibrium[nrow(DealCycle)] - DealCycle$Time[1]) >= 
                   subset(BuffFinal, rownames(BuffFinal)=="SoulContractLink")$CoolTime * 1000 - 72840) {
@@ -531,6 +549,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
           SCDummy <- 1
         } else if(DTDummy==0) {
           DealCycle <- DCSummoned(DealCycle, "DoorofTruth", SummonedFinal)
@@ -539,12 +559,38 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
           DTDummy <- 1
         } else {
           DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
-          DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
-          DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
           DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
+          if(OrbRemain == 0 & DealCycle$LiberationOrb[nrow(DealCycle)] == 0) {
+            DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1] + 1)
+            DealCycle$LiberationLightSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationLightSTK[nrow(DealCycle)-1] + 1)
+            OrbRemain <- 6000 - DealCycle$Time[1]
+            OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
+            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+            DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
+            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+            DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
+          } else if(OrbARemain == 0 & DealCycle$LiberationOrb[nrow(DealCycle)] > 0 & OrbADummy < 20) {
+            DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
+            DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
+            OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+            OrbARemain <- max(0, 900 - DealCycle$Time[1])
+            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+            DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbBalance"
+            OrbADummy <- OrbADummy + 1
+            if(OrbADummy == 20) {
+              DealCycle$LiberationOrb[nrow(DealCycle)] <- 0
+            }
+          } else {
+            DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
+            DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
+            OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+            OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
+          }
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
         }
@@ -555,6 +601,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
       DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
       DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
       PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
+      OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+      OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
       DTDummy <- 0
       
       while(DealCycle$EquilibriumMemorize[nrow(DealCycle)] - DealCycle$Time[1] > 0) {
@@ -565,6 +613,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
           PunishingRemain <- PunishingCool - DealCycle$Time[1]
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         } else if(DealCycle$BaptismStack[nrow(DealCycle)]>=12 & BaptismRemain==0 & DealCycle$EquilibriumMemorize[nrow(DealCycle)] - DealCycle$Time[1] > 10000) {
           DealCycle <- DCATK(DealCycle, "BaptismofLightandDarkness", ATKFinal)
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
@@ -572,6 +622,8 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1] - 12
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- BaptismCool - DealCycle$Time[1]
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         } else if(DTDummy==0) {
           DealCycle <- DCSummoned(DealCycle, "DoorofTruth", SummonedFinal)
           DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
@@ -579,14 +631,28 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
           DealCycle$BaptismStack[nrow(DealCycle)] <- DealCycle$BaptismStack[nrow(DealCycle)-1]
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+          OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
           DTDummy <- 1
         } else {
           DealCycle <- DCATK(DealCycle, "AbsoluteKill", ATKFinal)
-          DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
-          DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
           DealCycle$BaptismStack[nrow(DealCycle)] <- min(23, DealCycle$BaptismStack[nrow(DealCycle)-1] + 1)
+          if(OrbRemain == 0) {
+            DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1] + 1)
+            DealCycle$LiberationLightSTK[nrow(DealCycle)] <- min(4, DealCycle$LiberationLightSTK[nrow(DealCycle)-1] + 1)
+            OrbRemain <- 6000 - DealCycle$Time[1]
+            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+            DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
+            DealCycle <- rbind(DealCycle, DealCycle[nrow(DealCycle), ])
+            DealCycle$Skills[nrow(DealCycle)] <- "LiberationOrbLight"
+          } else {
+            DealCycle$LiberationDarknessSTK[nrow(DealCycle)] <- DealCycle$LiberationDarknessSTK[nrow(DealCycle)-1]
+            DealCycle$LiberationLightSTK[nrow(DealCycle)] <- DealCycle$LiberationLightSTK[nrow(DealCycle)-1]
+            OrbRemain <- max(0, OrbRemain - DealCycle$Time[1])
+          }
           PunishingRemain <- max(0, PunishingRemain - DealCycle$Time[1])
           BaptismRemain <- max(0, BaptismRemain - DealCycle$Time[1])
+          OrbARemain <- max(0, OrbARemain - DealCycle$Time[1])
         }
       }
     }
@@ -594,35 +660,6 @@ LuminousCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
   return(DealCycle)
 }
 LuminousAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
-  ## Liberation Orb(Active)
-  LO <- subset(DealCycle, DealCycle$Skills=="LiberationOrb")
-  Ind <- rownames(LO)
-  Ind[length(Ind)+1] <- nrow(DealCycle)-1
-  Ind <- as.numeric(Ind)
-  
-  for(i in 1:(length(Ind)-1)) {
-    DC <- data.frame(t(rep(0, ncol(DealCycle))))
-    colnames(DC) <- colnames(DealCycle)
-    p <- Ind[i] + 1
-    n <- 0
-    
-    time <- 901
-    while(p < Ind[i+1] & DealCycle$LiberationOrb[p] > 0 & n < 20) {
-      if(time > 900 & max(DealCycle$Skills[p]==c("AbsoluteKill"))==1) {
-        DC <- rbind(DC, DealCycle[p, ])
-        DC[nrow(DC), 1] <- c("LiberationOrbBalance")
-        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
-        n <- n + 1
-      } else {
-        time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
-      }
-      p <- p + 1
-    }
-    DealCycle <- rbind(DealCycle, DC[2:nrow(DC), ])  
-  }
-  DealCycle <- DealCycle[order(DealCycle$Time), ] 
-  rownames(DealCycle) <- 1:nrow(DealCycle)
-  
   ## Sunfire, Eclipse, Equilibrium
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="LightReflection") {

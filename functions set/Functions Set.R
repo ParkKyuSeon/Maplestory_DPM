@@ -3256,12 +3256,6 @@ Deal_RR <- function(DealData) {
     return(sum(RR[1:(Idx[2]-1), ]$Deal))
   }
 }
-Deal_BishopRR <- function(DealData) {
-  StartTime <- subset(DealData, DealData$Skills=="HolyBlood")$Time[1]
-  DealData <- DealData[DealData$Time >= StartTime, ]
-  DealData <- DealData[DealData$Time < StartTime + 15000, ]
-  return(sum(DealData$Deal))
-}
 Deal_40s <- function(DealData, StartWithRR=T, StartTime=NA, FinishTime=NA) {
   if(StartWithRR==T) {
     Start_40s <- min(subset(DealData, DealData$Skills=="Restraint4")$Time)

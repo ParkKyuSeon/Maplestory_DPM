@@ -369,7 +369,7 @@ FountainforAngel <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=SSkill)
 value <- c(2 * GetCoreLv(BishopCore, "Bahamut"), ifelse(GetCoreLv(BishopCore, "Bahamut")>=40, 20, 0))
-info <- c(170 + 2 * BishopSpec$SkillLv, 3, 0, 3030, 260, NA, T, NA, NA, F)
+info <- c(170 + 3 * BishopSpec$SkillLv, 3, 0, 3030, 260, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 Bahamut <- rbind(data.frame(option, value), info)
@@ -962,5 +962,5 @@ BishopDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNames),
                                   times=UnstableCycles$CycleTimes, 
                                   prob=UnstableCycles$Prob)
 
-set(get(DPMCalcOption$DataName), as.integer(3), "Bishop", Deal_BishopRR(BishopDealData))
+set(get(DPMCalcOption$DataName), as.integer(3), "Bishop", Deal_RR(BishopDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Bishop", Deal_40s(BishopDealData, F, NA, FinishTime=subset(BishopDealData, BishopDealData$Skills=="WeaponPuff4")$Time[1] + 18000))

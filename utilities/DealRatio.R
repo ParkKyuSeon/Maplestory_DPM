@@ -1,70 +1,47 @@
 ## Hero
 HeroSkillList <- list(SwordIllusion=c("SwordIllusion", "SwordIllusionExplosion"), 
-                      ComboInstinct=c("ScarofSpace"))
+                      ComboInstinct=c("ScarofSpace"), 
+                      Valhalla=c("ValhallaATK"))
 HeroDealCycleSimplified <- DealCycleCollapse(HeroDealCycle, HeroSkillList)
 
 ## Palladin
-PalladinSkillList <- list(BlessedHammer=c("BlessedHammerBig", "BlessedHammerSmall"), 
-                          GrandCross=c("GrandCrossBig", "GrandCrossSmall"), 
+PalladinSkillList <- list(GrandCross=c("GrandCrossBig", "GrandCrossSmall"), 
                           MightyMjolnir=c("MightyMjolnir", "MightyMjolnirExplosion"))
 PalladinDealCycleSimplified <- DealCycleCollapse(PalladinDealCycle, PalladinSkillList)
 
 ## DarkKnight
-DarkKnightSkillList <- list(DarknessAura=c("DarknessAura", "DarknessAuraEnd"), 
+DarkKnightSkillList <- list(BeholderShock=c("BeholderShock", "BeholderShockSphere"), 
+                            DarknessAura=c("DarknessAura", "DarknessAuraEnd"), 
                             PierceCyclone=c("PierceCycloneTick", "PierceCycloneRemain", "PierceCycloneEnd"))
 DarkKnightDealCycleSimplified <- DealCycleCollapse(DarkKnightDealCycle, DarkKnightSkillList)
 
 ## ArchMageFP
 ArchMageFPSkillList <- list(DotPunisher=c("DotPunisher1st", "DotPunisherRemain"), 
-                            EnergyBolt=c("EnergyBoltUnstable"), 
-                            Explosion=c("ExplosionUnstable"), 
-                            FlameHaze=c("FlameHaze", "FlameHazeUnstable"), 
-                            FlameOrb=c("FlameOrbUnstable"), 
-                            Ignite=c("Ignite", "IgniteDotPunisher", "IgniteDotPunisherFinalAttack", "IgniteMeteorFinalAttack", "IgnitePoisonNova", "IgniteUnstable", "IgniteUnstableFinalAttack"), 
-                            MegiddoFlame=c("MegiddoFlame", "MegiddoFlameUnstable"), 
-                            Meteor=c("Meteor", "MeteorFinalAttack", "MeteorFinalAttackDotPunisher", "MeteorFinalAttackPoisonNova", "MeteorFinalAttackUnstable", "MeteorUnstable"), 
-                            MistEruption=c("MistEruption", "MistEruptionUnstable"), 
-                            Paralyze=c("Paralyze", "ParalyzeUnstable"), 
-                            PoisonBreath=c("PoisonBreathUnstable"), 
+                            Ignite=c("Ignite", "IgniteMeteorFinalAttack"), 
+                            MegiddoFlame=c("MegiddoFlame", "MegiddoFlameAdd"), 
+                            Meteor=c("Meteor", "MeteorFinalAttack"), 
                             PoisonChain=c("PoisonChain1", "PoisonChain2", "PoisonChain3", "PoisonChain4", "PoisonChain5", "PoisonChainMax", "PoisonChainPre"), 
                             PoisonMist=c("PoisonMistUnstable"), 
-                            PoisonNova=c("PoisonNova123", "PoisonNovaRemain", "PoisonNovaStart"))
+                            PoisonNova=c("PoisonNova123", "PoisonNovaRemain", "PoisonNovaStart"), 
+                            PoisonRegion=c("PoisonRegion", "PoisonRegionAdd"))
 ArchMageFPDealCycleSimplified1 <- DealCycleCollapse(ArchMageFPDealCycle1, ArchMageFPSkillList)
 ArchMageFPDealCycleSimplified2 <- DealCycleCollapse(ArchMageFPDealCycle2, ArchMageFPSkillList)
 
 ## ArchMageTC
-ArchMageTCSkillList <- list(Blizard=c("Blizard", "BlizardFA", "BlizardUnstable", "UnstableBlizardFA", "UnstableBlizardFAOrb"), 
-                            ChainLightning=c("ChainLightning", "ChainLightningUnstable"), 
-                            ColdBeam=c("ColdBeamUnstable"), 
-                            EnergyBolt=c("EnergyBoltUnstable"), 
-                            FrozenOrb=c("FrozenOrb", "FrozenOrbUnstable"), 
-                            GlacialChain=c("GlacialChainUnstable"), 
+ArchMageTCSkillList <- list(Blizard=c("Blizard", "BlizardFA"), 
                             IceAge=c("IceAge", "IceAgeFloor"), 
-                            IceStrike=c("IceStrikeUnstable"), 
-                            LightningSpear=c("LightningSpearEnd", "LightningSpearEndUnstable", "LightningSpearLoop"), 
-                            ThunderBolt=c("ThunderBoltUnstable"), 
+                            LightningSpear=c("LightningSpearEnd", "LightningSpearLoop"), 
                             ThunderBreak=c("ThunderBreak", "ThunderBreak2", "ThunderBreak3", "ThunderBreak4", "ThunderBreak5", "ThunderBreak6", "ThunderBreak7", "ThunderBreak8"))
 ArchMageTCDealCycleSimplified1 <- DealCycleCollapse(ArchMageTCDealCycle1, ArchMageTCSkillList)
 ArchMageTCDealCycleSimplified2 <- DealCycleCollapse(ArchMageTCDealCycle2, ArchMageTCSkillList)
 ArchMageTCDealCycleSimplified3 <- DealCycleCollapse(ArchMageTCDealCycle3, ArchMageTCSkillList)
 
 ## Bishop
-BishopSkillList <- list(AngelRay=c("AngelRay", "AngelRayUnstable"), 
-                        Bigbang=c("BigbangUnstable"), 
-                        DivinePunishment=c("DivinePunishment", "DivinePunishmentAfterUns1", "DivinePunishmentAfterUns2", "DivinePunishmentEnd"), 
-                        EnergyBolt=c("EnergyBoltUnstable"), 
-                        Genesis=c("GenesisUnstable"), 
-                        HeavensDoor=c("HeavensDoor", "HeavensDoorUnstable"), 
-                        HolyArrow=c("HolyArrowUnstable"), 
-                        PeaceMaker=c("PeaceMaker", "PeaceMakerAfterUns1", "PeaceMakerAfterUns2", "PeaceMakerExplosion"), 
-                        ShiningRay=c("ShiningRayUnstable"))
+BishopSkillList <- list(DivinePunishment=c("DivinePunishment", "DivinePunishmentEnd"), 
+                        PeaceMaker=c("PeaceMaker", "PeaceMakerExplosion"))
 BishopDealCycleSimplified1 <- DealCycleCollapse(BishopDealCycle1, BishopSkillList)
 BishopDealCycleSimplified2 <- DealCycleCollapse(BishopDealCycle2, BishopSkillList)
 BishopDealCycleSimplified3 <- DealCycleCollapse(BishopDealCycle3, BishopSkillList)
-
-## Marksman
-MarksmanSkillList <- list(ChargedArrow=c("ChargedArrow", "ChargedArrowUncharged"))
-MarksmanDealCycleSimplified <- DealCycleCollapse(MarksmanDealCycle, MarksmanSkillList)
 
 ## Bowmaster
 BowmasterSkillList <- list(AfterimageArrow=c("AfterimageArrowPassive", "AfterimageArrowActive"), 
@@ -72,6 +49,11 @@ BowmasterSkillList <- list(AfterimageArrow=c("AfterimageArrowPassive", "Afterima
                            AdvancedQuiver=c("QuiverMagic", "QuiverMagicRain"), 
                            QuiverFullBurst=c("QuiverFlame"))
 BowmasterDealCycleSimplified <- DealCycleCollapse(BowmasterDealCycle, BowmasterSkillList)
+
+## Marksman
+MarksmanSkillList <- list(ChargedArrow=c("ChargedArrow", "ChargedArrowUncharged"), 
+                          EnhanceSnipe=c("EnhanceSnipe", "EnhanceSnipeAddATK"))
+MarksmanDealCycleSimplified <- DealCycleCollapse(MarksmanDealCycle, MarksmanSkillList)
 
 ## PathFinder
 PathFinderSkillList <- list(RelicUnbound=c("RelicUnboundDischarge"), 
@@ -107,23 +89,24 @@ DualBladeSkillList <- list(Asura=c("Asura", "AsuraAdd"),
 DualBladeDealCycleSimplified <- DealCycleCollapse(DualBladeDealCycle, DualBladeSkillList)
 
 ## Viper
-ViperSkillList <- list(FistEnrage=c("FistEnrage", "FistEnrageFullCharge"), 
-                       HawlingFist=c("HawlingFistLast", "HawlingFistStart"), 
-                       Nautilus=c("Nautilus", "NautilusFinalATK"), 
-                       SerpentScrew=c("SerpentScrewTick"), 
-                       Transform=c("TransformOrb"))
-ViperDealCycle5Simplified <- DealCycleCollapse(ViperDealCycle5, ViperSkillList)
-ViperDealCycle55Simplified <- DealCycleCollapse(ViperDealCycle55, ViperSkillList)
-ViperDealCycle57Simplified <- DealCycleCollapse(ViperDealCycle57, ViperSkillList)
-ViperDealCycle555Simplified <- DealCycleCollapse(ViperDealCycle555, ViperSkillList)
-ViperDealCycle557Simplified <- DealCycleCollapse(ViperDealCycle557, ViperSkillList)
-ViperDealCycle577Simplified <- DealCycleCollapse(ViperDealCycle577, ViperSkillList)
+ViperSkillList <- list(HawlingFist=c("HawlingFistLast", "HawlingFistStart"), 
+                       Nautilus=c("NautilusFinalATK"), 
+                       LightningForm=c("LightningFormOrb"))
+ViperSimplifiedCycleNames <- c()
+for(i in 1:length(ViperCycleNames)) {
+  ViperDealCycleSimplified <- DealCycleCollapse(get(ViperCycleNames[i]), ViperSkillList)
+  assign(paste(ViperCycleNames[i], "Simplified", sep=""), ViperDealCycleSimplified)
+  ViperSimplifiedCycleNames <- c(ViperSimplifiedCycleNames, paste(ViperCycleNames[i], "Simplified", sep=""))
+  rm(ViperDealCycleSimplified)
+}
 
 ## Captain
-CaptainSkillList <- list(AssembleCrew=c("AssembleCrewJack", "AssembleCrewMurat", "AssembleCrewStoner", "AssembleCrewValery"), 
-                         BattleShipBomber=c("BattleShipBomberBlackbark1", "BattleShipBomberBlackbark2", "BattleShipBomberDauntless1", "BattleShipBomberDauntless2", 
-                                            "BattleShipBomberJonathan1", "BattleShipBomberJonathan2", "BattleShipBomberSchultz1", "BattleShipBomberSchultz2"), 
-                         NautilusAssault=c("NautilusAssaultLast", "NautilusAssaultPre"))
+CaptainSkillList <- list(AssembleCrew=c("AssembleCrewDualPistol", "AssembleCrewDualPistolNectar", 
+                                        "AssembleCrewMarksman", "AssembleCrewMarksmanNectar"), 
+                         BattleShipBomber=c("BattleShipBomber1", "BattleShipBomber1Nectar", 
+                                            "BattleShipBomber2", "BattleShipBomber2Nectar"), 
+                         NautilusAssault=c("NautilusAssaultLast", "NautilusAssaultPre"), 
+                         SeizeBomber=c("SeizeBomber", "SeizeBomberNectar"))
 CaptainDealCycle5Simplified <- DealCycleCollapse(CaptainDealCycle5, CaptainSkillList)
 CaptainDealCycle55Simplified <- DealCycleCollapse(CaptainDealCycle55, CaptainSkillList)
 CaptainDealCycle555Simplified <- DealCycleCollapse(CaptainDealCycle555, CaptainSkillList)
@@ -475,19 +458,26 @@ KinesisDealCycleSimplified <- DealCycleCollapse(KinesisDealCycle, KinesisSkillLi
 HeroDealRatio <- DealRatio(HeroDealCycleSimplified, HeroFinalDPMwithMax)
 PalladinDealRatio <- DealRatio(PalladinDealCycleSimplified, PalladinFinalDPMwithMax)
 DarkKnightDealRatio <- DealRatio(DarkKnightDealCycleSimplified, DarkKnightFinalDPMwithMax)
-ArchMageFPDealRatio <- InfinityDealRatio(ArchMageFPDealCycleSimplified, ArchMageFPDealCycleSimplified2, ArchMageFPDeal1, ArchMageFPDeal2, FPUnsdata)
-ArchMageTCDealRatio <- InfinityDealRatio(ArchMageTCDealCycleSimplified, ArchMageTCDealCycleSimplified2, ArchMageTCDeal1, ArchMageTCDeal2, TCUnsdata)
-BishopDealRatio <- InfinityDealRatio(BishopDealCycleSimplified, BishopDealCycleSimplified2, BishopDeal1, BishopDeal2, BIUnsdata)
-MarksmanDealRatio <- DealRatio(MarksmanDealCycleSimplified, MarksmanFinalDPMwithMax)
+ArchMageFPDealRatio <- ResetDealRatio(list(ArchMageFPDealCycleSimplified1, ArchMageFPDealCycleSimplified2), 
+                                      list(ArchMageFPDealData1, ArchMageFPDealData2), 
+                                      c(max(ArchMageFPDealCycleSimplified1$Time), max(ArchMageFPDealCycleSimplified2$Time)),
+                                      c(0.01, 0.99))
+ArchMageTCDealRatio <- ResetDealRatio(list(ArchMageTCDealCycleSimplified1, ArchMageTCDealCycleSimplified2, ArchMageTCDealCycleSimplified3), 
+                                      list(ArchMageTCDealData1, ArchMageTCDealData2, ArchMageTCDealData3), 
+                                      c(max(ArchMageTCDealCycleSimplified1$Time), max(ArchMageTCDealCycleSimplified2$Time), max(ArchMageTCDealCycleSimplified3$Time)),
+                                      c(0.01, 0.05, 0.94))
+BishopDealRatio <- ResetDealRatio(list(BishopDealCycleSimplified1, BishopDealCycleSimplified2, BishopDealCycleSimplified3), 
+                                  list(BishopDealData1, BishopDealData2, BishopDealData3), 
+                                  c(max(BishopDealCycleSimplified1$Time), max(BishopDealCycleSimplified2$Time), max(BishopDealCycleSimplified3$Time)),
+                                  c(0.01, 0.05, 0.94))
 BowmasterDealRatio <- DealRatio(BowmasterDealCycleSimplified, BowmasterFinalDPMwithMax)
+MarksmanDealRatio <- DealRatio(MarksmanDealCycleSimplified, MarksmanFinalDPMwithMax)
 PathFinderDealRatio <- DealRatio(PathFinderDealCycleSimplified, PathFinderFinalDPMwithMax)
 NightLordDealRatio <- DealRatio(NightLordDealCycleSimplified, NightLordFinalDPMwithMax)
 ShadowerDealRatio <- DealRatio(ShadowerDealCycleSimplified, ShadowerFinalDPMwithMax)
 DualBladerDealRatio <- DealRatio(DualBladeDealCycleSimplified, DualBladeFinalDPMwithMax)
-ViperDealRatio <- ResetDealRatio(DealCycles=list(ViperDealCycle5Simplified, 
-                                                 ViperDealCycle55Simplified, ViperDealCycle57Simplified, 
-                                                 ViperDealCycle555Simplified, ViperDealCycle557Simplified, ViperDealCycle577Simplified), 
-                                 DealDatas=ViperDealDatas, rep(max(ViperDealCycle5Simplified$Time), 6), ViperDealCycleProbs)
+ViperDealRatio <- ResetDealRatio(DealCycles=GetList(ViperSimplifiedCycleNames), 
+                                 DealDatas=ViperDealDatas, rep(max(ViperDealCycle5Simplified$Time), length(ViperSimplifiedCycleNames)), ViperDealCycleProbs)
 CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5Simplified, CaptainDealCycle55Simplified, CaptainDealCycle555Simplified), 
                                    CaptainDealDatas, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
 CannonMasterDealRatio <- ResetDealRatio(DealCycles=list(CannonShooterDealCyclesSimplified[[2]], CannonShooterDealCyclesSimplified[[1]], CannonShooterDealCyclesSimplified[[3]], 

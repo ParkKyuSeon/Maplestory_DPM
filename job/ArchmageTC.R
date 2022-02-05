@@ -469,7 +469,7 @@ ArchMageTCCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Unsta
   DealCycle <- DCBuff(DealCycle, c("Infinity"), BuffFinal)
   
   ## 1st, 3rd, 5th Infinity
-  IceCyclone <- c(16)
+  ## IceCyclone <- c(16)
   Restraint4 <- c(15)
   if(BuffFinal[rownames(BuffFinal)=="Infinity", ]$Duration < 121) {
     LightningSpearLoop <- c(5)
@@ -483,11 +483,13 @@ ArchMageTCCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Unsta
   SoulContractLink <- c(31)
   SpiritofSnow <- c(30)
   SpiderInMirror <- c(50)
-  skills1 <- list(IceCyclone=IceCyclone, Restraint4=Restraint4, LightningSpearLoop=LightningSpearLoop, IceAge=IceAge, JupiterThunderFDR=JupiterThunderFDR, ThunderBreak=ThunderBreak, MapleWarriors2=MapleWarriors2, 
+  ## skills1 <- list(IceCyclone=IceCyclone, Restraint4=Restraint4, LightningSpearLoop=LightningSpearLoop, IceAge=IceAge, JupiterThunderFDR=JupiterThunderFDR, ThunderBreak=ThunderBreak, MapleWarriors2=MapleWarriors2, 
+  ##                 SoulContractLink=SoulContractLink, SpiritofSnow=SpiritofSnow, SpiderInMirror=SpiderInMirror)
+  skills1 <- list(Restraint4=Restraint4, LightningSpearLoop=LightningSpearLoop, IceAge=IceAge, JupiterThunderFDR=JupiterThunderFDR, ThunderBreak=ThunderBreak, MapleWarriors2=MapleWarriors2, 
                   SoulContractLink=SoulContractLink, SpiritofSnow=SpiritofSnow, SpiderInMirror=SpiderInMirror)
   
   ## 2nd, 4th, 6th Infinity
-  IceCyclone <- c(16)
+  ## IceCyclone <- c(16)
   if(BuffFinal[rownames(BuffFinal)=="Infinity", ]$Duration < 121) {
     LightningSpearLoop <- c(5)
   } else {
@@ -498,7 +500,9 @@ ArchMageTCCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Unsta
   ThunderBreak <- c(10, 49, 88)
   SoulContractLink <- c(31)
   SpiritofSnow <- c(30)
-  skills2 <- list(IceCyclone=IceCyclone, LightningSpearLoop=LightningSpearLoop, IceAge=IceAge, JupiterThunderFDR=JupiterThunderFDR, ThunderBreak=ThunderBreak, 
+  ## skills2 <- list(IceCyclone=IceCyclone, LightningSpearLoop=LightningSpearLoop, IceAge=IceAge, JupiterThunderFDR=JupiterThunderFDR, ThunderBreak=ThunderBreak, 
+  ##                 SoulContractLink=SoulContractLink, SpiritofSnow=SpiritofSnow)
+  skills2 <- list(LightningSpearLoop=LightningSpearLoop, IceAge=IceAge, JupiterThunderFDR=JupiterThunderFDR, ThunderBreak=ThunderBreak, 
                   SoulContractLink=SoulContractLink, SpiritofSnow=SpiritofSnow)
   
   for(k in 1:6) {
@@ -616,7 +620,7 @@ TCAddATKCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Thunder
   DealCycle <- RepATKCycle(DealCycle, "IceAgeFloor", 18, 800, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "FrozenOrb", 19, 0, ATKFinal)
   DealCycle <- RepATKCycle(DealCycle, "IceAuraDummy", 800, 0, ATKFinal)
-  DealCycle <- RepATKCycle(DealCycle, "IceCycloneDummy", 47, 0, ATKFinal)
+  ## DealCycle <- RepATKCycle(DealCycle, "IceCycloneDummy", 47, 0, ATKFinal)
   
   IceAuraDel <- c()
   for(i in 1:nrow(DealCycle)) {

@@ -66,7 +66,7 @@ value <- c(50, 30, 20)
 EndlessResearch <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
-value <- c(36)
+value <- c(46)
 BlessMarkCompletion <- data.frame(option, value) ## 9 stack
 
 option <- factor(c("IGR"), levels=PSkill)
