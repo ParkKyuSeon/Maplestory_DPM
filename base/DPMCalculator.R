@@ -469,6 +469,7 @@ source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/
 FinalData <- get(DPMCalcOption$DataName)
 FinalData <- data.frame(t(FinalData))
 FinalData <- round(FinalData)
+FinalData <- FinalData[rownames(FinalData)!="Cadena", ]
 colnames(FinalData)[4] <- "X40s"
 
 if(CSVExportOption$OrderBy == "JobName") {
