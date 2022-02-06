@@ -411,7 +411,7 @@ CadenaDealCycle <- data.frame(CadenaDealCycle)
 if(CadenaSpec$CoolTimeReset==24) {
   CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimes.csv"
 } else if(CadenaSpec$CoolTimeReset==26) {
-  CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimesml.csv"
+  CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimes_reset26.csv"
 }
 CadenaTimes <- read.csv(CadenaTimes, header=T, row.names=1)
 
@@ -732,35 +732,3 @@ set(get(DPMCalcOption$DataName), as.integer(4), "Cadena", Deal_40s(CadenaDealDat
 CadenaSpecMean <- SpecMean("Cadena", CadenaDealCycleReduction, 
                            DealCalcWithMaxDMR(CadenaDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt), 
                            ATKFinal, BuffFinal, SummonedFinal, CadenaSpecOpt)
-
-
-## Cadena Without Cool Reset Ability
-CadenaSpecOptBDRAB <- CadenaSpecOpt
-CadenaSpecOptBDRAB$BDR <- CadenaSpecOptBDRAB$BDR + 20
-
-ATKFinal2 <- data.frame(CadenaATK)
-ATKFinal2$Delay[c(-18)] <- Delay(ATKFinal2$Delay, CadenaSpec$ATKSpeed)[c(-18)]
-ATKFinal2$CoolTime <- Cooldown(ATKFinal2$CoolTime, ATKFinal2$CoolReduceAvailable, CadenaSpec$CoolReduceP, CadenaSpec$CoolReduce)
-
-CadenaTimes2 <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimesabbdr.csv"
-CadenaTimes2 <- read.csv(CadenaTimes2, header=T, row.names=1)
-
-DealCycle <- c("Skills", "Time", rownames(CadenaBuff))
-CadenaDealCycle2 <- t(rep(0, length(DealCycle)))
-colnames(CadenaDealCycle2) <- DealCycle
-CadenaDealCycle2 <- data.frame(CadenaDealCycle2)
-
-CadenaDealCycle2 <- CadenaCycle(CadenaDealCycle2, 
-                               ATKFinal2, 
-                               BuffFinal, 
-                               SummonedFinal, 
-                               CadenaSpec, 
-                               180, 360)
-CadenaDealCycle2 <- DealCycleFinal(CadenaDealCycle2)
-ATKFinal2 <- CadenaATKCollapse(ATKFinal2, CadenaDealCycle2, CadenaTimes2, CadenaTimes2$TimesPerMin2[rownames(CadenaTimes2)=="WeaponVarietyFinale"])
-CadenaDealCycle2 <- CadenaAddATK(CadenaDealCycle2, ATKFinal2, BuffFinal, SummonedFinal)
-
-CadenaABBDR <- DealCalcWithMaxDMR(CadenaDealCycle2, ATKFinal2, BuffFinal, SummonedFinal, CadenaSpecOptBDRAB)
-CadenaABBDRDPM <- sum(na.omit(CadenaABBDR)) / (max(CadenaDealCycle2$Time)/ 60000)
-
-print(data.frame(CadenaABBDRDPM=CadenaABBDRDPM))
