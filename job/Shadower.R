@@ -150,7 +150,7 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor("CDMR", levels=BSkill)
 value <- c(20 + 2 * ceiling(ShadowerBase$SkillLv/3))
-info <- c(30, 150 - 2 * ShadowerBase$SkillLv, 900, F, T, F, F)
+info <- c(30, 150 - 2 * ShadowerBase$SkillLv, 810, F, T, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SmokeShell <- rbind(data.frame(option, value), info)
@@ -381,7 +381,7 @@ colnames(ShadowerDealCycle) <- DealCycle
 ShadowerDealCycle <- data.frame(ShadowerDealCycle)
 
 ShadowerCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
-                         Period=c(180.5), CycleTime=c(361), AddDelay=0) {
+                         Period=c(180.5), CycleTime=c(361), AddDelay=30) {
   BuffSummonedPrior <- c("ShadowPartner", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "EpicAdventure", "DarkFlare",
                          "MapleWarriors2", "SoulContractLink", "UltimateDarkSight", "ReadyToDie2Stack")
   
@@ -859,7 +859,7 @@ ShadowerDealCycle <- ShadowerCycle(ShadowerDealCycle,
                                    SummonedFinal, 
                                    ShadowerSpec, 
                                    ShadowerSkipATK, 
-                                   Period=180.5, CycleTime=361)
+                                   Period=180.5, CycleTime=361, AddDelay=30)
 ShadowerDealCycle <- DealCycleFinal(ShadowerDealCycle)
 ShadowerDealCycle <- ShadowerAddATK(ShadowerDealCycle, 
                                     ATKFinal, 
@@ -913,6 +913,36 @@ ShadowerSpecMean <- SpecMean("Shadower", ShadowerDealCycleReduction,
                              ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt)
 
 
+## Shadower - Add Delay 0ms
+DealCycle <- c("Skills", "Time", rownames(ShadowerBuff))
+ShadowerDealCycle0 <- t(rep(0, length(DealCycle)))
+colnames(ShadowerDealCycle0) <- DealCycle
+ShadowerDealCycle0 <- data.frame(ShadowerDealCycle0)
+
+ShadowerDealCycle0 <- ShadowerCycle(ShadowerDealCycle0, 
+                                    ATKFinal, 
+                                    BuffFinal, 
+                                    SummonedFinal, 
+                                    ShadowerSpec, 
+                                    ShadowerSkipATK, 
+                                    Period=180.5, CycleTime=361, AddDelay=0)
+ShadowerDealCycle0 <- DealCycleFinal(ShadowerDealCycle0)
+ShadowerDealCycle0 <- ShadowerAddATK(ShadowerDealCycle0, 
+                                     ATKFinal, 
+                                     BuffFinal, 
+                                     SummonedFinal, 
+                                     ShadowerSpec)
+
+ShadowerFinalDPM0 <- DealCalcWithMaxDMR(ShadowerDealCycle0, ATKFinal, BuffFinal, SummonedFinal, ShadowerSpecOpt)
+Shadower0DPM <- sum(na.omit(ShadowerFinalDPM0)) / (max(ShadowerDealCycle0$Time)/ 60000)
+
+ShadowerDealData0 <- data.frame(ShadowerDealCycle0$Skills, ShadowerDealCycle0$Time, ShadowerDealCycle0$Restraint4, ShadowerFinalDPM0)
+colnames(ShadowerDealData0) <- c("Skills", "Time", "R4", "Deal")
+
+Shadower0RR <- Deal_RR(ShadowerDealData0)
+Shadower040s <- Deal_40s(ShadowerDealData0)
+
+
 ## Shadower - Add Delay 90ms
 DealCycle <- c("Skills", "Time", rownames(ShadowerBuff))
 ShadowerDealCycle90 <- t(rep(0, length(DealCycle)))
@@ -942,4 +972,5 @@ colnames(ShadowerDealData90) <- c("Skills", "Time", "R4", "Deal")
 Shadower90RR <- Deal_RR(ShadowerDealData90)
 Shadower9040s <- Deal_40s(ShadowerDealData90)
 
-print(list(Shadower90ms=data.frame(Shadower90DPM=Shadower90DPM, Shadower90RR=Shadower90RR, Shadower9040s=Shadower9040s)))
+print(list(Shadower0ms=data.frame(Shadower0DPM=Shadower0DPM, Shadower0RR=Shadower0RR, Shadower040s=Shadower040s), 
+           Shadower90ms=data.frame(Shadower90DPM=Shadower90DPM, Shadower90RR=Shadower90RR, Shadower9040s=Shadower9040s)))
