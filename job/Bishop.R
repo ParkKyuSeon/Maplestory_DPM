@@ -882,7 +882,7 @@ for(i in 1:nrow(UnstableCycles)) {
   BishopDealCycleDummy <- t(rep(0, length(DealCycle)))
   colnames(BishopDealCycleDummy) <- DealCycle
   
-  BishopDealCycleDummy <- BishopCycle(BishopDealCycleDummy, ATKFinal, BuffFinal, SummonedFinal, UnstableCool = UnstableCool[3])
+  BishopDealCycleDummy <- BishopCycle(BishopDealCycleDummy, ATKFinal, BuffFinal, SummonedFinal, UnstableCool = UnstableCool[i])
   BishopDealCycleDummy <- DealCycleFinal(BishopDealCycleDummy)
   
   BishopDealCycleDummy <- BishopAddATK(BishopDealCycleDummy, ATKFinal, BuffFinal, SummonedFinal, 3, BishopSpec)

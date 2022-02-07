@@ -116,3 +116,26 @@ GuardianSlime <- function(DealData) {
   }
   return(sum(DealData$SlimeDeal) / max(DealData$Time) * 60000)
 }
+
+RRDealData <- function(DealData, CycleTime=NA) {
+  RR <- subset(DealData, DealData$R4 > 0)
+  rownames(RR) <- 1:nrow(RR)
+  Idx <- as.numeric(rownames(subset(RR, RR$Skills=="Restraint4")))
+  RRDeal <- c()
+  if(length(Idx)==1) {
+    RRDeal <- sum(RR$Deal)
+  } else {
+    for(i in 1:(length(Idx)-1)) {
+      RRDeal <- c(RRDeal, sum(RR[Idx[i]:(Idx[i+1]-1), ]$Deal))
+    }
+    RRDeal <- c(RRDeal, sum(RR[Idx[(length(Idx))]:nrow(RR), ]$Deal))
+  }
+  
+  RRSubTime <- round(ifelse(is.na(CycleTime)==T, max(DealData$Time) / length(Idx), CycleTime / length(Idx)) / 1000, 2)
+  RRDealAvg <- mean(RRDeal)
+  RRDealPerMin <- sum(RRDeal) / (ifelse(is.na(CycleTime)==T, max(DealData$Time), CycleTime) / 60000)
+  return(list(RRDealList = RRDeal, 
+              RRSubTime = RRSubTime, 
+              RRDealAvg = RRDealAvg, 
+              RRDealPerMin = RRDealPerMin))
+}
