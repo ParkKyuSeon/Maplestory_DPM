@@ -33,7 +33,7 @@ DPMCalcOption <- data.frame(SpecSet = "SpecLegendry",
                             MonsterLifeLevel = 3, ## Not a Monster Life Farm Level
                             WeaponSF = 18, 
                             DemonAvengerSF = 330, ## 264 : Unique, 330 : Legendry
-                            Optimization = F, 
+                            Optimization = T, 
                             OptdataDelete = T,
                             DataName = "DPM12360_L", 
                             

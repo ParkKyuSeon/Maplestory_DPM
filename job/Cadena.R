@@ -630,6 +630,8 @@ CadenaAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- paste("SummonThrowingWingdagger", TimeDiff, sep="")
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
+      DealCycle$Skills[nrow(DealCycle)] <- paste("SummonThrowingWingdaggerFDR", TimeDiff, sep="")
+      DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- paste("SummonThrowingWingdaggerExplosion", TimeDiff, sep="")
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- paste("SummonShootingShotgun", TimeDiff, sep="")
