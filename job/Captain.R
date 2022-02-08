@@ -910,11 +910,13 @@ CaptainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   QuickDrawFD <- 25 + Spec$SkillLv
   DealCycle$QuickDrawStack[3] <- 0
   for(i in 4:nrow(DealCycle)) {
-    if(sum(DealCycle$Skills[i]==c("RapidFire", "BulletParty", "HeadShot", "NautilusAssaultPre", "NautilusAssualtLast", "DeathTrigger", "CaptainDignity")) >= 1 & 
-       DealCycle$QuickDrawStack[i-1] < 1) {
-      DealCycle$QuickDrawStack[i] <- min(1, DealCycle$QuickDrawStack[i-1] + QuickDrawProb)
-    } else if(sum(DealCycle$Skills[i]==c("HeadShot", "DeadEye")) >= 1) {
-      DealCycle$QuickDrawFDR[i] <- QuickDrawFD * DealCycle$QuickDrawStack[i-1]
+    if(sum(DealCycle$Skills[i]==c("RapidFire", "BulletParty", "NautilusAssaultPre", "NautilusAssualtLast", "DeathTrigger", "CaptainDignity")) >= 1) {
+      DealCycle$QuickDrawStack[i] <- DealCycle$QuickDrawStack[i-1] + 1
+    } else if(sum(DealCycle$Skills[i]==c("HeadShot")) >= 1) {
+      DealCycle$QuickDrawFDR[i] <- QuickDrawFD * (1 - (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i-1])
+      DealCycle$QuickDrawStack[i] <- (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i]
+    } else if(sum(DealCycle$Skills[i]==c("DeadEye")) >= 1) {
+      DealCycle$QuickDrawFDR[i] <- QuickDrawFD * (1 - (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i-1])
       DealCycle$QuickDrawStack[i] <- 0
     } else {
       DealCycle$QuickDrawStack[i] <- DealCycle$QuickDrawStack[i-1]
