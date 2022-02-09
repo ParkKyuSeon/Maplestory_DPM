@@ -117,9 +117,12 @@ CaptainDealCycle553Simplified <- DealCycleCollapse(CaptainDealCycle553, CaptainS
 ## CannonShooter
 CannonShooterSkillList <- list(ICBM=c("ICBM", "ICBMFloor"), 
                                SpecialMonkeyEscort=c("MonkeyEscortBomb", "MonkeyEscortCannon"))
-CannonShooterDealCyclesSimplified <- list()
-for(i in 1:length(CannonShooterDealCycles)) {
-  CannonShooterDealCyclesSimplified[[i]] <- DealCycleCollapse(CannonShooterDealCycles[[i]], CannonShooterSkillList)
+CannonShooterSimplifiedCycleNames <- c()
+for(i in 1:length(CSList$CycleNames)) {
+  CannonShooterDealCycleSimplified <- DealCycleCollapse(get(CSList$CycleNames[i]), CannonShooterSkillList)
+  assign(paste(CSList$CycleNames[i], "Simplified", sep=""), CannonShooterDealCycleSimplified)
+  CannonShooterSimplifiedCycleNames <- c(CannonShooterSimplifiedCycleNames, paste(CSList$CycleNames[i], "Simplified", sep=""))
+  rm(CannonShooterDealCycleSimplified)
 }
 
 ## Mikhail
@@ -142,7 +145,7 @@ SoulMasterDealCycleSimplified <- DealCycleCollapse(SoulMasterDealCycle, SoulMast
 FlameWizardSkillList <- list(DragonSlave=c("DragonSlave", "DragonSlaveLast"), 
                              FlameDischarge=c("FlameDischargeFox2", "FlameDischargeFox3", "FlameDischargeFox4", "FlameDischargeFox5", 
                                               "FlameDischargeLion2", "FlameDischargeLion3", "FlameDischargeLion4", "FlameDischargeLion5"), 
-                             InfinityFlameCircle=c("InfinityFlameCircleEnd", "InfinityFlameCircleTick"), 
+                             InfinityFlameCircle=c("InfinityFlameCircleEnd1", "InfinityFlameCircleEnd2", "InfinityFlameCircleTick"), 
                              OrbitalFlameIV=c("OrbitalFlame"), 
                              SalamanderMischief=c("SalamanderMischiefATK"))
 FlameWizardDealCycleSimplified <- DealCycleCollapse(FlameWizardDealCycle, FlameWizardSkillList)
@@ -203,11 +206,12 @@ LuminousSkillList <- list(AbsoluteKill=c("AbsoluteKill", "AbsoluteKillAdd", "Abs
 LuminousDealCycleSimplified <- DealCycleCollapse(LuminousDealCycle, LuminousSkillList)
 
 ## Mercedes
-MercedesSkillList <- list(AdvancedFinalAttack=c("AdvancedFinalAttack", "AdvancedFinalAttackEnlilGhost", "AdvancedFinalAttackIshtarGhost"), 
+MercedesSkillList <- list(AdvancedFinalAttack=c("AdvancedFinalAttack", "AdvancedFinalAttackEnlilGhost", "AdvancedFinalAttackGustGhost", "AdvancedFinalAttackIshtarGhost"), 
                           AdvancedStrikeDualShot=c("AdvancedStrikeDualShot", "AdvancedStrikeDualShotGhost"), 
-                          BreathofIrkalla=c("BreathofIrkalla", "BreathofIrkallaGhost"), 
+                          BreathofIrkalla=c("BreathofIrkalla", "BreathofIrkallaGhost", "BreathofIrkallaSylvidia"), 
                           ElementalGhost=c("ElementalGhostTree"), 
                           ElementalKnight=c("ElementalKnightD", "ElementalKnightIF"), 
+                          GustDive=c("GustDive", "GustDiveGhost"),
                           LegendrySpear=c("LegendrySpear", "LegendrySpearGhost"), 
                           RingofIshtar=c("RingofIshtar", "RingofIshtarGhost"), 
                           RoyalKnights=c("RoyalKnightsKnight"), 
@@ -286,6 +290,9 @@ MechanicSkillList <- list(HomingMissile=c("HomingMissile", "HomingMissileBomberT
 MechanicDealCycle5Simplified <- DealCycleCollapse(MechanicDealCycle5, MechanicSkillList)
 MechanicDealCycle55Simplified <- DealCycleCollapse(MechanicDealCycle55, MechanicSkillList)
 MechanicDealCycle555Simplified <- DealCycleCollapse(MechanicDealCycle555, MechanicSkillList)
+MechanicDealCycle53Simplified <- DealCycleCollapse(MechanicDealCycle53, MechanicSkillList)
+MechanicDealCycle553Simplified <- DealCycleCollapse(MechanicDealCycle553, MechanicSkillList)
+MechanicDealCycle533Simplified <- DealCycleCollapse(MechanicDealCycle533, MechanicSkillList)
 
 ## DemonSlayer
 DemonSlayerSkillList <- list(AuraWeapon=c("AuraWeapon", "AuraWeaponAdd"), 
@@ -303,8 +310,7 @@ DemonSlayerSkillList <- list(AuraWeapon=c("AuraWeapon", "AuraWeaponAdd"),
 DemonSlayerDealCycleSimplified <- DealCycleCollapse(DemonSlayerDealCycle, DemonSlayerSkillList)
 
 ## DemonAvenger
-DemonAvengerSkillList <- list(BloodFeast=c("BloodFeast1", "BloodFeast2", "BloodFeast3"), 
-                              DimensionSword=c("DimensionSword", "DimensionSwordFast"), 
+DemonAvengerSkillList <- list(DimensionSword=c("DimensionSword", "DimensionSwordFast"), 
                               ExceedExecution=c("ExceedExecution1", "ExceedExecution2", "ExceedExecution3", "ExceedExecution4", "ExceedExecution5"), 
                               CallMastema=c("MastemaClaw"), 
                               BlessofMasteriaGoddess=c("OtherworldEmptiness"), 
@@ -396,6 +402,7 @@ IlliumSkillList <- list(CurseMark=c("CurseMark", "CurseMarkJavelin"),
                         ReactionDomination=c("Domination", "DominationSoul"), 
                         GlorywingEnhancedJavelin=c("EnhancedJavelin", "MagicMissile"), 
                         CraftJavelinII=c("Javelin", "JavelinAddATK", "JavelinAddFragment", "JavelinFragment"), 
+                        CraftLonginus=c("Longinus"), 
                         Liyo=c("Liyo1Stack", "Liyo2Stack", "Liyo3Stack"), 
                         CrystalSkillMotalSwing=c("MotalSwing"), 
                         GlorywingMotalWingBeat=c("MotalWingBeat"), 
@@ -484,13 +491,9 @@ ViperDealRatio <- ResetDealRatio(DealCycles=GetList(ViperSimplifiedCycleNames),
 CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5Simplified, CaptainDealCycle55Simplified, CaptainDealCycle555Simplified, 
                                         CaptainDealCycle53Simplified, CaptainDealCycle533Simplified, CaptainDealCycle553Simplified), 
                                    CaptainDealDatas, rep(max(CaptainDealCycle$Time), 6), CaptainDealCycleProbs)
-CannonMasterDealRatio <- ResetDealRatio(DealCycles=list(CannonShooterDealCyclesSimplified[[2]], CannonShooterDealCyclesSimplified[[1]], CannonShooterDealCyclesSimplified[[3]], 
-                                                        CannonShooterDealCyclesSimplified[[4]], CannonShooterDealCyclesSimplified[[5]], CannonShooterDealCyclesSimplified[[6]],
-                                                        CannonShooterDealCyclesSimplified[[7]], CannonShooterDealCyclesSimplified[[8]], CannonShooterDealCyclesSimplified[[9]]), 
-                                        DealDatas=list(CannonShooterDealDatas[[2]], CannonShooterDealDatas[[1]], CannonShooterDealDatas[[3]], 
-                                                       CannonShooterDealDatas[[4]], CannonShooterDealDatas[[5]], CannonShooterDealDatas[[6]],
-                                                       CannonShooterDealDatas[[7]], CannonShooterDealDatas[[8]], CannonShooterDealDatas[[9]]), 
-                                        rep(max(CannonShooterDealCycle$Time), 9), CannonShooterCycleProbs[c(2, 1, 3:9)])
+CannonMasterDealRatio <- ResetDealRatio(DealCycles=GetList(CannonShooterSimplifiedCycleNames), 
+                                        DealDatas=CannonShooterDealDatas, 
+                                        rep(max(CannonShooterDealCycle_5Lightning$Time), length(CannonShooterSimplifiedCycleNames)), CSList$CycleProbs)
 MikhailDealRatio <- DealRatio(MikhailDealCycleSimplified, MikhailFinalDPMwithMax)
 SoulMasterDealRatio <- DealRatio(SoulMasterDealCycleSimplified, SoulMasterFinalDPMwithMax)
 FlameWizardDealRatio <- DealRatio(FlameWizardDealCycleSimplified, FlameWizardFinalDPMwithMax)
@@ -499,7 +502,7 @@ NightWalkerDealRatio <- DealRatio(NightWalkerDealCycleSimplified, NightWalkerFin
 StrikerDealRatio <- DealRatio(StrikerDealCycleSimplified, StrikerFinalDPMwithMax)
 AranDealRatio <- DealRatio(AranDealCycleSimplified, AranFinalDPMwithMax)
 EvanDealRatio <- ResetDealRatio(list(EvanDealCycleSimplified, EvanDealCycleHPSimplified), list(EvanDeal1, EvanDeal2), 
-                                rep(max(EvanDealCycle$Time), 2), c(0.6564, 0.3436))
+                                rep(max(EvanDealCycle$Time), 2), c(0.6592, 0.3408))
 LuminousDealRatio <- DealRatio(LuminousDealCycleSimplified, LuminousFinalDPMwithMax)
 MercedesDealRatio <- DealRatio(MercedesDealCycleSimplified, MercedesFinalDPMwithMax)
 PhantomDealRatio <- ResetDealRatio(DealCycles=list(PhantomDealCycleSimplified, PhantomDealCycle2Simplified), DealDatas=list(PhantomDeal1, PhantomDeal2), 
@@ -509,8 +512,9 @@ BlasterDealRatio <- DealRatio(BlasterDealCycleSimplified, BlasterFinalDPMwithMax
 BattleMageDealRatio <- DealRatio(BattleMageDealCycleSimplified, BattleMageFinalDPMwithMax)
 WildHunterDealRatio <- DealRatio(WildHunterDealCycleSimplified, WildHunterFinalDPMwithMax)
 XenonDealRatio <- DealRatio(XenonDealCycleSimplified, XenonFinalDPMwithMax)
-MechanicDealRatio <- ResetDealRatio(list(MechanicDealCycle5Simplified, MechanicDealCycle55Simplified, MechanicDealCycle555Simplified), 
-                                    MechanicDealDatas, rep(max(MechanicDealCycle$Time), 3), MechanicDealCycleProbs)
+MechanicDealRatio <- ResetDealRatio(list(MechanicDealCycle5Simplified, MechanicDealCycle55Simplified, MechanicDealCycle555Simplified, 
+                                         MechanicDealCycle53Simplified, MechanicDealCycle533Simplified, MechanicDealCycle553Simplified), 
+                                    MechanicDealDatas, rep(max(MechanicDealCycle$Time), 6), MechanicDealCycleProbs)
 DemonSlayerDealRatio <- DealRatio(DemonSlayerDealCycleSimplified, DemonSlayerFinalDPMwithMax)
 DemonAvengerDealRatio <- DealRatio(DemonAvengerDealCycleSimplified, DemonAvengerFinalDPMwithMax)
 KaiserDealRatio <- ResetDealRatio(DealCycles=KaiserDealCyclesSimplified, 
@@ -536,7 +540,7 @@ DealRatioSave <- function(JobName, DealRatioData, Modifier) {
   DealRatioData$Ratio <- round(DealRatioData$Ratio, 4)
   write.csv(DealRatioData, paste("jobdata/", JobName, "/", JobName, "DealRatio", Modifier, ".csv", sep=""))
 }
-Modifier <- ""
+Modifier <- "_L"
 for(i in 1:nrow(ChrInfo)) {
   DealRatioSave(ChrInfo$job[i], get(paste(ChrInfo$job[i], "DealRatio", sep="")), Modifier)
 }

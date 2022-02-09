@@ -914,7 +914,7 @@ CaptainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
       DealCycle$QuickDrawStack[i] <- DealCycle$QuickDrawStack[i-1] + 1
     } else if(sum(DealCycle$Skills[i]==c("HeadShot")) >= 1) {
       DealCycle$QuickDrawFDR[i] <- QuickDrawFD * (1 - (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i-1])
-      DealCycle$QuickDrawStack[i] <- (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i]
+      DealCycle$QuickDrawStack[i] <- (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i-1]
     } else if(sum(DealCycle$Skills[i]==c("DeadEye")) >= 1) {
       DealCycle$QuickDrawFDR[i] <- QuickDrawFD * (1 - (1 - QuickDrawProb) ^ DealCycle$QuickDrawStack[i-1])
       DealCycle$QuickDrawStack[i] <- 0
