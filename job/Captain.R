@@ -362,14 +362,14 @@ SeizeBomberNectar <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
-info <- c(200, 3 * 2, 900, 3030, 120, 45, T, T, T, F)
+info <- c(150 + 200, 3 * 2, 900, 3030, 120, 45, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AssembleCrewDualPistol <- rbind(data.frame(option, value), info) ## ATKSpeed/Delay Check Needed
 
 option <- factor(c("IGR", "FDR"), levels=SSkill)
 value <- c(ifelse(GetCoreLv(CaptainCore, "SummonCrew")>=40, 20, 0), FDRCalc(c(15 + CaptainSpec$SkillLv, 2 * GetCoreLv(CaptainCore, "SummonCrew"))))
-info <- c(285, 3 * 2, 900, 1200, 120, 45, T, T, T, F)
+info <- c(285 + 200, 3 * 2, 900, 1200, 120, 45, T, T, T, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")
 AssembleCrewDualPistolNectar <- rbind(data.frame(option, value), info)
