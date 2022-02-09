@@ -376,7 +376,7 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
   
   option <- factor(c("IGR", "FDR"), levels=ASkill)
   value <- c(ifelse(GetCoreLv(MercedesCore, "LeafTornado_GustDive")>=40, 20, 0), 2 * GetCoreLv(MercedesCore, "LeafTornado_GustDive"))
-  info <- c((260 + 170 + 3 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 1.845, 0, NA, NA, NA, NA, F)
+  info <- c((260 + 170 + 3 * MercedesSpec$SkillLv) * (0.3 + 0.01 * GetCoreLv(MercedesCore, "ElementalGhost")), 4 * 0.9, 0, NA, NA, NA, NA, F)
   info <- data.frame(AInfo, info)
   colnames(info) <- c("option", "value")
   GustDiveGhost <- rbind(data.frame(option, value), info)
@@ -435,7 +435,14 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
   info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 1.845, 0, NA, NA, NA, NA, F)
   info <- data.frame(AInfo, info)
   colnames(info) <- c("option", "value")
-  AdvancedFinalAttackEnlilGhost <- rbind(data.frame(option, value), info)}
+  AdvancedFinalAttackEnlilGhost <- rbind(data.frame(option, value), info)
+  
+  option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+  value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
+  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.9, 0, NA, NA, NA, NA, F)
+  info <- data.frame(AInfo, info)
+  colnames(info) <- c("option", "value")
+  AdvancedFinalAttackGustGhost <- rbind(data.frame(option, value), info)}
 
 MercedesATK <- Attack(list(UnicornSpike=UnicornSpike, LeafTornado=LeafTornado, GustDive=GustDive, 
                            LegendrySpear=LegendrySpear, RingofIshtar=RingofIshtar, AdvancedStrikeDualShot=AdvancedStrikeDualShot, RollingMoonsault=RollingMoonsault, WrathofEnlil=WrathofEnlil, 
@@ -444,7 +451,7 @@ MercedesATK <- Attack(list(UnicornSpike=UnicornSpike, LeafTornado=LeafTornado, G
                            UnicornSpikeGhost=UnicornSpikeGhost, LeafTornadoGhost=LeafTornadoGhost, GustDiveGhost=GustDiveGhost,
                            LegendrySpearGhost=LegendrySpearGhost, RollingMoonsaultGhost=RollingMoonsaultGhost, RingofIshtarGhost=RingofIshtarGhost, AdvancedStrikeDualShotGhost=AdvancedStrikeDualShotGhost, 
                            WrathofEnlilGhost=WrathofEnlilGhost, BreathofIrkallaGhost=BreathofIrkallaGhost, AdvancedFinalAttackIshtarGhost=AdvancedFinalAttackIshtarGhost, AdvancedFinalAttackEnlilGhost=AdvancedFinalAttackEnlilGhost, 
-                           SpiderInMirror=SpiderInMirror))
+                           AdvancedFinalAttackGustGhost=AdvancedFinalAttackGustGhost, SpiderInMirror=SpiderInMirror))
 
 
 ## Mercedes - Summoned
@@ -494,15 +501,15 @@ MercedesSkipATK <- matrix(rep(F, nrow(ATKFinal) * (nrow(ATKFinal)+1)), nrow=nrow
 MercedesSkipATK <- data.frame(MercedesSkipATK, row.names=c(rownames(ATKFinal)))
 colnames(MercedesSkipATK) <- c(rownames(ATKFinal), "SkippedDelay")
 
-MercedesSkipATK$UnicornSpike <- c(F, F, T, F, F, T, F, T, rep(F, 19))
-MercedesSkipATK$LeafTornado <- c(F, F, F, T, F, F, T, F, rep(F, 19))
-MercedesSkipATK$GustDive <- c(F, T, F, T, F, F, T, F, rep(F, 19))
-MercedesSkipATK$LegendrySpear <- c(T, T, T, F, F, T, T, T, rep(F, 19))
-MercedesSkipATK$AdvancedStrikeDualShot <- c(T, F, T, F, F, F, F, T, rep(F, 19))
-MercedesSkipATK$RollingMoonsault <- c(F, T, F, T, F, F, F, F, rep(F, 19))
-MercedesSkipATK$WrathofEnlil <- c(T, T, T, T, F, T, T, F, rep(F, 19))
+MercedesSkipATK$UnicornSpike <- c(F, F, T, F, F, T, F, T, rep(F, 20))
+MercedesSkipATK$LeafTornado <- c(F, F, F, T, F, F, T, F, rep(F, 20))
+MercedesSkipATK$GustDive <- c(F, T, F, T, F, F, T, F, rep(F, 20))
+MercedesSkipATK$LegendrySpear <- c(T, T, T, F, F, T, T, T, rep(F, 20))
+MercedesSkipATK$AdvancedStrikeDualShot <- c(T, F, T, F, F, F, F, T, rep(F, 20))
+MercedesSkipATK$RollingMoonsault <- c(F, T, F, T, F, F, F, F, rep(F, 20))
+MercedesSkipATK$WrathofEnlil <- c(T, T, T, T, F, T, T, F, rep(F, 20))
 MercedesSkipATK$SkippedDelay <- c(Delay(600, MercedesSpec$ATKSpeed), Delay(480, MercedesSpec$ATKSpeed), 480, 
-                                  Delay(870, MercedesSpec$ATKSpeed), 0, Delay(450, MercedesSpec$ATKSpeed), Delay(630, MercedesSpec$ATKSpeed), Delay(270, MercedesSpec$ATKSpeed), rep(0, 19))
+                                  Delay(870, MercedesSpec$ATKSpeed), 0, Delay(450, MercedesSpec$ATKSpeed), Delay(630, MercedesSpec$ATKSpeed), Delay(270, MercedesSpec$ATKSpeed), rep(0, 20))
 MercedesSkipATK <- subset(MercedesSkipATK, MercedesSkipATK$SkippedDelay>0)
 
 
@@ -513,7 +520,7 @@ colnames(MercedesDealCycle) <- DealCycle
 MercedesDealCycle <- data.frame(MercedesDealCycle)
 
 MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, 
-                          Period=c(180), CycleTime, SummonSkillPeriod, CycleType=c("Default", "UseGustDive", "NotUseGustDive")) {
+                          Period=c(180), CycleTime, SummonSkillPeriod, CycleType=c("Default", "UseGustDive")) {
   BuffSummonedPrior <- c("AncientSpirit", "MapleSoldier", "UsefulCombatOrders", "UsefulSharpEyes", "UsefulAdvancedBless", 
                          "HeroesOath", "ElementalKnightIF", "ElementalKnightD", "GuidedArrow",
                          "ElfishBlessing", "MapleWarriors2", "ElementalGhost", "RoyalKnights", "SoulContractLink", "CriticalReinforce", "Restraint4")
@@ -729,42 +736,6 @@ MercedesCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Skip
         DebuffDummy <- 3
         IgnisDummy <- ifelse(DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] > 0, 0, IgnisDummy + DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] + DealCycle$Time[1])
       }
-      if(IgnisDummy==0 & DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] > 0 & CycleType == "NotUseGustDive") {
-        DealCycle <- DCATKSkip(DealCycle, "UnicornSpike", ATKFinal, SkipStructure)
-        if(sum(DealCycle$Skills[nrow(DealCycle)-1]==c("AdvancedStrikeDualShot", "GustDive", "WrathofEnlil"))==1) {
-          DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-          DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        }
-        DealCycle$UnicornSpikeDebuff[nrow(DealCycle)] <- 30000
-        DealCycle <- DCATKSkip(DealCycle, "AdvancedStrikeDualShot", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "LegendrySpear", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$LegendrySpearDebuff[nrow(DealCycle)] <- 30000
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "LeafTornado", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "RollingMoonsault", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "LeafTornado", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "LegendrySpear", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$LegendrySpearDebuff[nrow(DealCycle)] <- 30000
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "WrathofEnlil", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DealCycle <- DCATKSkip(DealCycle, "AdvancedStrikeDualShot", ATKFinal, SkipStructure)
-        DealCycle$SkipDummy[nrow(DealCycle)] <- 1
-        DealCycle$IgnisRoarStack[nrow(DealCycle)] <- 15000
-        DebuffDummy <- 3
-        IgnisDummy <- ifelse(DealCycle$ElementalGhost[nrow(DealCycle)] - DealCycle$Time[1] > 0, 0, IgnisDummy + DealCycle$Time[nrow(DealCycle)] - DealCycle$Time[nrow(DealCycle)-1] + DealCycle$Time[1])
-      }
       if(nrow(subset(DealCycle, DealCycle$Skills=="BreathofIrkallaPre"))==0) {
         DealCycle <- DCBuff(DealCycle, "Sylvidia", BuffFinal)
         DealCycle <- DCATK(DealCycle, "BreathofIrkallaPre", ATKFinal)
@@ -867,10 +838,12 @@ MercedesAddATK <- function(DealCycle) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- paste(DealCycle$Skills[i], "Ghost", sep="")
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil")) > 0) {
+        if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "LegendrySpear", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil")) > 0) {
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackEnlilGhost")
         } else if(sum(DealCycle$Skills[i]==c("RingofIshtar")) > 0) {
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackIshtarGhost")
+        } else if(sum(DealCycle$Skills[i]==c("GustDive")) > 0) {
+          DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackGustGhost")
         }
       }
     }
@@ -890,7 +863,7 @@ MercedesDealCycle <- MercedesCycle(PreDealCycle = MercedesDealCycle,
                                    Period = 180, 
                                    CycleTime = 360, 
                                    SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)), 
-                                   CycleType="Default")
+                                   CycleType="UseGustDive")
 MercedesDealCycle <- DCSummonedATKs(MercedesDealCycle, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
 MercedesDealCycle <- RepATKCycle(MercedesDealCycle, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
 MercedesDealCycle <- MercedesAddATK(MercedesDealCycle)
@@ -911,31 +884,11 @@ MercedesDealCycle2 <- MercedesCycle(PreDealCycle = MercedesDealCycle2,
                                     Period = 180, 
                                     CycleTime = 360, 
                                     SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)), 
-                                    CycleType="UseGustDive")
+                                    CycleType="Default")
 MercedesDealCycle2 <- DCSummonedATKs(MercedesDealCycle2, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
 MercedesDealCycle2 <- RepATKCycle(MercedesDealCycle2, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
 MercedesDealCycle2 <- MercedesAddATK(MercedesDealCycle2)
 MercedesDealCycle2 <- DCSpiderInMirror(MercedesDealCycle2, SummonedFinal)
-
-DealCycle <- c("Skills", "Time", rownames(MercedesBuff))
-MercedesDealCycle3 <- t(rep(0, length(DealCycle)))
-colnames(MercedesDealCycle3) <- DealCycle
-MercedesDealCycle3 <- data.frame(MercedesDealCycle3)
-
-MercedesDealCycle3 <- MercedesCycle(PreDealCycle = MercedesDealCycle3, 
-                                    ATKFinal = ATKFinal, 
-                                    BuffFinal = BuffFinal, 
-                                    SummonedFinal = SummonedFinal, 
-                                    SkipStructure = MercedesSkipATK, 
-                                    Spec = MercedesSpec, 
-                                    Period = 180, 
-                                    CycleTime = 360, 
-                                    SummonSkillPeriod=data.frame(Skills=c("ElementalKnightIF", "ElementalKnightD"), Period=c(112.8, 112.8)), 
-                                    CycleType="NotUseGustDive")
-MercedesDealCycle3 <- DCSummonedATKs(MercedesDealCycle3, Skill=c("GuidedArrow", "ElementalKnightIF", "ElementalKnightD"), SummonedFinal)
-MercedesDealCycle3 <- RepATKCycle(MercedesDealCycle3, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
-MercedesDealCycle3 <- MercedesAddATK(MercedesDealCycle3)
-MercedesDealCycle3 <- DCSpiderInMirror(MercedesDealCycle3, SummonedFinal)
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {
@@ -978,28 +931,17 @@ colnames(MercedesDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Mercedes", Deal_RR(MercedesDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Mercedes", Deal_40s(MercedesDealData))
 
-MercedesGust <- DealCalcWithMaxDMR(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt)
-MercedesGustDPM <- sum(na.omit(MercedesGust)) / (max(MercedesDealCycle2$Time) / 60000)
+MercedesNotUseGust <- DealCalcWithMaxDMR(MercedesDealCycle2, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt)
+MercedesNotUseGustDPM <- sum(na.omit(MercedesNotUseGust)) / (max(MercedesDealCycle2$Time) / 60000)
 
-MercedesDealDataGust <- data.frame(MercedesDealCycle2$Skills, MercedesDealCycle2$Time, MercedesDealCycle2$Restraint4, MercedesGust)
-colnames(MercedesDealDataGust) <- c("Skills", "Time", "R4", "Deal")
+MercedesDealDataNotUseGust <- data.frame(MercedesDealCycle2$Skills, MercedesDealCycle2$Time, MercedesDealCycle2$Restraint4, MercedesNotUseGust)
+colnames(MercedesDealDataNotUseGust) <- c("Skills", "Time", "R4", "Deal")
 
-MercedesGustRR <- Deal_RR(MercedesDealDataGust)
-MercedesGust40s <- Deal_40s(MercedesDealDataGust)
+MercedesNotUseGustRR <- Deal_RR(MercedesDealDataNotUseGust)
+MercedesNotUseGust40s <- Deal_40s(MercedesDealDataNotUseGust)
 
-MercedesMoonsault <- DealCalcWithMaxDMR(MercedesDealCycle3, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt)
-MercedesMoonsaultDPM <- sum(na.omit(MercedesMoonsault)) / (max(MercedesDealCycle3$Time) / 60000)
-
-MercedesDealDataMoonsault <- data.frame(MercedesDealCycle3$Skills, MercedesDealCycle3$Time, MercedesDealCycle3$Restraint4, MercedesMoonsault)
-colnames(MercedesDealDataMoonsault) <- c("Skills", "Time", "R4", "Deal")
-
-MercedesMoonsaultRR <- Deal_RR(MercedesDealDataMoonsault)
-MercedesMoonsault40s <- Deal_40s(MercedesDealDataMoonsault)
-
-MercedesGustDealRatio <- DealRatio(MercedesDealCycle2, MercedesGust)
-MercedesMoonsaultDealRatio <- DealRatio(MercedesDealCycle3, MercedesMoonsault)
-print(list(GustCycle=data.frame(MercedesGustDPM=MercedesGustDPM, MercedesGustRR=MercedesGustRR, MercedesGust40s=MercedesGust40s), 
-           MoonsaultCycle=data.frame(MercedesMoonsaultDPM=MercedesMoonsaultDPM, MercedesMoonsaultRR=MercedesMoonsaultRR, MercedesMoonsault40s=MercedesMoonsault40s)))
+MercedesNotUseGustDealRatio <- DealRatio(MercedesDealCycle2, MercedesNotUseGust)
+print(list(NotUseGustCycle=data.frame(MercedesNotUseGustDPM=MercedesNotUseGustDPM, MercedesNotUseGustRR=MercedesNotUseGustRR, MercedesNotUseGust40s=MercedesNotUseGust40s)))
 
 MercedesSpecMean <- SpecMean("Mercedes", MercedesDealCycleReduction, 
                              DealCalcWithMaxDMR(MercedesDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, MercedesSpecOpt), 

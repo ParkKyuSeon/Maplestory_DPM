@@ -965,7 +965,7 @@ CaptainDealCycle53$LuckyDice5 <- 0
 CaptainDealCycle533$LuckyDice533 <- CaptainDealCycle533$LuckyDice5
 CaptainDealCycle533$LuckyDice5 <- 0
 
-CaptainDealCycle553$LuckyDice533 <- CaptainDealCycle553$LuckyDice5
+CaptainDealCycle553$LuckyDice553 <- CaptainDealCycle553$LuckyDice5
 CaptainDealCycle553$LuckyDice5 <- 0
 
 CaptainDealCycleProbs <- c(0.592680, 0.208894, 0.009475, 

@@ -110,6 +110,9 @@ CaptainSkillList <- list(AssembleCrew=c("AssembleCrewDualPistol", "AssembleCrewD
 CaptainDealCycle5Simplified <- DealCycleCollapse(CaptainDealCycle5, CaptainSkillList)
 CaptainDealCycle55Simplified <- DealCycleCollapse(CaptainDealCycle55, CaptainSkillList)
 CaptainDealCycle555Simplified <- DealCycleCollapse(CaptainDealCycle555, CaptainSkillList)
+CaptainDealCycle53Simplified <- DealCycleCollapse(CaptainDealCycle53, CaptainSkillList)
+CaptainDealCycle533Simplified <- DealCycleCollapse(CaptainDealCycle533, CaptainSkillList)
+CaptainDealCycle553Simplified <- DealCycleCollapse(CaptainDealCycle553, CaptainSkillList)
 
 ## CannonShooter
 CannonShooterSkillList <- list(ICBM=c("ICBM", "ICBMFloor"), 
@@ -478,8 +481,9 @@ ShadowerDealRatio <- DealRatio(ShadowerDealCycleSimplified, ShadowerFinalDPMwith
 DualBladerDealRatio <- DealRatio(DualBladeDealCycleSimplified, DualBladeFinalDPMwithMax)
 ViperDealRatio <- ResetDealRatio(DealCycles=GetList(ViperSimplifiedCycleNames), 
                                  DealDatas=ViperDealDatas, rep(max(ViperDealCycle5Simplified$Time), length(ViperSimplifiedCycleNames)), ViperDealCycleProbs)
-CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5Simplified, CaptainDealCycle55Simplified, CaptainDealCycle555Simplified), 
-                                   CaptainDealDatas, rep(max(CaptainDealCycle$Time), 3), CaptainDealCycleProbs)
+CaptainDealRatio <- ResetDealRatio(list(CaptainDealCycle5Simplified, CaptainDealCycle55Simplified, CaptainDealCycle555Simplified, 
+                                        CaptainDealCycle53Simplified, CaptainDealCycle533Simplified, CaptainDealCycle553Simplified), 
+                                   CaptainDealDatas, rep(max(CaptainDealCycle$Time), 6), CaptainDealCycleProbs)
 CannonMasterDealRatio <- ResetDealRatio(DealCycles=list(CannonShooterDealCyclesSimplified[[2]], CannonShooterDealCyclesSimplified[[1]], CannonShooterDealCyclesSimplified[[3]], 
                                                         CannonShooterDealCyclesSimplified[[4]], CannonShooterDealCyclesSimplified[[5]], CannonShooterDealCyclesSimplified[[6]],
                                                         CannonShooterDealCyclesSimplified[[7]], CannonShooterDealCyclesSimplified[[8]], CannonShooterDealCyclesSimplified[[9]]), 
