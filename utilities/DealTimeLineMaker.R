@@ -259,49 +259,48 @@ legend(x=0, y=400000, legend=c("CannonShooter", "Viper", "Striker", "Eunwol(Fixe
 
 ## Cummulative RR Deal Graph
 ## Warrior
-RRGraph(HeroDealData[57:179, ], "Warrior(1)", col=colorset[2])
-RRGraph(PalladinDealData[25:208, ], "Palladin", col=colorset[3], add=T)
-RRGraph(DarkKnightDealData[260:390, ], "DarkKnight", col=colorset[4], add=T)
-RRGraph(MikhailDealData[51:205, ], "Mikhail", col=colorset[5], add=T, reverse=T)
-RRGraph(SoulMasterDealData[359:576, ], "SoulMaster", col=colorset[6], add=T, reverse=T)
-RRGraph(AranDealData[151:664, ], "Aran", col=colorset[8], add=T)
+RRGraph(DealData_RR(HeroDealData), "Warrior(1)", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682)
+RRGraph(DealData_RR(PalladinDealData), "Palladin", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(DarkKnightDealData), "DarkKnight", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(MikhailDealData), "Mikhail", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T, reverse=T)
+RRGraph(DealData_RR(SoulMasterDealData), "SoulMaster", col=colorset[6],  ylim=c(0, 220000), BishopRRDeal=126682, add=T, reverse=T)
+RRGraph(DealData_RR(AranDealData), "Aran", col=colorset[8], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("Hero", "Palladin", "DarkKnight", "Mikhail(R)", 
+legend(x=0, y=220000, legend=c("Hero", "Palladin", "DarkKnight", "Mikhail(R)", 
                               "SoulMaster(R)", "Aran"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
 
 
-RRGraph(BlasterDealData[19:275, ], "Warrior(2)", col=colorset[2])
-RRGraph(DemonSlayerDealData[56:295, ], "DemonSlayer", col=colorset[3], add=T)
-RRGraph(DemonAvengerDealData[86:319, ], "DemonAvenger", col=colorset[4], add=T)
-RRGraph(KaiserDealData[39:274, ], "Kaiser", col=colorset[5], add=T)
-RRGraph(AdeleDealData[165:577, ], "Adele", col=colorset[6], add=T)
-RRGraph(ZeroDealData[11:173, ], "Zero", col=colorset[8], add=T)
+RRGraph(DealData_RR(BlasterDealData), "Warrior(2)", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682)
+RRGraph(DealData_RR(DemonSlayerDealData), "DemonSlayer", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(DemonAvengerDealData), "DemonAvenger", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(KaiserDealData), "Kaiser", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(AdeleDealData), "Adele", col=colorset[6], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(ZeroDealData), "Zero", col=colorset[8], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("Blaster", "DemonSlayer", "DemonAvenger", "Kaiser",
+legend(x=0, y=220000, legend=c("Blaster", "DemonSlayer", "DemonAvenger", "Kaiser",
                               "Adele", "Zero"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
 
 ## Wizard
-RRGraph(data.frame(Time=ArchMageFP40s$Time, Deal=ArchMageFP40s$Damage)[1495:1829, ], "Wizard(1)", col=colorset[2], reverse=T)
-RRGraph(data.frame(Time=ArchMageTC40s$Time, Deal=ArchMageTC40s$Damage)[730:1009, ], "ArchMageTC", col=colorset[3], add=T, reverse=T)
-RRGraph(data.frame(Time=Bishop40s$Time, Deal=Bishop40s$Damage)[341:424, ], "Bishop", col=colorset[4], add=T, reverse=T)
-RRGraph(FlameWizardDealData[89:256, ], "FlameWizard", col=colorset[5], add=T)
-RRGraph(EvanDealData[55:357, ], "Evan", col=colorset[6], add=T)
-RRGraph(LuminousDealData[622:755, ], "Luminous", col=colorset[8], add=T)
+RRGraph(DealData_RR(ArchMageFPDealData), "Wizard(1)", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682, reverse=T)
+RRGraph(DealData_RR(ArchMageTCDealData), "ArchMageTC", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T, reverse=T)
+RRGraph(DealData_RR(BishopDealData), "Bishop", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T, reverse=T)
+RRGraph(DealData_RR(FlameWizardDealData), "FlameWizard", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(EvanDealData), "Evan", col=colorset[6], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("ArchMageFP(R)", "ArchMageTC(R)", "Bishop(R)", "FlameWizard", 
-                              "Evan", "Luminous"), col=colorset[c(2:6, 8)], lty=1, lwd=4)
+legend(x=0, y=220000, legend=c("ArchMageFP(R)", "ArchMageTC(R)", "Bishop(R)", "FlameWizard", 
+                              "Evan"), col=colorset[c(2:6)], lty=1, lwd=4)
 
-RRGraph(BattleMageDealData[18:183, ], "Wizard(2)", col=colorset[2])
-RRGraph(IlliumDealData[220:405, ], "Illium(Ground)", col=colorset[3], add=T)
-RRGraph(WinggnitionDealData[220:392, ], "Illium(Wing)", col=colorset[4], add=T)
-RRGraph(LaraDealData[30:205, ], "Lara", col=colorset[5], add=T)
-RRGraph(KinesisDealData[60:282, ], "Kinesis", col=colorset[6], add=T)
+RRGraph(DealData_RR(LuminousDealData), "Wizard(2)", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682)
+RRGraph(DealData_RR(BattleMageDealData), "BattleMage", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(IlliumDealData), "Illium", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(LaraDealData), "Lara", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(KinesisDealData), "Kinesis", col=colorset[6], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("BattleMage", "Illium(Ground)", "Illium(Wing)", "Lara", "Kinesis"), col=colorset[c(2:6)], lty=1, lwd=4)
+legend(x=0, y=220000, legend=c("Luminous", "BattleMage", "Illium", "Lara", "Kinesis"), col=colorset[c(2:6)], lty=1, lwd=4)
 
 ## Archer
-RRGraph(BowmasterDealData[70:766, ], "Archer", col=colorset[2])
-RRGraph(data.frame(Time=MRestraint$Time, Deal=MRestraint$Damage), "Marksman", col=colorset[3], add=T)
+RRGraph(DealData_RR(BowmasterDealData), "Archer", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682)
+RRGraph(DealData_RR(MarksmanDealData), "Marksman", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 RRGraph(PathFinderDealData[58:462, ], "PathFinder", col=colorset[4], add=T)
 RRGraph(WindBreakerDealData[111:1148, ], "WindBreaker", col=colorset[5], add=T)
 RRGraph(MercedesDealData[42:452, ], "Mercedes", col=colorset[6], add=T)

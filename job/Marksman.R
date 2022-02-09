@@ -519,7 +519,7 @@ MarksmanCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
     ## Charged Arrow Charging Start (Auto)
     if(CARemain - DealCycle$Time[1] <= 0 & CAStatus == "Auto") {
       RemainedTime <- (DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="ChargedArrowStart")$Time)) - 11000
-      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Time[1] - ((DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="ChargedArrowStart")$Time)) - 11000)
+      DealCycle[1, 2:ncol(DealCycle)] <- DealCycle$Time[1] - RemainedTime
       DealCycle <- DCATK(DealCycle, "ChargedArrowStart", ATKFinal)
       DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
       DealCycle$ChargedArrowCharge[nrow(DealCycle)] <- 10000
@@ -589,7 +589,13 @@ MarksmanCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         if(DealCycle[nrow(DealCycle), ColNums[i]] - DealCycle$Time[1] < 3000) {
           DealCycle <- DCBuff(DealCycle, colnames(DealCycle)[ColNums[i]], BuffFinal)
           DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
-          CARemain <- max(0, CARemain - DealCycle$Time[1])
+          DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+          if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+            CAStatus <- "Auto"
+            CARemain <- max(0, 11000 - DealCycle$Time[1])
+          } else {
+            CARemain <- max(0, CARemain - DealCycle$Time[1])
+          }
         }
       }
       ## Fullbust Shot
@@ -690,22 +696,24 @@ MarksmanCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec
         if(sum(rownames(BuffFinal)==BuffList[[k]][i]) > 0) {
           DealCycle <- DCBuff(DealCycle, BuffList[[k]][i], BuffFinal)
           DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
-          CARemain <- max(0, CARemain - DealCycle$Time[1])
+          DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+          if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+            CAStatus <- "Auto"
+            CARemain <- max(0, 11000 - DealCycle$Time[1])
+          } else {
+            CARemain <- max(0, CARemain - DealCycle$Time[1])
+          }
         } else {
           DealCycle <- DCSummoned(DealCycle, BuffList[[k]][i], SummonedFinal)
           DealCycle$EnhanceArrowStack[nrow(DealCycle)] <- DealCycle$EnhanceArrowStack[nrow(DealCycle)-1]
-          CARemain <- max(0, CARemain - DealCycle$Time[1])
+          DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
+          if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
+            CAStatus <- "Auto"
+            CARemain <- max(0, 11000 - DealCycle$Time[1])
+          } else {
+            CARemain <- max(0, CARemain - DealCycle$Time[1])
+          }
         }
-      }
-    }
-    
-    if(DealCycle$ChargedArrowCharge[nrow(DealCycle)] > 0) {
-      DealCycle <- ChargedArrowLogic(DealCycle, CARemain, CAStatus, F)
-      if(DealCycle$Skills[nrow(DealCycle)]=="ChargedArrowStart") {
-        CAStatus <- "Auto"
-        CARemain <- max(0, 11000 - DealCycle$Time[1])
-      } else {
-        CARemain <- max(0, CARemain - DealCycle$Time[1])
       }
     }
   }
