@@ -301,40 +301,39 @@ legend(x=0, y=220000, legend=c("Luminous", "BattleMage", "Illium", "Lara", "Kine
 ## Archer
 RRGraph(DealData_RR(BowmasterDealData), "Archer", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682)
 RRGraph(DealData_RR(MarksmanDealData), "Marksman", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
-RRGraph(PathFinderDealData[58:462, ], "PathFinder", col=colorset[4], add=T)
-RRGraph(WindBreakerDealData[111:1148, ], "WindBreaker", col=colorset[5], add=T)
-RRGraph(MercedesDealData[42:452, ], "Mercedes", col=colorset[6], add=T)
-RRGraph(WildHunterDealData[81:687, ], "WildHunter", col=colorset[8], add=T)
-RRGraph(KainDealData[185:404, ], "Kain", col=colorset[9], add=T)
+RRGraph(DealData_RR(PathFinderDealData), "PathFinder", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(WindBreakerDealData), "WindBreaker", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(MercedesDealData), "Mercedes", col=colorset[6], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(WildHunterDealData), "WildHunter", col=colorset[8], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(KainDealData), "Kain", col=colorset[9], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("Bowmaster", "Marksman", "PathFinder", 
+legend(x=0, y=220000, legend=c("Bowmaster", "Marksman", "PathFinder", 
                               "WindBreaker", "Mercedes", "WildHunter", "Kain"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 ## Thief
-RRGraph(NightLordDealData[31:434, ], "Thief", col=colorset[2])
-RRGraph(ShadowerDealData[42:462, ], "Shadower", col=colorset[3], add=T)
-RRGraph(DualBladeDealData[30:279, ], "DualBlader", col=colorset[4], add=T)
-RRGraph(NightWalkerDealData[58:825, ], "NightWalker", col=colorset[5], add=T)
-RRGraph(PhantomDealData[23:429, ], "Phantom", col=colorset[6], add=T)
-RRGraph(HoyeongDealData[67:232, ], "Hoyeong", col=colorset[8], add=T)
-RRGraph(XenonDealData[320:636, ], "Xenon", col=colorset[9], add=T)
+RRGraph(DealData_RR(NightLordDealData), "Thief", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682)
+RRGraph(DealData_RR(ShadowerDealData), "Shadower", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(DualBladeDealData), "DualBlader", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(NightWalkerDealData), "NightWalker", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T, reverse=T)
+RRGraph(DealData_RR(PhantomDealData), "Phantom", col=colorset[6], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(HoyeongDealData), "Hoyeong", col=colorset[8], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(XenonDealData), "Xenon", col=colorset[9], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("NightLord", "Shadower", "DualBlader", "NightWalker", 
+legend(x=0, y=220000, legend=c("NightLord", "Shadower", "DualBlader", "NightWalker", 
                               "Phantom", "Hoyeong", "Xenon"), col=colorset[c(2:6, 8, 9)], lty=1, lwd=4)
 
 ## Pirates
-RRGraph(CannonShooterDealData[39:274, ], "Pirates", col=colorset[1])
-RRGraph(ViperDealData[45:210, ], "Viper", col=colorset[2], add=T)
-RRGraph(CaptainDealData[125:594, ], "Captain", col=colorset[3], add=T)
-RRGraph(StrikerDealData[33:235, ], "Striker", col=colorset[4], add=T, reverse=T)
-RRGraph(EunwolDealData[72:1825, ], "Eunwol(Moving Boss)", col=colorset[5], add=T)
-RRGraph(EunwolDealDataFixed[51:1579, ], "Eunwol(Fixed Boss)", col=colorset[6], add=T)
-RRGraph(MechanicDealData[46:339, ], "Mechanic", col=colorset[7], add=T)
-RRGraph(ArkDealData[58:395, ], "Ark", col=colorset[9], add=T)
-RRGraph(ABDealData[517:1180, ], "AngelicBuster", col=colorset[10], add=T)
+RRGraph(DealData_RR(CannonShooterDealData), "Pirates", col=colorset[1], ylim=c(0, 220000), BishopRRDeal=126682)
+RRGraph(DealData_RR(ViperDealData), "Viper", col=colorset[2], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(CaptainDealData), "Captain", col=colorset[3], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(StrikerDealData), "Striker", col=colorset[4], ylim=c(0, 220000), BishopRRDeal=126682, add=T, reverse=T)
+RRGraph(DealData_RR(EunwolDealDataFGX), "Eunwol(Fixed Boss)", col=colorset[5], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(MechanicDealData), "Mechanic", col=colorset[6], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(ArkDealData), "Ark", col=colorset[8], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
+RRGraph(DealData_RR(AngelicBusterDealDataRR), "AngelicBuster", col=colorset[9], ylim=c(0, 220000), BishopRRDeal=126682, add=T)
 
-legend(x=0, y=80000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)", "Eunwol(Moving)", 
-                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(1:7, 9:10)], lty=1, lwd=4)
+legend(x=0, y=220000, legend=c("CannonShooter", "Viper", "Captain", "Striker(R)", 
+                              "Eunwol(Fixed)", "Mechanic", "Ark", "AngelicBuster"), col=colorset[c(1:6, 8:9)], lty=1, lwd=4)
 
 
 

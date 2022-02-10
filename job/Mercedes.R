@@ -432,14 +432,20 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
   
   option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
   value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 1.845, 0, NA, NA, NA, NA, F)
+  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * 
+            ## (0.75 + 0.01 * MercedesSpec$SkillLv) * 1.845, 
+            (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.25333 * 1.845, 
+            0, NA, NA, NA, NA, F)
   info <- data.frame(AInfo, info)
   colnames(info) <- c("option", "value")
   AdvancedFinalAttackEnlilGhost <- rbind(data.frame(option, value), info)
   
   option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
   value <- c(ifelse(GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack")>=40, 20, 0), MercedesBase$MonsterLife$FinalATKDMR, 2 * GetCoreLv(MercedesCore, "AdvancedStrikeDualShot_AdvancedFinalAttack"))
-  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.9, 0, NA, NA, NA, NA, F)
+  info <- c(120 + 1 * MercedesSpec$SkillLv, 2 * 
+            ## (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.9, 
+            (0.75 + 0.01 * MercedesSpec$SkillLv) * 0.25333 * 0.9, 
+            0, NA, NA, NA, NA, F)
   info <- data.frame(AInfo, info)
   colnames(info) <- c("option", "value")
   AdvancedFinalAttackGustGhost <- rbind(data.frame(option, value), info)}
@@ -832,17 +838,21 @@ MercedesAddATK <- function(DealCycle) {
   
   for(i in 1:(nrow(DealCycle)-1)) {
     if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "GustDive", "LegendrySpear", "RingofIshtar", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil", "BreathofIrkallaSylvidia")) > 0) {
-      DealCycle <- rbind(DealCycle, DealCycle[i, ])
-      DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttack")
+      if(sum(DealCycle$Skills[i]==c("LeafTornado", "GustDive", "LegendrySpear", "RingofIshtar", "AdvancedStrikeDualShot", "RollingMoonsault", "BreathofIrkallaSylvidia")) > 0) {
+        DealCycle <- rbind(DealCycle, DealCycle[i, ])
+        DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttack")
+      }
       if(DealCycle$ElementalGhost[i] > 0 & DealCycle$Skills[i]!="BreathofIrkallaSylvidia") {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- paste(DealCycle$Skills[i], "Ghost", sep="")
-        DealCycle <- rbind(DealCycle, DealCycle[i, ])
-        if(sum(DealCycle$Skills[i]==c("UnicornSpike", "LeafTornado", "LegendrySpear", "AdvancedStrikeDualShot", "RollingMoonsault", "WrathofEnlil")) > 0) {
+        if(sum(DealCycle$Skills[i]==c("LeafTornado", "LegendrySpear", "AdvancedStrikeDualShot", "RollingMoonsault")) > 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[i, ])
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackEnlilGhost")
         } else if(sum(DealCycle$Skills[i]==c("RingofIshtar")) > 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[i, ])
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackIshtarGhost")
         } else if(sum(DealCycle$Skills[i]==c("GustDive")) > 0) {
+          DealCycle <- rbind(DealCycle, DealCycle[i, ])
           DealCycle$Skills[nrow(DealCycle)] <- c("AdvancedFinalAttackGustGhost")
         }
       }
