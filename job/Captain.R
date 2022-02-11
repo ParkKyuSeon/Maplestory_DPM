@@ -81,7 +81,7 @@ value <- c(45 + 3 * CaptainBase$PSkillLv, 30 + CaptainBase$PSkillLv, 10 + floor(
 CrewCommandership <- data.frame(option, value) ## Crew FDR 15 + PSkillLv%
 
 option <- factor(c("Mastery", "ATK", "FDR"), levels=PSkill)
-value <- c(70 + floor(CaptainBase$PSkillLv/2), 30 + CaptainBase$PSkillLv, 8)
+value <- c(70 + ceiling(CaptainBase$PSkillLv/2), 30 + CaptainBase$PSkillLv, 8)
 CaptainDignityPassive <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)

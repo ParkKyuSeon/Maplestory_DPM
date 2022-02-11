@@ -887,3 +887,9 @@ ArchMageFPDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNam
 
 set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageFP", Deal_RR(ArchMageFPDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageFP", Deal_40s(ArchMageFPDealData, F, NA, FinishTime=subset(ArchMageFPDealData, ArchMageFPDealData$Skills=="Restraint4")$Time[1] + 15000))
+
+ArchMageFPSpecMean <- ResetSpecMean("ArchMageFP", 
+                                    GetList(UnstableCycles$CycleNames), 
+                                    GetList(UnstableCycles$DealDatas), 
+                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+                                    NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))

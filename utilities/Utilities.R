@@ -139,3 +139,18 @@ RRDealData <- function(DealData, CycleTime=NA) {
               RRDealAvg = RRDealAvg, 
               RRDealPerMin = RRDealPerMin))
 }
+
+## Spec Mean Data Generation
+SpecMeanData <- get(paste(ChrInfo$job[1], "SpecMean", sep=""))
+for(i in 2:length(ChrInfo$job)) {
+  if(sum(ChrInfo$job[i] == c("DualBlader")) >= 1) {
+    SpecMeanData <- rbind(SpecMeanData, get(paste("DualBlade", "SpecMean", sep="")))
+  } else if(sum(ChrInfo$job[i] == c("CannonMaster")) >= 1) {
+    SpecMeanData <- rbind(SpecMeanData, get(paste("CannonShooter", "SpecMean", sep="")))
+  } else {
+    SpecMeanData <- rbind(SpecMeanData, get(paste(ChrInfo$job[i], "SpecMean", sep="")))
+  }
+}
+rownames(SpecMeanData) <- ChrInfo$job
+Modifier <- "_L"
+write.csv(SpecMeanData, paste("SpecMeanData", Modifier, ".csv", sep=""))

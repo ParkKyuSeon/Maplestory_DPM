@@ -964,3 +964,9 @@ BishopDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNames),
 
 set(get(DPMCalcOption$DataName), as.integer(3), "Bishop", Deal_RR(BishopDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Bishop", Deal_40s(BishopDealData, F, NA, FinishTime=subset(BishopDealData, BishopDealData$Skills=="WeaponPuff4")$Time[1] + 18000))
+
+BishopSpecMean <- ResetSpecMean("Bishop", 
+                                GetList(UnstableCycles$CycleNames), 
+                                GetList(UnstableCycles$DealDatas), 
+                                ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+                                NotBuffCols=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"), NotBuffColOption=c("FDR", "FDR", "FDR", "BDR"))

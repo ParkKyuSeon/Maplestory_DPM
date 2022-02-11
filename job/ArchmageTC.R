@@ -806,6 +806,12 @@ ArchMageTCDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNam
 set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageTC", Deal_RR(ArchMageTCDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageTC", Deal_40s(ArchMageTCDealData, F, NA, FinishTime=subset(ArchMageTCDealData, ArchMageTCDealData$Skills=="Restraint4")$Time[1] + 15000))
 
+ArchMageTCSpecMean <- ResetSpecMean("ArchMageTC", 
+                                    GetList(UnstableCycles$CycleNames), 
+                                    GetList(UnstableCycles$DealDatas), 
+                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+                                    NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
+
 
 ## ThunderBreak 2Hits
 for(i in 1:nrow(UnstableCycles)) {
