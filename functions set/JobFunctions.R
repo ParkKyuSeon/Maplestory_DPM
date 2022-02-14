@@ -243,7 +243,7 @@ FPAddATKCycle <- function(DealCycle, ATKSkillList) {
     if(DealCycle$Skills[i]==c("DotPunisher1st")) {
       DealCycle <- rbind(DealCycle, DealCycle[i, ])
       DealCycle$Skills[nrow(DealCycle)] <- c("DotPunisherRemain")
-      for(j in 1:23) {
+      for(j in 1:24) {
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- c("Ignite")
         DealCycle <- rbind(DealCycle, DealCycle[i, ])

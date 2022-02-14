@@ -899,6 +899,7 @@ MercedesDealCycle2 <- DCSummonedATKs(MercedesDealCycle2, Skill=c("GuidedArrow", 
 MercedesDealCycle2 <- RepATKCycle(MercedesDealCycle2, c("BreathofIrkallaSylvidia"), 44, 0, ATKFinal)
 MercedesDealCycle2 <- MercedesAddATK(MercedesDealCycle2)
 MercedesDealCycle2 <- DCSpiderInMirror(MercedesDealCycle2, SummonedFinal)
+MercedesDealCycleReduction2 <- DealCycleReduction(MercedesDealCycle2)
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {

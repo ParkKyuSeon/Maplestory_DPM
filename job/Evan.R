@@ -1790,7 +1790,7 @@ if(EvanDealCycleType=="DoE-DB-BoW") {
   EvanSpecMean <- ResetSpecMean("Evan", 
                                 list(EvanDealCycle, EvanDealCycleHP), 
                                 list(EvanDeal1, EvanDeal2), 
-                                ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, rep(max(EvanDealCycle$Time), 2), c(0.6564, 0.3436))
+                                ATKFinal, BuffFinal, SummonedFinal, EvanSpecOpt, rep(max(EvanDealCycle$Time), 2), c(0.6592, 0.3408))
   
   
   ## DoE(3) - DB - BoW

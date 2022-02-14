@@ -327,7 +327,7 @@ DotPunisher1st <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(GetCoreLv(ArchMageFPCore, "OverloadMana") / 10) + 8)
-info <- c((400 + 15 * GetCoreLv(ArchMageFPCore, "DotPunisher")) * 0.65, 5 * 22, 0, NA, 25, T, F, F)
+info <- c((400 + 15 * GetCoreLv(ArchMageFPCore, "DotPunisher")) * 0.65, 5 * 23, 0, NA, 25, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DotPunisherRemain <- rbind(data.frame(option, value), info)
