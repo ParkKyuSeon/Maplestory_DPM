@@ -698,6 +698,13 @@ BlasterAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal) {
   DealCycle <- DealCycle[order(DealCycle$Time), ] 
   rownames(DealCycle) <- 1:nrow(DealCycle)
   
+  ## Burning Breaker - Maximize Cannon
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("BurningBreaker", "BurningBreakerEnd"))==1 & DealCycle$MaximizeCannon[i] > 0) {
+      DealCycle$MaximizeCannonRevolvingBunkerBDR[i] <- 1
+    }
+  }
+  
   ## Release Pile Bunker
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="ReleasePileBunker") {
