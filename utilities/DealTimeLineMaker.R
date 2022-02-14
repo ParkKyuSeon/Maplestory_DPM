@@ -416,7 +416,7 @@ for(i in 1:nrow(ChrInfo)) {
                 CumDealDivider=CumDealDivider)
 }
 
-MaxDeal <- 220000 ; BishopRRDeal <- 126682
+MaxDeal <- 220000 ; BishopRRDeal <- 127692
 for(i in 1:nrow(ChrInfo)) {
   RRGraphSave(JobName=ChrInfo$job[i], 
               DealData=get(ifelse(ChrInfo$job[i]=="CannonMaster", "CannonShooterDealData", 
