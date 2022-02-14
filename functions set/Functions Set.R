@@ -2089,11 +2089,14 @@ PotIGR <- c(0, 30, 40, 58, 64, 74.8, 78.4, 84.88, 89.416, 92.5912)
 PotList <- list()
 for(i in 1:length(PotIGR)) {
   PotList[[i]] <- subset(PotentialList, PotentialList$IGR==PotIGR[i])
+  PotList[[i]] <- PotList[[i]][order(PotList[[i]]$BDR, decreasing = T), ]
 }
 ZeroPotList <- list()
 for(i in 1:length(PotIGR)) {
   ZeroPotList[[i]] <- subset(PotentialListZero, PotentialListZero$IGR==PotIGR[i])
+  ZeroPotList[[i]] <- ZeroPotList[[i]][order(ZeroPotList[[i]]$BDR, decreasing = T), ]
 }
+
 
 Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, UnionBDRIGR, Cores=(detectCores(logical=F)-1), 
                           NotBuffCols=c(), NotBuffColOption=c()) {
@@ -2102,194 +2105,80 @@ Optimization1 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList
   UnionList <- data.frame(BDR, IGR)
   PotList <- PotList
   
-  BaseDeal <- DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)
-  
   NewDeal <- c()
-  p <- 1
-  while(ifelse(p<=2, 0, NewDeal[p-2])<=ifelse(p==1, 0, NewDeal[p-1]) & p<=nrow(PotList[[1]])) {
-    NewSpecs <- Specs
-    NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][p, 1]
-    NewSpecs$BDR <- Specs$BDR + PotList[[1]][p, 3]
-    NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][p, 2]))
-    NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-    p <- p + 1
-  }
-  if(length(NewDeal)==2) {
-    NewSpecs <- Specs
-    NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][nrow(PotList[[1]]), 1]
-    NewSpecs$BDR <- Specs$BDR + PotList[[1]][nrow(PotList[[1]]), 3]
-    NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][nrow(PotList[[1]]), 2]))
-    NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-    l <- NewDeal==max(NewDeal)
-    Deals <- max(NewDeal)
-    Combinations <- ifelse(l[1]==T, PotList[[1]][1, ], PotList[[1]][length(PotList[[1]]), ])
-  } else {
-    Combinations <- PotList[[1]][length(NewDeal), ]
-    Deals <- max(NewDeal)
-  }
-  ind <- c(0, 0)
-  
-  k <- 2
-  while(ind[1]<=ind[2] & k<=length(PotList)) {
-    ind[1] <- max(NewDeal)
-    NewDeal <- c()
-    p <- 1
-    while(ifelse(p<=2, 0, NewDeal[p-2])<=ifelse(p==1, 0, NewDeal[p-1]) & p<=nrow(PotList[[k]])) {
-      NewSpecs <- Specs
-      NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][p, 1]
-      NewSpecs$BDR <- Specs$BDR + PotList[[k]][p, 3]
-      NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][p, 2]))
-      NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-      p <- p + 1
-    }
-    if(length(NewDeal)==2) {
-      NewSpecs <- Specs
-      NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][nrow(PotList[[k]]), 1]
-      NewSpecs$BDR <- Specs$BDR + PotList[[k]][nrow(PotList[[k]]), 3]
-      NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][nrow(PotList[[k]]), 2]))
-      NewDeal[p] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-      l <- NewDeal==max(NewDeal)
-      Deals <- c(Deals, max(NewDeal))
-      Combinations <- rbind(Combinations, ifelse(l[1]==T, PotList[[k]][1, ], PotList[[k]][length(PotList[[k]]), ]))
-      ind[2] <- max(NewDeal)
-    } else {
-      Combinations <- rbind(Combinations, PotList[[k]][length(NewDeal), ])
-      ind[2] <- max(NewDeal)
-      Deals <- c(Deals, max(NewDeal))
-    }
-    k <- k + 1
-  }
-  DealList <- data.frame(Combinations, Deals)
-  DealList <- subset(DealList, DealList$Deals==max(DealList$Deals))
-  
-  t <- ifelse(DealList$IGR==0, 1, ifelse(DealList$IGR==40 | DealList$IGR==64 | DealList$IGR==78.4, 2, ifelse(DealList$IGR==30, 3, 4)))
-  
-  if(t==1) {
-    AvailablePot <- DealList[, 1:3]
-  } else if(t==2) {
-    AvailablePot <- DealList[, 1:3]
-    NewCase1 <- c() ## Minus IGR40, Plus ATK12
-    NewCase1[1] <- DealList$ATKP + 12
-    NewCase1[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-    NewCase1[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase1)
-    
-    if(DealList$BDR<=100) {
-      NewCase2 <- c() ## Minus IGR40, Plus BDR40
-      NewCase2[1] <- DealList$ATKP
-      NewCase2[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-      NewCase2[3] <- DealList$BDR + 40
-      AvailablePot <- rbind(AvailablePot, NewCase2)
-    }
-  } else if(t==3) {
-    AvailablePot <- DealList[, 1:3]
-    NewCase1 <- c() ## Minus IGR30, Plus ATK9
-    NewCase1[1] <- DealList$ATKP + 9
-    NewCase1[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-    NewCase1[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase1) 
-    
-    if(DealList$BDR<=110) {
-      NewCase2 <- c() ## Minus IGR30, Plus BDR30
-      NewCase2[1] <- DealList$ATKP
-      NewCase2[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-      NewCase2[3] <- DealList$BDR + 30
-      AvailablePot <- rbind(AvailablePot, NewCase2) 
-    }
-  } else if(t==4) {
-    AvailablePot <- DealList[, 1:3]
-    NewCase1 <- c() ## Minus IGR40, Plus ATK12
-    NewCase1[1] <- DealList$ATKP + 12
-    NewCase1[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-    NewCase1[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase1)
-    
-    NewCase2 <- c() ## Minus IGR30, Plus ATK9
-    NewCase2[1] <- DealList$ATKP + 9
-    NewCase2[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-    NewCase2[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase2)
-    
-    if(DealList$BDR<=100) {
-      NewCase3 <- c() ## Minus IGR40, Plus BDR40
-      NewCase3[1] <- DealList$ATKP
-      NewCase3[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-      NewCase3[3] <- DealList$BDR + 40
-      AvailablePot <- rbind(AvailablePot, NewCase3)
-    }
-    
-    if(DealList$BDR<=110) {
-      NewCase4 <- c() ## Minus IGR30, Plus BDR30
-      NewCase4[1] <- DealList$ATKP
-      NewCase4[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-      NewCase4[3] <- DealList$BDR + 30
-      AvailablePot <- rbind(AvailablePot, NewCase4)
-    }
-  }
-  
-  FinalATKP <- c()
-  FinalIGR <- c()
-  FinalBDR <- c()
-  FinalDeal <- c()
-  FinalCombination <- data.frame(FinalATKP, FinalIGR, FinalBDR, FinalDeal)
-  for(i in 1:nrow(AvailablePot)) {
-    ATKP <- rep(AvailablePot[i, 1], nrow(UnionList))
-    BDR <- AvailablePot[i, 3] + UnionList[, 1]
-    for(j in 1:nrow(UnionList)) {
-      IGR[j] <- IGRCalc(c(AvailablePot[i, 2], UnionList[j, 2]))
-    }
-    FinalList <- data.frame(ATKP, IGR, BDR)
-    
-    NewDeal <- c()
-    NewSpecs <- Specs
-    NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[1]
-    NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[1]
-    NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[1]))
-    NewDeal[1] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-    
-    if(nrow(FinalList) > 1) {
-      NewSpecs <- Specs
-      NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[2]
-      NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[2]
-      NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[2]))
-      NewDeal[2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
+  Opt <- data.frame(ATKP=rep(0, length(PotList)), BDR=rep(0, length(PotList)), IGR=rep(0, length(PotList)), Deal=rep(0, length(PotList)))
+  for(i in 1:length(PotList)) {
+    NewDeal_1 <- c()
+    Union <- data.frame(BDR=rep(0, nrow(PotList[[i]])), IGR=rep(0, nrow(PotList[[i]])))
+    for(j in 1:nrow(PotList[[i]])) {
+      NewDeal_2 <- c()
+      NewSpec_1 <- Specs
+      NewSpec_1$ATKP <- Specs$ATKP + PotList[[i]][j, 1]
+      NewSpec_1$BDR <- Specs$BDR + PotList[[i]][j, 3]
+      NewSpec_1$IGR <- IGRCalc(c(Specs$IGR, PotList[[i]][j, 2]))
       
-      if(NewDeal[1] > NewDeal[2]) {
-        NewSpecs <- Specs
-        NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[nrow(FinalList)]
-        NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[nrow(FinalList)]
-        NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[nrow(FinalList)]))
-        NewDeal[2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-        
-        FinalCombination[i, 1] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 1], FinalList[nrow(FinalList), 1])
-        FinalCombination[i, 2] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 2], FinalList[nrow(FinalList), 2])
-        FinalCombination[i, 3] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 3], FinalList[nrow(FinalList), 3])
-        FinalCombination[i, 4] <- ifelse(NewDeal[1] > NewDeal[2], NewDeal[1], NewDeal[2])
+      if(nrow(UnionList) == 1) {
+        NewSpec_1$BDR <- NewSpec_1$BDR + UnionList$BDR
+        NewSpec_1$IGR <- IGRCalc(c(NewSpec_1$IGR, UnionList$IGR))
+        NewDeal_1[j] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpec_1, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
+        Union[j, ] <- c(UnionList$BDR, UnionList$IGR)
       } else {
-        p <- 1
-        while(NewDeal[p+1] <= NewDeal[p] & p + 2 <= nrow(FinalList)) {
-          NewSpecs <- Specs
-          NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[p+2]
-          NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[p+2]
-          NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[p+2]))
-          NewDeal[p+2] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-          p <- p + 1
+        for(k in 1:nrow(UnionList)) {
+          NewSpec_2 <- NewSpec_1
+          NewSpec_2$BDR <- NewSpec_1$BDR + UnionList$BDR[k]
+          NewSpec_2$IGR <- IGRCalc(c(NewSpec_1$IGR, UnionList$IGR[k]))
+          NewDeal_2[k] <- sum(na.omit(DealCalc(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, NewSpec_2, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
+          if(k > 1) {
+            if(NewDeal_2[k] <= NewDeal_2[k - 1] & k < nrow(UnionList)) {
+              NewDeal_1[j] <- NewDeal_2[k - 1]
+              Union[j, ] <- c(UnionList$BDR[k - 1], UnionList$IGR[k - 1])
+              break
+            } else if(k == nrow(UnionList)) {
+              if(NewDeal_2[k] <= NewDeal_2[k - 1]) {
+                NewDeal_1[j] <- NewDeal_2[k - 1]
+                Union[j, ] <- c(UnionList$BDR[k - 1], UnionList$IGR[k - 1])
+              } else {
+                NewDeal_1[j] <- NewDeal_2[k]
+                Union[j, ] <- c(UnionList$BDR[k], UnionList$IGR[k])
+              }
+            }
+          }
         }
-        FinalCombination[i, 1] <- FinalList[length(NewDeal), 1]
-        FinalCombination[i, 2] <- FinalList[length(NewDeal), 2]
-        FinalCombination[i, 3] <- FinalList[length(NewDeal), 3]
-        FinalCombination[i, 4] <- max(NewDeal)
       }
-    } else {
-      FinalCombination[i, 1] <- FinalList[1, 1]
-      FinalCombination[i, 2] <- FinalList[1, 2]
-      FinalCombination[i, 3] <- FinalList[1, 3]
-      FinalCombination[i, 4] <- max(NewDeal)
+      
+      if(j > 1) {
+        if(NewDeal_1[j] <= NewDeal_1[j - 1] & j < nrow(PotList[[i]])) {
+          NewDeal[i] <- NewDeal_1[j - 1]
+          Opt[i, ] <- c(PotList[[i]][j - 1, 1], PotList[[i]][j - 1, 3] + Union$BDR[j - 1], IGRCalc(c(PotList[[i]][j - 1, 2], Union$IGR[j - 1])), NewDeal[i])
+          break
+        } else if(j == nrow(PotList[[i]])) {
+          if(NewDeal_1[j] <= NewDeal_1[j - 1]) {
+            NewDeal[i] <- NewDeal_1[j - 1]
+            Opt[i, ] <- c(PotList[[i]][j - 1, 1], PotList[[i]][j - 1, 3] + Union$BDR[j - 1], IGRCalc(c(PotList[[i]][j - 1, 2], Union$IGR[j - 1])), NewDeal[i])
+          } else {
+            NewDeal[i] <- NewDeal_1[j]
+            Opt[i, ] <- c(PotList[[i]][j, 1], PotList[[i]][j, 3] + Union$BDR[j], IGRCalc(c(PotList[[i]][j, 2], Union$IGR[j])), NewDeal[i])
+          }
+        }
+      }
+    }
+    
+    if(i > 1) {
+      if(NewDeal[i] <= NewDeal[i - 1] & i < length(PotList)) {
+        FinalOpt <- Opt[i - 1, ]
+        break
+      } else if(i == length(PotList)) {
+        if(NewDeal[i] <= NewDeal[i - 1]) {
+          FinalOpt <- Opt[i - 1, ]
+        } else {
+          FinalOpt <- Opt[i, ]
+        }
+      }
     }
   }
-  colnames(FinalCombination) <- c("ATKP", "IGR", "BDR", "Deal")
-  FinalCombination <- subset(FinalCombination, FinalCombination$Deal==max(FinalCombination$Deal))
-  return(FinalCombination)
+  FinalOpt <- data.frame(ATKP=FinalOpt$ATKP, IGR=FinalOpt$IGR, BDR=FinalOpt$BDR, Deal=FinalOpt$Deal)
+  print(FinalOpt)
+  return(FinalOpt)
 }
 Optimization2 <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0, Cores=(detectCores(logical=F)-1), 
                           NotBuffCols=c(), NotBuffColOption=c()) {
@@ -2479,194 +2368,80 @@ ResetOptimization1 <- function(DealCycles=list(), ATKSkillsList, BuffList, Summo
   UnionList <- data.frame(BDR, IGR)
   PotList <- PotList
   
-  BaseDeal <- ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, Specs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)
-  
   NewDeal <- c()
-  p <- 1
-  while(ifelse(p<=2, 0, NewDeal[p-2])<=ifelse(p==1, 0, NewDeal[p-1]) & p<=nrow(PotList[[1]])) {
-    NewSpecs <- Specs
-    NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][p, 1]
-    NewSpecs$BDR <- Specs$BDR + PotList[[1]][p, 3]
-    NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][p, 2]))
-    NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-    p <- p + 1
-  }
-  if(length(NewDeal)==2) {
-    NewSpecs <- Specs
-    NewSpecs$ATKP <- Specs$ATKP + PotList[[1]][nrow(PotList[[1]]), 1]
-    NewSpecs$BDR <- Specs$BDR + PotList[[1]][nrow(PotList[[1]]), 3]
-    NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[1]][nrow(PotList[[1]]), 2]))
-    NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-    l <- NewDeal==max(NewDeal)
-    Deals <- max(NewDeal)
-    Combinations <- ifelse(l[1]==T, PotList[[1]][1, ], PotList[[1]][length(PotList[[1]]), ])
-  } else {
-    Combinations <- PotList[[1]][length(NewDeal), ]
-    Deals <- max(NewDeal)
-  }
-  ind <- c(0, 0)
-  
-  k <- 2
-  while(ind[1]<=ind[2] & k<=length(PotList)) {
-    ind[1] <- max(NewDeal)
-    NewDeal <- c()
-    p <- 1
-    while(ifelse(p<=2, 0, NewDeal[p-2])<=ifelse(p==1, 0, NewDeal[p-1]) & p<=nrow(PotList[[k]])) {
-      NewSpecs <- Specs
-      NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][p, 1]
-      NewSpecs$BDR <- Specs$BDR + PotList[[k]][p, 3]
-      NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][p, 2]))
-      NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-      p <- p + 1
-    }
-    if(length(NewDeal)==2) {
-      NewSpecs <- Specs
-      NewSpecs$ATKP <- Specs$ATKP + PotList[[k]][nrow(PotList[[k]]), 1]
-      NewSpecs$BDR <- Specs$BDR + PotList[[k]][nrow(PotList[[k]]), 3]
-      NewSpecs$IGR <- IGRCalc(c(Specs$IGR, PotList[[k]][nrow(PotList[[k]]), 2]))
-      NewDeal[p] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-      l <- NewDeal==max(NewDeal)
-      Deals <- c(Deals, max(NewDeal))
-      Combinations <- rbind(Combinations, ifelse(l[1]==T, PotList[[k]][1, ], PotList[[k]][length(PotList[[k]]), ]))
-      ind[2] <- max(NewDeal)
-    } else {
-      Combinations <- rbind(Combinations, PotList[[k]][length(NewDeal), ])
-      ind[2] <- max(NewDeal)
-      Deals <- c(Deals, max(NewDeal))
-    }
-    k <- k + 1
-  }
-  DealList <- data.frame(Combinations, Deals)
-  DealList <- subset(DealList, DealList$Deals==max(DealList$Deals))
-  
-  t <- ifelse(DealList$IGR==0, 1, ifelse(DealList$IGR==40 | DealList$IGR==64 | DealList$IGR==78.4, 2, ifelse(DealList$IGR==30, 3, 4)))
-  
-  if(t==1) {
-    AvailablePot <- DealList[, 1:3]
-  } else if(t==2) {
-    AvailablePot <- DealList[, 1:3]
-    NewCase1 <- c() ## Minus IGR40, Plus ATK12
-    NewCase1[1] <- DealList$ATKP + 12
-    NewCase1[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-    NewCase1[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase1)
-    
-    if(DealList$BDR<=100) {
-      NewCase2 <- c() ## Minus IGR40, Plus BDR40
-      NewCase2[1] <- DealList$ATKP
-      NewCase2[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-      NewCase2[3] <- DealList$BDR + 40
-      AvailablePot <- rbind(AvailablePot, NewCase2)
-    }
-  } else if(t==3) {
-    AvailablePot <- DealList[, 1:3]
-    NewCase1 <- c() ## Minus IGR30, Plus ATK9
-    NewCase1[1] <- DealList$ATKP + 9
-    NewCase1[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-    NewCase1[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase1) 
-    
-    if(DealList$BDR<=110) {
-      NewCase2 <- c() ## Minus IGR30, Plus BDR30
-      NewCase2[1] <- DealList$ATKP
-      NewCase2[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-      NewCase2[3] <- DealList$BDR + 30
-      AvailablePot <- rbind(AvailablePot, NewCase2) 
-    }
-  } else if(t==4) {
-    AvailablePot <- DealList[, 1:3]
-    NewCase1 <- c() ## Minus IGR40, Plus ATK12
-    NewCase1[1] <- DealList$ATKP + 12
-    NewCase1[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-    NewCase1[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase1)
-    
-    NewCase2 <- c() ## Minus IGR30, Plus ATK9
-    NewCase2[1] <- DealList$ATKP + 9
-    NewCase2[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-    NewCase2[3] <- DealList$BDR
-    AvailablePot <- rbind(AvailablePot, NewCase2)
-    
-    if(DealList$BDR<=100) {
-      NewCase3 <- c() ## Minus IGR40, Plus BDR40
-      NewCase3[1] <- DealList$ATKP
-      NewCase3[2] <- IGRCalc(c(DealList$IGR, -2/3*100))
-      NewCase3[3] <- DealList$BDR + 40
-      AvailablePot <- rbind(AvailablePot, NewCase3)
-    }
-    
-    if(DealList$BDR<=110) {
-      NewCase4 <- c() ## Minus IGR30, Plus BDR30
-      NewCase4[1] <- DealList$ATKP
-      NewCase4[2] <- IGRCalc(c(DealList$IGR, -3/7*100))
-      NewCase4[3] <- DealList$BDR + 30
-      AvailablePot <- rbind(AvailablePot, NewCase4)
-    }
-  }
-  
-  FinalATKP <- c()
-  FinalIGR <- c()
-  FinalBDR <- c()
-  FinalDeal <- c()
-  FinalCombination <- data.frame(FinalATKP, FinalIGR, FinalBDR, FinalDeal)
-  for(i in 1:nrow(AvailablePot)) {
-    ATKP <- rep(AvailablePot[i, 1], nrow(UnionList))
-    BDR <- AvailablePot[i, 3] + UnionList[, 1]
-    for(j in 1:nrow(UnionList)) {
-      IGR[j] <- IGRCalc(c(AvailablePot[i, 2], UnionList[j, 2]))
-    }
-    FinalList <- data.frame(ATKP, IGR, BDR)
-    
-    NewDeal <- c()
-    NewSpecs <- Specs
-    NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[1]
-    NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[1]
-    NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[1]))
-    NewDeal[1] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-    
-    if(nrow(FinalList) > 1) {
-      NewSpecs <- Specs
-      NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[2]
-      NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[2]
-      NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[2]))
-      NewDeal[2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
+  Opt <- data.frame(ATKP=rep(0, length(PotList)), BDR=rep(0, length(PotList)), IGR=rep(0, length(PotList)), Deal=rep(0, length(PotList)))
+  for(i in 1:length(PotList)) {
+    NewDeal_1 <- c()
+    Union <- data.frame(BDR=rep(0, nrow(PotList[[i]])), IGR=rep(0, nrow(PotList[[i]])))
+    for(j in 1:nrow(PotList[[i]])) {
+      NewDeal_2 <- c()
+      NewSpec_1 <- Specs
+      NewSpec_1$ATKP <- Specs$ATKP + PotList[[i]][j, 1]
+      NewSpec_1$BDR <- Specs$BDR + PotList[[i]][j, 3]
+      NewSpec_1$IGR <- IGRCalc(c(Specs$IGR, PotList[[i]][j, 2]))
       
-      if(NewDeal[1] > NewDeal[2]) {
-        NewSpecs <- Specs
-        NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[nrow(FinalList)]
-        NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[nrow(FinalList)]
-        NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[nrow(FinalList)]))
-        NewDeal[2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-        
-        FinalCombination[i, 1] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 1], FinalList[nrow(FinalList), 1])
-        FinalCombination[i, 2] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 2], FinalList[nrow(FinalList), 2])
-        FinalCombination[i, 3] <- ifelse(NewDeal[1] > NewDeal[2], FinalList[1, 3], FinalList[nrow(FinalList), 3])
-        FinalCombination[i, 4] <- ifelse(NewDeal[1] > NewDeal[2], NewDeal[1], NewDeal[2])
+      if(nrow(UnionList) == 1) {
+        NewSpec_1$BDR <- NewSpec_1$BDR + UnionList$BDR
+        NewSpec_1$IGR <- IGRCalc(c(NewSpec_1$IGR, UnionList$IGR))
+        NewDeal_1[j] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpec_1, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
+        Union[j, ] <- c(UnionList$BDR, UnionList$IGR)
       } else {
-        p <- 1
-        while(NewDeal[p+1] <= NewDeal[p] & p + 2 <= nrow(FinalList)) {
-          NewSpecs <- Specs
-          NewSpecs$ATKP <- NewSpecs$ATKP +  FinalList$ATK[p+2]
-          NewSpecs$BDR <- NewSpecs$BDR +  FinalList$BDR[p+2]
-          NewSpecs$IGR <- IGRCalc(c(NewSpecs$IGR, FinalList$IGR[p+2]))
-          NewDeal[p+2] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpecs, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
-          p <- p + 1
+        for(k in 1:nrow(UnionList)) {
+          NewSpec_2 <- NewSpec_1
+          NewSpec_2$BDR <- NewSpec_1$BDR + UnionList$BDR[k]
+          NewSpec_2$IGR <- IGRCalc(c(NewSpec_1$IGR, UnionList$IGR[k]))
+          NewDeal_2[k] <- sum(na.omit(ResetDealCalc(DealCycles, ATKSkillsList, BuffList, SummonedSkillsList, NewSpec_2, times, prob, Cores, Collapse=T, NotBuffCols, NotBuffColOption)))
+          if(k > 1) {
+            if(NewDeal_2[k] <= NewDeal_2[k - 1] & k < nrow(UnionList)) {
+              NewDeal_1[j] <- NewDeal_2[k - 1]
+              Union[j, ] <- c(UnionList$BDR[k - 1], UnionList$IGR[k - 1])
+              break
+            } else if(k == nrow(UnionList)) {
+              if(NewDeal_2[k] <= NewDeal_2[k - 1]) {
+                NewDeal_1[j] <- NewDeal_2[k - 1]
+                Union[j, ] <- c(UnionList$BDR[k - 1], UnionList$IGR[k - 1])
+              } else {
+                NewDeal_1[j] <- NewDeal_2[k]
+                Union[j, ] <- c(UnionList$BDR[k], UnionList$IGR[k])
+              }
+            }
+          }
         }
-        FinalCombination[i, 1] <- FinalList[length(NewDeal), 1]
-        FinalCombination[i, 2] <- FinalList[length(NewDeal), 2]
-        FinalCombination[i, 3] <- FinalList[length(NewDeal), 3]
-        FinalCombination[i, 4] <- max(NewDeal)
       }
-    } else {
-      FinalCombination[i, 1] <- FinalList[1, 1]
-      FinalCombination[i, 2] <- FinalList[1, 2]
-      FinalCombination[i, 3] <- FinalList[1, 3]
-      FinalCombination[i, 4] <- max(NewDeal)
+      
+      if(j > 1) {
+        if(NewDeal_1[j] <= NewDeal_1[j - 1] & j < nrow(PotList[[i]])) {
+          NewDeal[i] <- NewDeal_1[j - 1]
+          Opt[i, ] <- c(PotList[[i]][j - 1, 1], PotList[[i]][j - 1, 3] + Union$BDR[j - 1], IGRCalc(c(PotList[[i]][j - 1, 2], Union$IGR[j - 1])), NewDeal[i])
+          break
+        } else if(j == nrow(PotList[[i]])) {
+          if(NewDeal_1[j] <= NewDeal_1[j - 1]) {
+            NewDeal[i] <- NewDeal_1[j - 1]
+            Opt[i, ] <- c(PotList[[i]][j - 1, 1], PotList[[i]][j - 1, 3] + Union$BDR[j - 1], IGRCalc(c(PotList[[i]][j - 1, 2], Union$IGR[j - 1])), NewDeal[i])
+          } else {
+            NewDeal[i] <- NewDeal_1[j]
+            Opt[i, ] <- c(PotList[[i]][j, 1], PotList[[i]][j, 3] + Union$BDR[j], IGRCalc(c(PotList[[i]][j, 2], Union$IGR[j])), NewDeal[i])
+          }
+        }
+      }
+    }
+    
+    if(i > 1) {
+      if(NewDeal[i] <= NewDeal[i - 1] & i < length(PotList)) {
+        FinalOpt <- Opt[i - 1, ]
+        break
+      } else if(i == length(PotList)) {
+        if(NewDeal[i] <= NewDeal[i - 1]) {
+          FinalOpt <- Opt[i - 1, ]
+        } else {
+          FinalOpt <- Opt[i, ]
+        }
+      }
     }
   }
-  colnames(FinalCombination) <- c("ATKP", "IGR", "BDR", "Deal")
-  FinalCombination <- subset(FinalCombination, FinalCombination$Deal==max(FinalCombination$Deal))
-  return(FinalCombination)
+  FinalOpt <- data.frame(ATKP=FinalOpt$ATKP, IGR=FinalOpt$IGR, BDR=FinalOpt$BDR, Deal=FinalOpt$Deal)
+  print(FinalOpt)
+  return(FinalOpt)
 }
 ResetOptimization2 <- function(DealCycles=list(), ATKSkillsList, BuffList, SummonedSkillsList, Specs, HyperBase, ChrLv, CRROver, HyperStanceLv=0, times=c(), prob=c(), 
                                Cores=(detectCores(logical=F)-1), NotBuffCols=c(), NotBuffColOption=c()) {
