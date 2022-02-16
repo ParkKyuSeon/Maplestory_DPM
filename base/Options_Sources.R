@@ -1,3 +1,5 @@
+source("Base/ChrInfo.R")
+
 ## Options Setting (Default)
 DPMCalcOption <- data.frame(SpecSet = "SpecDefault", 
                             ZeroSpecSet = "SpecDefaultZero", 
