@@ -1,5 +1,4 @@
-MonsterLifeData <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/monsterlifedata.csv"
-MonsterLifeData <- read.csv(MonsterLifeData, header=T, row.names=1, stringsAsFactors=F, encoding="EUC-KR")
+MonsterLifeData <- read.csv("data/monsterlifedata.csv", header=T, row.names=1, stringsAsFactors=F, encoding="EUC-KR")
 
 MonsterLifeSpecs <- function(MonsterLifeData, Monsters) {
   MLSet <- MonsterLifeData[1, ]

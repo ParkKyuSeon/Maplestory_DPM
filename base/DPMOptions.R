@@ -9,7 +9,7 @@ DPMCalcOption <- data.frame(SpecSet = "SpecDefault",
                             WeaponSF = 17, 
                             DemonAvengerSF = 264, ## 264 : Unique, 330 : Legendry
                             Optimization = F, 
-                            OptdataDelete = T,
+                            OptdataDelete = F,
                             DataName = "DPM12360", 
                             
                             DualBladeBladeType = "AB", 
@@ -18,6 +18,7 @@ CSVExportOption <- data.frame(Leakage = F,
                               OrderBy = "DPM", ## Default, JobName, DPM, Restratint, 40s
                               RatioStandard = "Bishop", ## Bishop, Minimum, Maximum
                               FileName = "DPM12356",
+                              Modifier = "",
                               
                               stringsAsFactors=F)
 JobOption <- data.frame()
@@ -34,7 +35,7 @@ DPMCalcOption <- data.frame(SpecSet = "SpecLegendry",
                             WeaponSF = 18, 
                             DemonAvengerSF = 330, ## 264 : Unique, 330 : Legendry
                             Optimization = F, 
-                            OptdataDelete = T,
+                            OptdataDelete = F,
                             DataName = "DPM12360_L", 
                             
                             DualBladeBladeType = "AR", 
@@ -43,18 +44,10 @@ CSVExportOption <- data.frame(Leakage = F,
                               OrderBy = "DPM", ## Default, JobName, DPM, Restratint, 40s
                               RatioStandard = "Bishop", ## Bishop, Minimum, Maximum
                               FileName = "DPM12360_L",
+                              Modifier = "_L",
                               
                               stringsAsFactors=F)
 JobOption <- data.frame()
-
-
-
-## DPM Data Frame Make
-Dummy <- data.frame(t(rep(0, 45)))
-Dummy <- rbind(Dummy, Dummy, Dummy, Dummy)
-colnames(Dummy) <- job
-rownames(Dummy) <- c("DPM", "DamageLeakage", "Restraint", "40s")
-assign(DPMCalcOption$DataName, Dummy)
 
 
 ## Ability List, Link List, Monster Life List Preset
@@ -114,7 +107,7 @@ SpecLegendryAbility <- data.frame(Ability1=rep("", nrow(ChrInfo)),
                                   Ability3=rep("", nrow(ChrInfo)), 
                                   row.names=ChrInfo$job, 
                                   stringsAsFactors=F)
-SpecLegendryAbility[rownames(SpecLegendryAbility)=="Hero", ] <- c("BDR", "CRR", "DisorderBDR")
+{SpecLegendryAbility[rownames(SpecLegendryAbility)=="Hero", ] <- c("BDR", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Palladin", ] <- c("BDR", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="DarkKnight", ] <- c("BuffDuration", "BDR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="ArchMageFP", ] <- c("BuffDuration", "CRR", "DisorderBDR")
@@ -158,7 +151,7 @@ SpecLegendryAbility[rownames(SpecLegendryAbility)=="Ark", ] <- c("BDR", "CRR", "
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Lara", ] <- c("PassiveLv", "BDR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Hoyeong", ] <- c("PassiveLv", "BDR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Zero", ] <- c("BDR", "CRR", "DisorderBDR")
-SpecLegendryAbility[rownames(SpecLegendryAbility)=="Kinesis", ] <- c("PassiveLv", "CRR", "DisorderBDR")
+SpecLegendryAbility[rownames(SpecLegendryAbility)=="Kinesis", ] <- c("PassiveLv", "CRR", "DisorderBDR")}
 
 
 SpecDefaultLink <- data.frame(Link1=rep("", nrow(ChrInfo)), 
@@ -220,7 +213,7 @@ SpecLegendryLink <- data.frame(Link1=rep("", nrow(ChrInfo)),
                                Link4=rep("", nrow(ChrInfo)), 
                                row.names=ChrInfo$job, 
                                stringsAsFactors=F)
-SpecLegendryLink[rownames(SpecLegendryLink)=="Hero", ] <- c("AdventureWarrior", "Xenon", "DemonAvenger", "Phantom")
+{SpecLegendryLink[rownames(SpecLegendryLink)=="Hero", ] <- c("AdventureWarrior", "Xenon", "DemonAvenger", "Phantom")
 SpecLegendryLink[rownames(SpecLegendryLink)=="Palladin", ] <- c("AdventureWarrior", "Xenon", "DemonAvenger", "CygnusKnights")
 SpecLegendryLink[rownames(SpecLegendryLink)=="DarkKnight", ] <- c("Xenon", "CygnusKnights", "DemonAvenger", "AdventureWarrior")
 SpecLegendryLink[rownames(SpecLegendryLink)=="ArchMageFP", ] <- c("Zero", "Xenon", "DemonAvenger", "Phantom")
@@ -264,7 +257,7 @@ SpecLegendryLink[rownames(SpecLegendryLink)=="Ark", ] <- c("Zero", "Xenon", "Dem
 SpecLegendryLink[rownames(SpecLegendryLink)=="Lara", ] <- c("Lara", "CygnusKnights", "DemonAvenger", "Xenon")
 SpecLegendryLink[rownames(SpecLegendryLink)=="Hoyeong", ] <- c("Xenon", "Hoyeong", "DemonAvenger", "CygnusKnights")
 SpecLegendryLink[rownames(SpecLegendryLink)=="Zero", ] <- c("CygnusKnights", "DemonAvenger", "Zero", "Xenon")
-SpecLegendryLink[rownames(SpecLegendryLink)=="Kinesis", ] <- c("Zero", "CygnusKnights", "DemonAvenger", "Xenon")
+SpecLegendryLink[rownames(SpecLegendryLink)=="Kinesis", ] <- c("Zero", "CygnusKnights", "DemonAvenger", "Xenon")}
 
 
 SpecDefaultCoolReduceHat <- data.frame(CoolReduceHat=rep("", nrow(ChrInfo)), 
@@ -320,7 +313,7 @@ SpecDefaultCoolReduceHat[rownames(SpecDefaultCoolReduceHat)=="Kinesis", ] <- F}
 SpecLegendryCoolReduceHat <- data.frame(CoolReduceHat=rep("", nrow(ChrInfo)), 
                                         row.names=ChrInfo$job, 
                                         stringsAsFactors=F)
-SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Hero", ] <- T
+{SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Hero", ] <- T
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Palladin", ] <- F
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="DarkKnight", ] <- T
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="ArchMageFP", ] <- T
@@ -364,7 +357,7 @@ SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Ark", ] <- F
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Lara", ] <- F
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Hoyeong", ] <- F
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Zero", ] <- F
-SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Kinesis", ] <- F
+SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Kinesis", ] <- F}
 
 
 MonsterLifePreSet <- data.frame(Level1=rep("", nrow(ChrInfo)), 
@@ -372,7 +365,7 @@ MonsterLifePreSet <- data.frame(Level1=rep("", nrow(ChrInfo)),
                                 Level3=rep("", nrow(ChrInfo)), 
                                 row.names=ChrInfo$job, 
                                 stringsAsFactors=F)
-MonsterLifePreSet[rownames(MonsterLifePreSet)=="Hero", ] <- c("", "MLTypeS22", "MLTypeS33")
+{MonsterLifePreSet[rownames(MonsterLifePreSet)=="Hero", ] <- c("", "MLTypeS22", "MLTypeS33")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Palladin", ] <- c("", "MLTypeS21", "MLTypeS31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="DarkKnight", ] <- c("", "MLTypeS21", "MLTypeS32")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="ArchMageFP", ] <- c("", "MLTypeI21", "MLTypeI32")
@@ -416,108 +409,4 @@ MonsterLifePreSet[rownames(MonsterLifePreSet)=="Ark", ] <- c("", "MLTypeS21", "M
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Lara", ] <- c("", "MLTypeI22", "MLTypeI35")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Hoyeong", ] <- c("", "MLTypeL22", "MLTypeL33")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Zero", ] <- c("", "MLTypeS21", "MLTypeS31")
-MonsterLifePreSet[rownames(MonsterLifePreSet)=="Kinesis", ] <- c("", "MLTypeI21", "MLTypeI31")
-
-
-## Optimization Data
-if(DPMCalcOption$Optimization == T & DPMCalcOption$OptdataDelete == T & sum(names(PotentialOpt) == DPMCalcOption$SpecSet) >= 1) {
-  Idx1 <- c()
-  for(i in 1:length(PotentialOpt)) {
-    if(names(PotentialOpt)[i]==DPMCalcOption$SpecSet) {
-      Idx1 <- i
-    }
-  }
-  PotentialOpt[[Idx1]][ , ] <- 0
-  HyperStatOpt[[Idx1]][ , ] <- 0
-} else if(DPMCalcOption$Optimization == T & sum(names(PotentialOpt) == DPMCalcOption$SpecSet) == 0) {
-  PotentialOpt[[length(PotentialOpt)+1]] <- data.frame(ATKP=rep(0, nrow(ChrInfo)), 
-                                                       IGR=rep(0, nrow(ChrInfo)), 
-                                                       BDR=rep(0, nrow(ChrInfo)), 
-                                                       row.names=ChrInfo$job, 
-                                                       stringsAsFactors=F)
-  HyperStatOpt[[length(HyperStatOpt)+1]] <- data.frame(MainStat=rep(0, nrow(ChrInfo)), 
-                                                       MainStatP=rep(0, nrow(ChrInfo)), 
-                                                       SubStat1=rep(0, nrow(ChrInfo)), 
-                                                       SubStat2=rep(0, nrow(ChrInfo)), 
-                                                       DMR=rep(0, nrow(ChrInfo)), 
-                                                       BDR=rep(0, nrow(ChrInfo)), 
-                                                       IGR=rep(0, nrow(ChrInfo)), 
-                                                       CRR=rep(0, nrow(ChrInfo)), 
-                                                       CDMR=rep(0, nrow(ChrInfo)), 
-                                                       ATK=rep(0, nrow(ChrInfo)), 
-                                                       row.names=ChrInfo$job, 
-                                                       stringsAsFactors=F)
-  names(PotentialOpt)[[length(PotentialOpt)]] <- DPMCalcOption$SpecSet
-  names(HyperStatOpt)[[length(HyperStatOpt)]] <- DPMCalcOption$SpecSet
-}
-
-
-## Sourcing and Calculation
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Hero.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Palladin.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/DarkKnight.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/ArchMageFP.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/ArchMageTC.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Bishop.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Bowmaster.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/Marksman.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/PathFinder.R")
-source("https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/job/BattleMage.R")
-
-
-## Make csv File
-FinalData <- get(DPMCalcOption$DataName)
-FinalData <- data.frame(t(FinalData))
-FinalData <- round(FinalData)
-colnames(FinalData)[4] <- "X40s"
-
-if(CSVExportOption$OrderBy == "JobName") {
-  FinalData <- FinalData[order(rownames(FinalData)), ]
-} else if(CSVExportOption$OrderBy == "DPM") {
-  FinalData <- FinalData[order(FinalData$DPM, decreasing=T), ]
-} else if(CSVExportOption$OrderBy == "Restraint") {
-  FinalData <- FinalData[order(FinalData$Restraint, decreasing=T), ]
-} else if(CSVExportOption$OrderBy == "40s") {
-  FinalData <- FinalData[order(FinalData$X40s, decreasing=T), ]
-}
-
-if(CSVExportOption$RatioStandard=="Bishop") {
-  StandardDPM <- FinalData[rownames(FinalData)=="Bishop", ]$DPM
-  FinalData$DPMRatio <- FinalData$DPM / StandardDPM
-  
-  StandardRR <- FinalData[rownames(FinalData)=="Bishop", ]$Restraint
-  FinalData$RestraintRatio <- FinalData$Restraint / StandardRR
-  
-  Standard40s <- FinalData[rownames(FinalData)=="Bishop", ]$X40s
-  FinalData$X40sRatio <- FinalData$X40s / Standard40s
-} else if(CSVExportOption$RatioStandard=="Maximum") {
-  StandardDPM <- max(FinalData$DPM)
-  FinalData$DPMRatio <- FinalData$DPM / StandardDPM
-  
-  StandardRR <- max(FinalData$Restraint)
-  FinalData$RestraintRatio <- FinalData$Restraint / StandardRR
-  
-  Standard40s <- max(FinalData$X40s)
-  FinalData$X40sRatio <- FinalData$X40s / Standard40s
-} else if(CSVExportOption$RatioStandard=="Minimum") {
-  StandardDPM <- min(FinalData$DPM)
-  FinalData$DPMRatio <- FinalData$DPM / StandardDPM
-  
-  StandardRR <- min(FinalData$Restraint)
-  FinalData$RestraintRatio <- FinalData$Restraint / StandardRR
-  
-  Standard40s <- min(FinalData$X40s)
-  FinalData$X40sRatio <- FinalData$X40s / Standard40s
-}
-FinalData$DPMRatio <- round(FinalData$DPMRatio, 4)
-FinalData$RestraintRatio <- round(FinalData$RestraintRatio, 4)
-FinalData$X40sRatio <- round(FinalData$X40sRatio, 4)
-
-FinalData <- FinalData[, c(1, 5, 3, 6, 4, 7, 2)]
-colnames(FinalData)[5:6] <- c("40s", "40sRatio")
-
-if(CSVExportOption$Leakage == F) {
-  FinalData <- FinalData[, -7]
-}
-
-write.csv(FinalData, paste(CSVExportOption$FileName, ".csv", sep=""))
+MonsterLifePreSet[rownames(MonsterLifePreSet)=="Kinesis", ] <- c("", "MLTypeI21", "MLTypeI31")}

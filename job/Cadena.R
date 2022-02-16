@@ -409,11 +409,10 @@ colnames(CadenaDealCycle) <- DealCycle
 CadenaDealCycle <- data.frame(CadenaDealCycle)
 
 if(CadenaSpec$CoolTimeReset==24) {
-  CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimes.csv"
+  CadenaTimes <- read.csv("data/cadenatimes.csv", header=T, row.names=1, encoding = "EUC-KR")
 } else if(CadenaSpec$CoolTimeReset==26) {
-  CadenaTimes <- "https://raw.githubusercontent.com/ParkKyuSeon/Maplestory_DPM/master/data/cadenatimes_reset26.csv"
+  CadenaTimes <- read.csv("data/cadenatimes_reset26.csv", header=T, row.names=1, encoding = "EUC-KR")
 }
-CadenaTimes <- read.csv(CadenaTimes, header=T, row.names=1)
 
 CadenaCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
                          Period=c(180), CycleTime=c(360)) {

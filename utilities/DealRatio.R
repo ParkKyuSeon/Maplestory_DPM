@@ -540,7 +540,7 @@ DealRatioSave <- function(JobName, DealRatioData, Modifier) {
   DealRatioData$Ratio <- round(DealRatioData$Ratio, 4)
   write.csv(DealRatioData, paste("jobdata/", JobName, "/", JobName, "DealRatio", Modifier, ".csv", sep=""))
 }
-Modifier <- "_L"
+Modifier <- CSVExportOption$Modifier
 for(i in 1:nrow(ChrInfo)) {
   DealRatioSave(ChrInfo$job[i], get(paste(ChrInfo$job[i], "DealRatio", sep="")), Modifier)
 }
