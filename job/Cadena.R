@@ -409,9 +409,9 @@ colnames(CadenaDealCycle) <- DealCycle
 CadenaDealCycle <- data.frame(CadenaDealCycle)
 
 if(CadenaSpec$CoolTimeReset==24) {
-  CadenaTimes <- read.csv("data/cadenatimes.csv", header=T, row.names=1, encoding = "EUC-KR")
+  CadenaTimes <- read.csv("data/cadenatimes.csv", header=T, row.names=1, encoding = "UTF-8")
 } else if(CadenaSpec$CoolTimeReset==26) {
-  CadenaTimes <- read.csv("data/cadenatimes_reset26.csv", header=T, row.names=1, encoding = "EUC-KR")
+  CadenaTimes <- read.csv("data/cadenatimes_reset26.csv", header=T, row.names=1, encoding = "UTF-8")
 }
 
 CadenaCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 

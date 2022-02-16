@@ -205,9 +205,9 @@ ChaosHorntailUpgrade <- function(UpgradeOption) {
 
 
 ## StarForce Function
-sfstat <- read.csv("data/starforcestat.csv", header=T, row.names=1, encoding="EUC-KR")
-sfatk <- read.csv("data/starforceatk.csv", header=T, row.names=1, encoding="EUC-KR")
-sfsup <- read.csv("data/superior.csv", header=T, row.names=1, encoding="EUC-KR")
+sfstat <- read.csv("data/starforcestat.csv", header=T, row.names=1, encoding="UTF-8")
+sfatk <- read.csv("data/starforceatk.csv", header=T, row.names=1, encoding="UTF-8")
+sfsup <- read.csv("data/superior.csv", header=T, row.names=1, encoding="UTF-8")
 colnames(sfstat) <- c("100", "110", "120", "130", "140", "150", "160", "200")
 colnames(sfatk) <- c("100", "110", "120", "130", "140", "150", "160", "200")
 colnames(sfsup) <- c("100", "110", "120", "130", "140", "150")
@@ -281,7 +281,7 @@ StarforceDA <- function(ReqLv, Superior=F, Stars, ClassOnly=c(T, F), ItemType) {
 
 
 ## AmazingReinforce Function
-amaze <- read.csv("data/amazingstar.csv", header=T, row.names=1, encoding="EUC-KR")
+amaze <- read.csv("data/amazingstar.csv", header=T, row.names=1, encoding="UTF-8")
 colnames(sfsup) <- c("100", "110", "120", "130", "140", "150")
 Amazing <- function(ReqLv, Stars, ItemType=c("Acc", "Armor"), ClassOnly=c(T, F), BonusRate, InitialSubStat2) {
   
@@ -474,9 +474,9 @@ ItemTypes <- c("Sword", "Hammer", "TwohandSword", "TwohandAxe", "TwohandHammer",
                "Bow", "Crossbow", "AincientBow", "DualBowgun", "BreathShooter", 
                "Wristband", "Dagger", "Cane", "Chain", "Fan",
                "Gun", "Knuckle", "HandCannon", "EnergySword", "SoulShooter")
-wsfstat <- read.csv("data/starforcestat.csv", header=T, row.names=1, encoding="EUC-KR")
+wsfstat <- read.csv("data/starforcestat.csv", header=T, row.names=1, encoding="UTF-8")
 wsfstat <- wsfstat[, 6:8]
-wsfatk <- read.csv("data/weaponsfatk.csv", header=T, row.names=1, encoding="EUC-KR")
+wsfatk <- read.csv("data/weaponsfatk.csv", header=T, row.names=1, encoding="UTF-8")
 colnames(wsfstat) <- c(150, 160, 200)
 colnames(wsfatk) <- c(150, 160, 200)
 WeaponUpgrade <- function(UpgradeType=c(1, 2), Stars, AddoptionTier=c(4, 5), 
@@ -1464,7 +1464,7 @@ DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Spe
       }
       return(SpecialSpec)
     }
-    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
     if(is.vector(SpecialSpecRaw)==T) {
       SpecialSpec <- data.frame(Options=SpecialSpecRaw)
     } else {
@@ -1571,7 +1571,7 @@ DealCalc <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkillsList, Spe
     }
     return(Deal)
   }
-  Deal <- mcmapply(DealCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+  Deal <- mcmapply(DealCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
   return(Deal)
 }
 pdamdist <- function(Damage, DamageAVG, Mastery, CDMR) {
@@ -1739,7 +1739,7 @@ DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkill
       }
       return(SpecialSpec)
     }
-    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
     if(is.vector(SpecialSpecRaw)==T) {
       SpecialSpec <- data.frame(Options=SpecialSpecRaw)
     } else {
@@ -1847,7 +1847,7 @@ DealCalcWithMaxDMR <- function(DealCycle, ATKSkillsList, BuffList, SummonedSkill
     }
     return(Deal)
   }
-  Deal <- mcmapply(DealCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+  Deal <- mcmapply(DealCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
   return(Deal)
 }
 DealRatio <- function(DealCycle, DealData) {
@@ -1939,7 +1939,7 @@ SpecMean <- function(JobName, DealCycle, DealData, ATKSkillsList, BuffList, Summ
       }
       return(SpecialSpec)
     }
-    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+    SpecialSpecRaw <- mcmapply(SpecialSpecEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
     if(is.vector(SpecialSpecRaw)==T) {
       SpecialSpec <- data.frame(Options=SpecialSpecRaw)
     } else {
@@ -2052,7 +2052,7 @@ SpecMean <- function(JobName, DealCycle, DealData, ATKSkillsList, BuffList, Summ
     }
     return(SpecEach)
   }
-  SpecEach <- mcmapply(SpecCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+  SpecEach <- mcmapply(SpecCalcEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
   SpecEach <- as.data.frame(SpecEach)
   for(i in 1:ncol(SpecEach)) {
     SpecEach[, i] <- unlist(SpecEach[, i])
@@ -2074,8 +2074,8 @@ SpecMean <- function(JobName, DealCycle, DealData, ATKSkillsList, BuffList, Summ
 
 
 ## Damage Optimization Function
-PotentialList <- read.csv("data/potentiallist.csv", encoding="EUC-KR")
-PotentialListZero <- read.csv("data/potentiallistzero.csv", encoding="EUC-KR")
+PotentialList <- read.csv("data/potentiallist.csv", encoding="UTF-8")
+PotentialListZero <- read.csv("data/potentiallistzero.csv", encoding="UTF-8")
 PotIGR <- c(0, 30, 40, 58, 64, 74.8, 78.4, 84.88, 89.416, 92.5912)
 PotList <- list()
 for(i in 1:length(PotIGR)) {
@@ -3117,7 +3117,7 @@ DealCycleCollapse <- function(DealCycle, SkillList, Cores=detectCores(logical=F)
     Skill <- as.character(Skill)
     return(Skill)
   }
-  DealCycleSkillList <- mcmapply(CollapseEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=Cores)
+  DealCycleSkillList <- mcmapply(CollapseEach, i=1:nrow(DealCycle), SIMPLIFY=T, mc.cores=ifelse(Sys.info()[["sysname"]]=="Windows", 1, Cores))
   DealCycle$Skills <- DealCycleSkillList
   return(DealCycle)
 }

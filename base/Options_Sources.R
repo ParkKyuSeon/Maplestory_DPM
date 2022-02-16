@@ -34,7 +34,7 @@ DPMCalcOption <- data.frame(SpecSet = "SpecLegendry",
                             MonsterLifeLevel = 3, ## Not a Monster Life Farm Level
                             WeaponSF = 18, 
                             DemonAvengerSF = 330, ## 264 : Unique, 330 : Legendry
-                            Optimization = F, 
+                            Optimization = T, 
                             OptdataDelete = F,
                             DataName = "DPM12360_L", 
                             
@@ -410,3 +410,14 @@ MonsterLifePreSet[rownames(MonsterLifePreSet)=="Lara", ] <- c("", "MLTypeI22", "
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Hoyeong", ] <- c("", "MLTypeL22", "MLTypeL33")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Zero", ] <- c("", "MLTypeS21", "MLTypeS31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Kinesis", ] <- c("", "MLTypeI21", "MLTypeI31")}
+
+
+## Sourcing
+source("Base/Base.R")
+source("functions set/Functions Set.R")
+source("functions set/JobFunctions.R")
+source("Base/Item Data.R")
+source("Base/PreSets.R")
+source("Base/Common.R")
+source("Base/MonsterLife.R")
+source("Base/VMatrix Data.R")

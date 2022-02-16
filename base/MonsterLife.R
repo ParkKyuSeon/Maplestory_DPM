@@ -1,4 +1,4 @@
-MonsterLifeData <- read.csv("data/monsterlifedata.csv", header=T, row.names=1, stringsAsFactors=F, encoding="EUC-KR")
+MonsterLifeData <- read.csv("data/monsterlifedata.csv", header=T, row.names=1, stringsAsFactors=F, encoding="UTF-8")
 
 MonsterLifeSpecs <- function(MonsterLifeData, Monsters) {
   MLSet <- MonsterLifeData[1, ]
