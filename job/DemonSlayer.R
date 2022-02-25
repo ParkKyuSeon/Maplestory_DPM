@@ -120,7 +120,7 @@ colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor("BDR", levels=BSkill)
-value <- c(30 + DemonSlayerBase$SkillLv)
+value <- c(35 + DemonSlayerBase$SkillLv)
 info <- c(180 + 4 * DemonSlayerBase$SkillLv, 90 + 2 * DemonSlayerBase$SkillLv, 1680, T, T, T, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")

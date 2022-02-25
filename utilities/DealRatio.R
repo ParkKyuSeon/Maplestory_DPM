@@ -507,7 +507,7 @@ LuminousDealRatio <- DealRatio(LuminousDealCycleSimplified, LuminousFinalDPMwith
 MercedesDealRatio <- DealRatio(MercedesDealCycleSimplified, MercedesFinalDPMwithMax)
 PhantomDealRatio <- ResetDealRatio(DealCycles=list(PhantomDealCycleSimplified, PhantomDealCycle2Simplified), DealDatas=list(PhantomDeal1, PhantomDeal2), 
                                    rep(max(PhantomDealCycle$Time), 2), c(0.6, 0.4))
-EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFGXSimplified, EunwolDealCycleFGOSimplified), list(EunwolFGXDeal, EunwolFGODeal), rep(max(EunwolDealCycleFGX$Time), 2), c(0.5136, 0.4864))
+EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFGXSimplified, EunwolDealCycleFGOSimplified), list(EunwolFGXDeal, EunwolFGODeal), rep(max(EunwolDealCycleFGX$Time), 2), c(0.5129, 0.4871))
 BlasterDealRatio <- DealRatio(BlasterDealCycleSimplified, BlasterFinalDPMwithMax)
 BattleMageDealRatio <- DealRatio(BattleMageDealCycleSimplified, BattleMageFinalDPMwithMax)
 WildHunterDealRatio <- DealRatio(WildHunterDealCycleSimplified, WildHunterFinalDPMwithMax)

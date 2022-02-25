@@ -364,7 +364,7 @@ PossessShaftBreakExplosion <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(25, IGRCalc(c(0, ifelse(GetCoreLv(KainCore, "ShaftBreak")>=40, 20, 0))), 2 * GetCoreLv(KainCore, "ShaftBreak"))
-info <- c(40 + 21 + floor(KainSpec$PSkillLv/2), 3, 0, 120, NA, NA, NA, F)
+info <- c(40 + 21 + floor(KainSpec$PSkillLv/3), 3, 0, 120, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PossessShaftBreakTornado <- rbind(data.frame(option, value), info)
@@ -1526,8 +1526,7 @@ KainCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   rownames(DealCycle) <- 1:nrow(DealCycle)
   return(DealCycle)
 }
-KainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
-                       ThanatosDescentAddATKReset = 0) {
+KainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   ## Scattering Shot, [Possess] Scattering Shot Add ATK
   for(i in 1:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("ScatteringShot", "PossessScatteringShot"))>=1) {
@@ -1677,7 +1676,6 @@ KainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   
   
   ## Thanatos Descent AddATK
-  TDResetDummy <- 0
   TD <- subset(DealCycle, DealCycle$Skills=="ThanatosDescent")
   Ind <- rownames(TD)
   Ind[length(Ind)+1] <- nrow(DealCycle)
@@ -1697,12 +1695,7 @@ KainAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
                                                   "GuidedArrow", "GripofAgony"))==1) {
         DC <- rbind(DC, DealCycle[p, ])
         DC[nrow(DC), 1] <- c("ThanatosDescentAddATK")
-        if(TDResetDummy < ThanatosDescentAddATKReset) {
-          time <- 3001
-          TDResetDummy <- TDResetDummy + 1
-        } else {
-          time <- DealCycle[p+1, 2] - DealCycle[p, 2]
-        }
+        time <- DealCycle[p+1, 2] - DealCycle[p, 2]
       } else {
         time <- time + DealCycle[p+1, 2] - DealCycle[p, 2]
       }
@@ -1805,24 +1798,12 @@ KainDealCycle <- KainCycle(KainDealCycle,
                            KainSpec, 
                            180, 360)
 KainDealCycle <- DealCycleFinal(KainDealCycle)
-KainDealCycle0 <- KainAddATK(KainDealCycle, 
-                             ATKFinal,
-                             BuffFinal, 
-                             SummonedFinal,
-                             KainSpec, 
-                             ThanatosDescentAddATKReset = 0)
-KainDealCycleReduction <- DealCycleReduction(KainDealCycle0)
-
-for(i in 1:6) {
-  KainDealCycleDummy <- KainAddATK(KainDealCycle, 
-                                   ATKFinal,
-                                   BuffFinal, 
-                                   SummonedFinal,
-                                   KainSpec, 
-                                   ThanatosDescentAddATKReset = i)
-  assign(paste("KainDealCycle", i, sep=""), KainDealCycleDummy)
-  rm(KainDealCycleDummy)
-}
+KainDealCycle <- KainAddATK(KainDealCycle, 
+                            ATKFinal,
+                            BuffFinal, 
+                            SummonedFinal,
+                            KainSpec)
+KainDealCycleReduction <- DealCycleReduction(KainDealCycle)
 
 
 Idx1 <- c() ; Idx2 <- c()
@@ -1853,43 +1834,19 @@ if(DPMCalcOption$Optimization==T) {
 KainSpecOpt <- OptDataAdd(KainSpecOpt, KainSpecOpt2, "HyperStat", KainBase$CRROver, DemonAvenger=F)
 BuffFinal <- CriReinAdj(KainSpec, KainSpecOpt, BuffFinal, GetCoreLv(KainCore, "CriticalReinforce"))
 
-KainDealCycles <- list(KainDealCycle0, KainDealCycle1, KainDealCycle2, KainDealCycle3, KainDealCycle4, KainDealCycle5, KainDealCycle6)
-KainDealCycleProbs <- c(0.45, 0.55*0.45, 0.55^2*0.45, 0.55^3*0.45, 0.55^4*0.45, 0.55^6 + 0.55^5*0.45^2, 0.55^6*0.45)
-KainDealCycleTimes <- c(max(KainDealCycle0$Time), max(KainDealCycle1$Time), max(KainDealCycle2$Time), 
-                          max(KainDealCycle3$Time), max(KainDealCycle4$Time), max(KainDealCycle5$Time), 
-                          max(KainDealCycle6$Time))
-KainDealCycleTime <- sum(KainDealCycleTimes * KainDealCycleProbs)
+KainFinalDPM <- DealCalc(KainDealCycle, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, Collapse=F)
+KainFinalDPMwithMax <- DealCalcWithMaxDMR(KainDealCycle, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt)
 
-KainFinalDPM <- ResetDealCalc(DealCycles=KainDealCycles, 
-                                ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, KainDealCycleTimes, KainDealCycleProbs)
-KainFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=KainDealCycles, 
-                                                 ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, KainDealCycleTimes, KainDealCycleProbs)
+set(get(DPMCalcOption$DataName), as.integer(1), "Kain", sum(na.omit(KainFinalDPMwithMax)) / (max(KainDealCycle$Time) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Kain", sum(na.omit(KainFinalDPM)) / (max(KainDealCycle$Time) / 60000) - sum(na.omit(KainFinalDPMwithMax)) / (max(KainDealCycle$Time) / 60000))
 
-set(get(DPMCalcOption$DataName), as.integer(1), "Kain", sum(na.omit(KainFinalDPMwithMax)) / (KainDealCycleTime / 60000))
-set(get(DPMCalcOption$DataName), as.integer(2), "Kain", sum(na.omit(KainFinalDPM)) / (KainDealCycleTime / 60000) - sum(na.omit(KainFinalDPMwithMax)) / (KainDealCycleTime / 60000))
+KainDealRatio <- DealRatio(KainDealCycle, KainFinalDPMwithMax)
 
-KainDealDatas <- list(DealCalcWithMaxDMR(KainDealCycle0, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
-                      DealCalcWithMaxDMR(KainDealCycle1, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
-                      DealCalcWithMaxDMR(KainDealCycle2, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
-                      DealCalcWithMaxDMR(KainDealCycle3, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
-                      DealCalcWithMaxDMR(KainDealCycle4, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
-                      DealCalcWithMaxDMR(KainDealCycle5, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
-                      DealCalcWithMaxDMR(KainDealCycle6, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt))
-
-for(i in 1:length(KainDealDatas)) {
-  print(sum(na.omit(KainDealDatas[[i]])) / (KainDealCycleTimes[i] / 60000))
-}
-
-KainDealRatio <- ResetDealRatio(DealCycles=KainDealCycles, 
-                                DealDatas=KainDealDatas, 
-                                KainDealCycleTimes, KainDealCycleProbs)
-
-KainDealData <- data.frame(KainDealCycle0$Skills, KainDealCycle0$Time, KainDealCycle0$Restraint4, KainDealDatas[[1]])
+KainDealData <- data.frame(KainDealCycle$Skills, KainDealCycle$Time, KainDealCycle$Restraint4, KainFinalDPMwithMax)
 colnames(KainDealData) <- c("Skills", "Time", "R4", "Deal")
 set(get(DPMCalcOption$DataName), as.integer(3), "Kain", Deal_RR(KainDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Kain", Deal_40s(KainDealData, F, StartTime=subset(KainDealData, KainDealData$Skills=="ChasingShot")$Time[1]))
 
-KainSpecMean <- ResetSpecMean("Kain", 
-                              KainDealCycles, 
-                              KainDealDatas, 
-                              ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt, KainDealCycleTimes, KainDealCycleProbs)
+KainSpecMean <- SpecMean("Kain", KainDealCycleReduction, 
+                         DealCalcWithMaxDMR(KainDealCycleReduction, ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt), 
+                         ATKFinal, BuffFinal, SummonedFinal, KainSpecOpt)

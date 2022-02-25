@@ -256,7 +256,7 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Mikhail - Attacks
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(MikhailCore, "SoulAssault")>=40, 20, 0), 20, 2 * GetCoreLv(MikhailCore, "SoulAssault"))
-info <- c(242 + 3 * MikhailSpec$SkillLv, 12, 720, NA, NA, NA, NA, F)
+info <- c(285 + 4 * MikhailSpec$SkillLv, 12, 720, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 SoulAssault <- rbind(data.frame(option, value), info)

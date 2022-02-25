@@ -361,7 +361,7 @@ JupiterThunder <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 870, NA, 435 - 3 * GetCoreLv(ArchMageTCCore, "UnstableMemorize"), F, F, F)
+info <- c(0, 0, 870, NA, 430 - 3 * GetCoreLv(ArchMageTCCore, "UnstableMemorize"), F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UnstableMemorize <- rbind(data.frame(option, value), info)
@@ -428,8 +428,8 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 
 
 ## Unstable Memorize Data
-UnstableCoolReduceProb <- c(1, 5, 10, 35, 15, 10, 5, 5, 5, 5, 3, 1)
-UnstableCoolReduceP <- c(20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 75, 80)
+UnstableCoolReduceProb <- c(1, 6, 6, 6, 10, 11, 12, 12, 12, 8, 6, 5, 2, 2, 1)
+UnstableCoolReduceP <- c(20, 23, 24, 25, 27, 30, 33, 35, 38, 40, 45, 50, 55, 60, 65)
 
 UnstableCool <- c()
 for(i in 1:length(UnstableCoolReduceP)) {
@@ -447,13 +447,13 @@ for(i in 1:length(UnstableCool)) {
   UnstableCycleNames_TB <- c(UnstableCycleNames_TB, paste("ArchMageTCDealCycleTB", i, sep=""))
   UnstableDealDataNames <- c(UnstableDealDataNames, paste("ArchMageTCDealData", i, sep=""))
 }
-UnstableCycles <- data.frame(Cool = UnstableCool, 
-                             Prob = UnstableProb, 
-                             CycleNames = UnstableCycleNames, 
-                             CycleNames_TB = UnstableCycleNames_TB, 
-                             DealDatas = UnstableDealDataNames, 
-                             CycleTimes = rep(0, length(UnstableCool)), 
-                             stringsAsFactors = F)
+UnstableCyclesTC <- data.frame(Cool = UnstableCool, 
+                               Prob = UnstableProb, 
+                               CycleNames = UnstableCycleNames, 
+                               CycleNames_TB = UnstableCycleNames_TB, 
+                               DealDatas = UnstableDealDataNames, 
+                               CycleTimes = rep(0, length(UnstableCool)), 
+                               stringsAsFactors = F)
 
 
 ## ArchMageTC - DealCycle
@@ -673,7 +673,7 @@ TCAddATKCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Thunder
       DealCycle$JupiterThunderFDR[i] <- 0
     }
     if(DealCycle$JupiterThunderFDR[i] > 0 & sum(DealCycle$Skills[i]==c("ChainLightning", "LightningSpearLoop", "LightningSpearEnd", "ThunderBreak", "ThunderBreak2", "ThunderBreak3", 
-                                                                       "ThunderBreak4", "ThunderBreak5", "ThunderBreak6", "ThunderBreak7", "ThunderBreak8")) > 0) {
+                                                                       "ThunderBreak4", "ThunderBreak5", "ThunderBreak6", "ThunderBreak7", "ThunderBreak8", "ThunderSphere")) > 0) {
       DealCycle$JupiterThunderFDR[i] <- 1
     } else {
       DealCycle$JupiterThunderFDR[i] <- 0
@@ -729,7 +729,7 @@ TCAddATKCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Thunder
   return(DealCycle)
 }
 
-for(i in 1:nrow(UnstableCycles)) {
+for(i in 1:nrow(UnstableCyclesTC)) {
   DealCycle <- c("Skills", "Time", rownames(ArchMageTCBuff))
   ArchMageTCDealCycleDummy <- t(rep(0, length(DealCycle)))
   colnames(ArchMageTCDealCycleDummy) <- DealCycle
@@ -740,12 +740,12 @@ for(i in 1:nrow(UnstableCycles)) {
   ArchMageTCDealCycleDummy <- TCAddATKCycle(ArchMageTCDealCycleDummy, ATKFinal, BuffFinal, SummonedFinal, 8, ArchMageTCSpec)
   ArchMageTCDealCycleDummy <- BishopInfinity(ArchMageTCDealCycleDummy, 6000, 70 + ArchMageTCSpec$SkillLv, General$General$Serverlag)
   
-  UnstableCycles$CycleTimes[i] <- max(ArchMageTCDealCycleDummy$Time)
+  UnstableCyclesTC$CycleTimes[i] <- max(ArchMageTCDealCycleDummy$Time)
   assign(paste("ArchMageTCDealCycle", i, sep=""), ArchMageTCDealCycleDummy)
   rm(ArchMageTCDealCycleDummy)
 }
 
-ArchMageTCDealCycleReduction <- DealCycleReduction(get(UnstableCycles$CycleNames[nrow(UnstableCycles)]), NotBuffColNames=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"))
+ArchMageTCDealCycleReduction <- DealCycleReduction(get(UnstableCyclesTC$CycleNames[nrow(UnstableCyclesTC)]), NotBuffColNames=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"))
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {
@@ -776,45 +776,45 @@ if(DPMCalcOption$Optimization==T) {
 }
 ArchMageTCSpecOpt <- OptDataAdd(ArchMageTCSpecOpt, ArchMageTCSpecOpt2, "HyperStat", ArchMageTCBase$CRROver, DemonAvenger=F)
 
-ArchMageTCFinalDPM <- ResetDealCalc(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+ArchMageTCFinalDPM <- ResetDealCalc(DealCycles=GetList(UnstableCyclesTC$CycleNames), 
+                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCyclesTC$CycleTimes, UnstableCyclesTC$Prob, 
                                     NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
-ArchMageTCFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                                     ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+ArchMageTCFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(UnstableCyclesTC$CycleNames), 
+                                                     ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCyclesTC$CycleTimes, UnstableCyclesTC$Prob, 
                                                      NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
 
-set(get(DPMCalcOption$DataName), as.integer(1), "ArchMageTC", sum(na.omit(ArchMageTCFinalDPMwithMax)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000))
-set(get(DPMCalcOption$DataName), as.integer(2), "ArchMageTC", sum(na.omit(ArchMageTCFinalDPM)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000) - 
-      sum(na.omit(ArchMageTCFinalDPMwithMax)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(1), "ArchMageTC", sum(na.omit(ArchMageTCFinalDPMwithMax)) / (sum(UnstableCyclesTC$Prob * UnstableCyclesTC$CycleTimes) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "ArchMageTC", sum(na.omit(ArchMageTCFinalDPM)) / (sum(UnstableCyclesTC$Prob * UnstableCyclesTC$CycleTimes) / 60000) - 
+      sum(na.omit(ArchMageTCFinalDPMwithMax)) / (sum(UnstableCyclesTC$Prob * UnstableCyclesTC$CycleTimes) / 60000))
 
 ArchMageTCDealData <- data.frame(ArchMageTCDealCycle1$Skills, ArchMageTCDealCycle1$Time, ArchMageTCDealCycle1$Restraint4, 
                                  DealCalcWithMaxDMR(ArchMageTCDealCycle1, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
                                                     NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR")))
 colnames(ArchMageTCDealData) <- c("Skills", "Time", "R4", "Deal")
 
-for(i in 1:nrow(UnstableCycles)) {
-  ArchMageTCDealDummy <- DealCalcWithMaxDMR(get(UnstableCycles$CycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
+for(i in 1:nrow(UnstableCyclesTC)) {
+  ArchMageTCDealDummy <- DealCalcWithMaxDMR(get(UnstableCyclesTC$CycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 
                                             NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
   assign(paste("ArchMageTCDealData", i, sep=""), ArchMageTCDealDummy)
   rm(ArchMageTCDealDummy)
 }
-ArchMageTCDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                      DealDatas=GetList(UnstableCycles$DealDatas), 
-                                      times=UnstableCycles$CycleTimes, 
-                                      prob=UnstableCycles$Prob)
+ArchMageTCDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCyclesTC$CycleNames), 
+                                      DealDatas=GetList(UnstableCyclesTC$DealDatas), 
+                                      times=UnstableCyclesTC$CycleTimes, 
+                                      prob=UnstableCyclesTC$Prob)
 
 set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageTC", Deal_RR(ArchMageTCDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageTC", Deal_40s(ArchMageTCDealData, F, NA, FinishTime=subset(ArchMageTCDealData, ArchMageTCDealData$Skills=="Restraint4")$Time[1] + 15000))
 
 ArchMageTCSpecMean <- ResetSpecMean("ArchMageTC", 
-                                    GetList(UnstableCycles$CycleNames), 
-                                    GetList(UnstableCycles$DealDatas), 
-                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+                                    GetList(UnstableCyclesTC$CycleNames), 
+                                    GetList(UnstableCyclesTC$DealDatas), 
+                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCyclesTC$CycleTimes, UnstableCyclesTC$Prob, 
                                     NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
 
 
 ## ThunderBreak 2Hits
-for(i in 1:nrow(UnstableCycles)) {
+for(i in 1:nrow(UnstableCyclesTC)) {
   DealCycle <- c("Skills", "Time", rownames(ArchMageTCBuff))
   ArchMageTCDealCycleDummy <- t(rep(0, length(DealCycle)))
   colnames(ArchMageTCDealCycleDummy) <- DealCycle
@@ -828,10 +828,10 @@ for(i in 1:nrow(UnstableCycles)) {
   assign(paste("ArchMageTCDealCycleTB", i, sep=""), ArchMageTCDealCycleDummy)
   rm(ArchMageTCDealCycleDummy)
 }
-ArchMageTCFinalDPM2 <- ResetDealCalc(DealCycles=GetList(UnstableCycles$CycleNames_TB), 
-                                     ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+ArchMageTCFinalDPM2 <- ResetDealCalc(DealCycles=GetList(UnstableCyclesTC$CycleNames_TB), 
+                                     ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, UnstableCyclesTC$CycleTimes, UnstableCyclesTC$Prob, 
                                      NotBuffCols=c("InfinityFDR", "FrostEffectStackCalc", "FrostEffectStackBDR", "FrostEffectStackCDMR"), NotBuffColOption=c("FDR", "IGR", "BDR", "CDMR"))
-TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPM2)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000)
+TCTB2Hits <- sum(na.omit(ArchMageTCFinalDPM2)) / (sum(UnstableCyclesTC$Prob * UnstableCyclesTC$CycleTimes) / 60000)
 
 ArchMageTCDealDataTB <- data.frame(ArchMageTCDealCycleTB1$Skills, ArchMageTCDealCycleTB1$Time, ArchMageTCDealCycleTB1$Restraint4, 
                                    DealCalcWithMaxDMR(ArchMageTCDealCycleTB1, ATKFinal, BuffFinal, SummonedFinal, ArchMageTCSpecOpt, 

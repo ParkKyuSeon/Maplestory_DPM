@@ -285,7 +285,7 @@ RapidFire <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
 value <- c(40, IGRCalc(c(60, ifelse(GetCoreLv(CaptainCore, "HeadShot")>=40, 20, 0))), 2 * GetCoreLv(CaptainCore, "HeadShot"))
-info <- c(1185 + 13 * CaptainBase$SkillLv, 14, 570, NA, 5, T, T, F)
+info <- c(980 + 12 * CaptainBase$SkillLv, 14, 570, NA, 5, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 HeadShot <- rbind(data.frame(option, value), info)
@@ -306,7 +306,7 @@ CaptainDignity <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(230 + 9 * GetCoreLv(CaptainCore, "BulletParty"), 5, Cooldown(5, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) * 1000 - Delay(570, 2) + 180, 180, 75, T, F, F)
+info <- c(250 + 10 * GetCoreLv(CaptainCore, "BulletParty"), 5, Cooldown(5, T, CaptainSpec$CoolReduceP, CaptainSpec$CoolReduce) * 1000 - Delay(570, 2) + 180, 180, 75, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BulletParty <- rbind(data.frame(option, value), info) ## SubTime : 180ms, Pre : 180ms, End : 180ms

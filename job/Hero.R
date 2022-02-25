@@ -46,7 +46,7 @@ value <- c(10, 5, 1)
 WeaponMastery <- data.frame(option, value)
 
 option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
-value <- c(2, 10)
+value <- c(2, 20)
 WeaponAcceleration <- data.frame(option, value)
 
 option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
@@ -72,10 +72,6 @@ CombatMastery <- data.frame(option, value)
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30 + HeroBase$PSkillLv)
 AdvancedFinalAttack <- data.frame(option, value)
-
-option <- factor(c("FDR", "CDMR"), levels=PSkill)
-value <- c(25, 20)
-Enrage <- data.frame(option, value)
 
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(GetCoreLv(HeroCore, "BodyofSteel"))
@@ -600,7 +596,7 @@ HeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$ComboDeathfaultBuffInstinct[i] > 0 & DealCycle$ComboInstinct[i] == 0) {
-      DealCycle$ComboDeathfaultBuffInstinct[i] <- DealCycle$ComboDeathfaultAfter[i]
+      DealCycle$ComboDeathfaultBuffInstinct[i] <- DealCycle$ComboDeathfaultBuffAfter[i]
       DealCycle$ComboDeathfaultBuffInstinct[i] <- 0
     }
   }

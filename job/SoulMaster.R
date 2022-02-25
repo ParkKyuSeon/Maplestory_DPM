@@ -113,7 +113,7 @@ colnames(info) <- c("option", "value")
 TrueSight <- rbind(data.frame(option, value), info)
 
 option <- factor(c("CRR", "FDR", "ATKSpeed", "ATK"), levels=BSkill)
-value <- c(35 + floor(SoulMasterBase$PSkillLv/2), 25, 2, 30 + SoulMasterBase$PSkillLv + floor(SoulMasterBase$PSkillLv/2))
+value <- c(35 + floor(SoulMasterBase$PSkillLv/2), 25, 2, 45 + SoulMasterBase$PSkillLv + floor(SoulMasterBase$PSkillLv/2))
 info <- c(200, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")

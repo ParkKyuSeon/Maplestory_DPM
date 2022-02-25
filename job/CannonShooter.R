@@ -56,7 +56,7 @@ value <- c(2, 20)
 CannonAcceleration <- data.frame(option, value)
 
 option <- factor(c("FDR", "CRR", "CDMR"), levels=PSkill)
-value <- c(10, 20, 5)
+value <- c(10, 20, 10)
 BarrelRoulettePassive <- data.frame(option, value)
 
 option <- factor(c("ATK", "ATKSpeed", "FDR"), levels=PSkill)
@@ -390,7 +390,7 @@ PoolMaker <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(CannonShooterCore, "MonkeyFurious_MiniCannonball")>=40, 20, 0), 3 * GetCoreLv(CannonShooterCore, "MonkeyFurious_MiniCannonball"))
-info <- c(180 * 0.45, 5 * 3, 0, NA, NA, F, F, F)
+info <- c(360 * 0.45, 5 * 3, 0, NA, NA, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MiniCannonball <- rbind(data.frame(option, value), info)

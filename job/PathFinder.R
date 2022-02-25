@@ -48,6 +48,10 @@ option <- factor(c("CRR"), levels=PSkill)
 value <- c(40)
 CriticalShot <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+AncientBowAcceleration <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(30)
 AncientBowMastery <- data.frame(option, value)
@@ -65,7 +69,7 @@ value <- c(10, 10, 30)
 EssenceofArcher <- data.frame(option, value)
 
 option <- factor(c("ATKP"), levels=PSkill)
-value <- c(20)
+value <- c(20 + PathFinderBase$PSkillLv)
 AdditionalTransition <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
@@ -84,20 +88,13 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(PathFinderCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-PathFinderPassive <- Passive(list(ArcherMastery=ArcherMastery, CriticalShot=CriticalShot, AncientBowMastery=AncientBowMastery, PhysicalTraining=PhysicalTraining, 
+PathFinderPassive <- Passive(list(ArcherMastery=ArcherMastery, CriticalShot=CriticalShot, AncientBowAcceleration=AncientBowAcceleration, AncientBowMastery=AncientBowMastery, PhysicalTraining=PhysicalTraining, 
                                   AncientGuidancePassive=AncientGuidancePassive, EssenceofArcher=EssenceofArcher, AdditionalTransition=AdditionalTransition, AncientBowExpert=AncientBowExpert, IllusionStep=IllusionStep, 
                                   BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## PathFinder - Buff
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(300, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-AncientBowBooster <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
+{option <- factor(levels=BSkill)
 value <- c()
 info <- c(300, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -194,7 +191,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 RelicChange <- rbind(data.frame(option, value), info)}
 
-PathFinderBuff <- list(AncientBowBooster=AncientBowBooster, CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
+PathFinderBuff <- list(CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
                        CurseTransitionDebuff=CurseTransitionDebuff, EpicAdventure=EpicAdventure, RelicEvolution=RelicEvolution, UsefulCombatOrders=UsefulCombatOrders, 
                        CriticalReinforce=CriticalReinforce, RavenTempestBuff=RavenTempestBuff, MapleWarriors2=MapleWarriors2, 
                        RelicGauge=RelicGauge, GuidanceGauge=GuidanceGauge, RelicChange=RelicChange, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
@@ -204,7 +201,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 PathFinderBuff <- Buff(PathFinderBuff)
 PathFinderAllTimeBuff <- AllTimeBuff(PathFinderBuff)
-## PetBuff : AincientBowBooster(990ms), CurseTolerance(900ms), SharpEyes(900ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+## PetBuff : CurseTolerance(900ms), SharpEyes(900ms), MapleSoldier(0ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
 
 
 ## PathFinder - Union & HyperStat & SoulWeapon
@@ -229,7 +226,7 @@ info <- c(30, 120, 780, F, T, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 CriticalReinforce <- rbind(data.frame(option, value), info)}
-PathFinderBuff <- list(AncientBowBooster=AncientBowBooster, CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
+PathFinderBuff <- list(CurseTolerance=CurseTolerance, AncientGuidance=AncientGuidance, SharpEyes=SharpEyes, MapleSoldier=MapleSoldier,
                        CurseTransitionDebuff=CurseTransitionDebuff, EpicAdventure=EpicAdventure, RelicEvolution=RelicEvolution, UsefulCombatOrders=UsefulCombatOrders, 
                        CriticalReinforce=CriticalReinforce, RavenTempestBuff=RavenTempestBuff, MapleWarriors2=MapleWarriors2, 
                        RelicGauge=RelicGauge, GuidanceGauge=GuidanceGauge, RelicChange=RelicChange, Restraint4=Restraint4, SoulContractLink=SoulContractLink)
@@ -419,9 +416,9 @@ PathFinderDealCycle <- data.frame(PathFinderDealCycle)
 PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure,
                             Period=120, CycleTime=240, SkipAddDelay=30) {
   SkipStructure$SkippedDelay <- SkipStructure$SkippedDelay + SkipAddDelay
-  BuffSummonedPrior <- c("AncientBowBooster", "CurseTolerance", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
+  BuffSummonedPrior <- c("CurseTolerance", "SharpEyes", "MapleSoldier", "UsefulCombatOrders", "UsefulAdvancedBless", "EpicAdventure", 
                          "GuidedArrow", "MapleWarriors2", "CriticalReinforce", "SoulContractLink", "RavenTempestBuff", "Restraint4", "RelicEvolution")
-  Times120 <- c(0, 0.5, 0, 0, 0, 0, 0, 
+  Times120 <- c(0, 0, 0, 0, 0, 0, 
                 0, 0.5, 1, 1, 1, 0.5, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times120 <- Times120[BuffSummonedPrior!="UsefulAdvancedBless"]
@@ -660,7 +657,7 @@ PathFinderCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
         DealCycle <- DCATKSkip(DealCycle, "UltimateBlast", ATKFinal, SkipStructure)
         DealCycle <- RelicGauge(DealCycle, BuffFinal)
         DealCycle <- RelicShape(DealCycle, Shape)
-      } else if(BuffList[[1]][i]=="AncientBowBooster") {
+      } else if(BuffList[[1]][i]=="CurseTolerance") {
         DealCycle <- DCBuff(DealCycle, BuffList[[1]][i], BuffFinal)
         DealCycle$RelicGauge[nrow(DealCycle)] <- 1000
         DealCycle$GuidanceGauge[nrow(DealCycle)] <- 1000

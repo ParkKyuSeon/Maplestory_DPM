@@ -314,7 +314,7 @@ PeaceMaker <- rbind(data.frame(option, value), info)
 
 option <- factor("FDR", levels=ASkill)
 value <- c(floor(GetCoreLv(BishopCore, "OverloadMana") / 10) + 8)
-info <- c(500 + 20 * GetCoreLv(BishopCore, "PeaceMaker"), 8, 0, NA, 10, T, F, F)
+info <- c(350 + 14 * GetCoreLv(BishopCore, "PeaceMaker"), 12, 0, NA, 10, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 PeaceMakerExplosion <- rbind(data.frame(option, value), info)
@@ -342,7 +342,7 @@ DivinePunishmentEnd <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 870, NA, 435 - 3 * GetCoreLv(BishopCore, "UnstableMemorize"), F, F, F)
+info <- c(0, 0, 870, NA, 430 - 3 * GetCoreLv(BishopCore, "UnstableMemorize"), F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UnstableMemorize <- rbind(data.frame(option, value), info)
@@ -402,8 +402,8 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 
 
 ## Unstable Memorize Data
-UnstableCoolReduceProb <- c(1, 5, 10, 35, 15, 10, 5, 5, 5, 5, 3, 1)
-UnstableCoolReduceP <- c(20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 75, 80)
+UnstableCoolReduceProb <- c(1, 6, 6, 6, 10, 11, 12, 12, 12, 8, 6, 5, 2, 2, 1)
+UnstableCoolReduceP <- c(20, 23, 24, 25, 27, 30, 33, 35, 38, 40, 45, 50, 55, 60, 65)
 
 UnstableCool <- c()
 for(i in 1:length(UnstableCoolReduceP)) {
@@ -419,12 +419,12 @@ for(i in 1:length(UnstableCool)) {
   UnstableCycleNames <- c(UnstableCycleNames, paste("BishopDealCycle", i, sep=""))
   UnstableDealDataNames <- c(UnstableDealDataNames, paste("BishopDealData", i, sep=""))
 }
-UnstableCycles <- data.frame(Cool = UnstableCool, 
-                             Prob = UnstableProb, 
-                             CycleNames = UnstableCycleNames, 
-                             DealDatas = UnstableDealDataNames, 
-                             CycleTimes = rep(0, length(UnstableCool)), 
-                             stringsAsFactors = F)
+UnstableCyclesBI <- data.frame(Cool = UnstableCool, 
+                               Prob = UnstableProb, 
+                               CycleNames = UnstableCycleNames, 
+                               DealDatas = UnstableDealDataNames, 
+                               CycleTimes = rep(0, length(UnstableCool)), 
+                               stringsAsFactors = F)
 
 
 BishopCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, UnstableCool) {
@@ -869,7 +869,7 @@ BishopStats <- function(DealCycle, BuffFinal, Spec) {
   
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i] == "HolyBlood") {
-      DealCycle$HolyBloodFDR[i] <- floor(DealCycle$Stat[i] / 5000) + 1
+      DealCycle$HolyBloodFDR[i] <- min(15, floor(DealCycle$Stat[i] / 5000) + 1)
     } else if(DealCycle$HolyBlood[i] > 0) {
       DealCycle$HolyBloodFDR[i] <- DealCycle$HolyBloodFDR[i-1]
     }
@@ -877,7 +877,7 @@ BishopStats <- function(DealCycle, BuffFinal, Spec) {
   return(DealCycle)
 }
 
-for(i in 1:nrow(UnstableCycles)) {
+for(i in 1:nrow(UnstableCyclesBI)) {
   DealCycle <- c("Skills", "Time", rownames(BishopBuff))
   BishopDealCycleDummy <- t(rep(0, length(DealCycle)))
   colnames(BishopDealCycleDummy) <- DealCycle
@@ -889,12 +889,12 @@ for(i in 1:nrow(UnstableCycles)) {
   BishopDealCycleDummy <- BishopStats(BishopDealCycleDummy, BuffFinal, BishopSpec)
   BishopDealCycleDummy <- BishopInfinity(BishopDealCycleDummy, 6000, 70 + BishopSpec$SkillLv, General$General$Serverlag)
   
-  UnstableCycles$CycleTimes[i] <- max(BishopDealCycleDummy$Time)
+  UnstableCyclesBI$CycleTimes[i] <- max(BishopDealCycleDummy$Time)
   assign(paste("BishopDealCycle", i, sep=""), BishopDealCycleDummy)
   rm(BishopDealCycleDummy)
 }
 
-BishopDealCycleReduction <- DealCycleReduction(get(UnstableCycles$CycleNames[nrow(UnstableCycles)]), NotBuffColNames=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"))
+BishopDealCycleReduction <- DealCycleReduction(get(UnstableCyclesBI$CycleNames[nrow(UnstableCyclesBI)]), NotBuffColNames=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"))
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {
@@ -925,16 +925,16 @@ if(DPMCalcOption$Optimization==T) {
 }
 BishopSpecOpt <- OptDataAdd(BishopSpecOpt, BishopSpecOpt2, "HyperStat", BishopBase$CRROver, DemonAvenger=F)
 
-BishopFinalDPM <- ResetDealCalc(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+BishopFinalDPM <- ResetDealCalc(DealCycles=GetList(UnstableCyclesBI$CycleNames), 
+                                ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCyclesBI$CycleTimes, UnstableCyclesBI$Prob, 
                                 NotBuffCols=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"), NotBuffColOption=c("FDR", "FDR", "FDR", "BDR"))
-BishopFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                                 ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+BishopFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(UnstableCyclesBI$CycleNames), 
+                                                 ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCyclesBI$CycleTimes, UnstableCyclesBI$Prob, 
                                                  NotBuffCols=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"), NotBuffColOption=c("FDR", "FDR", "FDR", "BDR"))
 
-set(get(DPMCalcOption$DataName), as.integer(1), "Bishop", sum(na.omit(BishopFinalDPMwithMax)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000))
-set(get(DPMCalcOption$DataName), as.integer(2), "Bishop", sum(na.omit(BishopFinalDPM)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000) - 
-      sum(na.omit(BishopFinalDPMwithMax)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(1), "Bishop", sum(na.omit(BishopFinalDPMwithMax)) / (sum(UnstableCyclesBI$Prob * UnstableCyclesBI$CycleTimes) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "Bishop", sum(na.omit(BishopFinalDPM)) / (sum(UnstableCyclesBI$Prob * UnstableCyclesBI$CycleTimes) / 60000) - 
+      sum(na.omit(BishopFinalDPMwithMax)) / (sum(UnstableCyclesBI$Prob * UnstableCyclesBI$CycleTimes) / 60000))
 
 BishopDealData <- data.frame(BishopDealCycle1$Skills, BishopDealCycle1$Time, BishopDealCycle1$WeaponPuff, BishopDealCycle1$HolyBlood, 
                              DealCalcWithMaxDMR(BishopDealCycle1, ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
@@ -951,22 +951,22 @@ for(i in 2:nrow(BishopDealData)) {
   }
 }
 
-for(i in 1:nrow(UnstableCycles)) {
-  BishopDealDummy <- DealCalcWithMaxDMR(get(UnstableCycles$CycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
+for(i in 1:nrow(UnstableCyclesBI)) {
+  BishopDealDummy <- DealCalcWithMaxDMR(get(UnstableCyclesBI$CycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, 
                                         NotBuffCols=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"), NotBuffColOption=c("FDR", "FDR", "FDR", "BDR"))
   assign(paste("BishopDealData", i, sep=""), BishopDealDummy)
   rm(BishopDealDummy)
 }
-BishopDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                  DealDatas=GetList(UnstableCycles$DealDatas), 
-                                  times=UnstableCycles$CycleTimes, 
-                                  prob=UnstableCycles$Prob)
+BishopDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCyclesBI$CycleNames), 
+                                  DealDatas=GetList(UnstableCyclesBI$DealDatas), 
+                                  times=UnstableCyclesBI$CycleTimes, 
+                                  prob=UnstableCyclesBI$Prob)
 
 set(get(DPMCalcOption$DataName), as.integer(3), "Bishop", Deal_RR(BishopDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "Bishop", Deal_40s(BishopDealData, F, NA, FinishTime=subset(BishopDealData, BishopDealData$Skills=="WeaponPuff4")$Time[1] + 18000))
 
 BishopSpecMean <- ResetSpecMean("Bishop", 
-                                GetList(UnstableCycles$CycleNames), 
-                                GetList(UnstableCycles$DealDatas), 
-                                ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+                                GetList(UnstableCyclesBI$CycleNames), 
+                                GetList(UnstableCyclesBI$DealDatas), 
+                                ATKFinal, BuffFinal, SummonedFinal, BishopSpecOpt, UnstableCyclesBI$CycleTimes, UnstableCyclesBI$Prob, 
                                 NotBuffCols=c("InfinityFDR", "HolyBloodFDR", "PrayFDR", "AngelofLibraBDR"), NotBuffColOption=c("FDR", "FDR", "FDR", "BDR"))

@@ -408,7 +408,7 @@ AssistantHuntingUnit <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "IGR"), levels=ASkill)
 value <- c(2 * GetCoreLv(WildHunterCore, "DrillContainer"), ifelse(GetCoreLv(WildHunterCore, "DrillContainer")>=40, 20, 0))
-info <- c(430, 1, 660, 270, 30, T, T, F) ## FirstATK 1200ms, 55 hits
+info <- c(430 + 4 * WildHunterSpec$SkillLv, 1, 660, 270, 30, T, T, F) ## FirstATK 1200ms, 55 hits
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DrillContainer <- rbind(data.frame(option, value), info)}

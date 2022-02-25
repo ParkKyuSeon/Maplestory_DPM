@@ -115,7 +115,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 EpicAdventure <- rbind(data.frame(option, value), info)
 
-option <- factor(c("BDR", "AddATKSkill"), levels=BSkill)
+option <- factor(c("BDR", "ATKSkill"), levels=BSkill)
 value <- c(10, 1)
 info <- c(60, 120, 0, F, F, F, T)
 info <- data.frame(BInfo, info)

@@ -69,7 +69,7 @@ value <- c(30 + PhantomBase$PSkillLv, 30 + PhantomBase$PSkillLv)
 PrayofAria <- data.frame(option, value)
 
 option <- factor(c("Mastery", "ATK", "CDMR", "FDR"), levels=PSkill)
-value <- c(70 + ceiling(PhantomBase$PSkillLv/2), 40 + PhantomBase$PSkillLv, 15, 25 + floor(PhantomBase$PSkillLv/2))
+value <- c(70 + ceiling(PhantomBase$PSkillLv/2), 40 + PhantomBase$PSkillLv, 15, 32 + floor(PhantomBase$PSkillLv/2))
 CaneExpert <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
@@ -300,7 +300,7 @@ FinalCut <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(240 + 9 * GetCoreLv(PhantomCore, "Joker"), 3, 6000 + floor(GetCoreLv(PhantomCore, "Joker")/25) * 1000, 50, 150, T, F, F)
+info <- c(350 + 14 * GetCoreLv(PhantomCore, "Joker"), 3, 6000 + floor(GetCoreLv(PhantomCore, "Joker")/25) * 1000, 50, 180, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Joker <- rbind(data.frame(option, value), info)

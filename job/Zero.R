@@ -51,7 +51,7 @@ value <- c(25, 50)
 ResolveTime <- data.frame(option, value)
 
 option <- factor(c("ATK", "FDR", "Mastery", "CRR", "ATKSpeed"), levels=PSkill)
-value <- c(40, 10, 70, 30, 3)
+value <- c(40, 16, 70, 30, 3)
 Mastery <- data.frame(option, value)
 
 option <- factor(c("BDR", "CRR", "ATKSpeed"), levels=PSkill)
@@ -1787,11 +1787,20 @@ ZeroAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, Deal
                                          "LimitBreakLast", "ShadowFlashAlphaInstall", "ShadowFlashAlphaExp", "ShadowFlashBetaInstall", "ShadowFlashBetaExp", 
                                          "EgoWeaponAlpha", "EgoWeaponBeta"))==1 & DealCycle$Beta[i] > 0 & CriticalBindStack == 10 & CriticalBindCool == 0) {
       CriticalBindStack <- 0
-      CriticalBindCool <- ifelse(DealCycle$LimitBreakBuff[i] > 0 & BuffFinal[rownames(BuffFinal)=="LimitBreakBuff", ]$Duration * 1000 - DealCycle$LimitBreakBuff[i] < 6000, 0, 39000)
-      DealCycle$CriticalBindDebuff[i] <- 4000
+      CriticalBindCool <- ifelse(DealCycle$LimitBreakBuff[i] > 0 & BuffFinal[rownames(BuffFinal)=="LimitBreakBuff", ]$Duration * 1000 - DealCycle$LimitBreakBuff[i] < 8000, 0, 39000)
+      DealCycle$CriticalBindDebuff[i] <- ifelse(DealCycle$LimitBreakBuff[i] > 0 & BuffFinal[rownames(BuffFinal)=="LimitBreakBuff", ]$Duration * 1000 - DealCycle$LimitBreakBuff[i] >= 8000 & 
+                                                  BuffFinal[rownames(BuffFinal)=="LimitBreakBuff", ]$Duration * 1000 - DealCycle$LimitBreakBuff[i] < 10000, 
+                                                4000 + 10000 - (BuffFinal[rownames(BuffFinal)=="LimitBreakBuff", ]$Duration * 1000 - DealCycle$LimitBreakBuff[i]), 
+                                                4000)
     } else {
       DealCycle$CriticalBindDebuff[i] <- max(0, DealCycle$CriticalBindDebuff[i-1] - (DealCycle[i, 2] - DealCycle[i-1, 2]))
       CriticalBindCool <- max(0, CriticalBindCool - (DealCycle[i, 2] - DealCycle[i-1, 2]))
+    }
+  }
+  
+  for(i in 1:nrow(DealCycle)) {
+    if(DealCycle$CriticalBindDebuff[i] > 4000) {
+      DealCycle$CriticalBindDebuff[i] <- 0
     }
   }
   

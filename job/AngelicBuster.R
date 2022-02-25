@@ -44,6 +44,10 @@ AngelicBusterBase <- JobBase(ChrInfo=ChrInfo,
 value <- c(10)
 TrueSuccesser <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed"), levels=PSkill)
+value <- c(2)
+LyricalCross <- data.frame(option, value)
+
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(20)
 SoulShooterMastery <- data.frame(option, value)
@@ -51,6 +55,10 @@ SoulShooterMastery <- data.frame(option, value)
 option <- factor(c("MainStat"), levels=PSkill)
 value <- c(40)
 InnerFire <- data.frame(option, value)
+
+option <- factor(c("MainStat"), levels=PSkill)
+value <- c(20)
+IronLotus <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(40)
@@ -84,7 +92,7 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(AngelicBusterCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-AngelicBusterPassive <- Passive(list(TrueSuccesser, SoulShooterMastery, InnerFire, CallofAincient, AffinityIII, TrinityPassive, SoulShooterExpert,
+AngelicBusterPassive <- Passive(list(TrueSuccesser, LyricalCross, SoulShooterMastery, InnerFire, IronLotus, CallofAincient, AffinityIII, TrinityPassive, SoulShooterExpert,
                                      TrinityFusionPassive, LoadedDice, BlinkPassive, RopeConnectPassive))
 
 
@@ -96,26 +104,12 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SoulContract <- rbind(data.frame(option, value), info)
 
-option <- factor(c("ATKSpeed"), levels=BSkill)
-value <- c(2)
-info <- c(180, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-LyricalCross <- rbind(data.frame(option, value), info) 
-
 option <- factor(levels=BSkill)
 value <- c()
 info <- c(180, NA, 0, T, NA, NA, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 PowerTransfer <- rbind(data.frame(option, value), info) 
-
-option <- factor(levels=BSkill)
-value <- c()
-info <- c(180, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-IronRotus <- rbind(data.frame(option, value), info) 
 
 option <- factor(c("CDMR"), levels=BSkill)
 value <- c(45 + AngelicBusterBase$SkillLv)
@@ -245,13 +239,18 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 }
 
-AngelicBusterBuff <- Buff(list(LyricalCross=LyricalCross, PowerTransfer=PowerTransfer, IronRotus=IronRotus, SoulGaze=SoulGaze, MapleSoldier=MapleSoldier, 
-                               FinituraFettucciaBuff=FinituraFettucciaBuff, AffinityIVBuff=AffinityIVBuff, SoulExalt=SoulExalt, FinalContract=FinalContract, 
-                               EnergyBustBuff=EnergyBustBuff, SpotLightBuff1=SpotLightBuff1, SpotLightBuff2=SpotLightBuff2, SpotLightBuff3=SpotLightBuff3, 
-                               MascotFamiliarBuff=MascotFamiliarBuff, MascotFamiliarStack=MascotFamiliarStack, MascotFamiliarDummy=MascotFamiliarDummy, 
-                               LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, BlessofGrandisGoddess=BlessofGrandisGoddess, 
-                               UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, Restraint4=Restraint4, SoulContract=SoulContract))
-## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), SoulGaze(1080ms), LyricalCross(990ms), PowerTransfer(990ms), IronRotus(1080ms) -> Not Use Useful Advanced Bless
+AngelicBusterBuff <- list(PowerTransfer=PowerTransfer, SoulGaze=SoulGaze, MapleSoldier=MapleSoldier, 
+                          FinituraFettucciaBuff=FinituraFettucciaBuff, AffinityIVBuff=AffinityIVBuff, SoulExalt=SoulExalt, FinalContract=FinalContract, 
+                          EnergyBustBuff=EnergyBustBuff, SpotLightBuff1=SpotLightBuff1, SpotLightBuff2=SpotLightBuff2, SpotLightBuff3=SpotLightBuff3, 
+                          MascotFamiliarBuff=MascotFamiliarBuff, MascotFamiliarStack=MascotFamiliarStack, MascotFamiliarDummy=MascotFamiliarDummy, 
+                          LuckyDice5=LuckyDice5, OverDrive=OverDrive, OverDriveExhaust=OverDriveExhaust, BlessofGrandisGoddess=BlessofGrandisGoddess, 
+                          UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, Restraint4=Restraint4, SoulContract=SoulContract)
+## PetBuff : UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), SoulGaze(1080ms), PowerTransfer(990ms), (UsefulAdvancedBless)
+if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
+  AngelicBusterBuff[[length(AngelicBusterBuff)+1]] <- UsefulAdvancedBless
+  names(AngelicBusterBuff)[[length(AngelicBusterBuff)]] <- "UsefulAdvancedBless"
+}
+AngelicBusterBuff <- Buff(AngelicBusterBuff)
 AngelicBusterAllTimeBuff <- AllTimeBuff(AngelicBusterBuff)
 
 
@@ -286,7 +285,7 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 ## Hyper : Trinity - Reinforce / Split Attack, Soul Seeker - Reinforce / Make Up,  Finitura Fettuccia - CoolTime Reduce
 {option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(30, ifelse(GetCoreLv(AngelicBusterCore, "Trinity")>=40, 20, 0))), 50, 2 * GetCoreLv(AngelicBusterCore, "Trinity")) 
-info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 3, 510, NA, NA, NA, NA, F) 
+info <- c(720 + 12 * AngelicBusterSpec$SkillLv - 70, 3, 480, NA, NA, NA, NA, F) 
 info <- data.frame(AInfo, info) 
 colnames(info) <- c("option", "value")
 Trinity1 <- rbind(data.frame(option, value), info) 
@@ -411,11 +410,14 @@ AngelicBusterDealCycle <- data.frame(AngelicBusterDealCycle)
 
 AngelicBusterCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, SkipStructure, 
                                Period=c(122), CycleTime=c(244), SoulContractReset=0, FinituraFettucciaReset=0) {
-  BuffSummonedPrior <- c("MapleSoldier", "LyricalCross", "PowerTransfer", "IronRotus", "SoulGaze", "UsefulSharpEyes", "UsefulCombatOrders", "LuckyDice5", 
+  BuffSummonedPrior <- c("MapleSoldier", "PowerTransfer", "SoulGaze", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "LuckyDice5", 
                          "MascotFamiliarBuff", "EnergyBustBuff", "BlessofGrandisGoddess", "OverDrive", "SoulExalt", "FinalContract", "SpotLightBuff1", "SoulContract", "FinituraFettucciaBuff")
-  
-  Times122 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
+  Times122 <- c(0, 0, 0, 0, 0, 0, 0, 
                 1, 1, 0.5, 2, 1, 1, 1, 1, 0.5)
+  if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
+    Times122 <- Times122[BuffSummonedPrior!="UsefulAdvancedBless"]
+    BuffSummonedPrior <- BuffSummonedPrior[BuffSummonedPrior!="UsefulAdvancedBless"]
+  }
   SubTime <- rep(Period - min(2, Spec$CoolReduce), length(BuffSummonedPrior))
   TotalTime <- CycleTime - min(2, Spec$CoolReduce) * (CycleTime/Period)
   for(i in 1:length(BuffSummonedPrior)) {

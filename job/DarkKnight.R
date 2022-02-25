@@ -28,7 +28,7 @@ DarkKnightBase <- JobBase(ChrInfo=ChrInfo,
                           SpecSet=get(DPMCalcOption$SpecSet), 
                           Job="DarkKnight",
                           CoreData=DarkKnightCore, 
-                          BuffDurationNeeded=85, 
+                          BuffDurationNeeded=55, 
                           AbilList=FindJob(get(paste(DPMCalcOption$SpecSet, "Ability", sep="")), "DarkKnight"), 
                           LinkList=FindJob(get(paste(DPMCalcOption$SpecSet, "Link", sep="")), "DarkKnight"), 
                           MonsterLife=get(FindJob(MonsterLifePreSet, "DarkKnight")[DPMCalcOption$MonsterLifeLevel][1, 1]), 
@@ -74,7 +74,7 @@ option <- factor(c("FDR", "CRR", "CDMR"), levels=PSkill)
 value <- c(35 + DarkKnightBase$SkillLv, 30 + ceiling(DarkKnightBase$SkillLv/3), 15)
 ReincarnationPassive <- data.frame(option, value)
 
-option <- factor(c("Mastery", "ATK", "CMDR"), levels=PSkill)
+option <- factor(c("Mastery", "ATK", "CDMR"), levels=PSkill)
 value <- c(70 + ceiling(DarkKnightBase$SkillLv/2), 30 + DarkKnightBase$SkillLv, 15)
 AdvancedWeaponMastery <- data.frame(option, value)
 
@@ -119,8 +119,8 @@ colnames(info) <- c("option", "value")
 MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=BSkill)
-value <- c(10 + ceiling(DarkKnightBase$SkillLv/3), 10 + ceiling(DarkKnightBase$SkillLv/3), 10)
-info <- c(30 * (100 + DarkKnightBase$BuffDurationNeeded) / 100 + General$General$Serverlag, Cooldown(70, T, DarkKnightBase$UnionChrs$CoolReduceP, DarkKnightBase$CoolReduce) - 7.7, 960, F, F, F, F)
+value <- c(10 + ceiling(DarkKnightBase$SkillLv/3), 15 + ceiling(DarkKnightBase$SkillLv/3), 10)
+info <- c(30 * (100 + DarkKnightBase$BuffDurationNeeded) / 100 + General$General$Serverlag, Cooldown(70, T, DarkKnightBase$UnionChrs$CoolReduceP, DarkKnightBase$CoolReduce) - 7.7, 0, F, F, F, F)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DarkResonance <- rbind(data.frame(option, value), info)
@@ -184,7 +184,7 @@ if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
 }
 DarkKnightBuff <- Buff(DarkKnightBuff)
 DarkKnightAllTimeBuff <- AllTimeBuff(DarkKnightBuff)
-## PetBuff : HyperBody(600ms), CrossOverChain(720ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
+## PetBuff : DarkResonance(960ms), HyperBody(600ms), CrossOverChain(720ms), UsefulSharpEyes(900ms), UsefulCombatOrders(1500ms), (UsefulAdvancedBless)
 
 
 ## DarkKnight - Union & HyperStat & SoulWeapon
@@ -238,7 +238,7 @@ BeholderShockSphere <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(DarkKnightCore, "Beholder")>=40, 20, 0), 150, 3 * GetCoreLv(DarkKnightCore, "Beholder"))
-info <- c(182 + 2 * DarkKnightSpec$SkillLv, 5, 0, NA, 5, F, F, F)
+info <- c(255 + 4 * DarkKnightSpec$SkillLv, 5, 0, NA, 5, F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BeholdersRevenge <- rbind(data.frame(option, value), info)
@@ -259,7 +259,7 @@ DarkSpear <- rbind(data.frame(option, value), info) ## 10 Hits
 
 option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
 value <- c(IGRCalc(c(20, ifelse(GetCoreLv(DarkKnightCore, "Beholder")>=40, 20, 0))), 150, 3 * GetCoreLv(DarkKnightCore, "Beholder"))
-info <- c(100 + GetCoreLv(DarkKnightCore, "BeholderImpact"), 6, 0, 240, 20, T, F, F)
+info <- c(110 + 5 * GetCoreLv(DarkKnightCore, "BeholderImpact"), 6, 0, 240, 20, T, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 BeholderImpact <- rbind(data.frame(option, value), info)
@@ -358,7 +358,7 @@ DarkKnightCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Sp
                          "DarkResonance", "AuraWeaponBuff", "MapleWarriors2", "DarknessAuraBuff")
   
   Times180 <- c(0, 0, 0, 0, 0, 0, 0, 
-                3, 1, 1, 1)
+                4, 1, 1, 1)
   
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]

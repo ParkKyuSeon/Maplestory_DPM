@@ -73,7 +73,7 @@ value <- c(30 + AdeleBase$PSkillLv, 20 + AdeleBase$PSkillLv)
 Demolition <- data.frame(option, value)
 
 option <- factor(c("ATK", "BDR", "CRR"), levels=PSkill)
-value <- c(30 + AdeleBase$PSkillLv, 10 + floor(AdeleBase$PSkillLv/2), 20 + AdeleBase$PSkillLv)
+value <- c(30 + AdeleBase$PSkillLv, 10 + ceiling(AdeleBase$PSkillLv/2), 20 + AdeleBase$PSkillLv)
 Attain <- data.frame(option, value)
 
 option <- factor(c("BDR", "IGR"), levels=PSkill)

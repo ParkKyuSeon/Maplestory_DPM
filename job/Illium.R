@@ -67,7 +67,7 @@ EndlessResearch <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)
 value <- c(46)
-BlessMarkCompletion <- data.frame(option, value) ## 9 stack
+BlessMarkCompletion <- data.frame(option, value) ## 10 stack
 
 option <- factor(c("IGR"), levels=PSkill)
 value <- c(20)
@@ -256,8 +256,8 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 MotalSwing <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(IlliumCore, "Destruction")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Destruction"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(IlliumCore, "Destruction")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Destruction"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c(710 + 2 * IlliumSpec$SkillLv, 8, 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -277,8 +277,8 @@ info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 DominationSoul <- rbind(data.frame(option, value), info)
 
-option <- factor(c("IGR", "FDR"), levels=ASkill)
-value <- c(ifelse(GetCoreLv(IlliumCore, "Destruction")>=40, 20, 0), FDRCalc(c(2 * GetCoreLv(IlliumCore, "Destruction"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
+option <- factor(c("IGR", "BDR", "FDR"), levels=ASkill)
+value <- c(ifelse(GetCoreLv(IlliumCore, "Destruction")>=40, 20, 0), 20, FDRCalc(c(2 * GetCoreLv(IlliumCore, "Destruction"), floor(GetCoreLv(IlliumCore, "OverloadMana") / 10) + 8)))
 info <- c((710 + 2 * IlliumSpec$SkillLv) * (0.01 * GetCoreLv(IlliumCore, "SoulofCrystal") + 0.5), 8, 0, NA, 4, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")

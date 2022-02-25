@@ -826,6 +826,9 @@ Passive <- function(PassiveSkills) {
   for(i in 1:length(PassiveSkills)) {
     for(j in 1:nrow(PassiveSkills[[i]])) {
       t <- as.numeric(PassiveSkills[[i]][j, 1])
+      if(is.na(t)==T) {
+        warning("Incorrect Spec Component Detected")
+      }
       a[t] <- ifelse(PSkill[t]!="IGR"&PSkill[t]!="FDR", a[t] + PassiveSkills[[i]][j, 2], 
                      ifelse(PSkill[t]=="IGR", (1 - (100 - a[t]) / 100 * (100 - PassiveSkills[[i]][j, 2]) / 100) * 100, 
                             ((100 + a[t]) / 100 * (100 + PassiveSkills[[i]][j, 2]) / 100) * 100 - 100))
@@ -849,6 +852,9 @@ Buff <- function(BuffSkills) {
     BuffSkills[[i]][, 1] <- factor(BuffSkills[[i]][, 1], levels=buffoptions)
     for(j in 1:nrow(BuffSkills[[i]])) {
       t <- as.numeric(BuffSkills[[i]][j, 1])
+      if(is.na(t)==T) {
+        warning("Incorrect Spec Component Detected")
+      }
       buffs[i, t] <- BuffSkills[[i]][j, 2]
     }
   }
@@ -871,6 +877,9 @@ Attack <- function(ATKSkills) {
     ATKSkills[[i]][, 1] <- factor(ATKSkills[[i]][, 1], levels=ATKoptions)
     for(j in 1:nrow(ATKSkills[[i]])) {
       t <- as.numeric(ATKSkills[[i]][j, 1])
+      if(is.na(t)==T) {
+        warning("Incorrect Spec Component Detected")
+      }
       ATKs[i, t] <- ATKSkills[[i]][j, 2]
     }
   }
@@ -894,6 +903,9 @@ Summoned <- function(SummonedSkills) {
     SummonedSkills[[i]][, 1] <- factor(SummonedSkills[[i]][, 1], levels=Summonedoptions)
     for(j in 1:nrow(SummonedSkills[[i]])) {
       t <- as.numeric(SummonedSkills[[i]][j, 1])
+      if(is.na(t)==T) {
+        warning("Incorrect Spec Component Detected")
+      }
       Summoned[i, t] <- SummonedSkills[[i]][j, 2]
     }
   }

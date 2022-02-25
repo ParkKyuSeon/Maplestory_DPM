@@ -253,7 +253,7 @@ HurricaneArrow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage")>=40, 20, 0), 2 * GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage"))
-info <- c(420 + 120 + 2 * BowmasterSpec$SkillLv, 4 * 4, 0, NA, NA, NA, NA, F)
+info <- c(420 + 120 + 2 * BowmasterSpec$SkillLv, 8 * 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FlashMirage <- rbind(data.frame(option, value), info)
@@ -328,8 +328,8 @@ BowmasterATK <- Attack(list(HurricaneArrow=HurricaneArrow, FlashMirage=FlashMira
 
 
 ## Bowmaster - Summoned
-{option <- factor(c("FDR", "IGR"), levels=SSkill)
-value <- c(2 * GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage"), ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage")>=40, 20, 0))
+{option <- factor(c("BDR", "FDR", "IGR"), levels=SSkill)
+value <- c(30, 2 * GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage"), ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage")>=40, 20, 0))
 info <- c(175, 1, 0, 210, 30, NA, T, NA, NA, F)
 info <- data.frame(SInfo, info)
 colnames(info) <- c("option", "value")

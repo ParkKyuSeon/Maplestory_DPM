@@ -411,7 +411,7 @@ PoisonChainMax <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill)
 value <- c()
-info <- c(0, 0, 870, NA, 435 - 3 * GetCoreLv(ArchMageFPCore, "UnstableMemorize"), F, F, F)
+info <- c(0, 0, 870, NA, 430 - 3 * GetCoreLv(ArchMageFPCore, "UnstableMemorize"), F, F, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 UnstableMemorize <- rbind(data.frame(option, value), info)}
@@ -455,8 +455,8 @@ SummonedFinal$Duration <- SummonedFinal$Duration + ifelse(SummonedFinal$Summoned
 
 
 ## Unstable Memorize Data
-UnstableCoolReduceProb <- c(1, 5, 10, 35, 15, 10, 5, 5, 5, 5, 3, 1)
-UnstableCoolReduceP <- c(20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 75, 80)
+UnstableCoolReduceProb <- c(1, 6, 6, 6, 10, 11, 12, 12, 12, 8, 6, 5, 2, 2, 1)
+UnstableCoolReduceP <- c(20, 23, 24, 25, 27, 30, 33, 35, 38, 40, 45, 50, 55, 60, 65)
 
 UnstableCool <- c()
 for(i in 1:length(UnstableCoolReduceP)) {
@@ -472,7 +472,7 @@ for(i in 1:length(UnstableCool)) {
   UnstableCycleNames <- c(UnstableCycleNames, paste("ArchMageFPDealCycle", i, sep=""))
   UnstableDealDataNames <- c(UnstableDealDataNames, paste("ArchMageFPDealData", i, sep=""))
 }
-UnstableCycles <- data.frame(Cool = UnstableCool, 
+UnstableCyclesFP <- data.frame(Cool = UnstableCool, 
                              Prob = UnstableProb, 
                              CycleNames = UnstableCycleNames, 
                              DealDatas = UnstableDealDataNames, 
@@ -806,7 +806,7 @@ ArchMageFPCycle <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   return(DealCycle)
 }
 
-for(i in 1:nrow(UnstableCycles)) {
+for(i in 1:nrow(UnstableCyclesFP)) {
   DealCycle <- c("Skills", "Time", rownames(ArchMageFPBuff))
   ArchMageFPDealCycleDummy <- t(rep(0, length(DealCycle)))
   colnames(ArchMageFPDealCycleDummy) <- DealCycle
@@ -822,12 +822,12 @@ for(i in 1:nrow(UnstableCycles)) {
   ArchMageFPDealCycleDummy <- RepATKCycle(ArchMageFPDealCycleDummy, "FireAura", 300, 0, ATKFinal)
   ArchMageFPDealCycleDummy <- BishopInfinity(ArchMageFPDealCycleDummy, 6000, 70 + ArchMageFPSpec$SkillLv, General$General$Serverlag)
   ArchMageFPDealCycleDummy <- FPDealCycleReduction(ArchMageFPDealCycleDummy, c("Ignite", "IgniteMeteorFinalAttack"))
-  UnstableCycles$CycleTimes[i] <- max(ArchMageFPDealCycleDummy$Time)
+  UnstableCyclesFP$CycleTimes[i] <- max(ArchMageFPDealCycleDummy$Time)
   assign(paste("ArchMageFPDealCycle", i, sep=""), ArchMageFPDealCycleDummy)
   rm(ArchMageFPDealCycleDummy)
 }
 
-ArchMageFPDealCycleReduction <- DealCycleReduction(get(UnstableCycles$CycleNames[nrow(UnstableCycles)]), NotBuffColNames=c("InfinityFDR"))
+ArchMageFPDealCycleReduction <- DealCycleReduction(get(UnstableCyclesFP$CycleNames[nrow(UnstableCyclesFP)]), NotBuffColNames=c("InfinityFDR"))
 
 Idx1 <- c() ; Idx2 <- c()
 for(i in 1:length(PotentialOpt)) {
@@ -858,38 +858,38 @@ if(DPMCalcOption$Optimization==T) {
 }
 ArchMageFPSpecOpt <- OptDataAdd(ArchMageFPSpecOpt, ArchMageFPSpecOpt2, "HyperStat", ArchMageFPBase$CRROver, DemonAvenger=F)
 
-ArchMageFPFinalDPM <- ResetDealCalc(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+ArchMageFPFinalDPM <- ResetDealCalc(DealCycles=GetList(UnstableCyclesFP$CycleNames), 
+                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCyclesFP$CycleTimes, UnstableCyclesFP$Prob, 
                                     NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
-ArchMageFPFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                                     ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+ArchMageFPFinalDPMwithMax <- ResetDealCalcWithMaxDMR(DealCycles=GetList(UnstableCyclesFP$CycleNames), 
+                                                     ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCyclesFP$CycleTimes, UnstableCyclesFP$Prob, 
                                                      NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
 
-set(get(DPMCalcOption$DataName), as.integer(1), "ArchMageFP", sum(na.omit(ArchMageFPFinalDPMwithMax)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000))
-set(get(DPMCalcOption$DataName), as.integer(2), "ArchMageFP", sum(na.omit(ArchMageFPFinalDPM)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000) - 
-      sum(na.omit(ArchMageFPFinalDPMwithMax)) / (sum(UnstableCycles$Prob * UnstableCycles$CycleTimes) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(1), "ArchMageFP", sum(na.omit(ArchMageFPFinalDPMwithMax)) / (sum(UnstableCyclesFP$Prob * UnstableCyclesFP$CycleTimes) / 60000))
+set(get(DPMCalcOption$DataName), as.integer(2), "ArchMageFP", sum(na.omit(ArchMageFPFinalDPM)) / (sum(UnstableCyclesFP$Prob * UnstableCyclesFP$CycleTimes) / 60000) - 
+      sum(na.omit(ArchMageFPFinalDPMwithMax)) / (sum(UnstableCyclesFP$Prob * UnstableCyclesFP$CycleTimes) / 60000))
 
 ArchMageFPDealData <- data.frame(ArchMageFPDealCycle1$Skills, ArchMageFPDealCycle1$Time, ArchMageFPDealCycle1$Restraint4, 
                                  DealCalcWithMaxDMR(ArchMageFPDealCycle1, ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
                                                     NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR")))
 colnames(ArchMageFPDealData) <- c("Skills", "Time", "R4", "Deal")
 
-for(i in 1:nrow(UnstableCycles)) {
-  ArchMageFPDealDummy <- DealCalcWithMaxDMR(get(UnstableCycles$CycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
+for(i in 1:nrow(UnstableCyclesFP)) {
+  ArchMageFPDealDummy <- DealCalcWithMaxDMR(get(UnstableCyclesFP$CycleNames[i]), ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, 
                                             NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))
   assign(paste("ArchMageFPDealData", i, sep=""), ArchMageFPDealDummy)
   rm(ArchMageFPDealDummy)
 }
-ArchMageFPDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCycles$CycleNames), 
-                                      DealDatas=GetList(UnstableCycles$DealDatas), 
-                                      times=UnstableCycles$CycleTimes, 
-                                      prob=UnstableCycles$Prob)
+ArchMageFPDealRatio <- ResetDealRatio(DealCycles=GetList(UnstableCyclesFP$CycleNames), 
+                                      DealDatas=GetList(UnstableCyclesFP$DealDatas), 
+                                      times=UnstableCyclesFP$CycleTimes, 
+                                      prob=UnstableCyclesFP$Prob)
 
 set(get(DPMCalcOption$DataName), as.integer(3), "ArchMageFP", Deal_RR(ArchMageFPDealData))
 set(get(DPMCalcOption$DataName), as.integer(4), "ArchMageFP", Deal_40s(ArchMageFPDealData, F, NA, FinishTime=subset(ArchMageFPDealData, ArchMageFPDealData$Skills=="Restraint4")$Time[1] + 15000))
 
 ArchMageFPSpecMean <- ResetSpecMean("ArchMageFP", 
-                                    GetList(UnstableCycles$CycleNames), 
-                                    GetList(UnstableCycles$DealDatas), 
-                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCycles$CycleTimes, UnstableCycles$Prob, 
+                                    GetList(UnstableCyclesFP$CycleNames), 
+                                    GetList(UnstableCyclesFP$DealDatas), 
+                                    ATKFinal, BuffFinal, SummonedFinal, ArchMageFPSpecOpt, UnstableCyclesFP$CycleTimes, UnstableCyclesFP$Prob, 
                                     NotBuffCols=c("InfinityFDR"), NotBuffColOption=c("FDR"))

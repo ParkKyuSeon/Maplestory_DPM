@@ -70,11 +70,11 @@ WeakpointConvergingAttack <- data.frame(option, value)
 ## Summon Slashing Knife (Fear), Summon Bitting Needlebat (Confusion), Weakpoint Conversing Attack (Bleeding)
 
 option <- factor(c("CDMR", "CRR", "Mastery", "ATK"), levels=PSkill)
-value <- c(15 + ceiling(CadenaBase$PSkillLv/2), 30 + CadenaBase$PSkillLv, 70 + ceiling(CadenaBase$PSkillLv/2), 30 + CadenaBase$PSkillLv)
+value <- c(18 + ceiling(CadenaBase$PSkillLv/2), 30 + CadenaBase$PSkillLv, 70 + ceiling(CadenaBase$PSkillLv/2), 30 + CadenaBase$PSkillLv)
 WeaponExpert <- data.frame(option, value)
 
 option <- factor(c("ATK", "CDMR", "CRR"), levels=PSkill)
-value <- c(30 + CadenaBase$PSkillLv, 5 + ceiling(CadenaBase$PSkillLv/6), 10 + ceiling(CadenaBase$PSkillLv/3))
+value <- c(30 + CadenaBase$PSkillLv, 10 + ceiling(CadenaBase$PSkillLv/3), 10 + ceiling(CadenaBase$PSkillLv/3))
 QuickServiceMind2 <- data.frame(option, value)
 
 option <- factor(c("ATK"), levels=PSkill)

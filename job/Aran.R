@@ -44,8 +44,12 @@ AranBase <- JobBase(ChrInfo=ChrInfo,
 value <- c(5)
 RegainedMemory <- data.frame(option, value)
 
+option <- factor(c("ATKSpeed", "MainStat"), levels=PSkill)
+value <- c(2, 20)
+PolarmAcceleration <- data.frame(option, value)
+
 option <- factor(c("BDR"), levels=PSkill)
-value <- c(10)
+value <- c(20)
 SnowCharge <- data.frame(option, value)
 
 option <- factor(c("ATKSpeed"), levels=PSkill)
@@ -88,27 +92,13 @@ option <- factor(c("MainStat", "SubStat1"), levels=PSkill)
 value <- c(rep(GetCoreLv(AranCore, "RopeConnect"), 2))
 RopeConnectPassive <- data.frame(option, value)}
 
-AranPassive <- Passive(list(RegainedMemory=RegainedMemory, SnowCharge=SnowCharge, PolarmMastery=PolarmMastery, PhysicalTraining=PhysicalTraining, 
+AranPassive <- Passive(list(RegainedMemory=RegainedMemory, PolarmAcceleration=PolarmAcceleration, SnowCharge=SnowCharge, PolarmMastery=PolarmMastery, PhysicalTraining=PhysicalTraining, 
                             AdvancedComboAbility=AdvancedComboAbility, Might=Might, CleavingAttack=CleavingAttack, HighMastery=HighMastery, AdvancedFinalAttack=AdvancedFinalAttack, 
                             BodyofSteelPassive=BodyofSteelPassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Aran - Buff
-{option <- factor("ATKSpeed", levels=BSkill)
-value <- c(2)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-PolarmBooster <- rbind(data.frame(option, value), info)
-
-option <- factor("BDR", levels=BSkill)
-value <- c(10)
-info <- c(200, NA, 0, T, NA, NA, T)
-info <- data.frame(BInfo, info)
-colnames(info) <- c("option", "value")
-SnowCharge <- rbind(data.frame(option, value), info)
-
-option <- factor(levels=BSkill)
+{option <- factor(levels=BSkill)
 value <- c()
 info <- c(20, NA, 0, F, NA, NA, T)
 info <- data.frame(BInfo, info)
@@ -138,7 +128,7 @@ MapleSoldier <- rbind(data.frame(option, value), info)
 
 option <- factor(c("FDR", "BDR"), levels=BSkill)
 value <- c(15 + AranBase$PSkillLv, 20)
-info <- c(20, 10, 0, F, F, F, T)
+info <- c(20, 30, 0, F, F, F, T)
 info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 SwingBuff <- rbind(data.frame(option, value), info)
@@ -199,11 +189,11 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 Combo <- rbind(data.frame(option, value), info)}
 
-AranBuff <- list(PolarmBooster=PolarmBooster, SnowCharge=SnowCharge, AdrenalineBoost=AdrenalineBoost, AdrenalineGenerator=AdrenalineGenerator, 
+AranBuff <- list(AdrenalineBoost=AdrenalineBoost, AdrenalineGenerator=AdrenalineGenerator, 
                  BlessingMaha=BlessingMaha, MapleSoldier=MapleSoldier, SwingBuff=SwingBuff, HeroesOath=HeroesOath, UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, 
                  InstallMahaBuff=InstallMahaBuff, DireWolfCurse=DireWolfCurse, DireWolfCurseStack=DireWolfCurseStack, AuraWeaponBuff=AuraWeaponBuff, MapleWarriors2=MapleWarriors2, Combo=Combo, 
                  Restraint4=Restraint4, SoulContractLink=SoulContractLink)
-## Petbuff : SnowCharge(900ms), PolarmBooster(600ms), BlessingMaha(600ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
+## Petbuff : BlessingMaha(600ms), UsefulCombatOrders(1500ms), UsefulSharpEyes(900ms), (UsefulAdvancedBless)
 if(sum(names(Useful)=="UsefulAdvancedBless") >= 1) {
   AranBuff[[length(AranBuff)+1]] <- UsefulAdvancedBless
   names(AranBuff)[[length(AranBuff)]] <- "UsefulAdvancedBless"
@@ -525,9 +515,9 @@ AranDealCycle <- data.frame(AranDealCycle)
 
 AranCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipStructure, Spec, 
                       Period=180, CycleTime=720) {
-  BuffSummonedPrior <- c("PolarmBooster", "SnowCharge", "BlessingMaha", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
+  BuffSummonedPrior <- c("BlessingMaha", "MapleSoldier", "UsefulSharpEyes", "UsefulCombatOrders", "UsefulAdvancedBless", "HeroesOath", 
                          "AuraWeaponBuff", "MapleWarriors2", "InstallMahaBuff", "SoulContractLink", "Restraint4")
-  Times180 <- c(0, 0, 0, 0, 0, 0, 0, 0, 
+  Times180 <- c(0, 0, 0, 0, 0, 0, 
                 1, 1, 2, 2, 1)
   if(nrow(BuffFinal[rownames(BuffFinal)=="UsefulAdvancedBless", ]) == 0) {
     Times180 <- Times180[BuffSummonedPrior!="UsefulAdvancedBless"]

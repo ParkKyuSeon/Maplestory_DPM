@@ -36,7 +36,7 @@ DPMCalcOption <- data.frame(SpecSet = "SpecLegendry",
                             MonsterLifeLevel = 3, ## Not a Monster Life Farm Level
                             WeaponSF = 18, 
                             DemonAvengerSF = 330, ## 264 : Unique, 330 : Legendry
-                            Optimization = T, 
+                            Optimization = F, 
                             OptdataDelete = F,
                             DataName = "DPM12360_L", 
                             
@@ -59,7 +59,7 @@ SpecDefaultAbility <- data.frame(Ability1=rep("", nrow(ChrInfo)),
                                  stringsAsFactors=F)
 {SpecDefaultAbility[rownames(SpecDefaultAbility)=="Hero", ] <- c("BDR", "DisorderBDR")
 SpecDefaultAbility[rownames(SpecDefaultAbility)=="Palladin", ] <- c("BDR", "DisorderBDR")
-SpecDefaultAbility[rownames(SpecDefaultAbility)=="DarkKnight", ] <- c("BuffDuration", "DisorderBDR")
+SpecDefaultAbility[rownames(SpecDefaultAbility)=="DarkKnight", ] <- c("BDR", "BuffDuration")
 SpecDefaultAbility[rownames(SpecDefaultAbility)=="ArchMageFP", ] <- c("BuffDuration", "DisorderBDR")
 SpecDefaultAbility[rownames(SpecDefaultAbility)=="ArchMageTC", ] <- c("BuffDuration", "DisorderBDR")
 SpecDefaultAbility[rownames(SpecDefaultAbility)=="Bishop", ] <- c("BuffDuration", "DisorderBDR")
@@ -111,7 +111,7 @@ SpecLegendryAbility <- data.frame(Ability1=rep("", nrow(ChrInfo)),
                                   stringsAsFactors=F)
 {SpecLegendryAbility[rownames(SpecLegendryAbility)=="Hero", ] <- c("BDR", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Palladin", ] <- c("BDR", "CRR", "DisorderBDR")
-SpecLegendryAbility[rownames(SpecLegendryAbility)=="DarkKnight", ] <- c("BuffDuration", "BDR", "DisorderBDR")
+SpecLegendryAbility[rownames(SpecLegendryAbility)=="DarkKnight", ] <- c("BDR", "BuffDuration", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="ArchMageFP", ] <- c("BuffDuration", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="ArchMageTC", ] <- c("BuffDuration", "CRR", "DisorderBDR")
 SpecLegendryAbility[rownames(SpecLegendryAbility)=="Bishop", ] <- c("BuffDuration", "BDR", "DisorderBDR")
@@ -369,7 +369,7 @@ MonsterLifePreSet <- data.frame(Level1=rep("", nrow(ChrInfo)),
                                 stringsAsFactors=F)
 {MonsterLifePreSet[rownames(MonsterLifePreSet)=="Hero", ] <- c("", "MLTypeS22", "MLTypeS33")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Palladin", ] <- c("", "MLTypeS21", "MLTypeS31")
-MonsterLifePreSet[rownames(MonsterLifePreSet)=="DarkKnight", ] <- c("", "MLTypeS21", "MLTypeS32")
+MonsterLifePreSet[rownames(MonsterLifePreSet)=="DarkKnight", ] <- c("", "MLTypeS21", "MLTypeS31")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="ArchMageFP", ] <- c("", "MLTypeI21", "MLTypeI32")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="ArchMageTC", ] <- c("", "MLTypeI21", "MLTypeI32")
 MonsterLifePreSet[rownames(MonsterLifePreSet)=="Bishop", ] <- c("", "MLTypeI21", "MLTypeI33")

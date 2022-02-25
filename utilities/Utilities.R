@@ -139,3 +139,21 @@ RRDealData <- function(DealData, CycleTime=NA) {
               RRDealAvg = RRDealAvg, 
               RRDealPerMin = RRDealPerMin))
 }
+
+InfinityData <- function(UnstableCycles, BuffFinal) {
+  FDRMean <- c()
+  for(i in 1:nrow(UnstableCycles)) {
+    DealWithoutUns <- get(UnstableCycles$DealDatas[i]) / ((100 + get(UnstableCycles$CycleNames[i])$InfinityFDR) / 100)
+    FDRMean <- c(FDRMean, (sum(get(UnstableCycles$DealDatas[i])) / sum(DealWithoutUns) - 1) * 100)
+  }
+  
+  WeightedTime <- sum(UnstableCycles$CycleTimes * UnstableCycles$Prob)
+  Weight <- UnstableCycles$CycleTimes * UnstableCycles$Prob / WeightedTime
+  
+  FDRMean <- sum(FDRMean * Weight)
+  
+  InfinityTimeRatio <- BuffFinal[rownames(BuffFinal)=="Infinity", ]$Duration * 1000 * 6 / UnstableCycles$CycleTimes
+  InfinityTimeRatio <- sum(InfinityTimeRatio * Weight)
+  return(data.frame(FDRMean=FDRMean, 
+                    InfinityTimeRatio=InfinityTimeRatio))
+}

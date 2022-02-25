@@ -326,11 +326,13 @@ CannonShooterVPassive$N5 <- data.frame(Skills=c("CannonBuster", "RollingCannonRa
                                        stringsAsFactors=F)
 CannonShooterVPrior <- list()
 CannonShooterVPrior$N4 <- c("CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", "CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", 
-                            "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                            "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka")
+                            "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2", 
+                            "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", 
+                            "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect")
 CannonShooterVPrior$N5 <- c("CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", "CannonBuster-RollingCannonRainbow-SupportMonkeyTwins", 
-                            "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2", "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", 
-                            "MonkeyFurious_MiniCannonball-BarrelRoulette-MagneticAnchor", "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", "MagneticAnchor-CannonBazuka-Nautilus")
+                            "OverDrive", "PirateFlag", "Cocoball", "ICBM", "SpecialMonkeyEscort", "PoolMaker", "MapleWarriors2",
+                            "MonkeyFurious_MiniCannonball-BarrelRoulette-MagneticAnchor", "MonkeyFurious_MiniCannonball-BarrelRoulette-CannonBazuka", 
+                            "LoadedDice", "Blink", "SpiderInMirror", "RopeConnect", "MagneticAnchor-CannonBazuka-Nautilus")
 
 ## Mikhail
 MikhailVPassive <- list()
@@ -363,7 +365,7 @@ FlameWizardVPrior <- list()
 FlameWizardVPrior$N3 <- c("InfinityFlameCircle", 
                           "OrbitalFlame-BlazingExtinction-DragonSlave", "OrbitalFlame-BlazingExtinction-Infernorise", 
                           "SalamanderMischief", "BlazingOrbitalFlame", "CygnusPhalanx", "OverloadMana", "FlameDischarge", "BlessofCygnus", "Blink", "SpiderInMirror", "RopeConnect", 
-                          "Infernorise-BlazingExtinction-Cataclysm")
+                          "Infernorise-DragonSlave-Cataclysm")
 
 ## WindBreaker
 WindBreakerVPassive <- list()

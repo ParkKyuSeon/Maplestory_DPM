@@ -256,7 +256,7 @@ colnames(info) <- c("option", "value")
 Assassination1 <- rbind(data.frame(option, value), info)
 
 option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill)
-value <- c(40, ifelse(GetCoreLv(ShadowerCore, "Assassination")>=40, 20, 0), 2 * GetCoreLv(ShadowerCore, "Assassination"))
+value <- c(40, IGRCalc(c(10, ifelse(GetCoreLv(ShadowerCore, "Assassination")>=40, 20, 0))), 2 * GetCoreLv(ShadowerCore, "Assassination"))
 info <- c(490 + 5 * ShadowerSpec$SkillLv, 6, 540, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")

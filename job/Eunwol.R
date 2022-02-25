@@ -70,7 +70,7 @@ value <- c(30 + EunwolBase$PSkillLv, 15 + floor(EunwolBase$PSkillLv/3), 30 + Eun
 JeongryeongGyeolsok4 <- data.frame(option, value)
 
 option <- factor(c("Mastery", "CDMR", "FDR"), levels=PSkill)
-value <- c(70 + 2 * floor(EunwolBase$PSkillLv/3), 20 + 2 * ceiling(EunwolBase$PSkillLv/3), 10 + ceiling(EunwolBase$PSkillLv/3))
+value <- c(70 + 2 * floor(EunwolBase$PSkillLv/3), 20 + 2 * ceiling(EunwolBase$PSkillLv/3), 16 + ceiling(EunwolBase$PSkillLv/2))
 GogeupKnuckleSukryeon <- data.frame(option, value)
 
 option <- factor(c("CRR"), levels=PSkill)
@@ -91,7 +91,7 @@ RopeConnectPassive <- data.frame(option, value)}
 
 EunwolPassive <- Passive(list(JeongryeongChinhwa=JeongryeongChinhwa, KnuckleMastery=KnuckleMastery, JeongryeongGyeolsok2=JeongryeongGyeolsok2, GeunryeokDanryeon=GeunryeokDanryeon, 
                               JeongryeongGyeolsok3=JeongryeongGyeolsok3, Yakhwa=Yakhwa, JeongryeongGyeolsok4=JeongryeongGyeolsok4, GogeupKnuckleSukryeon=GogeupKnuckleSukryeon, 
-                              YakjeomGanpa=YakjeomGanpa, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive))
+                              YakjeomGanpa=YakjeomGanpa, LoadedDicePassive=LoadedDicePassive, BlinkPassive=BlinkPassive, RopeConnectPassive=RopeConnectPassive))
 
 
 ## Eunwol - Buff
@@ -1218,7 +1218,6 @@ EunwolAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, BunhonFi
   }
   
   ## Bunhon Gyeokcham
-  d <- 0 ; dp <- 0 ; d1 <- 0 ; d2 <- 0 ; d3 <- 0 ; d3c <- 0
   if(BunhonFixed==F) {
     for(i in 1:nrow(DealCycle)) {
       if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & sum(DealCycle$Skills[i]==c("Gwicham", "JinGwicham", "SohonJangmak", "PashwaeCheoljoHoe", "PashwaeYeongwon", "PashwaeYeongwonLast", 
@@ -1230,55 +1229,7 @@ EunwolAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, BunhonFi
         DealCycle <- rbind(DealCycle, DealCycle[i, ])
         DealCycle$Skills[nrow(DealCycle)] <- paste(DealCycle$Skills[nrow(DealCycle)], "Add", sep="")
         DealCycle$GwimunjinStack[nrow(DealCycle)] <- 0
-      } else if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & DealCycle$Skills[i]=="Bulyeouryeong") {
-        if(d == 0) {
-          d <- 1
-        } else {
-          DealCycle$Skills[i] <- "BulyeouryeongAdd"
-          DealCycle$GwimunjinStack[i] <- 0
-          d <- 0
-        }
-      } else if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & DealCycle$Skills[i]=="BulyeouryeongPashwaeYeongwon") {
-        if(dp == 0) {
-          dp <- 1
-        } else {
-          DealCycle$Skills[i] <- "BulyeouryeongPashwaeYeongwonAdd"
-          DealCycle$GwimunjinStack[i] <- 0
-          dp <- 0
-        }
-      } else if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & DealCycle$Skills[i]=="BulyeouryeongJipsok1") {
-        if(d1 == 0) {
-          d1 <- 1
-        } else {
-          DealCycle$Skills[i] <- "BulyeouryeongJipsok1Add"
-          DealCycle$GwimunjinStack[i] <- 0
-          d1 <- 0
-        }
-      } else if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & DealCycle$Skills[i]=="BulyeouryeongJipsok2") {
-        if(d2 == 0) {
-          d2 <- 1
-        } else {
-          DealCycle$Skills[i] <- "BulyeouryeongJipsok2Add"
-          DealCycle$GwimunjinStack[i] <- 0
-          d2 <- 0
-        }
-      } else if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & DealCycle$Skills[i]=="BulyeouryeongJipsok3") {
-        if(d3 == 0) {
-          d3 <- 1
-        } else {
-          DealCycle$Skills[i] <- "BulyeouryeongJipsok3Add"
-          DealCycle$GwimunjinStack[i] <- 0
-          d3 <- 0
-        }
-      } else if(DealCycle$BunhonGyeokchamDebuffMoving[i] > 0 & DealCycle$Skills[i]=="BulyeouryeongJipsok3Cancelled") {
-        if(d3c == 0) {
-          d3c <- 1
-        } else {
-          DealCycle$Skills[i] <- "BulyeouryeongJipsok3CancelledAdd"
-          DealCycle$GwimunjinStack[i] <- 0
-          d3c <- 0
-        }
-      }
+      } 
     }
   } else {
     for(i in 1:nrow(DealCycle)) {
@@ -1426,7 +1377,7 @@ EunwolFGXDeal <- DealCalc(EunwolDealCycleFGX, ATKFinal, BuffFinal, SummonedFinal
                           NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
 EunwolFGODeal <- DealCalc(EunwolDealCycleFGO, ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, Collapse=F, 
                           NotBuffCols=c("GwimunjinStack"), NotBuffColOption=c("CDMR"))
-EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFGX, EunwolDealCycleFGO), list(EunwolFGXDeal, EunwolFGODeal), rep(max(EunwolDealCycleFGX$Time), 2), c(0.5136, 0.4864))
+EunwolDealRatio <- ResetDealRatio(list(EunwolDealCycleFGX, EunwolDealCycleFGO), list(EunwolFGXDeal, EunwolFGODeal), rep(max(EunwolDealCycleFGX$Time), 2), c(0.5129, 0.4871))
 
 EunwolDealDataFGX <- data.frame(EunwolDealCycleFGX$Skills, EunwolDealCycleFGX$Time, EunwolDealCycleFGX$Restraint4, EunwolFGXDeal)
 colnames(EunwolDealDataFGX) <- c("Skills", "Time", "R4", "Deal")
@@ -1442,7 +1393,7 @@ EunwolFGO40s <- Deal_40s(EunwolDealDataFGO)
 EunwolSpecMean <- ResetSpecMean("Eunwol", 
                                 list(EunwolDealCycleFGX, EunwolDealCycleFGO), 
                                 list(EunwolFGXDeal, EunwolFGODeal), 
-                                ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, rep(max(EunwolDealCycleFGX$Time), 2), c(0.5136, 0.4864))
+                                ATKFinal, BuffFinal, SummonedFinal, EunwolSpecOpt, rep(max(EunwolDealCycleFGX$Time), 2), c(0.5129, 0.4871))
 
 print(list(EWMoving=data.frame(MovingDPM=MovingDPM, MovingRR=EunwolMGXRR, Moving40s=EunwolMGX40s, MovingGanpaRR=EunwolMGORR, MovingGanpa40s=EunwolMGO40s),  
            EWFixed=data.frame(FixedGanpaRR=EunwolFGORR, FixedGanpa40s=EunwolFGO40s)))

@@ -249,9 +249,9 @@ SpiderInMirrorWait <- SIM$SpiderInMirrorWait
 
 
 ## Striker - Attacks
-## Hyper Setting : Typhoon - Bonus ATK, Thunderbolt - Reinforce / Bonus ATK, Annihilate - Reinforce / Boss Killer
+## Hyper Setting : Thunderbolt - Reinforce / Bonus ATK, Annihilate - Reinforce / Boss Killer / Ignore Guard
 {option <- factor(c("BDR", "IGR", "FDR"), levels=ASkill) 
-value <- c(40, ifelse(GetCoreLv(StrikerCore, "Annihilate")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Annihilate"))
+value <- c(40, IGRCalc(c(20, ifelse(GetCoreLv(StrikerCore, "Annihilate")>=40, 20, 0))), 2 * GetCoreLv(StrikerCore, "Annihilate"))
 info <- c(350 + 4 * StrikerSpec$SkillLv, 7, 780, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
@@ -266,7 +266,7 @@ Thunderbolt <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill) 
 value <- c(ifelse(GetCoreLv(StrikerCore, "Typhoon")>=40, 20, 0), 2 * GetCoreLv(StrikerCore, "Typhoon"))
-info <- c(390 + 3 * StrikerSpec$SkillLv, 6, 840, NA, 10, T, T, F)
+info <- c(390 + 3 * StrikerSpec$SkillLv, 5, 840, NA, 10, T, T, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 Typhoon <- rbind(data.frame(option, value), info)
@@ -301,7 +301,7 @@ LightningGodSpearStrike <- rbind(data.frame(option, value), info)
 
 option <- factor(levels=ASkill) 
 value <- c()
-info <- c(208 + 8 * GetCoreLv(StrikerCore, "LightningGodSpearStrike"), 7, 0, 202.5, NA, NA, NA, F)
+info <- c(200 + 8 * GetCoreLv(StrikerCore, "LightningGodSpearStrike"), 7, 0, 202.5, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 LightningGodSpearStrikeShock <- rbind(data.frame(option, value), info)
@@ -579,7 +579,7 @@ StrikerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, SkipS
         }
       }
       ## Typhoon (Taepung) for Buff
-      else if(DealCycle$TyphoonBuff[nrow(DealCycle)] == 0 & DealCycle$LightningStack[nrow(DealCycle)] == 5) {
+      else if(DealCycle$TyphoonBuff[nrow(DealCycle)] < 5000 & DealCycle$LightningStack[nrow(DealCycle)] == 5) {
         DealCycle <- DCATKSkip(DealCycle, "Typhoon", ATKFinal, SkipStructure)
         DealCycle$TyphoonBuff[nrow(DealCycle)] <- subset(BuffFinal, rownames(BuffFinal)=="TyphoonBuff")$Duration * 1000
         DealCycle$LightningStack[nrow(DealCycle)] <- ifelse(DealCycle$PrimalBolt[nrow(DealCycle)] > 0, DealCycle$LightningStack[(nrow(DealCycle)-1)], 0)
