@@ -41,7 +41,7 @@ Kain <- c(10, 20, 40, 80, 100) # DEX
 Cadena <- c(10, 20, 40, 80, 100) # LUK
 AngelicBuster <- c(10, 20, 40, 80, 100) # DEX
 Adele <- c(10, 20, 40, 80, 100) # STR
-Illium <- c(10, 20, 40, 80, 100) # LUK
+Illium <- c(10, 20, 40, 80, 100) # INT
 Ark <- c(10, 20, 40, 80, 100) # STR
 Hoyeong <- c(10, 20, 40, 80, 100) # LUK
 Lara <- c(10, 20, 40, 80, 100) # INT
@@ -52,7 +52,7 @@ Options <- c("STR", "STR", "HPP", "Others", "INT", "INT", "DEX", "CRR", "DEX", "
              "HP", "HP", "INT", "DEX", "LUK", "STR",
              "Others", "Others", "INT", "CoolReduceP", "Others", "CDMR", 
              "IGR", "INT", "BDR", "BuffDuration", "STRDEXLUK", "Others", "BDR", 
-             "STR", "DEX", "LUK", "DEX", "STR", "LUK", "STR", "LUK", "INT", "Others", "INT", "ATK")
+             "STR", "DEX", "LUK", "DEX", "STR", "INT", "STR", "LUK", "INT", "Others", "INT", "ATK")
 Union <- rbind(Hero, Palladin, DarkKnight, ArchMageFP, ArchMageTC, Bishop, BowMaster, Marksman, PathFinder, 
                NightLord, Shadower, DualBlader, Viper, Captain, CannonMaster, 
                Mikhail, SoulMaster, FlameWizard, WindBreaker, NightWalker, Striker, 
