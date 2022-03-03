@@ -157,3 +157,12 @@ InfinityData <- function(UnstableCycles, BuffFinal) {
   return(data.frame(FDRMean=FDRMean, 
                     InfinityTimeRatio=InfinityTimeRatio))
 }
+
+GetSkillsList <- function(JobNames, MaxSkillsCount) {
+  SkillList <- rep(NA, MaxSkillsCount)
+  JobNames[JobNames=="DualBlader"] <- "DualBlade"
+  JobNames[JobNames=="CannonMaster"] <- "CannonShooter"
+  for(i in 1:length(JobNames)) {
+    
+  }
+}

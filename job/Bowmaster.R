@@ -253,7 +253,7 @@ HurricaneArrow <- rbind(data.frame(option, value), info)
 
 option <- factor(c("IGR", "FDR"), levels=ASkill)
 value <- c(ifelse(GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage")>=40, 20, 0), 2 * GetCoreLv(BowmasterCore, "ArrowPlatter_FlashMirage"))
-info <- c(420 + 120 + 2 * BowmasterSpec$SkillLv, 8 * 4, 0, NA, NA, NA, NA, F)
+info <- c(420 + 120 + 2 * BowmasterSpec$SkillLv, 4 * 4, 0, NA, NA, NA, NA, F)
 info <- data.frame(AInfo, info)
 colnames(info) <- c("option", "value")
 FlashMirage <- rbind(data.frame(option, value), info)
