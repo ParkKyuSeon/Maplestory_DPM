@@ -347,7 +347,10 @@ KainSkillList <- list(DeathBlessing=c("DeathBlessing", "DeathBlessingIncanation"
                       StrikeArrowIII=c("StrikeArrow3"), 
                       ThanatosDescent=c("ThanatosDescentAddATK"), 
                       ThanatosDescentEnd=c("ThanatosDescentEndTick"))
-KainDealCycleSimplified <- DealCycleCollapse(KainDealCycle, KainSkillList)
+KainDealCyclesSimplified <- list()
+for(i in 1:length(KainDealCycles)) {
+  KainDealCyclesSimplified[[i]] <- DealCycleCollapse(KainDealCycles[[i]], KainSkillList)
+}
 
 ## Cadena
 CadenaATKCollapse <- function(DealCycle_Cadena, ATKSkillsData) {
@@ -520,7 +523,9 @@ DemonAvengerDealRatio <- DealRatio(DemonAvengerDealCycleSimplified, DemonAvenger
 KaiserDealRatio <- ResetDealRatio(DealCycles=KaiserDealCyclesSimplified, 
                                   DealDatas=KaiserDealDatas, 
                                   KaiserDealCycleTimes, KaiserDealCycleProbs)
-KainDealRatio <- DealRatio(KainDealCycleSimplified, KainFinalDPMwithMax)
+KainDealRatio <- ResetDealRatio(DealCycles=KainDealCyclesSimplified, 
+                                DealDatas=KainDealDatas, 
+                                KainDealCycleTimes, KainDealCycleProbs)
 CadenaDealRatio <- DealRatio(CadenaDealCycleSimplified, CadenaFinalDPMwithMax)
 AngelicBusterDealRatio <- ResetDealRatio(DealCycles=AngelicBusterDealCyclesSimplified, 
                                          DealDatas=AngelicBusterDealDatas, 
