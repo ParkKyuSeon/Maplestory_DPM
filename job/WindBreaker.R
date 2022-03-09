@@ -193,7 +193,6 @@ WindBreakerHyperStatBase <- WindBreakerSpec$HyperStatBase
 WindBreakerCoolReduceType <- WindBreakerSpec$CoolReduceType
 WindBreakerSpec <- WindBreakerSpec$Spec
 
-
 ## WindBreaker - CriticalReinforce(RE)
 {option <- factor("CDMR", levels=BSkill)
 value <- c(WindBreakerSpec$CRR * (0.2 + 0.01 * GetCoreLv(WindBreakerCore, "CriticalReinforce")))
@@ -485,7 +484,7 @@ WindBreakerCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, S
         }
       }
       ## Vortex Sphere
-      if(VSRemain==0 & nrow(subset(DealCycle, DealCycle$Skills=="VortexSphere")) < 8) {
+      if(VSRemain==0 & nrow(subset(DealCycle, DealCycle$Skills=="VortexSphere")) < floor(TotalTime / VSCool)) {
         DealCycle <- DCATK(DealCycle, "VortexSphereGust", ATKFinal)
         DealCycle <- DCATK(DealCycle, "VortexSphere", ATKFinal)
         GaleRemain <- max(0, GaleRemain - DealCycle$Time[1])

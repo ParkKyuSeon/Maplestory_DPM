@@ -488,7 +488,7 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   
   ## Ether 400 & Storm
   DealCycle <- AdeleBuffCycle(DealCycle, c("GatheringDebuff"), BuffFinal)
-  DealCycle <- AdeleATKCycle(DealCycle, c("Gathering", "Blossom1st", rep("Divide", 14)), ATKFinal)
+  DealCycle <- AdeleATKCycle(DealCycle, c("Gathering", "Blossom1st", rep("Divide", ifelse(Spec$CoolReduce == 0, 16, 14))), ATKFinal)
   if(Hyper=="Nobility") {
     DealCycle <- AdeleBuffCycle(DealCycle, c("Nobility"), BuffFinal)
   } else {
@@ -601,7 +601,7 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   
   ## Ether 400 & Storm
   DealCycle <- AdeleBuffCycle(DealCycle, c("GatheringDebuff"), BuffFinal)
-  DealCycle <- AdeleATKCycle(DealCycle, c("Gathering", "Blossom1st", rep("Divide", 14)), ATKFinal)
+  DealCycle <- AdeleATKCycle(DealCycle, c("Gathering", "Blossom1st", rep("Divide", ifelse(Spec$CoolReduce == 0, 16, 14))), ATKFinal)
   if(Hyper=="Nobility") {
     DealCycle <- AdeleBuffCycle(DealCycle, c("Nobility"), BuffFinal)
   } else {
@@ -614,7 +614,11 @@ AdeleCycle <-  function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec, 
   
   DealCycle <- AdeleBuffCycle(DealCycle, c("Order1"), BuffFinal)
   DealCycle <- AdeleSummonedCycle(DealCycle, c("OrderDummy"), SummonedFinal)
-  DealCycle <- AdeleATKCycle(DealCycle, c("Territory"), ATKFinal)
+  if(DealCycle$Time[nrow(DealCycle)] + DealCycle$Time[1] - max(subset(DealCycle, DealCycle$Skills=="Territory")$Time) >= TECool) {
+    DealCycle <- AdeleATKCycle(DealCycle, c("Territory"), ATKFinal)
+  } else {
+    DealCycle <- AdeleATKCycle(DealCycle, c(rep("Divide", 1)), ATKFinal)
+  }
   DealCycle <- AdeleBuffCycle(DealCycle, c("Restraint4"), BuffFinal)
   DealCycle <- AdeleBuffCycle(DealCycle, c("Order2"), BuffFinal)
   DealCycle <- AdeleSummonedCycle(DealCycle, c("OrderDummy"), SummonedFinal)

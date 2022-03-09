@@ -355,7 +355,7 @@ SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Cadena", ] <- T
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="AngelicBuster", ] <- T
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Adele", ] <- T
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Illium", ] <- F
-SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Ark", ] <- F
+SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Ark", ] <- T
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Lara", ] <- F
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Hoyeong", ] <- F
 SpecLegendryCoolReduceHat[rownames(SpecLegendryCoolReduceHat)=="Zero", ] <- F
