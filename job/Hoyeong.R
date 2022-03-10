@@ -107,6 +107,13 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 DurumariDoryeok <- rbind(data.frame(option, value), info)
 
+option <- factor(c("FDR"), levels=BSkill)
+value <- c(5)
+info <- c(0, 1, 0, F, F, F, F)
+info <- data.frame(BInfo, info)
+colnames(info) <- c("option", "value")
+LinkFDR <- rbind(data.frame(option, value), info)
+
 option <- factor(levels=BSkill)
 value <- c()
 info <- c(10, NA, Delay(480, 2), F, NA, NA, F)
@@ -233,7 +240,7 @@ info <- data.frame(BInfo, info)
 colnames(info) <- c("option", "value")
 BlessofGrandisGoddess <- rbind(data.frame(option, value), info)}
 
-HoyeongBuff <- list(BujeokDoryeok=BujeokDoryeok, DurumariDoryeok=DurumariDoryeok, Horobu1=Horobu1, BunsinbuBuff=BunsinbuBuff, FanBooster=FanBooster, MisaengGangbyeonDebuff=MisaengGangbyeonDebuff, 
+HoyeongBuff <- list(BujeokDoryeok=BujeokDoryeok, DurumariDoryeok=DurumariDoryeok, LinkFDR=LinkFDR, Horobu1=Horobu1, BunsinbuBuff=BunsinbuBuff, FanBooster=FanBooster, MisaengGangbyeonDebuff=MisaengGangbyeonDebuff, 
                     HojeopJimongBuff=HojeopJimongBuff, MapleSoldier=MapleSoldier, TaeeulSeondan=TaeeulSeondan, BunsinnanmuBuff=BunsinnanmuBuff, SanryeongSohwan=SanryeongSohwan, ElemComplete=ElemComplete, 
                     Goeryeoknansin=Goeryeoknansin, GoeryeoknansinAfter=GoeryeoknansinAfter, GoeryeoknansinStack=GoeryeoknansinStack, CheonjiinHwanyeongBuff=CheonjiinHwanyeongBuff, 
                     UsefulSharpEyes=UsefulSharpEyes, UsefulCombatOrders=UsefulCombatOrders, ReadyToDie1Stack=ReadyToDie1Stack, ReadyToDie2Stack=ReadyToDie2Stack, 
@@ -1611,6 +1618,24 @@ HoyeongCycle <- function(PreDealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec,
   return(DealCycle)
 }
 HoyeongAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
+  ## Link FDR
+  Status <- "Dummy"
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i]==c("Toparyu", "Jijinswae"))==1) {
+      if(sum(Status==c("Cheon", "In"))==1) {
+        DealCycle$LinkFDR[i] <- 1
+      }
+      Status <- "Ji"
+    } else if(sum(DealCycle$Skills[i]==c("Geumgobong1", "Geumgobong2"))==1) {
+      if(sum(Status==c("Cheon", "Ji"))==1) {
+        DealCycle$LinkFDR[i] <- 1
+      }
+      if(DealCycle$Skills[i] != "Geumgobong1") {
+        Status <- "In"
+      }
+    } 
+  }
+  
   ## Toparyu, Jijinswae - Heo
   for(i in 1:nrow(DealCycle)) {
     if(DealCycle$Skills[i]=="Toparyu") {
@@ -1629,8 +1654,8 @@ HoyeongAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   
   for(i in 2:nrow(DealCycle)) {
     if(sum(DealCycle$Skills[i]==c("ToparyuHeo", "JijinswaeHeo"))>=1) {
-      DealCycle[i, 5:ncol(DealCycle)] <- DealCycle[i-1, 5:ncol(DealCycle)] - (DealCycle$Time[i] - DealCycle$Time[i-1])
-      for(j in 5:ncol(DealCycle)) {
+      DealCycle[i, 6:ncol(DealCycle)] <- DealCycle[i-1, 6:ncol(DealCycle)] - (DealCycle$Time[i] - DealCycle$Time[i-1])
+      for(j in 6:ncol(DealCycle)) {
         DealCycle[i, j] <- max(0, DealCycle[i, j])
       }
     }
@@ -1816,6 +1841,11 @@ HoyeongAddATK <- function(DealCycle, ATKFinal, BuffFinal, SummonedFinal, Spec) {
   DealCycle$DurumariDoryeok <- 0
   DealCycle$Horobu1 <- 0
   DealCycle$ElemComplete <- 0
+  for(i in 1:nrow(DealCycle)) {
+    if(sum(DealCycle$Skills[i] == c("Toparyu", "ToparyuHeo", "Jijinswae", "JijinswaeHeo", "Geumgobong1", "Geumgobong2"))==0) {
+      DealCycle$LinkFDR[i] <- 0
+    }
+  }
   
   return(DealCycle)
 }
